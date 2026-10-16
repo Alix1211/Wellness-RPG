@@ -41,4 +41,12 @@ The repository was confirmed private before this asset upload. Nude/adult charac
 
 ## Current implementation status
 
-Repository documents and the ten portrait/source sheets are present. No gameplay code, four-legged movement/jump sheets, or private gallery pack has been committed.
+Repository documents, ten portrait/source sheets, and one isolated minigame performance prototype are present. No full RPG gameplay loop, four-legged movement/jump sheets, or private gallery pack has been committed.
+
+## 2026-10-17 performance prototype
+
+The user's current request explicitly calls for a **16:9 landscape fixed performance test**. This applies to `prototype/` only; the earlier portrait-screen direction for the full RPG remains open.
+
+Read-only inspection of Wellness selected **소시지 합치기**: its Matter.js compound-body collisions run at fixed 120Hz while a 1280×1020 canvas is redrawn each animation frame. `prototype/` carries one adapted game, a full-viewport cover-cropped local MP4 layer, adjustable translucent game backdrop, opaque controls, reserved portrait/dialog area, a nonvideo fallback, and FPS/frame-drop counters. Generated stand-in sausage art avoids copying Wellness images; no private video or gallery files were added. `*.mp4` and related video suffixes are ignored globally.
+
+The prototype has no APK or RPG integration. Follow `prototype/README.md` for Android Chrome testing. The browser environment used during implementation could not connect to the local test server; syntax and static checks were completed instead.

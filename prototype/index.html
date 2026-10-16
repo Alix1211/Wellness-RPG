@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101a28">
+  <title>GAIA CITY · 소시지 합치기 성능 시험</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main id="viewport" aria-label="16대 9 가로형 미니게임 성능 시험">
+    <div class="fallback" aria-hidden="true"></div>
+    <video id="backgroundVideo" muted loop playsinline preload="metadata" aria-hidden="true"></video>
+    <div class="scene-tint" aria-hidden="true"></div>
+
+    <header class="top-bar">
+      <div class="brand"><span class="eyebrow">GAIA CITY / PERFORMANCE LAB</span><strong>소시지 합치기</strong></div>
+      <div class="metrics" aria-live="off">
+        <span><small>FPS</small><b id="fps">—</b></span>
+        <span><small>프레임 누락</small><b id="drops">0</b></span>
+        <span><small>영상 누락</small><b id="videoDrops">—</b></span>
+      </div>
+    </header>
+
+    <section class="game-shell" aria-label="소시지 합치기 게임">
+      <div class="game-backdrop" aria-hidden="true"></div>
+      <div class="game-content">
+        <div class="game-hud">
+          <span><small>남은 시간</small><b id="time">60</b><small>초</small></span>
+          <span><small>점수</small><b id="score">0</b></span>
+          <span><small>몸체</small><b id="bodies">0</b></span>
+          <span><small>최고 단계</small><b id="level">1</b></span>
+        </div>
+        <div class="canvas-wrap"><canvas id="game" aria-label="같은 단계의 소시지를 충돌시켜 합치는 게임"></canvas></div>
+        <div class="controls">
+          <div class="next"><span>다음</span><canvas id="next" width="130" height="48" aria-hidden="true"></canvas><b id="nextLevel">1단계</b></div>
+          <div class="actions">
+            <button id="dropButton" class="primary" type="button">떨어뜨리기</button>
+            <button id="autoButton" type="button" aria-pressed="false">자동 투하 끔</button>
+            <button id="resetButton" type="button">다시 시작</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="side-panel">
+      <div class="overlay-reserve" aria-label="향후 초상화와 대사 표시 영역"><span>PORTRAIT / DIALOG AREA</span><p>초상화·대사 공간</p></div>
+      <div class="settings">
+        <label class="file-label" for="videoFile">내 MP4 선택</label>
+        <input id="videoFile" type="file" accept="video/mp4,.mp4">
+        <button id="clearVideo" type="button">기본 배경</button>
+        <label class="opacity-label" for="opacity">게임 배경 진하기 <output id="opacityValue">55%</output></label>
+        <input id="opacity" type="range" min="0" max="85" value="55">
+        <p id="videoStatus" role="status">기본 배경 · 영상 파일은 기기에만 남습니다.</p>
+      </div>
+    </aside>
+    <div id="result" class="result" hidden><strong id="resultTitle">종료</strong><p id="resultText"></p><button id="resultRestart" type="button">다시 시작</button></div>
+  </main>
+  <div class="rotate-message" role="note"><strong>가로 화면으로 돌려 주세요</strong><span>이 시험 화면은 16:9 가로 방향으로 고정됩니다.</span></div>
+  <script src="./vendor/matter.min.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
+

@@ -6,6 +6,9 @@ local-assets/
 *.zip
 *.7z
 *.rar
+*.mp4
+*.mov
+*.m4v
 
 # Local configuration and secrets
 .env
