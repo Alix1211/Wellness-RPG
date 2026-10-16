@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "status": "proposal-not-applied",
+  "source": {
+    "repository": "Alix1211/Wellness",
+    "commit": "ad0b677a965607e75bb86d555d1ce1dc45e1a342",
+    "path": "src/minigames/legacy-wellness"
+  },
+  "games": [
+    {
+      "id": "wiggle",
+      "legacyKind": 0,
+      "title": "움찔 찾기",
+      "entry": "mgWiggle",
+      "room": "group",
+      "roomName": "단체방",
+      "durationSeconds": 25,
+      "mechanic": "9칸 중 움직이는 대상을 찾아 누르기"
+    },
+    {
+      "id": "merge",
+      "legacyKind": 1,
+      "title": "소시지 합치기",
+      "entry": "mgMerge",
+      "room": "gear",
+      "roomName": "기구방",
+      "durationSeconds": 60,
+      "mechanic": "같은 단계끼리 합치는 물리 퍼즐"
+    },
+    {
+      "id": "balance",
+      "legacyKind": 2,
+      "title": "아슬아슬 균형 잡기",
+      "entry": "mgBalance",
+      "room": "posture",
+      "roomName": "자세 점검방",
+      "durationSeconds": 25,
+      "mechanic": "좌우 조작으로 컵 균형 유지, 세 번 떨어지면 종료"
+    },
+    {
+      "id": "tap",
+      "legacyKind": 3,
+      "title": "백만 대 챌린지",
+      "entry": "mgTap",
+      "room": "punish",
+      "roomName": "체벌방",
+      "durationSeconds": null,
+      "mechanic": "세 대상의 게이지를 번갈아 눌러 유지하기"
+    },
+    {
+      "id": "behind",
+      "legacyKind": 4,
+      "title": "뒤를 조심!!",
+      "entry": "mgBehind",
+      "room": "group",
+      "roomName": "단체방",
+      "durationSeconds": 30,
+      "mechanic": "당겼다 놓는 발사로 움직이는 대상 맞히기"
+    },
+    {
+      "id": "fetch",
+      "legacyKind": 5,
+      "title": "물어와!",
+      "entry": "mgFetch",
+      "room": "basic",
+      "roomName": "기초방",
+      "durationSeconds": null,
+      "mechanic": "전진 연타와 점프로 장애물을 넘어 물건 회수"
+    }
+  ],
+  "serviceRooms": [
+    {
+      "id": "lobby",
+      "name": "로비"
+    },
+    {
+      "id": "recovery",
+      "name": "회복방"
+    },
+    {
+      "id": "shop",
+      "name": "매점"
+    }
+  ],
+  "notes": [
+    "Room assignments are a reviewable proposal, not active gameplay configuration.",
+    "Original randomized events, growth and save code remain in the archived sources only.",
+    "Do not import idle growth into the RPG. RPG stats: ki=색기, um=음란도, bo=복종도, ge=개방성. HP and M파워 are resources.",
+    "Rewards, mission variants, skills and HP/M costs remain unbalanced and unimplemented."
+  ],
+  "pendingRooms": [
+    {
+      "id": "special",
+      "name": "화장실 훈련방",
+      "game": null,
+      "reason": "User confirmed special is the toilet training room; no arbitrary assignment."
+    }
+  ]
+}

@@ -3,9 +3,9 @@
 ## Project scope
 
 - Repository: `Alix1211/Wellness-RPG`, separate from the original Wellness repository.
-- Portrait-screen, stage-based GAIA CITY RPG with movement between rooms in the active chapter.
-- Chapter order: **Wellness Center → Company → Marriage/Home**; unlock criteria remain open.
-- Stats: **색기, 음란도, 개방성, 인내력, 친밀도**. Resources: **HP** and **M파워**.
+- GAIA CITY life RPG controlling one female member; indoor belt-scroll movement is the agreed map direction. No street travel map. Discuss map layout/resources with the user before implementation.
+- Life expands from own home/Wellness Center to company, partner/marriage and later Dream House. The Center remains a repeatable growth hub after employment/marriage.
+- Current confirmed stats: **색기, 음란도, 복종도, 개방성** (ki/um/bo/ge). Resources: **HP** and **M파워(마조력)**; M파워 is used for skills. Growth comes from mission/minigame performance, not waiting in rooms.
 - Adapt suitable Wellness minigames after a read-only inventory of the original project. Do not modify the original Wellness repository for this work.
 
 ## Character art added on 2026-10-17
@@ -45,10 +45,18 @@ The repository was confirmed private before this asset upload. Nude/adult charac
 
 1. Keep the committed PNG sheets as source originals. Add derived/cropped/upscaled files in distinct paths with provenance only after they are produced and reviewed.
 2. Define portrait and movement manifests mapping outfit, emotion/action, direction, and sheet/cell position. Confirm crop boundaries and alpha edges visually before using cells in-game.
-3. Design room movement, chapter gates, save data, five stats, HP/M파워, and a minigame interface before building a full gameplay loop.
+3. Design room movement, chapter gates, save data, four stats, HP/M파워, and a minigame interface before building a full gameplay loop.
 4. Inventory original Wellness minigames read-only; adapt selected code/assets into this repository only after checking ownership and integration needs.
 5. Keep local gallery imports under ignored paths such as `assets/local/`; never commit that private pack.
 
 ## Current implementation status
 
-Repository documents, ten portrait/source sheets, and six four-legged movement/jump source sheets are present. No gameplay code or private gallery pack has been committed.
+Repository documents, ten portrait/source sheets, and six four-legged movement/jump source sheets are present. The standalone sausage/video test is in tests/. All six original Wellness minigames and 105 byte-identical source/dependency assets have now been imported under src/minigames/legacy-wellness/. This is a source import, not yet an RPG integration. No private gallery pack has been committed.
+
+## 2026-10-17 minigame import and current design decisions
+
+- User requested bringing all Wellness minigames first and discussing room matching. See src/minigames/README.md and room-matching.proposal.json. Assignments are proposals, not active configuration.
+- Original special (별도 훈련방) is **화장실 훈련방**, explicitly corrected by the user. Leave its minigame unassigned for discussion. 뒤를 조심!! moves to the group-room candidate list.
+- Imported 3 original scripts, complete minigame image/audio directories, Matter.js/license and four item dependencies. All 105 copied blobs match the pinned original ad0b677a965607e75bb86d555d1ce1dc45e1a342. JS syntax checks passed; no six-game RPG runtime has been wired or tested.
+- Early Center expenses are loans; later income is salary and events, used for repayment, training and items. Three male partner routes are planned, with continuing play after marriage. Keep story light; missions/minigames support player-directed life and growth.
+- Places: own home, Center, company, later Dream House. Instant travel between places; belt-scroll movement indoors. Open entrances; doors are rare. Map resources/layout must be discussed before building. No map work was done in this import.
