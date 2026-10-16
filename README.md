@@ -12,7 +12,7 @@ A portrait-screen, stage-based RPG in a repository separate from the original We
 
 ## Current state
 
-This repository contains planning documents and ten user-provided, original character portrait/source sheets. It has no gameplay implementation yet. See [HANDOFF.md](HANDOFF.md) for the exact asset inventory, missing movement/jump sheets, and implementation notes.
+This repository contains planning documents and ten user-provided, original character portrait/source sheets and six original four-legged movement/jump sheets. It has no gameplay implementation yet. See [HANDOFF.md](HANDOFF.md) for the exact asset inventory and implementation notes.
 
 ## Asset and privacy boundary
 

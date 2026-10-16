@@ -25,7 +25,17 @@ Ten original PNG files were committed byte-for-byte, with their original filenam
 
 For the numbered 2×2 outfits, use the first sheet's four expressions most often in dialogue; reserve the second sheet for special reactions. The user said some hair/background removal remains imperfect in current versions. Preserve these originals and replace only when corrected files are actually supplied. Avoid assuming every sheet has a transparent or clean background.
 
-**Unavailable:** The requested four-legged moving and jumping sprite sheets were not in the referenced conversation's retrievable attachment list. They were not uploaded. Ask for the original files again before adding or wiring those animations; do not substitute unrelated images. The earlier discussion allowed a minor left/right foot mismatch in a movement sheet, but that discussion is not evidence that the file is present here.
+## Four-legged movement and jump sheets added on 2026-10-17
+
+The user subsequently supplied the six missing original PNG sheets. They are committed byte-for-byte under `assets/characters/sprites/four-legged/`, preserving filenames:
+
+| Outfit | Front/back 4×4 sheet | Side 4×2 sheet |
+| --- | --- | --- |
+| Lavender/yoga | `lavender-yoga/1000080801(1).png` | `lavender-yoga/ChatGPT 이미지 2026년 10월 16일 오후 10_37_57.png` |
+| Office | `office/1000080812.png` | `office/투명 배경 치비 소녀 스프라이트 시트.png` |
+| Jeans | `jeans/1000080811.png` | `jeans/투명 배경의 치비 여성 액션 스프라이트 시트.png` |
+
+These are source sheets for four-legged crawling and jumping poses, not pre-cut animation frames. The 4×4 sheets visually contain front/back crawl and jump sequences; the 4×2 sheets contain side crawl and jump sequences. Confirm frame coordinates, timing, direction mirroring, foot alignment, alpha edges, and scale in-engine. Preserve originals if making cleaned or cropped derivatives. See [`assets/characters/sprites/four-legged/README.md`](assets/characters/sprites/four-legged/README.md).
 
 ## Privacy and publication
 
@@ -34,11 +44,11 @@ The repository was confirmed private before this asset upload. Nude/adult charac
 ## Implementation handoff for Claude/GPT
 
 1. Keep the committed PNG sheets as source originals. Add derived/cropped/upscaled files in distinct paths with provenance only after they are produced and reviewed.
-2. Define a portrait manifest mapping outfit, emotion, and sheet/cell position. Confirm crop boundaries and alpha edges visually before using cells in-game.
+2. Define portrait and movement manifests mapping outfit, emotion/action, direction, and sheet/cell position. Confirm crop boundaries and alpha edges visually before using cells in-game.
 3. Design room movement, chapter gates, save data, five stats, HP/M파워, and a minigame interface before building a full gameplay loop.
 4. Inventory original Wellness minigames read-only; adapt selected code/assets into this repository only after checking ownership and integration needs.
 5. Keep local gallery imports under ignored paths such as `assets/local/`; never commit that private pack.
 
 ## Current implementation status
 
-Repository documents and the ten portrait/source sheets are present. No gameplay code, four-legged movement/jump sheets, or private gallery pack has been committed.
+Repository documents, ten portrait/source sheets, and six four-legged movement/jump source sheets are present. No gameplay code or private gallery pack has been committed.
