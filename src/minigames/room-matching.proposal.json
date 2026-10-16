@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "proposal-not-applied",
+  "status": "superseded-by-user-confirmed-center-model",
   "source": {
     "repository": "Alix1211/Wellness",
     "commit": "ad0b677a965607e75bb86d555d1ce1dc45e1a342",
@@ -22,10 +22,14 @@
       "legacyKind": 1,
       "title": "소시지 합치기",
       "entry": "mgMerge",
-      "room": "gear",
-      "roomName": "기구방",
+      "room": null,
+      "roomName": "개인 사무실 / 침실",
       "durationSeconds": 60,
-      "mechanic": "같은 단계끼리 합치는 물리 퍼즐"
+      "mechanic": "같은 단계끼리 합치는 물리 퍼즐",
+      "assignedLocations": [
+        "company:executive-office",
+        "home:bedroom"
+      ]
     },
     {
       "id": "balance",
@@ -52,8 +56,8 @@
       "legacyKind": 4,
       "title": "뒤를 조심!!",
       "entry": "mgBehind",
-      "room": "group",
-      "roomName": "단체방",
+      "room": "punish",
+      "roomName": "체벌방",
       "durationSeconds": 30,
       "mechanic": "당겼다 놓는 발사로 움직이는 대상 맞히기"
     },
@@ -83,6 +87,7 @@
     }
   ],
   "notes": [
+    "2026-10-17: Later user decisions supersede these early proposals. See src/center/model.js and src/center/README.md; do not use the old proposal as runtime config.",
     "Room assignments are a reviewable proposal, not active gameplay configuration.",
     "Original randomized events, growth and save code remain in the archived sources only.",
     "Do not import idle growth into the RPG. RPG stats: ki=색기, um=음란도, bo=복종도, ge=개방성. HP and M파워 are resources.",
@@ -94,6 +99,27 @@
       "name": "화장실 훈련방",
       "game": null,
       "reason": "User confirmed special is the toilet training room; no arbitrary assignment."
+    }
+  ],
+  "plannedGames": [
+    {
+      "id": "rope",
+      "room": "gear",
+      "status": "not-implemented"
+    },
+    {
+      "id": "water-bottles",
+      "room": "special",
+      "roomName": "화장실 훈련방",
+      "status": "not-implemented"
+    },
+    {
+      "id": "cylinder-hearts",
+      "rooms": [
+        "공용 사무실",
+        "거실"
+      ],
+      "status": "design-only"
     }
   ]
 }

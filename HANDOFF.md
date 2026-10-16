@@ -3,7 +3,7 @@
 ## Project scope
 
 - Repository: `Alix1211/Wellness-RPG`, separate from the original Wellness repository.
-- GAIA CITY life RPG controlling one female member; indoor belt-scroll movement is the agreed map direction. No street travel map. Discuss map layout/resources with the user before implementation.
+- GAIA CITY life RPG controlling one female member; indoor belt-scroll movement is the agreed map direction. No street travel map. The user authorized implementation on 2026-10-17; build only the agreed indoor belt-scroll map.
 - Life expands from own home/Wellness Center to company, partner/marriage and later Dream House. The Center remains a repeatable growth hub after employment/marriage.
 - Current confirmed stats: **색기, 음란도, 복종도, 개방성** (ki/um/bo/ge). Resources: **HP** and **M파워(마조력)**; M파워 is used for skills. Growth comes from mission/minigame performance, not waiting in rooms.
 - Adapt suitable Wellness minigames after a read-only inventory of the original project. Do not modify the original Wellness repository for this work.
@@ -56,7 +56,20 @@ Repository documents, ten portrait/source sheets, and six four-legged movement/j
 ## 2026-10-17 minigame import and current design decisions
 
 - User requested bringing all Wellness minigames first and discussing room matching. See src/minigames/README.md and room-matching.proposal.json. Assignments are proposals, not active configuration.
-- Original special (별도 훈련방) is **화장실 훈련방**, explicitly corrected by the user. Leave its minigame unassigned for discussion. 뒤를 조심!! moves to the group-room candidate list.
+- Original special (별도 훈련방) is **화장실 훈련방**, explicitly corrected by the user. Leave its minigame unassigned for discussion. This early proposal was later rejected: 뒤를 조심!! belongs to 체벌방, not 단체방.
 - Imported 3 original scripts, complete minigame image/audio directories, Matter.js/license and four item dependencies. All 105 copied blobs match the pinned original ad0b677a965607e75bb86d555d1ce1dc45e1a342. JS syntax checks passed; no six-game RPG runtime has been wired or tested.
 - Early Center expenses are loans; later income is salary and events, used for repayment, training and items. Three male partner routes are planned, with continuing play after marriage. Keep story light; missions/minigames support player-directed life and growth.
-- Places: own home, Center, company, later Dream House. Instant travel between places; belt-scroll movement indoors. Open entrances; doors are rare. Map resources/layout must be discussed before building. No map work was done in this import.
+- Places: own home, Center, company, later Dream House. Instant travel between places; belt-scroll movement indoors. Open entrances; doors are rare. Map resources/layout must be discussed before building. No map work was done in that earlier import; the later implementation is described below.
+
+## 2026-10-17 Center exploration implementation
+
+User authorized the Center map, movement and rooms while considering stat decay. Additional instruction: several rooms of the same kind per floor, walk to the next bay to reach another room, bathrooms on every floor; do not cram all rooms onto one map.
+
+- Entry point: index.html, single-file offline build. Sources/build/provenance: src/center/README.md.
+- Six corridors/floors, 26 independent interiors: 1F lobby/shop/two recovery rooms/toilet; 2F three basic rooms/toilet; 3F three apparatus rooms/toilet; 4F three group rooms/toilet; 5F three posture rooms/toilet; 6F three punishment rooms/recovery/toilet. Elevator on the corridor left. Open room entrances, room-side adjacent transitions, lower-center return to corridor.
+- Three outfits (center lavender, office, jeans), four directions, 4-frame crawl and jump, touch target movement, stick, keyboard, responsive portrait follow camera and landscape view. Player/source art originals unchanged.
+- Room backgrounds are derivatives of the nine original Wellness Center images, embedded with provenance. Corridors use code-drawn repeating tiles. Male staff are temporary silhouette markers; dialogue/portrait integration remains pending.
+- Connected existing games: basic=fetch, group=wiggle, posture=balance, punishment=tap and behind. Sausage remains reserved for company private office/home bedroom; the host was tested for it but it is not arbitrarily placed in Center.
+- Gear=cut-rope and toilet=4-bottle water-aiming are planned, not implemented. Pressure-cylinder/three-heart game remains design only for public office/living room. Pantry game remains undecided.
+- Recovery has rest interaction; shop only inspection, no purchasing. No passive growth, new stat decay, economy, skills, or new RPG stat balancing was introduced. Existing minigames run inside isolated iframes; only best results are saved locally. Full company/home/Dream House maps are not implemented.
+- Validation: 26 room bounds/entry/return checks, six floor toilets, actual Chrome touch entrances/exits and elevator UI, three outfits, joystick/keyboard/jump, portrait/landscape renders, all six existing minigame starts. No pageerror observed. Android device testing and full minigame completion/balance remain pending.
