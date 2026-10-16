@@ -1,39 +1,44 @@
 # Handoff — GAIA CITY Wellness RPG
 
-## Scope agreed so far
+## Project scope
 
-- New, separate repository: `Alix1211/Wellness-RPG`.
-- Portrait-screen, stage-based RPG in GAIA CITY.
-- Free character movement between rooms within the active chapter.
-- Sequential chapter unlocks: **Wellness Center → Company → Marriage/Home**. Later chapters remain locked until their earlier chapter's requirements are met; exact requirements are open.
-- Five stats: **색기, 음란도, 개방성, 인내력, 친밀도**.
-- Resources: **HP** and **M파워**.
-- Reuse appropriate minigames from the existing Wellness game.
-- Use character costume sprites. A movement sprite sheet exists; minor left/right foot mismatch was considered acceptable for now.
-- User-imported local ZIP image packs must remain local and out of GitHub.
-- No adult images belong in this repository.
+- Repository: `Alix1211/Wellness-RPG`, separate from the original Wellness repository.
+- Portrait-screen, stage-based GAIA CITY RPG with movement between rooms in the active chapter.
+- Chapter order: **Wellness Center → Company → Marriage/Home**; unlock criteria remain open.
+- Stats: **색기, 음란도, 개방성, 인내력, 친밀도**. Resources: **HP** and **M파워**.
+- Adapt suitable Wellness minigames after a read-only inventory of the original project. Do not modify the original Wellness repository for this work.
 
-## Reuse strategy
+## Character art added on 2026-10-17
 
-1. Inventory the Wellness minigames and their dependencies **read-only** before choosing which to adapt. Do not modify the original Wellness repository as part of this project.
-2. Define a small interface between an RPG encounter and each reused minigame: entry conditions, result, HP/M파워 costs or rewards, stat effects, and return destination.
-3. Port or adapt only the selected minigame code and assets after checking ownership, licenses, and suitability. Keep source attribution where needed.
-4. Build the RPG's room movement, chapter gates, and state/save model around those interfaces. Preserve the portrait layout as a design constraint.
-5. Keep costume sprite manifests separate from image files so locally imported packs can be substituted without entering source control.
+The user explicitly requested **all character sprite and portrait assets shared in the referenced conversation** be uploaded to this **private** repository, including the temporary portrait. This supersedes the earlier handoff's blanket exclusion of adult character images. It does **not** authorize uploading the separate private photo/video gallery pack (approximately 300 files); keep that pack local and out of GitHub.
 
-## Proposed first playable slice
+Ten original PNG files were committed byte-for-byte, with their original filenames, under `assets/characters/portraits/`:
 
-A portrait-screen Wellness Center with room-to-room movement, one encounter using an adapted minigame, and visible HP/M파워 plus the five stats. This is a proposed validation slice, not a finalized implementation spec.
+| Folder | Files | Intended use / status |
+| --- | --- | --- |
+| `jeans/` | `01_Jeans_2x2_1.png`, `01_Jeans_2x2_2.png` | Main four dialogue portraits, then four secondary reactions. |
+| `jeans/` | `표정 가득한 여성 캐릭터 2×2 포즈 시트-1(1).png`, `투명 배경의 네 가지 포즈 애니 캐릭터 시트-3.png` | Earlier jeans pose-sheet originals; keep as source variants. |
+| `office/` | `02_Office_2x2_1.png`, `02_Office_2x2_2(1).png` | Office main and secondary reaction sheets. |
+| `lavender-yoga/` | `03_Lavender_Yoga_2x2_1.png`, `03_Lavender_Yoga_2x2_2.png` | Wellness/yoga main and secondary reaction sheets. |
+| `adult-nude/` | `image (1) 복사(1).png` | Temporary nude 2×2 portrait. User plans to send an upscaled replacement later; retain this original meanwhile. |
+| `swimwear/` | `image (2) 복사.png` | Swimwear reaction sheet. |
 
-## Decisions needed before core code
+For the numbered 2×2 outfits, use the first sheet's four expressions most often in dialogue; reserve the second sheet for special reactions. The user said some hair/background removal remains imperfect in current versions. Preserve these originals and replace only when corrected files are actually supplied. Avoid assuming every sheet has a transparent or clean background.
 
-- Runtime/engine and target platforms; reference device size and input method.
-- Room map and movement rules, chapter completion/unlock conditions.
-- Definitions, ranges, and update rules for the five stats and two resources.
-- Which Wellness minigame to reuse first and its integration contract.
-- Costume sprite dimensions, animation states, naming, and local import workflow.
-- Save data and content rating/distribution requirements.
+**Unavailable:** The requested four-legged moving and jumping sprite sheets were not in the referenced conversation's retrievable attachment list. They were not uploaded. Ask for the original files again before adding or wiring those animations; do not substitute unrelated images. The earlier discussion allowed a minor left/right foot mismatch in a movement sheet, but that discussion is not evidence that the file is present here.
+
+## Privacy and publication
+
+The repository was confirmed private before this asset upload. Nude/adult character art is in `assets/characters/portraits/adult-nude/`. Before making the repository public or publishing a public build with these files, explicitly warn the user that they would become exposed and get confirmation. The separate photo/video gallery pack stays local regardless of repository visibility. Do not copy images from the original Wellness repository or from unrelated conversations into this project without a specific asset decision.
+
+## Implementation handoff for Claude/GPT
+
+1. Keep the committed PNG sheets as source originals. Add derived/cropped/upscaled files in distinct paths with provenance only after they are produced and reviewed.
+2. Define a portrait manifest mapping outfit, emotion, and sheet/cell position. Confirm crop boundaries and alpha edges visually before using cells in-game.
+3. Design room movement, chapter gates, save data, five stats, HP/M파워, and a minigame interface before building a full gameplay loop.
+4. Inventory original Wellness minigames read-only; adapt selected code/assets into this repository only after checking ownership and integration needs.
+5. Keep local gallery imports under ignored paths such as `assets/local/`; never commit that private pack.
 
 ## Current implementation status
 
-Only repository documentation, ignore rules, and empty code/asset guidance are initialized. No gameplay or images have been committed.
+Repository documents and the ten portrait/source sheets are present. No gameplay code, four-legged movement/jump sheets, or private gallery pack has been committed.
