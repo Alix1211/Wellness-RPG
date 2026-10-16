@@ -1,0 +1,30 @@
+# User-supplied packs and local/private assets
+assets/local/
+assets/imported/
+imports/
+local-assets/
+*.zip
+*.7z
+*.rar
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Build outputs and dependency caches
+node_modules/
+dist/
+build/
+out/
+.cache/
+.tmp/
+temp/
+coverage/
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
