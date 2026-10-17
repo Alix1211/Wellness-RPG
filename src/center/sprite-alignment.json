@@ -1,0 +1,2029 @@
+{
+  "version": 2,
+  "tile": [
+    224,
+    208
+  ],
+  "pivot": [
+    112,
+    190
+  ],
+  "frames": {
+    "sprite/jeans/directions/0/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "actorBounds": [
+        30,
+        2,
+        283,
+        295
+      ],
+      "headWidth": 184.0,
+      "scale": 0.402174,
+      "placement": [
+        69,
+        72
+      ]
+    },
+    "sprite/jeans/directions/0/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "actorBounds": [
+        30,
+        2,
+        287,
+        293
+      ],
+      "headWidth": 185.0,
+      "scale": 0.4,
+      "placement": [
+        69,
+        74
+      ]
+    },
+    "sprite/jeans/directions/0/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "actorBounds": [
+        32,
+        2,
+        281,
+        295
+      ],
+      "headWidth": 185.0,
+      "scale": 0.4,
+      "placement": [
+        69,
+        73
+      ]
+    },
+    "sprite/jeans/directions/0/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "actorBounds": [
+        36,
+        2,
+        290,
+        296
+      ],
+      "headWidth": 184.0,
+      "scale": 0.402174,
+      "placement": [
+        69,
+        72
+      ]
+    },
+    "sprite/jeans/directions/1/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "actorBounds": [
+        75,
+        0,
+        262,
+        309
+      ],
+      "headWidth": 165.0,
+      "scale": 0.448485,
+      "placement": [
+        71,
+        51
+      ]
+    },
+    "sprite/jeans/directions/1/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "actorBounds": [
+        75,
+        0,
+        269,
+        312
+      ],
+      "headWidth": 167.0,
+      "scale": 0.443114,
+      "placement": [
+        71,
+        52
+      ]
+    },
+    "sprite/jeans/directions/1/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "actorBounds": [
+        77,
+        0,
+        265,
+        302
+      ],
+      "headWidth": 168.0,
+      "scale": 0.440476,
+      "placement": [
+        71,
+        57
+      ]
+    },
+    "sprite/jeans/directions/1/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "actorBounds": [
+        76,
+        0,
+        273,
+        309
+      ],
+      "headWidth": 167.0,
+      "scale": 0.443114,
+      "placement": [
+        70,
+        53
+      ]
+    },
+    "sprite/jeans/directions/2/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "actorBounds": [
+        31,
+        15,
+        259,
+        304
+      ],
+      "headWidth": 185.0,
+      "scale": 0.4,
+      "placement": [
+        69,
+        74
+      ]
+    },
+    "sprite/jeans/directions/2/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "actorBounds": [
+        24,
+        2,
+        286,
+        298
+      ],
+      "headWidth": 194.0,
+      "scale": 0.381443,
+      "placement": [
+        70,
+        77
+      ]
+    },
+    "sprite/jeans/directions/2/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "actorBounds": [
+        14,
+        0,
+        293,
+        279
+      ],
+      "headWidth": 202.0,
+      "scale": 0.366337,
+      "placement": [
+        65,
+        88
+      ]
+    },
+    "sprite/jeans/directions/2/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "actorBounds": [
+        38,
+        13,
+        267,
+        303
+      ],
+      "headWidth": 186.0,
+      "scale": 0.397849,
+      "placement": [
+        70,
+        75
+      ]
+    },
+    "sprite/jeans/directions/3/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "actorBounds": [
+        65,
+        0,
+        263,
+        303
+      ],
+      "headWidth": 166.0,
+      "scale": 0.445783,
+      "placement": [
+        67,
+        55
+      ]
+    },
+    "sprite/jeans/directions/3/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "actorBounds": [
+        38,
+        0,
+        298,
+        298
+      ],
+      "headWidth": 174.0,
+      "scale": 0.425287,
+      "placement": [
+        57,
+        63
+      ]
+    },
+    "sprite/jeans/directions/3/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "actorBounds": [
+        27,
+        0,
+        306,
+        275
+      ],
+      "headWidth": 182.0,
+      "scale": 0.406593,
+      "placement": [
+        53,
+        78
+      ]
+    },
+    "sprite/jeans/directions/3/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        940,
+        940,
+        1254,
+        1254
+      ],
+      "actorBounds": [
+        65,
+        0,
+        273,
+        304
+      ],
+      "headWidth": 168.0,
+      "scale": 0.440476,
+      "placement": [
+        65,
+        56
+      ]
+    },
+    "sprite/jeans/side/0/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        0,
+        362,
+        505
+      ],
+      "actorBounds": [
+        7,
+        147,
+        362,
+        495
+      ],
+      "headWidth": 229.0,
+      "scale": 0.323144,
+      "placement": [
+        50,
+        78
+      ]
+    },
+    "sprite/jeans/side/0/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        362,
+        0,
+        724,
+        505
+      ],
+      "actorBounds": [
+        18,
+        148,
+        362,
+        499
+      ],
+      "headWidth": 226.0,
+      "scale": 0.327434,
+      "placement": [
+        51,
+        75
+      ]
+    },
+    "sprite/jeans/side/0/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        724,
+        0,
+        1086,
+        505
+      ],
+      "actorBounds": [
+        0,
+        147,
+        362,
+        502
+      ],
+      "headWidth": 229.0,
+      "scale": 0.323144,
+      "placement": [
+        50,
+        75
+      ]
+    },
+    "sprite/jeans/side/0/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        1086,
+        0,
+        1448,
+        505
+      ],
+      "actorBounds": [
+        17,
+        145,
+        361,
+        496
+      ],
+      "headWidth": 228.0,
+      "scale": 0.324561,
+      "placement": [
+        51,
+        76
+      ]
+    },
+    "sprite/jeans/side/1/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        505,
+        362,
+        1086
+      ],
+      "actorBounds": [
+        24,
+        118,
+        319,
+        486
+      ],
+      "headWidth": 236.0,
+      "scale": 0.313559,
+      "placement": [
+        51,
+        75
+      ]
+    },
+    "sprite/jeans/side/1/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        362,
+        505,
+        724,
+        1086
+      ],
+      "actorBounds": [
+        37,
+        47,
+        362,
+        469
+      ],
+      "headWidth": 238.0,
+      "scale": 0.310924,
+      "placement": [
+        51,
+        59
+      ]
+    },
+    "sprite/jeans/side/1/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        724,
+        505,
+        1086,
+        1086
+      ],
+      "actorBounds": [
+        53,
+        14,
+        352,
+        429
+      ],
+      "headWidth": 249.0,
+      "scale": 0.297189,
+      "placement": [
+        50,
+        67
+      ]
+    },
+    "sprite/jeans/side/1/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        1086,
+        505,
+        1448,
+        1086
+      ],
+      "actorBounds": [
+        54,
+        112,
+        354,
+        487
+      ],
+      "headWidth": 239.0,
+      "scale": 0.309623,
+      "placement": [
+        51,
+        74
+      ]
+    },
+    "sprite/lavender-yoga/directions/0/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "actorBounds": [
+        31,
+        4,
+        274,
+        292
+      ],
+      "headWidth": 179.0,
+      "scale": 0.413408,
+      "placement": [
+        69,
+        71
+      ]
+    },
+    "sprite/lavender-yoga/directions/0/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "actorBounds": [
+        32,
+        4,
+        282,
+        292
+      ],
+      "headWidth": 180.0,
+      "scale": 0.411111,
+      "placement": [
+        69,
+        72
+      ]
+    },
+    "sprite/lavender-yoga/directions/0/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "actorBounds": [
+        34,
+        5,
+        270,
+        294
+      ],
+      "headWidth": 179.0,
+      "scale": 0.413408,
+      "placement": [
+        69,
+        71
+      ]
+    },
+    "sprite/lavender-yoga/directions/0/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "actorBounds": [
+        39,
+        4,
+        282,
+        294
+      ],
+      "headWidth": 179.0,
+      "scale": 0.413408,
+      "placement": [
+        69,
+        70
+      ]
+    },
+    "sprite/lavender-yoga/directions/1/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "actorBounds": [
+        76,
+        0,
+        257,
+        308
+      ],
+      "headWidth": 158.0,
+      "scale": 0.468354,
+      "placement": [
+        69,
+        46
+      ]
+    },
+    "sprite/lavender-yoga/directions/1/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "actorBounds": [
+        78,
+        0,
+        265,
+        311
+      ],
+      "headWidth": 160.0,
+      "scale": 0.4625,
+      "placement": [
+        71,
+        46
+      ]
+    },
+    "sprite/lavender-yoga/directions/1/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "actorBounds": [
+        79,
+        0,
+        261,
+        301
+      ],
+      "headWidth": 161.0,
+      "scale": 0.459627,
+      "placement": [
+        70,
+        52
+      ]
+    },
+    "sprite/lavender-yoga/directions/1/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "actorBounds": [
+        80,
+        0,
+        271,
+        308
+      ],
+      "headWidth": 161.0,
+      "scale": 0.459627,
+      "placement": [
+        70,
+        48
+      ]
+    },
+    "sprite/lavender-yoga/directions/2/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "actorBounds": [
+        33,
+        15,
+        261,
+        304
+      ],
+      "headWidth": 180.0,
+      "scale": 0.411111,
+      "placement": [
+        69,
+        71
+      ]
+    },
+    "sprite/lavender-yoga/directions/2/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "actorBounds": [
+        25,
+        2,
+        285,
+        297
+      ],
+      "headWidth": 189.0,
+      "scale": 0.391534,
+      "placement": [
+        69,
+        74
+      ]
+    },
+    "sprite/lavender-yoga/directions/2/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "actorBounds": [
+        15,
+        0,
+        292,
+        277
+      ],
+      "headWidth": 195.0,
+      "scale": 0.379487,
+      "placement": [
+        64,
+        85
+      ]
+    },
+    "sprite/lavender-yoga/directions/2/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "actorBounds": [
+        40,
+        14,
+        265,
+        303
+      ],
+      "headWidth": 179.0,
+      "scale": 0.413408,
+      "placement": [
+        69,
+        71
+      ]
+    },
+    "sprite/lavender-yoga/directions/3/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "actorBounds": [
+        64,
+        0,
+        261,
+        302
+      ],
+      "headWidth": 161.0,
+      "scale": 0.459627,
+      "placement": [
+        64,
+        51
+      ]
+    },
+    "sprite/lavender-yoga/directions/3/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "actorBounds": [
+        39,
+        0,
+        295,
+        295
+      ],
+      "headWidth": 166.0,
+      "scale": 0.445783,
+      "placement": [
+        55,
+        58
+      ]
+    },
+    "sprite/lavender-yoga/directions/3/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "actorBounds": [
+        28,
+        0,
+        305,
+        273
+      ],
+      "headWidth": 171.46,
+      "scale": 0.431588,
+      "placement": [
+        49,
+        72
+      ]
+    },
+    "sprite/lavender-yoga/directions/3/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        940,
+        940,
+        1254,
+        1254
+      ],
+      "actorBounds": [
+        68,
+        0,
+        270,
+        303
+      ],
+      "headWidth": 160.1,
+      "scale": 0.462211,
+      "placement": [
+        65,
+        50
+      ]
+    },
+    "sprite/lavender-yoga/side/0/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        0,
+        362,
+        505
+      ],
+      "actorBounds": [
+        15,
+        147,
+        339,
+        462
+      ],
+      "headWidth": 207.0,
+      "scale": 0.357488,
+      "placement": [
+        50,
+        77
+      ]
+    },
+    "sprite/lavender-yoga/side/0/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        362,
+        0,
+        724,
+        505
+      ],
+      "actorBounds": [
+        6,
+        149,
+        362,
+        466
+      ],
+      "headWidth": 201.0,
+      "scale": 0.368159,
+      "placement": [
+        49,
+        73
+      ]
+    },
+    "sprite/lavender-yoga/side/0/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        724,
+        0,
+        1086,
+        505
+      ],
+      "actorBounds": [
+        0,
+        148,
+        348,
+        469
+      ],
+      "headWidth": 203.0,
+      "scale": 0.364532,
+      "placement": [
+        53,
+        73
+      ]
+    },
+    "sprite/lavender-yoga/side/0/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        1086,
+        0,
+        1448,
+        505
+      ],
+      "actorBounds": [
+        2,
+        147,
+        345,
+        463
+      ],
+      "headWidth": 206.0,
+      "scale": 0.359223,
+      "placement": [
+        50,
+        76
+      ]
+    },
+    "sprite/lavender-yoga/side/1/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        505,
+        362,
+        1086
+      ],
+      "actorBounds": [
+        35,
+        117,
+        307,
+        460
+      ],
+      "headWidth": 222.0,
+      "scale": 0.333333,
+      "placement": [
+        51,
+        76
+      ]
+    },
+    "sprite/lavender-yoga/side/1/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        362,
+        505,
+        724,
+        1086
+      ],
+      "actorBounds": [
+        31,
+        46,
+        327,
+        452
+      ],
+      "headWidth": 220.0,
+      "scale": 0.336364,
+      "placement": [
+        51,
+        53
+      ]
+    },
+    "sprite/lavender-yoga/side/1/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        724,
+        505,
+        1086,
+        1086
+      ],
+      "actorBounds": [
+        37,
+        21,
+        304,
+        406
+      ],
+      "headWidth": 234.0,
+      "scale": 0.316239,
+      "placement": [
+        50,
+        68
+      ]
+    },
+    "sprite/lavender-yoga/side/1/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        1086,
+        505,
+        1448,
+        1086
+      ],
+      "actorBounds": [
+        39,
+        110,
+        321,
+        459
+      ],
+      "headWidth": 217.0,
+      "scale": 0.341014,
+      "placement": [
+        50,
+        71
+      ]
+    },
+    "sprite/office/directions/0/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "actorBounds": [
+        29,
+        1,
+        279,
+        297
+      ],
+      "headWidth": 188.0,
+      "scale": 0.393617,
+      "placement": [
+        70,
+        73
+      ]
+    },
+    "sprite/office/directions/0/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "actorBounds": [
+        27,
+        1,
+        283,
+        297
+      ],
+      "headWidth": 187.0,
+      "scale": 0.395722,
+      "placement": [
+        69,
+        73
+      ]
+    },
+    "sprite/office/directions/0/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "actorBounds": [
+        30,
+        2,
+        276,
+        300
+      ],
+      "headWidth": 186.0,
+      "scale": 0.397849,
+      "placement": [
+        69,
+        71
+      ]
+    },
+    "sprite/office/directions/0/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "actorBounds": [
+        34,
+        0,
+        287,
+        300
+      ],
+      "headWidth": 187.0,
+      "scale": 0.395722,
+      "placement": [
+        69,
+        71
+      ]
+    },
+    "sprite/office/directions/1/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "actorBounds": [
+        70,
+        0,
+        264,
+        309
+      ],
+      "headWidth": 166.0,
+      "scale": 0.445783,
+      "placement": [
+        68,
+        52
+      ]
+    },
+    "sprite/office/directions/1/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "actorBounds": [
+        74,
+        0,
+        273,
+        313
+      ],
+      "headWidth": 168.0,
+      "scale": 0.440476,
+      "placement": [
+        70,
+        52
+      ]
+    },
+    "sprite/office/directions/1/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "actorBounds": [
+        74,
+        0,
+        263,
+        304
+      ],
+      "headWidth": 166.0,
+      "scale": 0.445783,
+      "placement": [
+        70,
+        54
+      ]
+    },
+    "sprite/office/directions/1/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "actorBounds": [
+        77,
+        0,
+        280,
+        311
+      ],
+      "headWidth": 169.0,
+      "scale": 0.43787,
+      "placement": [
+        71,
+        54
+      ]
+    },
+    "sprite/office/directions/2/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "actorBounds": [
+        28,
+        7,
+        266,
+        306
+      ],
+      "headWidth": 188.0,
+      "scale": 0.393617,
+      "placement": [
+        69,
+        72
+      ]
+    },
+    "sprite/office/directions/2/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "actorBounds": [
+        22,
+        0,
+        286,
+        303
+      ],
+      "headWidth": 198.0,
+      "scale": 0.373737,
+      "placement": [
+        70,
+        77
+      ]
+    },
+    "sprite/office/directions/2/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "actorBounds": [
+        10,
+        0,
+        294,
+        291
+      ],
+      "headWidth": 216.0,
+      "scale": 0.342593,
+      "placement": [
+        65,
+        90
+      ]
+    },
+    "sprite/office/directions/2/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "actorBounds": [
+        32,
+        7,
+        271,
+        306
+      ],
+      "headWidth": 191.0,
+      "scale": 0.387435,
+      "placement": [
+        70,
+        74
+      ]
+    },
+    "sprite/office/directions/3/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "actorBounds": [
+        57,
+        0,
+        275,
+        306
+      ],
+      "headWidth": 168.0,
+      "scale": 0.440476,
+      "placement": [
+        63,
+        55
+      ]
+    },
+    "sprite/office/directions/3/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "actorBounds": [
+        32,
+        0,
+        298,
+        301
+      ],
+      "headWidth": 178.0,
+      "scale": 0.41573,
+      "placement": [
+        56,
+        65
+      ]
+    },
+    "sprite/office/directions/3/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "actorBounds": [
+        22,
+        0,
+        309,
+        275
+      ],
+      "headWidth": 202.0,
+      "scale": 0.366337,
+      "placement": [
+        59,
+        89
+      ]
+    },
+    "sprite/office/directions/3/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        940,
+        940,
+        1254,
+        1254
+      ],
+      "actorBounds": [
+        59,
+        0,
+        281,
+        306
+      ],
+      "headWidth": 172.0,
+      "scale": 0.430233,
+      "placement": [
+        64,
+        58
+      ]
+    },
+    "sprite/office/side/0/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        0,
+        362,
+        505
+      ],
+      "actorBounds": [
+        14,
+        145,
+        342,
+        463
+      ],
+      "headWidth": 213.0,
+      "scale": 0.347418,
+      "placement": [
+        51,
+        80
+      ]
+    },
+    "sprite/office/side/0/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        362,
+        0,
+        724,
+        505
+      ],
+      "actorBounds": [
+        4,
+        146,
+        362,
+        467
+      ],
+      "headWidth": 208.0,
+      "scale": 0.355769,
+      "placement": [
+        49,
+        76
+      ]
+    },
+    "sprite/office/side/0/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        724,
+        0,
+        1086,
+        505
+      ],
+      "actorBounds": [
+        0,
+        146,
+        352,
+        470
+      ],
+      "headWidth": 210.0,
+      "scale": 0.352381,
+      "placement": [
+        53,
+        76
+      ]
+    },
+    "sprite/office/side/0/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        1086,
+        0,
+        1448,
+        505
+      ],
+      "actorBounds": [
+        4,
+        146,
+        350,
+        465
+      ],
+      "headWidth": 211.0,
+      "scale": 0.350711,
+      "placement": [
+        51,
+        78
+      ]
+    },
+    "sprite/office/side/1/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        0,
+        505,
+        362,
+        1086
+      ],
+      "actorBounds": [
+        34,
+        117,
+        339,
+        462
+      ],
+      "headWidth": 226.0,
+      "scale": 0.327434,
+      "placement": [
+        51,
+        77
+      ]
+    },
+    "sprite/office/side/1/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        362,
+        505,
+        724,
+        1086
+      ],
+      "actorBounds": [
+        29,
+        44,
+        328,
+        452
+      ],
+      "headWidth": 225.0,
+      "scale": 0.328889,
+      "placement": [
+        51,
+        56
+      ]
+    },
+    "sprite/office/side/1/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        724,
+        505,
+        1086,
+        1086
+      ],
+      "actorBounds": [
+        39,
+        18,
+        310,
+        406
+      ],
+      "headWidth": 240.0,
+      "scale": 0.308333,
+      "placement": [
+        50,
+        70
+      ]
+    },
+    "sprite/office/side/1/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        1086,
+        505,
+        1448,
+        1086
+      ],
+      "actorBounds": [
+        38,
+        112,
+        341,
+        461
+      ],
+      "headWidth": 224.0,
+      "scale": 0.330357,
+      "placement": [
+        51,
+        75
+      ]
+    }
+  }
+}
