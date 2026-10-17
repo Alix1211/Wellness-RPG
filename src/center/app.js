@@ -47,6 +47,7 @@ function travel(){const current=M.FLOORS[state.scene.floor].place;panel('장소 
 $('#travel').onclick=travel;
 function chooseOutfit(){panel('복장',null,Object.entries(names).map(([id,name])=>({label:name,selected:state.outfit===id,run:()=>{state.outfit=id;save();}})));}
 function activity(){const r=room();
+ if(r.kind==='toilet'||r.kind==='companyToilet'){panel(r.name+' · 미션','물병 네 개에 물을 채우세요.',[{label:'물병 채우기',run:playWater}]);return;}
  if(M.FLOORS[state.scene.floor].place==='company'&&r.service!=='recovery'){
  const descriptions={companyReception:'비너스 그룹에 오신 것을 환영합니다. 공용 사무실과 회의실은 2층, 개인 사무실은 3층입니다.',office:'업무 공간을 자유롭게 둘러볼 수 있습니다.',meeting:'동료들이 모이는 회의 공간입니다.',pantry:'물과 차를 마시며 잠시 쉬어갈 수 있습니다.',companyToilet:'각 층에서 이용할 수 있는 화장실입니다.'};
  const buttons=r.service==='companyReception'?[{label:'층별 안내',run:showMap}]:r.service==='pantry'?[{label:'차 한 잔 마시기',run:()=>toast('따뜻한 차를 마시며 쉬었습니다.')}]:[];
@@ -94,6 +95,7 @@ function update(dt){elapsed+=dt;transition=Math.max(0,transition-dt);let dx=joy.
 function tick(now){const dt=Math.min(.035,(now-(last||now))/1000);last=now;if(loaded&&!modal&&!mini&&!document.hidden)update(dt);if(loaded&&!mini)render();requestAnimationFrame(tick);}
 function escapeScript(s){return s.replace(/<\/script/gi,'<\\/script');}
 function playGame(kind){mini=true;joy.x=joy.y=0;keys.clear();state.target=null;const r=room(),layer=$('#miniLayer');layer.style.display='block';$('#miniFrame').srcdoc=makeMiniHost(kind,r);}
+function playWater(){mini=true;joy.x=joy.y=0;keys.clear();state.target=null;const r=room();$('#miniLayer').style.display='block';$('#miniFrame').srcdoc=WATER_DOCUMENT.replace('/*HOST_CALLBACK*/',`parent.postMessage({type:'wellness-result',kind:6,roomId:${JSON.stringify(r.id)},score:r.caught+' / 400',ratio:r.ratio},'*');`);}
 function closeGame(){mini=false;$('#miniLayer').style.display='none';$('#miniFrame').srcdoc='';last=performance.now();save();}
 $('#miniBack').onclick=closeGame;
 function makeMiniHost(kind,r){const data={...MINI_ASSETS,'center-background':ART['bg/'+r.bg]};const bootstrap=`const AS=${JSON.stringify(data)};const assetUrl=(...p)=>AS[p.join('/') ]||'';const itemUrl=(folder,name)=>assetUrl('아이템',folder,name+'.png');const bgUrl=()=>AS['center-background'];const campaignAsset=(_g,n)=>assetUrl('미니게임','actors',({'face01.webp':'calm','face05.webp':'surprise','face09.webp':'tear','face10.webp':'cry','face13.webp':'blush'}[n]||'calm')+'.webp');const S={t:0,day:1,cfg:{sound:true,dayMin:10,speed:1},center:['room'],office:[],home:[],members:[]};const ROOMS={room:{name:${JSON.stringify(r.name)},bg:'room',train:{}}};const TITLE={center:'센터'},FOLDER={center:'센터'};const member={id:'hero',name:'회원',hp:100,st:{ki:0,um:0,bo:0,ge:0}};const mById=()=>member,nameOf=m=>m.name;const pick=a=>a[Math.floor(Math.random()*a.length)];const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));let AC=null,last=0,cur=null;const save=()=>{},updateHud=()=>{},render=()=>{},stopScene=()=>{},stopDlgActors=()=>{},inRoom=()=>[],wfx=()=>({up:{}}),toast=()=>{};const K={repPerPt:0};const dlg=document.createElement('dialog'),tdlg=document.createElement('dialog');function sound(){}`;

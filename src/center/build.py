@@ -1,6 +1,6 @@
 """Build an offline single-file center; source images remain unmodified."""
 from pathlib import Path
-import base64,json,hashlib
+import base64,json,hashlib,runpy
 ROOT=Path(__file__).resolve().parents[2]
 legacy=ROOT/'src/minigames/legacy-wellness'
 def data(path):
@@ -15,6 +15,8 @@ sprites=ROOT/'src/center/sprite-manifest.json'
 def script(s):return '<script>'+s.replace('</script','<\\/script')+'</script>'
 bundle=script('const ART='+prepared.read_text()+';const SPRITES='+sprites.read_text()+';const MINI_ASSETS='+json.dumps(assets,ensure_ascii=False)+';const MINI_SOURCE='+json.dumps(source,ensure_ascii=False)+';')
 bundle+=script('const NPC_ART='+(ROOT/'src/center/npc-assets.json').read_text()+';const NPC_MANIFEST='+(ROOT/'src/center/npc-manifest.json').read_text()+';')
+water=runpy.run_path(str(ROOT/'src/minigames/water-bottles/build.py'))['document']()
+bundle+=script('const WATER_DOCUMENT='+json.dumps(water,ensure_ascii=False)+';')
 bundle+=script((ROOT/'src/center/model.js').read_text())+script((ROOT/'src/center/life.js').read_text())+script((ROOT/'src/center/gallery.js').read_text())+script((ROOT/'src/center/app.js').read_text())
 license=(legacy/'vendor/MATTER-LICENSE.txt').read_text()
 out=(ROOT/'src/center/shell.html').read_text().replace('<!--BUNDLES-->',bundle)

@@ -99,3 +99,12 @@ User requested corridor picture frames before populating the map, with a photo-c
 - 센터 NPC: trainer 남성, yoga-member 여성, member-0/1/2/3/5 요가복 이동 인물. 회사 NPC: office 남성, office-member 여성, member-4/6 오피스룩 이동 인물. casual, casual-member는 어느 건물에도 배치하지 않는다. 주인공 시트는 기존 것을 유지한다.
 - 검증: 실제 headless Chromium에서 9개 층/49개 장면/총 271개 NPC의 복장 분리와 프레임 로드, 모든 방 진입/복귀/렌더, 층별 화장실, 장소 버튼 양방향 이동, 회사 엘리베이터 3개 층만 노출, 412×915 세로 툴바 위치 확인. pageerror 0. JS 문법 검사 통과. Android 실기기 확인은 남아 있다.
 - 오프라인 전달본: builds/wellness-center-company-v4.html (루트 index.html과 동일).
+
+
+## 2026-10-17 · v5 화장실 물병 미션
+- 현재 v4(회사·NPC·액자 포함)에 물병 미션만 추가. 센터 6층 및 회사 3층 각 화장실에서 실행.
+- 새 모듈: `src/minigames/water-bottles/` (모델/뷰, 스타일, 단독 빌더, 이미지/입구 좌표 교체 설명).
+- 물병 4개, 각도·파워·발사 지속 입력, 포물선 물줄기, 입구 하강 통과 판정, 몸통 충돌/넘침/바닥 흘림 계산.
+- 각 병100, 물통600. 4병 모두 채우고 받은 물>흘린 물이면 성공. 시간 제한 없음. 성장/금전 보상은 아직 연결하지 않음.
+- 단독 테스트 `tests/water-bottles.html`, 통합 `index.html`, 보관본 `builds/wellness-center-water-v5.html`.
+- 확인: 모델 20~120fps 4병 도달/완주/실패/물량 보존/일시정지, 실제 터치 발사·해제, 모바일 가로 넘침 없음, 센터·회사 화장실 실행/복귀, 브라우저 오류 없음.
