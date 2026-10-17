@@ -14,7 +14,8 @@ prepared=ROOT/'src/center/prepared-assets.json'
 sprites=ROOT/'src/center/sprite-manifest.json'
 def script(s):return '<script>'+s.replace('</script','<\\/script')+'</script>'
 bundle=script('const ART='+prepared.read_text()+';const SPRITES='+sprites.read_text()+';const MINI_ASSETS='+json.dumps(assets,ensure_ascii=False)+';const MINI_SOURCE='+json.dumps(source,ensure_ascii=False)+';')
-bundle+=script((ROOT/'src/center/model.js').read_text())+script((ROOT/'src/center/app.js').read_text())
+bundle+=script('const NPC_ART='+(ROOT/'src/center/npc-assets.json').read_text()+';const NPC_MANIFEST='+(ROOT/'src/center/npc-manifest.json').read_text()+';')
+bundle+=script((ROOT/'src/center/model.js').read_text())+script((ROOT/'src/center/life.js').read_text())+script((ROOT/'src/center/gallery.js').read_text())+script((ROOT/'src/center/app.js').read_text())
 license=(legacy/'vendor/MATTER-LICENSE.txt').read_text()
 out=(ROOT/'src/center/shell.html').read_text().replace('<!--BUNDLES-->',bundle)
 out=out.replace('<html lang="ko">','<html lang="ko"><!--\nMatter.js license\n'+license+'\n--> ',1)

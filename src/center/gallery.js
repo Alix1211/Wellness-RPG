@@ -1,0 +1,21 @@
+/* Per-frame photos are device-local. Uploaded pictures are never sent out. */
+(function(root){'use strict';
+const STORE='wellness-rpg-gallery-v1',photos=new Map(),cache=new Map();let dbPromise;
+function db(){if(!dbPromise)dbPromise=new Promise((resolve,reject)=>{const r=indexedDB.open(STORE,1);r.onupgradeneeded=()=>r.result.createObjectStore('photos');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});return dbPromise;}
+async function init(){try{const d=await db();const entries=await new Promise((resolve,reject)=>{const t=d.transaction('photos'),s=t.objectStore('photos'),k=s.getAllKeys(),v=s.getAll();t.oncomplete=()=>resolve(k.result.map((key,i)=>[key,v.result[i]]));t.onerror=()=>reject(t.error);});await Promise.all(entries.map(([id,src])=>decode(id,src).catch(()=>{})));}catch{/* Read-only artwork remains available without persistent storage. */}}
+function decode(id,src){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{photos.set(id,{src,im});resolve(im);};im.onerror=()=>reject(new Error('사진을 읽지 못했습니다.'));im.src=src;});}
+async function store(id,src){const d=await db();await new Promise((resolve,reject)=>{const t=d.transaction('photos','readwrite');const s=t.objectStore('photos');if(src===null)s.delete(id);else s.put(src,id);t.oncomplete=resolve;t.onerror=()=>reject(t.error);t.onabort=()=>reject(t.error);});}
+async function set(id,file){if(!file||!file.type.startsWith('image/'))throw new Error('이미지 파일을 선택해 주세요.');if(file.size>30*1024*1024)throw new Error('30MB 이하의 사진을 선택해 주세요.');
+ const src=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(new Error('파일을 읽지 못했습니다.'));r.readAsDataURL(file);});
+ const original=await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(new Error('지원하지 않는 이미지 형식입니다.'));im.src=src;});
+ const c=document.createElement('canvas'),s=Math.min(1,1600/Math.max(original.width,original.height));c.width=Math.max(1,Math.round(original.width*s));c.height=Math.max(1,Math.round(original.height*s));c.getContext('2d').drawImage(original,0,0,c.width,c.height);const image=c.toDataURL('image/jpeg',.9);
+ await store(id,image);await decode(id,image);
+}
+async function reset(id){await store(id,null);photos.delete(id);}
+function slots(floor){const f=root.CenterModel.FLOORS[floor];return [{id:`f${floor+1}-entry`,x:318,y:278,w:62,h:106},...f.rooms.slice(0,-1).map((r,i)=>({id:`f${floor+1}-art-${i+1}`,x:r.x+285,y:282,w:108,h:146}))];}
+function hit(floor,x,y){return slots(floor).find(p=>Math.abs(x-p.x)<p.w/2+12&&Math.abs(y-p.y)<p.h/2+12);}
+function placeholder(id){if(cache.has(id))return cache.get(id);const c=document.createElement('canvas');c.width=260;c.height=340;const g=c.getContext('2d'),n=[...id].reduce((a,s)=>a+s.charCodeAt(0),0),palettes=[['#dbe9df','#7aaca0','#446e66','#d4bc89'],['#efe0cc','#d3a286','#906d80','#ead6a0'],['#d5e0ee','#8fabc7','#526b89','#e3c8a0']],p=palettes[n%3];g.fillStyle=p[0];g.fillRect(0,0,260,340);g.fillStyle=p[3];g.beginPath();g.arc(180,85,29,0,Math.PI*2);g.fill();for(let i=0;i<3;i++){g.fillStyle=i%2?p[2]:p[1];g.beginPath();g.moveTo(0,210+i*40);g.bezierCurveTo(65,100+i*50,120,270+i*10,260,170+i*45);g.lineTo(260,340);g.lineTo(0,340);g.fill();}cache.set(id,c);return c;}
+function picture(id){return photos.get(id)?.im||placeholder(id);}
+function draw(ctx,floor,camera){for(const p of slots(floor)){if(p.x-camera<-100||p.x-camera>1380)continue;const x=p.x-p.w/2,y=p.y-p.h/2;ctx.save();ctx.shadowColor='#3a4a3f32';ctx.shadowBlur=9;ctx.shadowOffsetY=5;ctx.fillStyle='#8e7556';ctx.fillRect(x-5,y-5,p.w+10,p.h+10);ctx.shadowColor='transparent';ctx.fillStyle='#e9d6ae';ctx.fillRect(x-2,y-2,p.w+4,p.h+4);ctx.fillStyle='#fffaf0';ctx.fillRect(x+3,y+3,p.w-6,p.h-6);const im=picture(p.id),w=p.w-18,h=p.h-18,s=Math.min(w/im.width,h/im.height);ctx.drawImage(im,x+(p.w-im.width*s)/2,y+(p.h-im.height*s)/2,im.width*s,im.height*s);ctx.fillStyle='#ffffffe0';ctx.beginPath();ctx.roundRect(p.x-24,y+p.h+13,48,19,6);ctx.fill();ctx.font='600 10px system-ui';ctx.fillStyle='#6f806e';ctx.textAlign='center';ctx.fillText('사진  ✎',p.x,y+p.h+23);ctx.restore();}}
+root.CenterGallery={init,set,reset,slots,hit,picture,draw,photos};
+})(window);

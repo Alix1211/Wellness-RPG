@@ -1,0 +1,3147 @@
+{
+  "tile": [
+    224,
+    208
+  ],
+  "pivot": [
+    112,
+    190
+  ],
+  "actors": [
+    {
+      "id": "trainer-0",
+      "kind": "standing",
+      "role": "trainer",
+      "frames": [
+        "npc/trainer/0/0"
+      ],
+      "source": "1000081094.png"
+    },
+    {
+      "id": "trainer-1",
+      "kind": "standing",
+      "role": "trainer",
+      "frames": [
+        "npc/trainer/1/0"
+      ],
+      "source": "1000081094.png"
+    },
+    {
+      "id": "trainer-2",
+      "kind": "standing",
+      "role": "trainer",
+      "frames": [
+        "npc/trainer/2/0"
+      ],
+      "source": "1000081094.png"
+    },
+    {
+      "id": "trainer-3",
+      "kind": "standing",
+      "role": "trainer",
+      "frames": [
+        "npc/trainer/3/0"
+      ],
+      "source": "1000081094.png"
+    },
+    {
+      "id": "trainer-4",
+      "kind": "standing",
+      "role": "trainer",
+      "frames": [
+        "npc/trainer/4/0"
+      ],
+      "source": "1000081094.png"
+    },
+    {
+      "id": "trainer-5",
+      "kind": "standing",
+      "role": "trainer",
+      "frames": [
+        "npc/trainer/5/0"
+      ],
+      "source": "1000081094.png"
+    },
+    {
+      "id": "trainer-6",
+      "kind": "standing",
+      "role": "trainer",
+      "frames": [
+        "npc/trainer/6/0"
+      ],
+      "source": "1000081094.png"
+    },
+    {
+      "id": "trainer-7",
+      "kind": "standing",
+      "role": "trainer",
+      "frames": [
+        "npc/trainer/7/0"
+      ],
+      "source": "1000081094.png"
+    },
+    {
+      "id": "trainer-8",
+      "kind": "standing",
+      "role": "trainer",
+      "frames": [
+        "npc/trainer/8/0"
+      ],
+      "source": "1000081094.png"
+    },
+    {
+      "id": "trainer-9",
+      "kind": "standing",
+      "role": "trainer",
+      "frames": [
+        "npc/trainer/9/0"
+      ],
+      "source": "1000081094.png"
+    },
+    {
+      "id": "trainer-10",
+      "kind": "standing",
+      "role": "trainer",
+      "frames": [
+        "npc/trainer/10/0"
+      ],
+      "source": "1000081094.png"
+    },
+    {
+      "id": "trainer-11",
+      "kind": "standing",
+      "role": "trainer",
+      "frames": [
+        "npc/trainer/11/0"
+      ],
+      "source": "1000081094.png"
+    },
+    {
+      "id": "office-0",
+      "kind": "standing",
+      "role": "office",
+      "frames": [
+        "npc/office/0/0"
+      ],
+      "source": "1000081093.png"
+    },
+    {
+      "id": "office-1",
+      "kind": "standing",
+      "role": "office",
+      "frames": [
+        "npc/office/1/0"
+      ],
+      "source": "1000081093.png"
+    },
+    {
+      "id": "office-2",
+      "kind": "standing",
+      "role": "office",
+      "frames": [
+        "npc/office/2/0"
+      ],
+      "source": "1000081093.png"
+    },
+    {
+      "id": "office-3",
+      "kind": "standing",
+      "role": "office",
+      "frames": [
+        "npc/office/3/0"
+      ],
+      "source": "1000081093.png"
+    },
+    {
+      "id": "office-4",
+      "kind": "standing",
+      "role": "office",
+      "frames": [
+        "npc/office/4/0"
+      ],
+      "source": "1000081093.png"
+    },
+    {
+      "id": "office-5",
+      "kind": "standing",
+      "role": "office",
+      "frames": [
+        "npc/office/5/0"
+      ],
+      "source": "1000081093.png"
+    },
+    {
+      "id": "office-6",
+      "kind": "standing",
+      "role": "office",
+      "frames": [
+        "npc/office/6/0"
+      ],
+      "source": "1000081093.png"
+    },
+    {
+      "id": "office-7",
+      "kind": "standing",
+      "role": "office",
+      "frames": [
+        "npc/office/7/0"
+      ],
+      "source": "1000081093.png"
+    },
+    {
+      "id": "office-8",
+      "kind": "standing",
+      "role": "office",
+      "frames": [
+        "npc/office/8/0"
+      ],
+      "source": "1000081093.png"
+    },
+    {
+      "id": "office-9",
+      "kind": "standing",
+      "role": "office",
+      "frames": [
+        "npc/office/9/0"
+      ],
+      "source": "1000081093.png"
+    },
+    {
+      "id": "office-10",
+      "kind": "standing",
+      "role": "office",
+      "frames": [
+        "npc/office/10/0"
+      ],
+      "source": "1000081093.png"
+    },
+    {
+      "id": "office-11",
+      "kind": "standing",
+      "role": "office",
+      "frames": [
+        "npc/office/11/0"
+      ],
+      "source": "1000081093.png"
+    },
+    {
+      "id": "casual-0",
+      "kind": "standing",
+      "role": "casual",
+      "frames": [
+        "npc/casual/0/0"
+      ],
+      "source": "1000081092.png"
+    },
+    {
+      "id": "casual-1",
+      "kind": "standing",
+      "role": "casual",
+      "frames": [
+        "npc/casual/1/0"
+      ],
+      "source": "1000081092.png"
+    },
+    {
+      "id": "casual-2",
+      "kind": "standing",
+      "role": "casual",
+      "frames": [
+        "npc/casual/2/0"
+      ],
+      "source": "1000081092.png"
+    },
+    {
+      "id": "casual-3",
+      "kind": "standing",
+      "role": "casual",
+      "frames": [
+        "npc/casual/3/0"
+      ],
+      "source": "1000081092.png"
+    },
+    {
+      "id": "casual-4",
+      "kind": "standing",
+      "role": "casual",
+      "frames": [
+        "npc/casual/4/0"
+      ],
+      "source": "1000081092.png"
+    },
+    {
+      "id": "casual-5",
+      "kind": "standing",
+      "role": "casual",
+      "frames": [
+        "npc/casual/5/0"
+      ],
+      "source": "1000081092.png"
+    },
+    {
+      "id": "casual-6",
+      "kind": "standing",
+      "role": "casual",
+      "frames": [
+        "npc/casual/6/0"
+      ],
+      "source": "1000081092.png"
+    },
+    {
+      "id": "casual-7",
+      "kind": "standing",
+      "role": "casual",
+      "frames": [
+        "npc/casual/7/0"
+      ],
+      "source": "1000081092.png"
+    },
+    {
+      "id": "casual-8",
+      "kind": "standing",
+      "role": "casual",
+      "frames": [
+        "npc/casual/8/0"
+      ],
+      "source": "1000081092.png"
+    },
+    {
+      "id": "casual-9",
+      "kind": "standing",
+      "role": "casual",
+      "frames": [
+        "npc/casual/9/0"
+      ],
+      "source": "1000081092.png"
+    },
+    {
+      "id": "casual-10",
+      "kind": "standing",
+      "role": "casual",
+      "frames": [
+        "npc/casual/10/0"
+      ],
+      "source": "1000081092.png"
+    },
+    {
+      "id": "casual-11",
+      "kind": "standing",
+      "role": "casual",
+      "frames": [
+        "npc/casual/11/0"
+      ],
+      "source": "1000081092.png"
+    },
+    {
+      "id": "member-0",
+      "kind": "side",
+      "role": "member",
+      "frames": [
+        "npc/member/0/0",
+        "npc/member/0/1",
+        "npc/member/0/2",
+        "npc/member/0/3",
+        "npc/member/0/4",
+        "npc/member/0/5",
+        "npc/member/0/6",
+        "npc/member/0/7"
+      ],
+      "source": "1000081103.png"
+    },
+    {
+      "id": "member-1",
+      "kind": "side",
+      "role": "member",
+      "frames": [
+        "npc/member/1/0",
+        "npc/member/1/1",
+        "npc/member/1/2",
+        "npc/member/1/3",
+        "npc/member/1/4",
+        "npc/member/1/5",
+        "npc/member/1/6",
+        "npc/member/1/7"
+      ],
+      "source": "1000081102.png"
+    },
+    {
+      "id": "member-2",
+      "kind": "side",
+      "role": "member",
+      "frames": [
+        "npc/member/2/0",
+        "npc/member/2/1",
+        "npc/member/2/2",
+        "npc/member/2/3",
+        "npc/member/2/4",
+        "npc/member/2/5",
+        "npc/member/2/6",
+        "npc/member/2/7"
+      ],
+      "source": "1000081101.png"
+    },
+    {
+      "id": "member-3",
+      "kind": "side",
+      "role": "member",
+      "frames": [
+        "npc/member/3/0",
+        "npc/member/3/1",
+        "npc/member/3/2",
+        "npc/member/3/3",
+        "npc/member/3/4",
+        "npc/member/3/5",
+        "npc/member/3/6",
+        "npc/member/3/7"
+      ],
+      "source": "1000081100.png"
+    },
+    {
+      "id": "member-4",
+      "kind": "side",
+      "role": "member",
+      "frames": [
+        "npc/member/4/0",
+        "npc/member/4/1",
+        "npc/member/4/2",
+        "npc/member/4/3",
+        "npc/member/4/4",
+        "npc/member/4/5",
+        "npc/member/4/6",
+        "npc/member/4/7"
+      ],
+      "source": "1000081099.png"
+    },
+    {
+      "id": "member-5",
+      "kind": "side",
+      "role": "member",
+      "frames": [
+        "npc/member/5/0",
+        "npc/member/5/1",
+        "npc/member/5/2",
+        "npc/member/5/3",
+        "npc/member/5/4",
+        "npc/member/5/5",
+        "npc/member/5/6",
+        "npc/member/5/7"
+      ],
+      "source": "1000081098.png"
+    },
+    {
+      "id": "member-6",
+      "kind": "side",
+      "role": "member",
+      "frames": [
+        "npc/member/6/0",
+        "npc/member/6/1",
+        "npc/member/6/2",
+        "npc/member/6/3",
+        "npc/member/6/4",
+        "npc/member/6/5",
+        "npc/member/6/6",
+        "npc/member/6/7"
+      ],
+      "source": "1000081097.png"
+    },
+    {
+      "id": "casual-member-0",
+      "kind": "front",
+      "role": "casual-member",
+      "frames": [
+        "npc/casual-member/0/0",
+        "npc/casual-member/0/1",
+        "npc/casual-member/0/2",
+        "npc/casual-member/0/3",
+        "npc/casual-member/0/4",
+        "npc/casual-member/0/5",
+        "npc/casual-member/0/6",
+        "npc/casual-member/0/7",
+        "npc/casual-member/0/8",
+        "npc/casual-member/0/9",
+        "npc/casual-member/0/10",
+        "npc/casual-member/0/11",
+        "npc/casual-member/0/12",
+        "npc/casual-member/0/13",
+        "npc/casual-member/0/14",
+        "npc/casual-member/0/15"
+      ],
+      "source": "1000081105.png"
+    },
+    {
+      "id": "casual-member-1",
+      "kind": "front",
+      "role": "casual-member",
+      "frames": [
+        "npc/casual-member/1/0",
+        "npc/casual-member/1/1",
+        "npc/casual-member/1/2",
+        "npc/casual-member/1/3",
+        "npc/casual-member/1/4",
+        "npc/casual-member/1/5",
+        "npc/casual-member/1/6",
+        "npc/casual-member/1/7",
+        "npc/casual-member/1/8",
+        "npc/casual-member/1/9",
+        "npc/casual-member/1/10",
+        "npc/casual-member/1/11",
+        "npc/casual-member/1/12",
+        "npc/casual-member/1/13",
+        "npc/casual-member/1/14",
+        "npc/casual-member/1/15"
+      ],
+      "source": "1000081104.png"
+    },
+    {
+      "id": "office-member-0",
+      "kind": "pose",
+      "role": "office-member",
+      "frames": [
+        "npc/office-member/0/0",
+        "npc/office-member/0/1"
+      ],
+      "source": "1000081090.png"
+    },
+    {
+      "id": "office-member-1",
+      "kind": "pose",
+      "role": "office-member",
+      "frames": [
+        "npc/office-member/1/0",
+        "npc/office-member/1/1"
+      ],
+      "source": "1000081090.png"
+    },
+    {
+      "id": "office-member-2",
+      "kind": "pose",
+      "role": "office-member",
+      "frames": [
+        "npc/office-member/2/0",
+        "npc/office-member/2/1"
+      ],
+      "source": "1000081090.png"
+    },
+    {
+      "id": "office-member-3",
+      "kind": "pose",
+      "role": "office-member",
+      "frames": [
+        "npc/office-member/3/0",
+        "npc/office-member/3/1"
+      ],
+      "source": "1000081090.png"
+    },
+    {
+      "id": "office-member-4",
+      "kind": "pose",
+      "role": "office-member",
+      "frames": [
+        "npc/office-member/4/0",
+        "npc/office-member/4/1"
+      ],
+      "source": "1000081090.png"
+    },
+    {
+      "id": "office-member-5",
+      "kind": "pose",
+      "role": "office-member",
+      "frames": [
+        "npc/office-member/5/0",
+        "npc/office-member/5/1"
+      ],
+      "source": "1000081090.png"
+    },
+    {
+      "id": "yoga-member-0",
+      "kind": "pose",
+      "role": "yoga-member",
+      "frames": [
+        "npc/yoga-member/0/0",
+        "npc/yoga-member/0/1"
+      ],
+      "source": "1000081091.png"
+    },
+    {
+      "id": "yoga-member-1",
+      "kind": "pose",
+      "role": "yoga-member",
+      "frames": [
+        "npc/yoga-member/1/0",
+        "npc/yoga-member/1/1"
+      ],
+      "source": "1000081091.png"
+    },
+    {
+      "id": "yoga-member-2",
+      "kind": "pose",
+      "role": "yoga-member",
+      "frames": [
+        "npc/yoga-member/2/0",
+        "npc/yoga-member/2/1"
+      ],
+      "source": "1000081091.png"
+    },
+    {
+      "id": "yoga-member-3",
+      "kind": "pose",
+      "role": "yoga-member",
+      "frames": [
+        "npc/yoga-member/3/0",
+        "npc/yoga-member/3/1"
+      ],
+      "source": "1000081091.png"
+    },
+    {
+      "id": "yoga-member-4",
+      "kind": "pose",
+      "role": "yoga-member",
+      "frames": [
+        "npc/yoga-member/4/0",
+        "npc/yoga-member/4/1"
+      ],
+      "source": "1000081091.png"
+    },
+    {
+      "id": "yoga-member-5",
+      "kind": "pose",
+      "role": "yoga-member",
+      "frames": [
+        "npc/yoga-member/5/0",
+        "npc/yoga-member/5/1"
+      ],
+      "source": "1000081091.png"
+    }
+  ],
+  "sources": [
+    {
+      "file": "1000081090.png",
+      "sha256": "c7c827c8b5dbec8ba4bb872eb71e3d3aedfebf6f9b30c96145928db652858fa4"
+    },
+    {
+      "file": "1000081091.png",
+      "sha256": "10361f116a65c0a30a6751929ccf56cbab7942f01e488e76e25a81175fc56eca"
+    },
+    {
+      "file": "1000081092.png",
+      "sha256": "fffa6ff28e2b70e0109baf3ffea03b7fb384552bd2bee65a83a44b07e34b55ed"
+    },
+    {
+      "file": "1000081093.png",
+      "sha256": "22396b12a01b6a7dc6591a69c965d8e290fd09521178990c3c63a8130510e90b"
+    },
+    {
+      "file": "1000081094.png",
+      "sha256": "37500cf4871c69e3e2354f186bc2656cbe26b169f77694dcf8ae0f693f15f9ad"
+    },
+    {
+      "file": "1000081097.png",
+      "sha256": "1b43b2edefa04b41214910c5962d5eeb3c2ddc3f45556ef053fa330fcea9eaea"
+    },
+    {
+      "file": "1000081098.png",
+      "sha256": "25d2c92b3ced310a2470eb4d6590d4bd63b51a3696ec06839ac511b004002f35"
+    },
+    {
+      "file": "1000081099.png",
+      "sha256": "5bc4c2334543aa48f8a7a6dc42550e68ddef0586b965e662ed855dd8da7ad893"
+    },
+    {
+      "file": "1000081100.png",
+      "sha256": "47f2da2b94247b78f19c135af3369eaede0dd523676446c06e873b55016010ca"
+    },
+    {
+      "file": "1000081101.png",
+      "sha256": "b0e0b38cbabfbf7e8a9a75b71c941ef803ab971620c7f1d155b663d58df8c282"
+    },
+    {
+      "file": "1000081102.png",
+      "sha256": "1d2a52de52c389caf23a9bcbd0be6b7cdd14cd44db6a74395daacd5cdc1a2a11"
+    },
+    {
+      "file": "1000081103.png",
+      "sha256": "8292a57b66d21cafaf80160745d630850b23c71782a2718f7808f35a707f285f"
+    },
+    {
+      "file": "1000081104.png",
+      "sha256": "bd05b95fdeaff247e483ca8e4597534333cc61c769a42027fdb65487710f4141"
+    },
+    {
+      "file": "1000081105.png",
+      "sha256": "1718b1c53e67e583449313c60ac5843abfe0ac8a6d2c9488b1e427fc463d3a5b"
+    }
+  ],
+  "alignment": [
+    {
+      "id": "trainer-0",
+      "file": "1000081094.png",
+      "scale": 0.34375,
+      "rects": [
+        {
+          "component": [
+            46,
+            17,
+            278,
+            531
+          ],
+          "bounds": [
+            1,
+            1,
+            231,
+            513
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trainer-1",
+      "file": "1000081094.png",
+      "scale": 0.34509803921568627,
+      "rects": [
+        {
+          "component": [
+            284,
+            19,
+            507,
+            531
+          ],
+          "bounds": [
+            1,
+            1,
+            222,
+            511
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trainer-2",
+      "file": "1000081094.png",
+      "scale": 0.34442270058708413,
+      "rects": [
+        {
+          "component": [
+            503,
+            18,
+            722,
+            531
+          ],
+          "bounds": [
+            1,
+            1,
+            218,
+            512
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trainer-3",
+      "file": "1000081094.png",
+      "scale": 0.3485148514851485,
+      "rects": [
+        {
+          "component": [
+            734,
+            24,
+            955,
+            531
+          ],
+          "bounds": [
+            1,
+            1,
+            220,
+            506
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trainer-4",
+      "file": "1000081094.png",
+      "scale": 0.34375,
+      "rects": [
+        {
+          "component": [
+            961,
+            18,
+            1181,
+            532
+          ],
+          "bounds": [
+            1,
+            1,
+            218,
+            513
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trainer-5",
+      "file": "1000081094.png",
+      "scale": 0.34307992202729043,
+      "rects": [
+        {
+          "component": [
+            1192,
+            16,
+            1422,
+            531
+          ],
+          "bounds": [
+            1,
+            1,
+            229,
+            514
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trainer-6",
+      "file": "1000081094.png",
+      "scale": 0.3314500941619586,
+      "rects": [
+        {
+          "component": [
+            36,
+            529,
+            275,
+            1062
+          ],
+          "bounds": [
+            1,
+            1,
+            238,
+            532
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trainer-7",
+      "file": "1000081094.png",
+      "scale": 0.3308270676691729,
+      "rects": [
+        {
+          "component": [
+            261,
+            528,
+            498,
+            1062
+          ],
+          "bounds": [
+            1,
+            1,
+            236,
+            533
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trainer-8",
+      "file": "1000081094.png",
+      "scale": 0.3333333333333333,
+      "rects": [
+        {
+          "component": [
+            500,
+            532,
+            711,
+            1062
+          ],
+          "bounds": [
+            1,
+            1,
+            210,
+            529
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trainer-9",
+      "file": "1000081094.png",
+      "scale": 0.3333333333333333,
+      "rects": [
+        {
+          "component": [
+            730,
+            532,
+            956,
+            1062
+          ],
+          "bounds": [
+            1,
+            1,
+            225,
+            529
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trainer-10",
+      "file": "1000081094.png",
+      "scale": 0.33460076045627374,
+      "rects": [
+        {
+          "component": [
+            962,
+            534,
+            1186,
+            1062
+          ],
+          "bounds": [
+            1,
+            1,
+            223,
+            527
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trainer-11",
+      "file": "1000081094.png",
+      "scale": 0.33587786259541985,
+      "rects": [
+        {
+          "component": [
+            1207,
+            536,
+            1429,
+            1062
+          ],
+          "bounds": [
+            1,
+            1,
+            221,
+            525
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-0",
+      "file": "1000081093.png",
+      "scale": 0.3384615384615385,
+      "rects": [
+        {
+          "component": [
+            42,
+            5,
+            291,
+            527
+          ],
+          "bounds": [
+            1,
+            1,
+            248,
+            521
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-1",
+      "file": "1000081093.png",
+      "scale": 0.3365200764818356,
+      "rects": [
+        {
+          "component": [
+            296,
+            3,
+            535,
+            528
+          ],
+          "bounds": [
+            1,
+            1,
+            238,
+            524
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-2",
+      "file": "1000081093.png",
+      "scale": 0.3378119001919386,
+      "rects": [
+        {
+          "component": [
+            525,
+            5,
+            774,
+            528
+          ],
+          "bounds": [
+            1,
+            1,
+            248,
+            522
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-3",
+      "file": "1000081093.png",
+      "scale": 0.3404255319148936,
+      "rects": [
+        {
+          "component": [
+            780,
+            7,
+            1023,
+            526
+          ],
+          "bounds": [
+            1,
+            1,
+            242,
+            518
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-4",
+      "file": "1000081093.png",
+      "scale": 0.3371647509578544,
+      "rects": [
+        {
+          "component": [
+            1020,
+            4,
+            1264,
+            528
+          ],
+          "bounds": [
+            1,
+            1,
+            243,
+            523
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-5",
+      "file": "1000081093.png",
+      "scale": 0.33911368015414256,
+      "rects": [
+        {
+          "component": [
+            1270,
+            6,
+            1522,
+            527
+          ],
+          "bounds": [
+            1,
+            1,
+            251,
+            520
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-6",
+      "file": "1000081093.png",
+      "scale": 0.3492063492063492,
+      "rects": [
+        {
+          "component": [
+            36,
+            519,
+            285,
+            1024
+          ],
+          "bounds": [
+            1,
+            1,
+            248,
+            505
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-7",
+      "file": "1000081093.png",
+      "scale": 0.3492063492063492,
+      "rects": [
+        {
+          "component": [
+            276,
+            518,
+            529,
+            1024
+          ],
+          "bounds": [
+            1,
+            1,
+            252,
+            505
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-8",
+      "file": "1000081093.png",
+      "scale": 0.3492063492063492,
+      "rects": [
+        {
+          "component": [
+            534,
+            518,
+            761,
+            1024
+          ],
+          "bounds": [
+            1,
+            1,
+            226,
+            505
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-9",
+      "file": "1000081093.png",
+      "scale": 0.350597609561753,
+      "rects": [
+        {
+          "component": [
+            770,
+            520,
+            1012,
+            1024
+          ],
+          "bounds": [
+            1,
+            1,
+            241,
+            503
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-10",
+      "file": "1000081093.png",
+      "scale": 0.3499005964214712,
+      "rects": [
+        {
+          "component": [
+            1032,
+            520,
+            1273,
+            1024
+          ],
+          "bounds": [
+            1,
+            1,
+            240,
+            504
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-11",
+      "file": "1000081093.png",
+      "scale": 0.352,
+      "rects": [
+        {
+          "component": [
+            1289,
+            523,
+            1525,
+            1024
+          ],
+          "bounds": [
+            1,
+            1,
+            235,
+            501
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual-0",
+      "file": "1000081092.png",
+      "scale": 0.3378119001919386,
+      "rects": [
+        {
+          "component": [
+            45,
+            5,
+            292,
+            528
+          ],
+          "bounds": [
+            1,
+            1,
+            246,
+            522
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual-1",
+      "file": "1000081092.png",
+      "scale": 0.3365200764818356,
+      "rects": [
+        {
+          "component": [
+            297,
+            2,
+            539,
+            527
+          ],
+          "bounds": [
+            1,
+            1,
+            241,
+            524
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual-2",
+      "file": "1000081092.png",
+      "scale": 0.33911368015414256,
+      "rects": [
+        {
+          "component": [
+            528,
+            5,
+            774,
+            526
+          ],
+          "bounds": [
+            1,
+            1,
+            245,
+            520
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual-3",
+      "file": "1000081092.png",
+      "scale": 0.3404255319148936,
+      "rects": [
+        {
+          "component": [
+            781,
+            7,
+            1023,
+            526
+          ],
+          "bounds": [
+            1,
+            1,
+            241,
+            518
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual-4",
+      "file": "1000081092.png",
+      "scale": 0.3378119001919386,
+      "rects": [
+        {
+          "component": [
+            1020,
+            4,
+            1266,
+            527
+          ],
+          "bounds": [
+            1,
+            1,
+            245,
+            522
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual-5",
+      "file": "1000081092.png",
+      "scale": 0.3384615384615385,
+      "rects": [
+        {
+          "component": [
+            1267,
+            7,
+            1522,
+            529
+          ],
+          "bounds": [
+            1,
+            1,
+            254,
+            521
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual-6",
+      "file": "1000081092.png",
+      "scale": 0.3485148514851485,
+      "rects": [
+        {
+          "component": [
+            36,
+            518,
+            288,
+            1024
+          ],
+          "bounds": [
+            1,
+            1,
+            251,
+            506
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual-7",
+      "file": "1000081092.png",
+      "scale": 0.3485148514851485,
+      "rects": [
+        {
+          "component": [
+            276,
+            518,
+            534,
+            1024
+          ],
+          "bounds": [
+            1,
+            1,
+            257,
+            506
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual-8",
+      "file": "1000081092.png",
+      "scale": 0.34782608695652173,
+      "rects": [
+        {
+          "component": [
+            530,
+            517,
+            762,
+            1024
+          ],
+          "bounds": [
+            1,
+            1,
+            231,
+            507
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual-9",
+      "file": "1000081092.png",
+      "scale": 0.3499005964214712,
+      "rects": [
+        {
+          "component": [
+            771,
+            520,
+            1019,
+            1024
+          ],
+          "bounds": [
+            1,
+            1,
+            247,
+            504
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual-10",
+      "file": "1000081092.png",
+      "scale": 0.3492063492063492,
+      "rects": [
+        {
+          "component": [
+            1024,
+            519,
+            1275,
+            1024
+          ],
+          "bounds": [
+            1,
+            1,
+            250,
+            505
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual-11",
+      "file": "1000081092.png",
+      "scale": 0.3527054108216433,
+      "rects": [
+        {
+          "component": [
+            1288,
+            524,
+            1522,
+            1024
+          ],
+          "bounds": [
+            1,
+            1,
+            233,
+            500
+          ]
+        }
+      ]
+    },
+    {
+      "id": "member-0",
+      "file": "1000081103.png",
+      "scale": 0.45714285714285713,
+      "rects": [
+        {
+          "component": [
+            10,
+            179,
+            347,
+            475
+          ],
+          "bounds": [
+            1,
+            1,
+            336,
+            295
+          ]
+        },
+        {
+          "component": [
+            364,
+            180,
+            738,
+            476
+          ],
+          "bounds": [
+            1,
+            1,
+            373,
+            295
+          ]
+        },
+        {
+          "component": [
+            721,
+            181,
+            1086,
+            481
+          ],
+          "bounds": [
+            1,
+            1,
+            364,
+            299
+          ]
+        },
+        {
+          "component": [
+            1092,
+            180,
+            1445,
+            475
+          ],
+          "bounds": [
+            1,
+            1,
+            352,
+            294
+          ]
+        },
+        {
+          "component": [
+            30,
+            661,
+            316,
+            981
+          ],
+          "bounds": [
+            1,
+            1,
+            285,
+            319
+          ]
+        },
+        {
+          "component": [
+            385,
+            584,
+            699,
+            972
+          ],
+          "bounds": [
+            1,
+            1,
+            313,
+            386
+          ]
+        },
+        {
+          "component": [
+            768,
+            552,
+            1059,
+            928
+          ],
+          "bounds": [
+            1,
+            1,
+            290,
+            375
+          ]
+        },
+        {
+          "component": [
+            1127,
+            660,
+            1423,
+            980
+          ],
+          "bounds": [
+            1,
+            1,
+            295,
+            319
+          ]
+        }
+      ]
+    },
+    {
+      "id": "member-1",
+      "file": "1000081102.png",
+      "scale": 0.45012787723785164,
+      "rects": [
+        {
+          "component": [
+            12,
+            175,
+            349,
+            478
+          ],
+          "bounds": [
+            1,
+            1,
+            336,
+            302
+          ]
+        },
+        {
+          "component": [
+            365,
+            173,
+            742,
+            480
+          ],
+          "bounds": [
+            1,
+            1,
+            376,
+            306
+          ]
+        },
+        {
+          "component": [
+            727,
+            172,
+            1092,
+            485
+          ],
+          "bounds": [
+            1,
+            1,
+            364,
+            312
+          ]
+        },
+        {
+          "component": [
+            1093,
+            172,
+            1448,
+            479
+          ],
+          "bounds": [
+            1,
+            1,
+            355,
+            306
+          ]
+        },
+        {
+          "component": [
+            24,
+            660,
+            362,
+            988
+          ],
+          "bounds": [
+            1,
+            1,
+            337,
+            327
+          ]
+        },
+        {
+          "component": [
+            383,
+            586,
+            721,
+            979
+          ],
+          "bounds": [
+            1,
+            1,
+            337,
+            392
+          ]
+        },
+        {
+          "component": [
+            771,
+            553,
+            1090,
+            937
+          ],
+          "bounds": [
+            1,
+            1,
+            318,
+            383
+          ]
+        },
+        {
+          "component": [
+            1127,
+            662,
+            1448,
+            988
+          ],
+          "bounds": [
+            1,
+            1,
+            320,
+            325
+          ]
+        }
+      ]
+    },
+    {
+      "id": "member-2",
+      "file": "1000081101.png",
+      "scale": 0.45714285714285713,
+      "rects": [
+        {
+          "component": [
+            10,
+            179,
+            347,
+            475
+          ],
+          "bounds": [
+            1,
+            1,
+            336,
+            295
+          ]
+        },
+        {
+          "component": [
+            364,
+            180,
+            738,
+            476
+          ],
+          "bounds": [
+            1,
+            1,
+            373,
+            295
+          ]
+        },
+        {
+          "component": [
+            721,
+            181,
+            1086,
+            481
+          ],
+          "bounds": [
+            1,
+            1,
+            364,
+            299
+          ]
+        },
+        {
+          "component": [
+            1092,
+            180,
+            1445,
+            475
+          ],
+          "bounds": [
+            1,
+            1,
+            352,
+            294
+          ]
+        },
+        {
+          "component": [
+            30,
+            661,
+            316,
+            981
+          ],
+          "bounds": [
+            1,
+            1,
+            285,
+            319
+          ]
+        },
+        {
+          "component": [
+            385,
+            584,
+            699,
+            972
+          ],
+          "bounds": [
+            1,
+            1,
+            313,
+            386
+          ]
+        },
+        {
+          "component": [
+            768,
+            552,
+            1059,
+            928
+          ],
+          "bounds": [
+            1,
+            1,
+            290,
+            375
+          ]
+        },
+        {
+          "component": [
+            1127,
+            660,
+            1423,
+            980
+          ],
+          "bounds": [
+            1,
+            1,
+            295,
+            319
+          ]
+        }
+      ]
+    },
+    {
+      "id": "member-3",
+      "file": "1000081100.png",
+      "scale": 0.43672456575682383,
+      "rects": [
+        {
+          "component": [
+            15,
+            146,
+            340,
+            463
+          ],
+          "bounds": [
+            1,
+            1,
+            324,
+            316
+          ]
+        },
+        {
+          "component": [
+            367,
+            149,
+            724,
+            466
+          ],
+          "bounds": [
+            1,
+            1,
+            356,
+            316
+          ]
+        },
+        {
+          "component": [
+            714,
+            147,
+            1073,
+            470
+          ],
+          "bounds": [
+            1,
+            1,
+            358,
+            322
+          ]
+        },
+        {
+          "component": [
+            1087,
+            146,
+            1432,
+            464
+          ],
+          "bounds": [
+            1,
+            1,
+            344,
+            317
+          ]
+        },
+        {
+          "component": [
+            34,
+            622,
+            307,
+            966
+          ],
+          "bounds": [
+            1,
+            1,
+            272,
+            343
+          ]
+        },
+        {
+          "component": [
+            392,
+            551,
+            690,
+            957
+          ],
+          "bounds": [
+            1,
+            1,
+            297,
+            404
+          ]
+        },
+        {
+          "component": [
+            760,
+            526,
+            1028,
+            911
+          ],
+          "bounds": [
+            1,
+            1,
+            267,
+            384
+          ]
+        },
+        {
+          "component": [
+            1124,
+            615,
+            1408,
+            965
+          ],
+          "bounds": [
+            1,
+            1,
+            283,
+            348
+          ]
+        }
+      ]
+    },
+    {
+      "id": "member-4",
+      "file": "1000081099.png",
+      "scale": 0.4467005076142132,
+      "rects": [
+        {
+          "component": [
+            11,
+            173,
+            353,
+            481
+          ],
+          "bounds": [
+            1,
+            1,
+            341,
+            307
+          ]
+        },
+        {
+          "component": [
+            367,
+            172,
+            746,
+            480
+          ],
+          "bounds": [
+            1,
+            1,
+            377,
+            307
+          ]
+        },
+        {
+          "component": [
+            731,
+            170,
+            1096,
+            486
+          ],
+          "bounds": [
+            1,
+            1,
+            364,
+            314
+          ]
+        },
+        {
+          "component": [
+            1096,
+            170,
+            1448,
+            482
+          ],
+          "bounds": [
+            1,
+            1,
+            352,
+            311
+          ]
+        },
+        {
+          "component": [
+            23,
+            657,
+            363,
+            990
+          ],
+          "bounds": [
+            1,
+            1,
+            339,
+            332
+          ]
+        },
+        {
+          "component": [
+            383,
+            585,
+            722,
+            981
+          ],
+          "bounds": [
+            1,
+            1,
+            338,
+            395
+          ]
+        },
+        {
+          "component": [
+            768,
+            553,
+            1094,
+            940
+          ],
+          "bounds": [
+            1,
+            1,
+            325,
+            386
+          ]
+        },
+        {
+          "component": [
+            1128,
+            661,
+            1448,
+            991
+          ],
+          "bounds": [
+            1,
+            1,
+            320,
+            329
+          ]
+        }
+      ]
+    },
+    {
+      "id": "member-5",
+      "file": "1000081098.png",
+      "scale": 0.44783715012722647,
+      "rects": [
+        {
+          "component": [
+            7,
+            179,
+            352,
+            483
+          ],
+          "bounds": [
+            1,
+            1,
+            344,
+            303
+          ]
+        },
+        {
+          "component": [
+            367,
+            179,
+            746,
+            485
+          ],
+          "bounds": [
+            1,
+            1,
+            378,
+            305
+          ]
+        },
+        {
+          "component": [
+            727,
+            179,
+            1098,
+            490
+          ],
+          "bounds": [
+            1,
+            1,
+            370,
+            309
+          ]
+        },
+        {
+          "component": [
+            1095,
+            179,
+            1448,
+            484
+          ],
+          "bounds": [
+            1,
+            1,
+            353,
+            304
+          ]
+        },
+        {
+          "component": [
+            20,
+            664,
+            355,
+            996
+          ],
+          "bounds": [
+            1,
+            2,
+            334,
+            331
+          ]
+        },
+        {
+          "component": [
+            380,
+            591,
+            719,
+            987
+          ],
+          "bounds": [
+            1,
+            2,
+            338,
+            395
+          ]
+        },
+        {
+          "component": [
+            772,
+            552,
+            1096,
+            944
+          ],
+          "bounds": [
+            1,
+            1,
+            323,
+            390
+          ]
+        },
+        {
+          "component": [
+            1127,
+            664,
+            1448,
+            996
+          ],
+          "bounds": [
+            1,
+            1,
+            320,
+            331
+          ]
+        }
+      ]
+    },
+    {
+      "id": "member-6",
+      "file": "1000081097.png",
+      "scale": 0.4433249370277078,
+      "rects": [
+        {
+          "component": [
+            7,
+            178,
+            350,
+            480
+          ],
+          "bounds": [
+            1,
+            1,
+            342,
+            301
+          ]
+        },
+        {
+          "component": [
+            363,
+            180,
+            748,
+            481
+          ],
+          "bounds": [
+            1,
+            1,
+            383,
+            300
+          ]
+        },
+        {
+          "component": [
+            719,
+            179,
+            1093,
+            486
+          ],
+          "bounds": [
+            1,
+            1,
+            373,
+            305
+          ]
+        },
+        {
+          "component": [
+            1093,
+            178,
+            1448,
+            481
+          ],
+          "bounds": [
+            1,
+            1,
+            355,
+            302
+          ]
+        },
+        {
+          "component": [
+            26,
+            661,
+            325,
+            991
+          ],
+          "bounds": [
+            1,
+            1,
+            298,
+            329
+          ]
+        },
+        {
+          "component": [
+            381,
+            585,
+            703,
+            984
+          ],
+          "bounds": [
+            1,
+            1,
+            321,
+            398
+          ]
+        },
+        {
+          "component": [
+            766,
+            550,
+            1062,
+            942
+          ],
+          "bounds": [
+            1,
+            1,
+            295,
+            390
+          ]
+        },
+        {
+          "component": [
+            1124,
+            660,
+            1430,
+            992
+          ],
+          "bounds": [
+            1,
+            1,
+            305,
+            331
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual-member-0",
+      "file": "1000081105.png",
+      "scale": 0.5517241379310345,
+      "rects": [
+        {
+          "component": [
+            31,
+            4,
+            275,
+            293
+          ],
+          "bounds": [
+            1,
+            1,
+            242,
+            287
+          ]
+        },
+        {
+          "component": [
+            345,
+            4,
+            597,
+            293
+          ],
+          "bounds": [
+            2,
+            1,
+            251,
+            288
+          ]
+        },
+        {
+          "component": [
+            660,
+            4,
+            898,
+            294
+          ],
+          "bounds": [
+            1,
+            1,
+            237,
+            288
+          ]
+        },
+        {
+          "component": [
+            978,
+            3,
+            1223,
+            295
+          ],
+          "bounds": [
+            2,
+            1,
+            244,
+            291
+          ]
+        },
+        {
+          "component": [
+            75,
+            306,
+            258,
+            622
+          ],
+          "bounds": [
+            1,
+            1,
+            181,
+            315
+          ]
+        },
+        {
+          "component": [
+            391,
+            304,
+            580,
+            625
+          ],
+          "bounds": [
+            1,
+            1,
+            188,
+            320
+          ]
+        },
+        {
+          "component": [
+            705,
+            305,
+            888,
+            615
+          ],
+          "bounds": [
+            1,
+            1,
+            182,
+            309
+          ]
+        },
+        {
+          "component": [
+            1019,
+            306,
+            1211,
+            623
+          ],
+          "bounds": [
+            1,
+            1,
+            191,
+            316
+          ]
+        },
+        {
+          "component": [
+            33,
+            641,
+            262,
+            931
+          ],
+          "bounds": [
+            1,
+            1,
+            228,
+            289
+          ]
+        },
+        {
+          "component": [
+            339,
+            629,
+            599,
+            925
+          ],
+          "bounds": [
+            1,
+            1,
+            259,
+            295
+          ]
+        },
+        {
+          "component": [
+            641,
+            608,
+            920,
+            904
+          ],
+          "bounds": [
+            1,
+            1,
+            278,
+            294
+          ]
+        },
+        {
+          "component": [
+            980,
+            641,
+            1205,
+            930
+          ],
+          "bounds": [
+            2,
+            1,
+            224,
+            288
+          ]
+        },
+        {
+          "component": [
+            64,
+            937,
+            261,
+            1242
+          ],
+          "bounds": [
+            1,
+            1,
+            196,
+            304
+          ]
+        },
+        {
+          "component": [
+            353,
+            931,
+            610,
+            1236
+          ],
+          "bounds": [
+            1,
+            1,
+            256,
+            304
+          ]
+        },
+        {
+          "component": [
+            655,
+            916,
+            932,
+            1213
+          ],
+          "bounds": [
+            1,
+            1,
+            275,
+            296
+          ]
+        },
+        {
+          "component": [
+            1007,
+            938,
+            1211,
+            1243
+          ],
+          "bounds": [
+            1,
+            1,
+            203,
+            304
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual-member-1",
+      "file": "1000081104.png",
+      "scale": 0.5714285714285714,
+      "rects": [
+        {
+          "component": [
+            31,
+            32,
+            276,
+            296
+          ],
+          "bounds": [
+            1,
+            1,
+            243,
+            263
+          ]
+        },
+        {
+          "component": [
+            346,
+            33,
+            600,
+            296
+          ],
+          "bounds": [
+            1,
+            1,
+            253,
+            262
+          ]
+        },
+        {
+          "component": [
+            659,
+            33,
+            904,
+            296
+          ],
+          "bounds": [
+            1,
+            1,
+            243,
+            262
+          ]
+        },
+        {
+          "component": [
+            983,
+            33,
+            1232,
+            297
+          ],
+          "bounds": [
+            1,
+            1,
+            248,
+            262
+          ]
+        },
+        {
+          "component": [
+            53,
+            316,
+            267,
+            622
+          ],
+          "bounds": [
+            1,
+            1,
+            212,
+            305
+          ]
+        },
+        {
+          "component": [
+            370,
+            316,
+            581,
+            626
+          ],
+          "bounds": [
+            1,
+            1,
+            210,
+            309
+          ]
+        },
+        {
+          "component": [
+            681,
+            316,
+            893,
+            618
+          ],
+          "bounds": [
+            1,
+            1,
+            210,
+            301
+          ]
+        },
+        {
+          "component": [
+            997,
+            315,
+            1215,
+            624
+          ],
+          "bounds": [
+            2,
+            1,
+            217,
+            308
+          ]
+        },
+        {
+          "component": [
+            33,
+            663,
+            266,
+            933
+          ],
+          "bounds": [
+            1,
+            1,
+            232,
+            269
+          ]
+        },
+        {
+          "component": [
+            347,
+            654,
+            615,
+            930
+          ],
+          "bounds": [
+            1,
+            1,
+            267,
+            275
+          ]
+        },
+        {
+          "component": [
+            640,
+            630,
+            934,
+            909
+          ],
+          "bounds": [
+            1,
+            1,
+            293,
+            277
+          ]
+        },
+        {
+          "component": [
+            986,
+            660,
+            1217,
+            933
+          ],
+          "bounds": [
+            1,
+            1,
+            230,
+            272
+          ]
+        },
+        {
+          "component": [
+            47,
+            939,
+            270,
+            1240
+          ],
+          "bounds": [
+            1,
+            1,
+            221,
+            300
+          ]
+        },
+        {
+          "component": [
+            346,
+            930,
+            611,
+            1236
+          ],
+          "bounds": [
+            2,
+            1,
+            264,
+            305
+          ]
+        },
+        {
+          "component": [
+            652,
+            928,
+            946,
+            1215
+          ],
+          "bounds": [
+            1,
+            1,
+            293,
+            286
+          ]
+        },
+        {
+          "component": [
+            994,
+            939,
+            1217,
+            1241
+          ],
+          "bounds": [
+            2,
+            1,
+            222,
+            301
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-member-0",
+      "file": "1000081090.png",
+      "scale": 0.4292682926829268,
+      "rects": [
+        {
+          "component": [
+            2,
+            51,
+            328,
+            451
+          ],
+          "bounds": [
+            1,
+            1,
+            325,
+            399
+          ]
+        },
+        {
+          "component": [
+            2,
+            455,
+            323,
+            867
+          ],
+          "bounds": [
+            1,
+            1,
+            320,
+            411
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-member-1",
+      "file": "1000081090.png",
+      "scale": 0.42206235011990406,
+      "rects": [
+        {
+          "component": [
+            281,
+            54,
+            622,
+            450
+          ],
+          "bounds": [
+            1,
+            1,
+            340,
+            395
+          ]
+        },
+        {
+          "component": [
+            293,
+            448,
+            625,
+            867
+          ],
+          "bounds": [
+            1,
+            1,
+            331,
+            418
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-member-2",
+      "file": "1000081090.png",
+      "scale": 0.47696476964769646,
+      "rects": [
+        {
+          "component": [
+            581,
+            90,
+            900,
+            450
+          ],
+          "bounds": [
+            1,
+            1,
+            318,
+            359
+          ]
+        },
+        {
+          "component": [
+            589,
+            496,
+            900,
+            867
+          ],
+          "bounds": [
+            1,
+            1,
+            310,
+            370
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-member-3",
+      "file": "1000081090.png",
+      "scale": 0.4389027431421446,
+      "rects": [
+        {
+          "component": [
+            857,
+            56,
+            1188,
+            451
+          ],
+          "bounds": [
+            1,
+            1,
+            330,
+            394
+          ]
+        },
+        {
+          "component": [
+            867,
+            464,
+            1189,
+            868
+          ],
+          "bounds": [
+            1,
+            2,
+            321,
+            403
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-member-4",
+      "file": "1000081090.png",
+      "scale": 0.46684350132625996,
+      "rects": [
+        {
+          "component": [
+            1155,
+            80,
+            1499,
+            451
+          ],
+          "bounds": [
+            1,
+            2,
+            343,
+            370
+          ]
+        },
+        {
+          "component": [
+            1157,
+            489,
+            1500,
+            868
+          ],
+          "bounds": [
+            1,
+            1,
+            342,
+            378
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office-member-5",
+      "file": "1000081090.png",
+      "scale": 0.4467005076142132,
+      "rects": [
+        {
+          "component": [
+            1470,
+            56,
+            1770,
+            452
+          ],
+          "bounds": [
+            1,
+            1,
+            299,
+            395
+          ]
+        },
+        {
+          "component": [
+            1474,
+            479,
+            1774,
+            869
+          ],
+          "bounds": [
+            2,
+            2,
+            300,
+            389
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yoga-member-0",
+      "file": "1000081091.png",
+      "scale": 0.676923076923077,
+      "rects": [
+        {
+          "component": [
+            0,
+            425,
+            210,
+            687
+          ],
+          "bounds": [
+            0,
+            1,
+            209,
+            261
+          ]
+        },
+        {
+          "component": [
+            1,
+            798,
+            198,
+            1054
+          ],
+          "bounds": [
+            1,
+            1,
+            196,
+            255
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yoga-member-1",
+      "file": "1000081091.png",
+      "scale": 0.6567164179104478,
+      "rects": [
+        {
+          "component": [
+            168,
+            420,
+            388,
+            688
+          ],
+          "bounds": [
+            1,
+            1,
+            219,
+            267
+          ]
+        },
+        {
+          "component": [
+            173,
+            785,
+            377,
+            1055
+          ],
+          "bounds": [
+            1,
+            1,
+            203,
+            269
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yoga-member-2",
+      "file": "1000081091.png",
+      "scale": 0.6423357664233577,
+      "rects": [
+        {
+          "component": [
+            346,
+            422,
+            568,
+            689
+          ],
+          "bounds": [
+            1,
+            1,
+            221,
+            266
+          ]
+        },
+        {
+          "component": [
+            351,
+            781,
+            550,
+            1057
+          ],
+          "bounds": [
+            1,
+            1,
+            198,
+            275
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yoga-member-3",
+      "file": "1000081091.png",
+      "scale": 0.704,
+      "rects": [
+        {
+          "component": [
+            532,
+            444,
+            749,
+            691
+          ],
+          "bounds": [
+            1,
+            1,
+            216,
+            246
+          ]
+        },
+        {
+          "component": [
+            536,
+            807,
+            730,
+            1059
+          ],
+          "bounds": [
+            1,
+            1,
+            193,
+            251
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yoga-member-4",
+      "file": "1000081091.png",
+      "scale": 0.6175438596491228,
+      "rects": [
+        {
+          "component": [
+            707,
+            414,
+            926,
+            691
+          ],
+          "bounds": [
+            1,
+            1,
+            218,
+            276
+          ]
+        },
+        {
+          "component": [
+            705,
+            773,
+            925,
+            1060
+          ],
+          "bounds": [
+            1,
+            1,
+            219,
+            286
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yoga-member-5",
+      "file": "1000081091.png",
+      "scale": 0.6641509433962264,
+      "rects": [
+        {
+          "component": [
+            895,
+            438,
+            1086,
+            692
+          ],
+          "bounds": [
+            1,
+            1,
+            191,
+            253
+          ]
+        },
+        {
+          "component": [
+            898,
+            797,
+            1086,
+            1064
+          ],
+          "bounds": [
+            2,
+            1,
+            188,
+            266
+          ]
+        }
+      ]
+    }
+  ]
+}
