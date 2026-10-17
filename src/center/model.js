@@ -26,6 +26,8 @@
  FLOORS.forEach(f=>f.place='center');
  const companySpecs=[['로비 · 지원시설',['companyLobby','lounge','pantry','companyToilet']],['공용 업무층',['sharedOffice','sharedOffice','meeting','pantry','companyToilet']],['개인 업무층',['privateOffice','privateOffice','meeting','lounge','companyToilet']]];
  companySpecs.forEach(([name,kinds],fi)=>FLOORS.push({place:'company',number:fi+1,name,width:420+kinds.length*570,rooms:kinds.map((kind,i)=>({id:`company-f${fi+1}-${kind}-${i+1}`,kind,number:`${fi+1}${String(i+1).padStart(2,'0')}`,x:570+i*570,...TYPES[kind]}))}));
+ const HOME_ROOMS=[['homeLiving','거실','거실','cylinder'],['homeStudy','서재','서재',null],['homeSpare','빈방','빈방',null],['homeBedroom','침실','침실','rest'],['homeToilet','화장실','화장실','water'],['homeBasement','지하실','지하실',null]];
+ FLOORS.push({place:'home',number:1,name:'우리 집',width:1280,rooms:HOME_ROOMS.map(([kind,name,bg,service],i)=>({id:'home-'+kind,kind,name,bg:'home/'+bg,service,number:'',color:'#d7b594',games:[],x:640}))});
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
  function bounds(scene){
   if(scene.type==='corridor')return {left:60,right:FLOORS[scene.floor].width-60,top:443,bottom:672};
@@ -35,9 +37,10 @@
  function entrance(floor,index){return {x:FLOORS[floor].rooms[index].x,y:455};}
  const JUMP_DURATION=.7;
  function makeState(){return {scene:{type:'corridor',floor:0,room:0},player:{x:340,y:584,dir:'left',walk:0,moving:false,jump:0,jumpTime:0,jumpDir:null,airX:0,airY:0,moveX:0,moveY:0,lastMoveAge:1},target:null,camera:0,outfit:'lavender-yoga',visited:{},records:{},hp:100,mp:100};}
- function changeFloor(s,floor){if(floor<0||floor>=FLOORS.length)return false;s.scene={type:'corridor',floor,room:0};s.player.x=220;s.player.y=575;s.target=null;s.camera=0;return true;}
+ function changeFloor(s,floor){if(floor<0||floor>=FLOORS.length)return false;s.scene={type:FLOORS[floor].place==='home'?'room':'corridor',floor,room:0};s.player.x=FLOORS[floor].place==='home'?640:220;s.player.y=575;s.target=null;s.camera=0;return true;}
  function enterRoom(s,index){const f=FLOORS[s.scene.floor];if(!f.rooms[index])return false;s.scene={type:'room',floor:s.scene.floor,room:index};s.player.x=640;s.player.y=644;s.player.dir='up';s.target=null;s.camera=0;s.visited[f.rooms[index].id]=true;return true;}
- function leaveRoom(s){const p=entrance(s.scene.floor,s.scene.room);s.scene={...s.scene,type:'corridor'};s.player.x=p.x;s.player.y=560;s.player.dir='down';s.target=null;return true;}
+ function homeStep(s,delta){const f=FLOORS[s.scene.floor];if(f.place!=='home')return false;const index=(s.scene.room+delta+f.rooms.length)%f.rooms.length;enterRoom(s,index);s.player.x=delta>0?180:1100;s.player.y=610;s.player.dir=delta>0?'right':'left';return true;}
+ function leaveRoom(s){if(FLOORS[s.scene.floor].place==='home')return false;const p=entrance(s.scene.floor,s.scene.room);s.scene={...s.scene,type:'corridor'};s.player.x=p.x;s.player.y=560;s.player.dir='down';s.target=null;return true;}
  function startJump(s){const p=s.player;if(p.jumpTime>0)return false;p.jumpTime=JUMP_DURATION;p.jumpDir=p.dir;p.airX=p.lastMoveAge<.18?p.moveX:0;p.airY=p.lastMoveAge<.18?p.moveY:0;return true;}
  function jumpFrame(p){const t=1-p.jumpTime/JUMP_DURATION;return t<.14?0:t<.46?1:t<.8?2:3;}
  function step(s,dx,dy,dt){
@@ -51,8 +54,9 @@
   if(air){p.jumpTime=Math.max(0,p.jumpTime-dt);const t=1-p.jumpTime/JUMP_DURATION;p.jump=Math.sin(clamp((t-.1)/.76,0,1)*Math.PI)*65;if(!p.jumpTime){p.jump=0;p.jumpDir=null;p.airX=p.airY=0;}}
   else p.jump=0;
  }
- function nearby(s){const p=s.player;if(s.scene.type==='corridor'){if(p.x<330&&p.y<610)return {type:'lift',label:'층 이동',x:180,y:440};const f=FLOORS[s.scene.floor];for(let i=0;i<f.rooms.length;i++)if(Math.abs(p.x-f.rooms[i].x)<155&&p.y<568)return {type:'enter',index:i,label:`${f.rooms[i].name} ${f.rooms[i].number}호`,x:f.rooms[i].x,y:448};return null;}
+ function nearby(s){const p=s.player;if(FLOORS[s.scene.floor].place==='home'){const f=FLOORS[s.scene.floor],i=s.scene.room,n=f.rooms.length;if(p.x<145)return {type:'homeAdjacent',delta:-1,label:'← '+f.rooms[(i+n-1)%n].name,x:95,y:610};if(p.x>1135)return {type:'homeAdjacent',delta:1,label:f.rooms[(i+1)%n].name+' →',x:1185,y:610};return {type:'activity',label:f.rooms[i].service==='rest'?'쉬어가기':f.rooms[i].service?'미션 선택':'둘러보기',x:820,y:560};}if(s.scene.type==='corridor'){if(p.x<330&&p.y<610)return {type:'lift',label:'층 이동',x:180,y:440};const f=FLOORS[s.scene.floor];for(let i=0;i<f.rooms.length;i++)if(Math.abs(p.x-f.rooms[i].x)<155&&p.y<568)return {type:'enter',index:i,label:`${f.rooms[i].name} ${f.rooms[i].number}호`,x:f.rooms[i].x,y:448};return null;}
   const r=FLOORS[s.scene.floor].rooms[s.scene.room];if(p.y>635&&Math.abs(p.x-640)<165)return {type:'exit',label:'복도로',x:640,y:690};if(p.x<145)return {type:'adjacent',delta:-1,label:s.scene.room>0?'이전 방':'복도로',x:90,y:610};if(p.x>1135)return {type:'adjacent',delta:1,label:s.scene.room<FLOORS[s.scene.floor].rooms.length-1?'다음 방':'복도로',x:1190,y:610};if(Math.abs(p.x-820)<180)return {type:'activity',label:r.service==='recovery'?'쉬어가기':r.service==='shop'?'상품 보기':r.service==='reception'?'안내 보기':r.games.length?'미션 선택':'시설 살펴보기',x:820,y:560};return null;
  }
- const api={TYPES,FLOORS,clamp,bounds,entrance,makeState,changeFloor,enterRoom,leaveRoom,step,startJump,jumpFrame,JUMP_DURATION,nearby};root.CenterModel=api;if(typeof module!=='undefined')module.exports=api;
+ const api={TYPES,FLOORS,clamp,bounds,entrance,makeState,changeFloor,enterRoom,leaveRoom,step,startJump,jumpFrame,JUMP_DURATION,nearby,homeStep};root.CenterModel=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);
+

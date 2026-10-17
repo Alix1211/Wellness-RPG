@@ -1,19 +1,22 @@
 # GAIA CITY Wellness RPG
 
-A portrait-screen, stage-based RPG in a repository separate from the original Wellness game.
+Single-file offline indoor life RPG prototype. Open `index.html` in Chrome. This private project is separate from the original `Alix1211/Wellness`, which is read-only reference material.
 
-## Agreed direction
+## Current build · 2026-10-17 v7
 
-- Move freely between rooms within the active chapter.
-- Unlock chapters in order: **Wellness Center → Company → Marriage/Home**.
-- Track **색기, 음란도, 개방성, 인내력, 친밀도**, plus **HP** and **M파워**.
-- Adapt suitable minigames from Wellness after reviewing them.
-- Use outfit-specific character portraits and sprites.
+- Center: 6 corridors and 26 rooms; company: 3 corridors and 14 rooms.
+- Home: 6 linked background scenes. Walk to either edge to change spaces. Use the top ⇄ button for Center / Company / Home.
+- Center NPCs wear yoga/training outfits; company NPCs wear officewear/suits. Existing 72-frame protagonist animation and moving jump controls remain active.
+- Three new square minigames: touch-aimed timed water filling (toilets), rope cutting into a bottom-center target (Center apparatus rooms), rhythmic pressure + random hearts (company shared offices and home living room).
+- Existing minigames remain connected in their Center rooms. Best results are saved locally. New RPG growth, employment, marriage conditions, economy and cross-device sync are not added by this build.
+- Change game art using each game's **그림 변경**. Top ▧ changes corridor pictures or the current home background. Images are stored only on the device, independently of hitboxes.
 
-## Current state
+New protagonist: chestnut hair and green eyes, 72 extracted frames with common feet pivot and fixed render scale.
 
-This repository contains planning documents and ten user-provided, original character portrait/source sheets and six original four-legged movement/jump sheets. It has no gameplay implementation yet. See [HANDOFF.md](HANDOFF.md) for the exact asset inventory and implementation notes.
+Offline copy: `builds/wellness-life-home-hero-v7.html`. Build: `python src/center/build.py`.
 
-## Asset and privacy boundary
+See [HANDOFF.md](HANDOFF.md), [Center implementation](src/center/README.md), [new minigames](src/minigames/life-suite/README.md) and `tools/test_life_*.cjs` for current decisions, configurable defaults and validation. Android device performance still needs user testing.
 
-The repository is private. It contains a temporary nude character portrait because the user explicitly authorized uploading all supplied character assets. Confirm with the user before changing visibility to public or distributing these adult files. The separate approximately 300-file private photo/video gallery pack is local-only and must never be committed here. Keep local imports under `assets/local/`, which Git ignores.
+## Asset boundary
+
+Original user character sheets are preserved. Derived home backgrounds have source hashes in `assets/backgrounds/home/provenance.json`. Some private character-source folders contain adult artwork; repository privacy must be preserved. The separate local photo/video gallery pack must never be committed. Runtime user-selected images are neither sent to a server nor committed.

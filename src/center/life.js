@@ -6,6 +6,7 @@ function rand(n){let x=(n*1664525+1013904223)>>>0;return ()=>{x=(x*1664525+10139
 function key(s){return s.type==='corridor'?`c${s.floor}`:`r${s.floor}-${s.room}`;}
 function create(scene){const M=root.CenterModel,f=M.FLOORS[scene.floor],b=M.bounds(scene),corridor=scene.type==='corridor',seed=scene.floor*31+(corridor?0:scene.room+1)*71,rng=rand(seed+19),list=[];
  function add(a,x,y,id,staff=false){x=M.clamp(x,b.left+45,b.right-45);y=M.clamp(y,b.top+12,b.bottom-28);const r=rand(seed*100+id*37+5);list.push({id:`${key(scene)}-${id}`,actor:a,x,y,homeX:x,homeY:y,face:r()>.5?1:-1,phase:r()*6.28,timer:1+r()*4,mode:'idle',time:0,walk:0,target:null,rng:r,staff,bounds:{...b,left:Math.max(b.left,x-(corridor?240:140)),right:Math.min(b.right,x+(corridor?240:140)),top:Math.max(b.top+22,y-26),bottom:Math.min(b.bottom-32,y+26)}});}
+ if(f.place==='home')return list;
  const company=f.place==='company';
  const moving=pool('member').filter(a=>company?['member-4','member-6'].includes(a.id):!['member-4','member-6'].includes(a.id));
  const women=[...moving,...pool(company?'office-member':'yoga-member')],men=pool(company?'office':'trainer');
@@ -60,3 +61,4 @@ function draw(n,ctx,images,camera,label){const im=images[frame(n)];if(!im)return
 }
 root.CenterLife={get,update,draw,frame,cache};
 })(window);
+

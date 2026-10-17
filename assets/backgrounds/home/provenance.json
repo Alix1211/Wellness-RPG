@@ -1,0 +1,44 @@
+[
+  {
+    "file": "assets/backgrounds/home/거실.webp",
+    "source_repository": "Alix1211/Wellness",
+    "source_path": "배경/집/거실.png",
+    "source_blob_sha": "7f1e00d4f1344c71a3e4293d6180e4298d3af00c",
+    "derivative": "Pillow RGB, max1280x720, WebP quality88"
+  },
+  {
+    "file": "assets/backgrounds/home/서재.webp",
+    "source_repository": "Alix1211/Wellness",
+    "source_path": "배경/집/서재.png",
+    "source_blob_sha": "9a3146930dd4ec5077dee00cfa1168870db3c530",
+    "derivative": "Pillow RGB, max1280x720, WebP quality88"
+  },
+  {
+    "file": "assets/backgrounds/home/빈방.webp",
+    "source_repository": "Alix1211/Wellness",
+    "source_path": "배경/집/빈방.png",
+    "source_blob_sha": "0c7a04a72f563cbf7c2d8d275deb661a69b9c6de",
+    "derivative": "Pillow RGB, max1280x720, WebP quality88"
+  },
+  {
+    "file": "assets/backgrounds/home/침실.webp",
+    "source_repository": "Alix1211/Wellness",
+    "source_path": "배경/집/침실.png",
+    "source_blob_sha": "f3ca6a44b741e721fec8d6dcc0b7f625f4a94abc",
+    "derivative": "Pillow RGB, max1280x720, WebP quality88"
+  },
+  {
+    "file": "assets/backgrounds/home/화장실.webp",
+    "source_repository": "Alix1211/Wellness",
+    "source_path": "배경/집/화장실.png",
+    "source_blob_sha": "c40f7412c99f8c891535596ae20ebd72734ab99c",
+    "derivative": "Pillow RGB, max1280x720, WebP quality88"
+  },
+  {
+    "file": "assets/backgrounds/home/지하실.webp",
+    "source_repository": "Alix1211/Wellness",
+    "source_path": "배경/집/지하실.png",
+    "source_blob_sha": "4cbc00dc4cf519c6a0fe4641ec4e4c9052801d9b",
+    "derivative": "Pillow RGB, max1280x720, WebP quality88"
+  }
+]

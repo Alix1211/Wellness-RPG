@@ -77,3 +77,12 @@ model.js: 층/방/이동/경계. app.js: 캔버스·입력·카메라·서비스
 - 센터 NPC: trainer 남성, yoga-member 여성, member-0/1/2/3/5 요가복 이동 인물. 회사 NPC: office 남성, office-member 여성, member-4/6 오피스룩 이동 인물. casual, casual-member는 어느 건물에도 배치하지 않는다. 주인공 시트는 기존 것을 유지한다.
 - 검증: 실제 headless Chromium에서 9개 층/49개 장면/총 271개 NPC의 복장 분리와 프레임 로드, 모든 방 진입/복귀/렌더, 층별 화장실, 장소 버튼 양방향 이동, 회사 엘리베이터 3개 층만 노출, 412×915 세로 툴바 위치 확인. pageerror 0. JS 문법 검사 통과. Android 실기기 확인은 남아 있다.
 - 오프라인 전달본: builds/wellness-center-company-v4.html (루트 index.html과 동일).
+
+
+## v6 · 세 미니게임과 집
+
+물병/줄 자르기/리듬 실린더는 `src/minigames/life-suite/README.md`를 기준으로 한다. 집은 마지막 FLOORS 항목(place=home)의6개 배경판이며 복도나 엘리베이터가 없다. 좌우 끝에 도달하면 자동으로 인접 공간으로 전환한다. `assets/backgrounds/home/`의 원본 출처를 기록한 WebP를 빌드 때 읽어 내장한다. 상단 ⇄로 장소 이동, 집에서 ▧는 현재 배경 교체다. 방문 공간과 기존 최고기록을 저장한다. v6 검증 상세와 한계는 HANDOFF.md 및 life-suite README에 있다.
+
+## v7 · 새 주인공 애니메이션
+
+`chestnut-green/`의 사용자 PNG6장 → components-v3 추출 → 공통224×208/발 pivot(112,190)/머리74px 기준72프레임. 원본 그리드를 넘는 동작은 알파 연결성분으로 통째 추출한다. 주인공 전 복장/방향/점프는 고정1.16 렌더 배율, 점프 높이 보정. 머리·초록 눈은 새 사용자 원본, NPC와 대화 초상화 원본은 교체하지 않았다. 재생성은 기존과 같이 `python src/center/prepare_sprites.py` 후 `python src/center/build.py`. sprite-alignment.json에 원본 SHA256과 배치 기록이 있다.

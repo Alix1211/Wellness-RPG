@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "tile": [
     224,
     208
@@ -9,454 +9,6 @@
     190
   ],
   "frames": {
-    "sprite/jeans/directions/0/0": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        0,
-        0,
-        314,
-        314
-      ],
-      "actorBounds": [
-        30,
-        2,
-        283,
-        295
-      ],
-      "headWidth": 184.0,
-      "scale": 0.402174,
-      "placement": [
-        69,
-        72
-      ]
-    },
-    "sprite/jeans/directions/0/1": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        314,
-        0,
-        627,
-        314
-      ],
-      "actorBounds": [
-        30,
-        2,
-        287,
-        293
-      ],
-      "headWidth": 185.0,
-      "scale": 0.4,
-      "placement": [
-        69,
-        74
-      ]
-    },
-    "sprite/jeans/directions/0/2": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        627,
-        0,
-        940,
-        314
-      ],
-      "actorBounds": [
-        32,
-        2,
-        281,
-        295
-      ],
-      "headWidth": 185.0,
-      "scale": 0.4,
-      "placement": [
-        69,
-        73
-      ]
-    },
-    "sprite/jeans/directions/0/3": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        940,
-        0,
-        1254,
-        314
-      ],
-      "actorBounds": [
-        36,
-        2,
-        290,
-        296
-      ],
-      "headWidth": 184.0,
-      "scale": 0.402174,
-      "placement": [
-        69,
-        72
-      ]
-    },
-    "sprite/jeans/directions/1/0": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        0,
-        314,
-        314,
-        627
-      ],
-      "actorBounds": [
-        75,
-        0,
-        262,
-        309
-      ],
-      "headWidth": 165.0,
-      "scale": 0.448485,
-      "placement": [
-        71,
-        51
-      ]
-    },
-    "sprite/jeans/directions/1/1": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        314,
-        314,
-        627,
-        627
-      ],
-      "actorBounds": [
-        75,
-        0,
-        269,
-        312
-      ],
-      "headWidth": 167.0,
-      "scale": 0.443114,
-      "placement": [
-        71,
-        52
-      ]
-    },
-    "sprite/jeans/directions/1/2": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        627,
-        314,
-        940,
-        627
-      ],
-      "actorBounds": [
-        77,
-        0,
-        265,
-        302
-      ],
-      "headWidth": 168.0,
-      "scale": 0.440476,
-      "placement": [
-        71,
-        57
-      ]
-    },
-    "sprite/jeans/directions/1/3": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        940,
-        314,
-        1254,
-        627
-      ],
-      "actorBounds": [
-        76,
-        0,
-        273,
-        309
-      ],
-      "headWidth": 167.0,
-      "scale": 0.443114,
-      "placement": [
-        70,
-        53
-      ]
-    },
-    "sprite/jeans/directions/2/0": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        0,
-        627,
-        314,
-        940
-      ],
-      "actorBounds": [
-        31,
-        15,
-        259,
-        304
-      ],
-      "headWidth": 185.0,
-      "scale": 0.4,
-      "placement": [
-        69,
-        74
-      ]
-    },
-    "sprite/jeans/directions/2/1": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        314,
-        627,
-        627,
-        940
-      ],
-      "actorBounds": [
-        24,
-        2,
-        286,
-        298
-      ],
-      "headWidth": 194.0,
-      "scale": 0.381443,
-      "placement": [
-        70,
-        77
-      ]
-    },
-    "sprite/jeans/directions/2/2": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        627,
-        627,
-        940,
-        940
-      ],
-      "actorBounds": [
-        14,
-        0,
-        293,
-        279
-      ],
-      "headWidth": 202.0,
-      "scale": 0.366337,
-      "placement": [
-        65,
-        88
-      ]
-    },
-    "sprite/jeans/directions/2/3": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        940,
-        627,
-        1254,
-        940
-      ],
-      "actorBounds": [
-        38,
-        13,
-        267,
-        303
-      ],
-      "headWidth": 186.0,
-      "scale": 0.397849,
-      "placement": [
-        70,
-        75
-      ]
-    },
-    "sprite/jeans/directions/3/0": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        0,
-        940,
-        314,
-        1254
-      ],
-      "actorBounds": [
-        65,
-        0,
-        263,
-        303
-      ],
-      "headWidth": 166.0,
-      "scale": 0.445783,
-      "placement": [
-        67,
-        55
-      ]
-    },
-    "sprite/jeans/directions/3/1": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        314,
-        940,
-        627,
-        1254
-      ],
-      "actorBounds": [
-        38,
-        0,
-        298,
-        298
-      ],
-      "headWidth": 174.0,
-      "scale": 0.425287,
-      "placement": [
-        57,
-        63
-      ]
-    },
-    "sprite/jeans/directions/3/2": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        627,
-        940,
-        940,
-        1254
-      ],
-      "actorBounds": [
-        27,
-        0,
-        306,
-        275
-      ],
-      "headWidth": 182.0,
-      "scale": 0.406593,
-      "placement": [
-        53,
-        78
-      ]
-    },
-    "sprite/jeans/directions/3/3": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        940,
-        940,
-        1254,
-        1254
-      ],
-      "actorBounds": [
-        65,
-        0,
-        273,
-        304
-      ],
-      "headWidth": 168.0,
-      "scale": 0.440476,
-      "placement": [
-        65,
-        56
-      ]
-    },
     "sprite/jeans/side/0/0": {
       "tile": [
         224,
@@ -468,22 +20,25 @@
       ],
       "sourceCell": [
         0,
-        0,
-        362,
-        505
+        142,
+        370,
+        496
       ],
       "actorBounds": [
-        7,
-        147,
-        362,
-        495
+        0,
+        0,
+        370,
+        354
       ],
-      "headWidth": 229.0,
-      "scale": 0.323144,
+      "headWidth": 276.0,
+      "scale": 0.268116,
       "placement": [
-        50,
-        78
-      ]
+        48,
+        95
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081396.png",
+      "sourceSha256": "64b6e5e152e786880c2947994b689f8f2612fb0dffb84f7572bf8862365d106a",
+      "sourceBoundsTouchingEdge": true
     },
     "sprite/jeans/side/0/1": {
       "tile": [
@@ -495,23 +50,26 @@
         190
       ],
       "sourceCell": [
-        362,
-        0,
-        724,
-        505
+        370,
+        144,
+        773,
+        500
       ],
       "actorBounds": [
-        18,
-        148,
-        362,
-        499
+        0,
+        0,
+        403,
+        356
       ],
-      "headWidth": 226.0,
-      "scale": 0.327434,
+      "headWidth": 270.0,
+      "scale": 0.274074,
       "placement": [
-        51,
-        75
-      ]
+        46,
+        92
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081396.png",
+      "sourceSha256": "64b6e5e152e786880c2947994b689f8f2612fb0dffb84f7572bf8862365d106a",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/jeans/side/0/2": {
       "tile": [
@@ -523,23 +81,26 @@
         190
       ],
       "sourceCell": [
-        724,
-        0,
-        1086,
-        505
+        728,
+        143,
+        1125,
+        504
       ],
       "actorBounds": [
+        1,
         0,
-        147,
-        362,
-        502
+        397,
+        361
       ],
-      "headWidth": 229.0,
-      "scale": 0.323144,
+      "headWidth": 279.12,
+      "scale": 0.265119,
       "placement": [
-        50,
-        75
-      ]
+        47,
+        94
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081396.png",
+      "sourceSha256": "64b6e5e152e786880c2947994b689f8f2612fb0dffb84f7572bf8862365d106a",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/jeans/side/0/3": {
       "tile": [
@@ -551,23 +112,26 @@
         190
       ],
       "sourceCell": [
-        1086,
-        0,
-        1448,
-        505
+        1106,
+        143,
+        1458,
+        497
       ],
       "actorBounds": [
-        17,
-        145,
-        361,
-        496
+        0,
+        0,
+        352,
+        354
       ],
-      "headWidth": 228.0,
-      "scale": 0.324561,
+      "headWidth": 269.0,
+      "scale": 0.275093,
       "placement": [
-        51,
-        76
-      ]
+        46,
+        93
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081396.png",
+      "sourceSha256": "64b6e5e152e786880c2947994b689f8f2612fb0dffb84f7572bf8862365d106a",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/jeans/side/1/0": {
       "tile": [
@@ -580,22 +144,25 @@
       ],
       "sourceCell": [
         0,
-        505,
-        362,
-        1086
+        627,
+        361,
+        1001
       ],
       "actorBounds": [
-        24,
-        118,
-        319,
-        486
+        0,
+        0,
+        361,
+        374
       ],
-      "headWidth": 236.0,
-      "scale": 0.313559,
+      "headWidth": 278.0,
+      "scale": 0.266187,
       "placement": [
-        51,
-        75
-      ]
+        47,
+        90
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081396.png",
+      "sourceSha256": "64b6e5e152e786880c2947994b689f8f2612fb0dffb84f7572bf8862365d106a",
+      "sourceBoundsTouchingEdge": true
     },
     "sprite/jeans/side/1/1": {
       "tile": [
@@ -607,23 +174,26 @@
         190
       ],
       "sourceCell": [
-        362,
-        505,
-        724,
-        1086
+        397,
+        569,
+        741,
+        983
       ],
       "actorBounds": [
-        37,
-        47,
-        362,
-        469
+        1,
+        0,
+        344,
+        414
       ],
-      "headWidth": 238.0,
-      "scale": 0.310924,
+      "headWidth": 282.0,
+      "scale": 0.262411,
       "placement": [
-        51,
-        59
-      ]
+        47,
+        81
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081396.png",
+      "sourceSha256": "64b6e5e152e786880c2947994b689f8f2612fb0dffb84f7572bf8862365d106a",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/jeans/side/1/2": {
       "tile": [
@@ -635,23 +205,26 @@
         190
       ],
       "sourceCell": [
-        724,
-        505,
-        1086,
-        1086
+        751,
+        530,
+        1101,
+        948
       ],
       "actorBounds": [
-        53,
-        14,
-        352,
-        429
+        0,
+        0,
+        350,
+        418
       ],
-      "headWidth": 249.0,
-      "scale": 0.297189,
+      "headWidth": 291.0,
+      "scale": 0.254296,
       "placement": [
-        50,
-        67
-      ]
+        47,
+        84
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081396.png",
+      "sourceSha256": "64b6e5e152e786880c2947994b689f8f2612fb0dffb84f7572bf8862365d106a",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/jeans/side/1/3": {
       "tile": [
@@ -663,25 +236,214 @@
         190
       ],
       "sourceCell": [
-        1086,
-        505,
-        1448,
-        1086
+        1128,
+        631,
+        1464,
+        1001
       ],
       "actorBounds": [
-        54,
-        112,
-        354,
-        487
+        1,
+        0,
+        336,
+        370
       ],
-      "headWidth": 239.0,
-      "scale": 0.309623,
+      "headWidth": 264.0,
+      "scale": 0.280303,
+      "placement": [
+        47,
+        86
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081396.png",
+      "sourceSha256": "64b6e5e152e786880c2947994b689f8f2612fb0dffb84f7572bf8862365d106a",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/office/side/0/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        7,
+        142,
+        356,
+        480
+      ],
+      "actorBounds": [
+        0,
+        0,
+        349,
+        338
+      ],
+      "headWidth": 266.0,
+      "scale": 0.278195,
+      "placement": [
+        50,
+        96
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081391.png",
+      "sourceSha256": "e9612a1630b27ada82512c4c8cea942d52e5dfcb2fda949b3ea09647384b30e0",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/office/side/0/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        356,
+        144,
+        744,
+        479
+      ],
+      "actorBounds": [
+        0,
+        0,
+        388,
+        335
+      ],
+      "headWidth": 265.0,
+      "scale": 0.279245,
+      "placement": [
+        48,
+        96
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081391.png",
+      "sourceSha256": "e9612a1630b27ada82512c4c8cea942d52e5dfcb2fda949b3ea09647384b30e0",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/office/side/0/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        709,
+        144,
+        1096,
+        481
+      ],
+      "actorBounds": [
+        1,
+        0,
+        387,
+        337
+      ],
+      "headWidth": 273.0,
+      "scale": 0.271062,
+      "placement": [
+        48,
+        99
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081391.png",
+      "sourceSha256": "e9612a1630b27ada82512c4c8cea942d52e5dfcb2fda949b3ea09647384b30e0",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/office/side/0/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        1106,
+        144,
+        1458,
+        476
+      ],
+      "actorBounds": [
+        0,
+        0,
+        352,
+        332
+      ],
+      "headWidth": 276.0,
+      "scale": 0.268116,
+      "placement": [
+        50,
+        101
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081391.png",
+      "sourceSha256": "e9612a1630b27ada82512c4c8cea942d52e5dfcb2fda949b3ea09647384b30e0",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/office/side/1/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        16,
+        622,
+        371,
+        977
+      ],
+      "actorBounds": [
+        0,
+        0,
+        355,
+        355
+      ],
+      "headWidth": 273.0,
+      "scale": 0.271062,
+      "placement": [
+        47,
+        94
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081391.png",
+      "sourceSha256": "e9612a1630b27ada82512c4c8cea942d52e5dfcb2fda949b3ea09647384b30e0",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/office/side/1/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        391,
+        561,
+        730,
+        963
+      ],
+      "actorBounds": [
+        0,
+        0,
+        339,
+        402
+      ],
+      "headWidth": 298.0,
+      "scale": 0.248322,
       "placement": [
         51,
-        74
-      ]
+        90
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081391.png",
+      "sourceSha256": "e9612a1630b27ada82512c4c8cea942d52e5dfcb2fda949b3ea09647384b30e0",
+      "sourceBoundsTouchingEdge": false
     },
-    "sprite/lavender-yoga/directions/0/0": {
+    "sprite/office/side/1/2": {
       "tile": [
         224,
         208
@@ -691,25 +453,28 @@
         190
       ],
       "sourceCell": [
-        0,
-        0,
-        314,
-        314
+        741,
+        534,
+        1096,
+        936
       ],
       "actorBounds": [
-        31,
-        4,
-        274,
-        292
+        0,
+        0,
+        355,
+        402
       ],
-      "headWidth": 179.0,
-      "scale": 0.413408,
+      "headWidth": 307.0,
+      "scale": 0.241042,
       "placement": [
-        69,
-        71
-      ]
+        48,
+        93
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081391.png",
+      "sourceSha256": "e9612a1630b27ada82512c4c8cea942d52e5dfcb2fda949b3ea09647384b30e0",
+      "sourceBoundsTouchingEdge": false
     },
-    "sprite/lavender-yoga/directions/0/1": {
+    "sprite/office/side/1/3": {
       "tile": [
         224,
         208
@@ -719,415 +484,26 @@
         190
       ],
       "sourceCell": [
-        314,
-        0,
-        627,
-        314
+        1120,
+        621,
+        1466,
+        978
       ],
       "actorBounds": [
-        32,
-        4,
-        282,
-        292
-      ],
-      "headWidth": 180.0,
-      "scale": 0.411111,
-      "placement": [
-        69,
-        72
-      ]
-    },
-    "sprite/lavender-yoga/directions/0/2": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        627,
         0,
-        940,
-        314
-      ],
-      "actorBounds": [
-        34,
-        5,
-        270,
-        294
-      ],
-      "headWidth": 179.0,
-      "scale": 0.413408,
-      "placement": [
-        69,
-        71
-      ]
-    },
-    "sprite/lavender-yoga/directions/0/3": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        940,
         0,
-        1254,
-        314
+        346,
+        357
       ],
-      "actorBounds": [
-        39,
-        4,
-        282,
-        294
-      ],
-      "headWidth": 179.0,
-      "scale": 0.413408,
+      "headWidth": 279.0,
+      "scale": 0.265233,
       "placement": [
-        69,
-        70
-      ]
-    },
-    "sprite/lavender-yoga/directions/1/0": {
-      "tile": [
-        224,
-        208
+        48,
+        95
       ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        0,
-        314,
-        314,
-        627
-      ],
-      "actorBounds": [
-        76,
-        0,
-        257,
-        308
-      ],
-      "headWidth": 158.0,
-      "scale": 0.468354,
-      "placement": [
-        69,
-        46
-      ]
-    },
-    "sprite/lavender-yoga/directions/1/1": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        314,
-        314,
-        627,
-        627
-      ],
-      "actorBounds": [
-        78,
-        0,
-        265,
-        311
-      ],
-      "headWidth": 160.0,
-      "scale": 0.4625,
-      "placement": [
-        71,
-        46
-      ]
-    },
-    "sprite/lavender-yoga/directions/1/2": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        627,
-        314,
-        940,
-        627
-      ],
-      "actorBounds": [
-        79,
-        0,
-        261,
-        301
-      ],
-      "headWidth": 161.0,
-      "scale": 0.459627,
-      "placement": [
-        70,
-        52
-      ]
-    },
-    "sprite/lavender-yoga/directions/1/3": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        940,
-        314,
-        1254,
-        627
-      ],
-      "actorBounds": [
-        80,
-        0,
-        271,
-        308
-      ],
-      "headWidth": 161.0,
-      "scale": 0.459627,
-      "placement": [
-        70,
-        48
-      ]
-    },
-    "sprite/lavender-yoga/directions/2/0": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        0,
-        627,
-        314,
-        940
-      ],
-      "actorBounds": [
-        33,
-        15,
-        261,
-        304
-      ],
-      "headWidth": 180.0,
-      "scale": 0.411111,
-      "placement": [
-        69,
-        71
-      ]
-    },
-    "sprite/lavender-yoga/directions/2/1": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        314,
-        627,
-        627,
-        940
-      ],
-      "actorBounds": [
-        25,
-        2,
-        285,
-        297
-      ],
-      "headWidth": 189.0,
-      "scale": 0.391534,
-      "placement": [
-        69,
-        74
-      ]
-    },
-    "sprite/lavender-yoga/directions/2/2": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        627,
-        627,
-        940,
-        940
-      ],
-      "actorBounds": [
-        15,
-        0,
-        292,
-        277
-      ],
-      "headWidth": 195.0,
-      "scale": 0.379487,
-      "placement": [
-        64,
-        85
-      ]
-    },
-    "sprite/lavender-yoga/directions/2/3": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        940,
-        627,
-        1254,
-        940
-      ],
-      "actorBounds": [
-        40,
-        14,
-        265,
-        303
-      ],
-      "headWidth": 179.0,
-      "scale": 0.413408,
-      "placement": [
-        69,
-        71
-      ]
-    },
-    "sprite/lavender-yoga/directions/3/0": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        0,
-        940,
-        314,
-        1254
-      ],
-      "actorBounds": [
-        64,
-        0,
-        261,
-        302
-      ],
-      "headWidth": 161.0,
-      "scale": 0.459627,
-      "placement": [
-        64,
-        51
-      ]
-    },
-    "sprite/lavender-yoga/directions/3/1": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        314,
-        940,
-        627,
-        1254
-      ],
-      "actorBounds": [
-        39,
-        0,
-        295,
-        295
-      ],
-      "headWidth": 166.0,
-      "scale": 0.445783,
-      "placement": [
-        55,
-        58
-      ]
-    },
-    "sprite/lavender-yoga/directions/3/2": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        627,
-        940,
-        940,
-        1254
-      ],
-      "actorBounds": [
-        28,
-        0,
-        305,
-        273
-      ],
-      "headWidth": 171.46,
-      "scale": 0.431588,
-      "placement": [
-        49,
-        72
-      ]
-    },
-    "sprite/lavender-yoga/directions/3/3": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        940,
-        940,
-        1254,
-        1254
-      ],
-      "actorBounds": [
-        68,
-        0,
-        270,
-        303
-      ],
-      "headWidth": 160.1,
-      "scale": 0.462211,
-      "placement": [
-        65,
-        50
-      ]
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081391.png",
+      "sourceSha256": "e9612a1630b27ada82512c4c8cea942d52e5dfcb2fda949b3ea09647384b30e0",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/lavender-yoga/side/0/0": {
       "tile": [
@@ -1140,22 +516,25 @@
       ],
       "sourceCell": [
         0,
-        0,
-        362,
-        505
+        151,
+        351,
+        470
       ],
       "actorBounds": [
-        15,
-        147,
-        339,
-        462
+        0,
+        0,
+        351,
+        319
       ],
-      "headWidth": 207.0,
-      "scale": 0.357488,
+      "headWidth": 272.0,
+      "scale": 0.272059,
       "placement": [
         50,
-        77
-      ]
+        103
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081392.png",
+      "sourceSha256": "619a46825322f3472e74ccc862d3ae22ac6223a4f3d028dca1b7236192ff1552",
+      "sourceBoundsTouchingEdge": true
     },
     "sprite/lavender-yoga/side/0/1": {
       "tile": [
@@ -1167,23 +546,26 @@
         190
       ],
       "sourceCell": [
-        362,
-        0,
-        724,
-        505
+        366,
+        151,
+        741,
+        474
       ],
       "actorBounds": [
-        6,
-        149,
-        362,
-        466
+        0,
+        0,
+        375,
+        323
       ],
-      "headWidth": 201.0,
-      "scale": 0.368159,
+      "headWidth": 275.0,
+      "scale": 0.269091,
       "placement": [
         49,
-        73
-      ]
+        103
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081392.png",
+      "sourceSha256": "619a46825322f3472e74ccc862d3ae22ac6223a4f3d028dca1b7236192ff1552",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/lavender-yoga/side/0/2": {
       "tile": [
@@ -1195,23 +577,26 @@
         190
       ],
       "sourceCell": [
-        724,
-        0,
-        1086,
-        505
+        713,
+        151,
+        1085,
+        477
       ],
       "actorBounds": [
+        1,
         0,
-        148,
-        348,
-        469
+        372,
+        326
       ],
-      "headWidth": 203.0,
-      "scale": 0.364532,
+      "headWidth": 277.0,
+      "scale": 0.267148,
       "placement": [
-        53,
-        73
-      ]
+        49,
+        103
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081392.png",
+      "sourceSha256": "619a46825322f3472e74ccc862d3ae22ac6223a4f3d028dca1b7236192ff1552",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/lavender-yoga/side/0/3": {
       "tile": [
@@ -1224,22 +609,25 @@
       ],
       "sourceCell": [
         1086,
-        0,
-        1448,
-        505
+        151,
+        1444,
+        472
       ],
       "actorBounds": [
-        2,
-        147,
-        345,
-        463
+        0,
+        0,
+        358,
+        321
       ],
-      "headWidth": 206.0,
-      "scale": 0.359223,
+      "headWidth": 274.0,
+      "scale": 0.270073,
       "placement": [
-        50,
-        76
-      ]
+        49,
+        103
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081392.png",
+      "sourceSha256": "619a46825322f3472e74ccc862d3ae22ac6223a4f3d028dca1b7236192ff1552",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/lavender-yoga/side/1/0": {
       "tile": [
@@ -1251,23 +639,26 @@
         190
       ],
       "sourceCell": [
-        0,
-        505,
-        362,
-        1086
+        3,
+        627,
+        340,
+        975
       ],
       "actorBounds": [
-        35,
-        117,
-        307,
-        460
+        0,
+        0,
+        337,
+        348
       ],
-      "headWidth": 222.0,
-      "scale": 0.333333,
+      "headWidth": 264.0,
+      "scale": 0.280303,
       "placement": [
-        51,
-        76
-      ]
+        47,
+        92
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081392.png",
+      "sourceSha256": "619a46825322f3472e74ccc862d3ae22ac6223a4f3d028dca1b7236192ff1552",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/lavender-yoga/side/1/1": {
       "tile": [
@@ -1280,22 +671,25 @@
       ],
       "sourceCell": [
         362,
-        505,
-        724,
-        1086
+        569,
+        702,
+        968
       ],
       "actorBounds": [
-        31,
-        46,
-        327,
-        452
+        0,
+        0,
+        340,
+        399
       ],
-      "headWidth": 220.0,
-      "scale": 0.336364,
+      "headWidth": 294.0,
+      "scale": 0.251701,
       "placement": [
-        51,
-        53
-      ]
+        48,
+        90
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081392.png",
+      "sourceSha256": "619a46825322f3472e74ccc862d3ae22ac6223a4f3d028dca1b7236192ff1552",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/lavender-yoga/side/1/2": {
       "tile": [
@@ -1307,23 +701,26 @@
         190
       ],
       "sourceCell": [
-        724,
-        505,
-        1086,
-        1086
+        748,
+        526,
+        1078,
+        923
       ],
       "actorBounds": [
-        37,
-        21,
-        304,
-        406
+        0,
+        0,
+        330,
+        397
       ],
-      "headWidth": 234.0,
-      "scale": 0.316239,
+      "headWidth": 283.0,
+      "scale": 0.261484,
       "placement": [
-        50,
-        68
-      ]
+        48,
+        86
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081392.png",
+      "sourceSha256": "619a46825322f3472e74ccc862d3ae22ac6223a4f3d028dca1b7236192ff1552",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/lavender-yoga/side/1/3": {
       "tile": [
@@ -1335,23 +732,26 @@
         190
       ],
       "sourceCell": [
-        1086,
-        505,
-        1448,
-        1086
+        1118,
+        626,
+        1455,
+        975
       ],
       "actorBounds": [
-        39,
-        110,
-        321,
-        459
+        0,
+        0,
+        337,
+        349
       ],
-      "headWidth": 217.0,
-      "scale": 0.341014,
+      "headWidth": 271.0,
+      "scale": 0.273063,
       "placement": [
-        50,
-        71
-      ]
+        48,
+        95
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081392.png",
+      "sourceSha256": "619a46825322f3472e74ccc862d3ae22ac6223a4f3d028dca1b7236192ff1552",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/0/0": {
       "tile": [
@@ -1363,23 +763,26 @@
         190
       ],
       "sourceCell": [
-        0,
-        0,
-        314,
-        314
+        6,
+        3,
+        290,
+        298
       ],
       "actorBounds": [
-        29,
-        1,
-        279,
-        297
+        0,
+        0,
+        284,
+        295
       ],
-      "headWidth": 188.0,
-      "scale": 0.393617,
+      "headWidth": 224.0,
+      "scale": 0.330357,
       "placement": [
-        70,
-        73
-      ]
+        66,
+        93
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/0/1": {
       "tile": [
@@ -1391,23 +794,26 @@
         190
       ],
       "sourceCell": [
-        314,
-        0,
-        627,
-        314
-      ],
-      "actorBounds": [
-        27,
-        1,
-        283,
+        324,
+        3,
+        612,
         297
       ],
-      "headWidth": 187.0,
-      "scale": 0.395722,
+      "actorBounds": [
+        0,
+        0,
+        288,
+        294
+      ],
+      "headWidth": 225.0,
+      "scale": 0.328889,
       "placement": [
-        69,
-        73
-      ]
+        66,
+        93
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/0/2": {
       "tile": [
@@ -1419,23 +825,26 @@
         190
       ],
       "sourceCell": [
-        627,
-        0,
-        940,
-        314
+        641,
+        3,
+        930,
+        299
       ],
       "actorBounds": [
-        30,
-        2,
-        276,
-        300
+        0,
+        0,
+        289,
+        296
       ],
-      "headWidth": 186.0,
-      "scale": 0.397849,
+      "headWidth": 222.88,
+      "scale": 0.332017,
       "placement": [
-        69,
-        71
-      ]
+        66,
+        92
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/0/3": {
       "tile": [
@@ -1447,23 +856,26 @@
         190
       ],
       "sourceCell": [
-        940,
-        0,
-        1254,
-        314
+        953,
+        4,
+        1240,
+        298
       ],
       "actorBounds": [
-        34,
+        0,
         0,
         287,
-        300
+        294
       ],
-      "headWidth": 187.0,
-      "scale": 0.395722,
+      "headWidth": 222.0,
+      "scale": 0.333333,
       "placement": [
-        69,
-        71
-      ]
+        65,
+        92
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/1/0": {
       "tile": [
@@ -1475,23 +887,26 @@
         190
       ],
       "sourceCell": [
-        0,
-        314,
-        314,
-        627
+        43,
+        295,
+        277,
+        613
       ],
       "actorBounds": [
-        70,
         0,
-        264,
-        309
+        0,
+        234,
+        318
       ],
-      "headWidth": 166.0,
-      "scale": 0.445783,
+      "headWidth": 193.0,
+      "scale": 0.38342,
       "placement": [
-        68,
-        52
-      ]
+        67,
+        68
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/1/1": {
       "tile": [
@@ -1503,23 +918,26 @@
         190
       ],
       "sourceCell": [
-        314,
-        314,
-        627,
-        627
+        369,
+        296,
+        610,
+        616
       ],
       "actorBounds": [
-        74,
         0,
-        273,
-        313
+        0,
+        241,
+        320
       ],
-      "headWidth": 168.0,
-      "scale": 0.440476,
+      "headWidth": 196.0,
+      "scale": 0.377551,
       "placement": [
-        70,
-        52
-      ]
+        68,
+        69
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/1/2": {
       "tile": [
@@ -1531,23 +949,26 @@
         190
       ],
       "sourceCell": [
-        627,
-        314,
-        940,
-        627
+        674,
+        296,
+        908,
+        612
       ],
       "actorBounds": [
-        74,
         0,
-        263,
-        304
+        0,
+        234,
+        316
       ],
-      "headWidth": 166.0,
-      "scale": 0.445783,
+      "headWidth": 192.0,
+      "scale": 0.385417,
       "placement": [
-        70,
-        54
-      ]
+        67,
+        68
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/1/3": {
       "tile": [
@@ -1559,23 +980,26 @@
         190
       ],
       "sourceCell": [
-        940,
-        314,
-        1254,
-        627
+        994,
+        296,
+        1233,
+        616
       ],
       "actorBounds": [
-        77,
         0,
-        280,
-        311
+        0,
+        239,
+        320
       ],
-      "headWidth": 169.0,
-      "scale": 0.43787,
+      "headWidth": 194.0,
+      "scale": 0.381443,
       "placement": [
-        71,
-        54
-      ]
+        67,
+        68
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/2/0": {
       "tile": [
@@ -1587,23 +1011,26 @@
         190
       ],
       "sourceCell": [
-        0,
-        627,
-        314,
-        940
+        4,
+        617,
+        294,
+        926
       ],
       "actorBounds": [
-        28,
-        7,
-        266,
-        306
+        0,
+        0,
+        290,
+        309
       ],
-      "headWidth": 188.0,
-      "scale": 0.393617,
+      "headWidth": 216.0,
+      "scale": 0.342593,
       "placement": [
-        69,
-        72
-      ]
+        64,
+        84
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/2/1": {
       "tile": [
@@ -1615,23 +1042,26 @@
         190
       ],
       "sourceCell": [
-        314,
-        627,
-        627,
-        940
+        320,
+        613,
+        613,
+        925
       ],
       "actorBounds": [
-        22,
         0,
-        286,
-        303
+        0,
+        293,
+        312
       ],
-      "headWidth": 198.0,
-      "scale": 0.373737,
+      "headWidth": 233.0,
+      "scale": 0.317597,
       "placement": [
-        70,
-        77
-      ]
+        67,
+        91
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/2/2": {
       "tile": [
@@ -1643,23 +1073,26 @@
         190
       ],
       "sourceCell": [
-        627,
-        627,
-        940,
-        940
+        636,
+        608,
+        936,
+        922
       ],
       "actorBounds": [
-        10,
         0,
-        294,
-        291
+        0,
+        300,
+        314
       ],
-      "headWidth": 216.0,
-      "scale": 0.342593,
+      "headWidth": 245.0,
+      "scale": 0.302041,
       "placement": [
-        65,
-        90
-      ]
+        67,
+        95
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/2/3": {
       "tile": [
@@ -1671,23 +1104,26 @@
         190
       ],
       "sourceCell": [
-        940,
-        627,
-        1254,
-        940
+        950,
+        618,
+        1241,
+        926
       ],
       "actorBounds": [
-        32,
-        7,
-        271,
-        306
+        0,
+        0,
+        291,
+        308
       ],
-      "headWidth": 191.0,
-      "scale": 0.387435,
+      "headWidth": 221.0,
+      "scale": 0.334842,
       "placement": [
-        70,
-        74
-      ]
+        65,
+        87
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/3/0": {
       "tile": [
@@ -1699,23 +1135,26 @@
         190
       ],
       "sourceCell": [
-        0,
-        940,
-        314,
-        1254
+        36,
+        922,
+        292,
+        1235
       ],
       "actorBounds": [
-        57,
         0,
-        275,
-        306
+        0,
+        256,
+        313
       ],
-      "headWidth": 168.0,
-      "scale": 0.440476,
+      "headWidth": 205.0,
+      "scale": 0.360976,
       "placement": [
-        63,
-        55
-      ]
+        69,
+        77
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/3/1": {
       "tile": [
@@ -1727,23 +1166,26 @@
         190
       ],
       "sourceCell": [
-        314,
-        940,
-        627,
-        1254
+        334,
+        922,
+        610,
+        1233
       ],
       "actorBounds": [
-        32,
         0,
-        298,
-        301
+        0,
+        276,
+        311
       ],
-      "headWidth": 178.0,
-      "scale": 0.41573,
+      "headWidth": 201.0,
+      "scale": 0.368159,
       "placement": [
-        56,
-        65
-      ]
+        62,
+        76
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/3/2": {
       "tile": [
@@ -1755,23 +1197,26 @@
         190
       ],
       "sourceCell": [
-        627,
-        940,
-        940,
-        1254
+        640,
+        924,
+        939,
+        1219
       ],
       "actorBounds": [
-        22,
         0,
-        309,
-        275
+        0,
+        299,
+        295
       ],
-      "headWidth": 202.0,
-      "scale": 0.366337,
+      "headWidth": 224.0,
+      "scale": 0.330357,
       "placement": [
-        59,
-        89
-      ]
+        62,
+        93
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
     "sprite/office/directions/3/3": {
       "tile": [
@@ -1783,25 +1228,28 @@
         190
       ],
       "sourceCell": [
-        940,
-        940,
-        1254,
-        1254
+        981,
+        922,
+        1231,
+        1236
       ],
       "actorBounds": [
-        59,
         0,
-        281,
-        306
+        0,
+        250,
+        314
       ],
-      "headWidth": 172.0,
-      "scale": 0.430233,
+      "headWidth": 199.0,
+      "scale": 0.371859,
       "placement": [
-        64,
-        58
-      ]
+        67,
+        73
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+      "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+      "sourceBoundsTouchingEdge": false
     },
-    "sprite/office/side/0/0": {
+    "sprite/lavender-yoga/directions/0/0": {
       "tile": [
         224,
         208
@@ -1811,25 +1259,28 @@
         190
       ],
       "sourceCell": [
+        18,
         0,
-        0,
-        362,
-        505
+        298,
+        297
       ],
       "actorBounds": [
-        14,
-        145,
-        342,
-        463
+        0,
+        0,
+        280,
+        297
       ],
-      "headWidth": 213.0,
-      "scale": 0.347418,
+      "headWidth": 214.0,
+      "scale": 0.345794,
       "placement": [
-        51,
-        80
-      ]
+        65,
+        87
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": true
     },
-    "sprite/office/side/0/1": {
+    "sprite/lavender-yoga/directions/0/1": {
       "tile": [
         224,
         208
@@ -1839,137 +1290,28 @@
         190
       ],
       "sourceCell": [
-        362,
+        332,
         0,
-        724,
-        505
-      ],
-      "actorBounds": [
-        4,
-        146,
-        362,
-        467
-      ],
-      "headWidth": 208.0,
-      "scale": 0.355769,
-      "placement": [
-        49,
-        76
-      ]
-    },
-    "sprite/office/side/0/2": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        724,
-        0,
-        1086,
-        505
+        614,
+        297
       ],
       "actorBounds": [
         0,
-        146,
-        352,
-        470
-      ],
-      "headWidth": 210.0,
-      "scale": 0.352381,
-      "placement": [
-        53,
-        76
-      ]
-    },
-    "sprite/office/side/0/3": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        1086,
         0,
-        1448,
-        505
-      ],
-      "actorBounds": [
-        4,
-        146,
-        350,
-        465
-      ],
-      "headWidth": 211.0,
-      "scale": 0.350711,
-      "placement": [
-        51,
-        78
-      ]
-    },
-    "sprite/office/side/1/0": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        0,
-        505,
-        362,
-        1086
-      ],
-      "actorBounds": [
-        34,
-        117,
-        339,
-        462
-      ],
-      "headWidth": 226.0,
-      "scale": 0.327434,
-      "placement": [
-        51,
-        77
-      ]
-    },
-    "sprite/office/side/1/1": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        362,
-        505,
-        724,
-        1086
-      ],
-      "actorBounds": [
-        29,
-        44,
-        328,
-        452
+        282,
+        297
       ],
       "headWidth": 225.0,
       "scale": 0.328889,
       "placement": [
-        51,
-        56
-      ]
+        66,
+        92
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": true
     },
-    "sprite/office/side/1/2": {
+    "sprite/lavender-yoga/directions/0/2": {
       "tile": [
         224,
         208
@@ -1979,51 +1321,925 @@
         190
       ],
       "sourceCell": [
-        724,
-        505,
-        1086,
-        1086
+        644,
+        1,
+        926,
+        298
       ],
       "actorBounds": [
-        39,
-        18,
-        310,
-        406
-      ],
-      "headWidth": 240.0,
-      "scale": 0.308333,
-      "placement": [
-        50,
-        70
-      ]
-    },
-    "sprite/office/side/1/3": {
-      "tile": [
-        224,
-        208
-      ],
-      "pivot": [
-        112,
-        190
-      ],
-      "sourceCell": [
-        1086,
-        505,
-        1448,
-        1086
-      ],
-      "actorBounds": [
-        38,
-        112,
-        341,
-        461
+        0,
+        0,
+        282,
+        297
       ],
       "headWidth": 224.0,
       "scale": 0.330357,
       "placement": [
-        51,
-        75
-      ]
+        66,
+        92
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/lavender-yoga/directions/0/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        955,
+        0,
+        1241,
+        297
+      ],
+      "actorBounds": [
+        0,
+        0,
+        286,
+        297
+      ],
+      "headWidth": 223.0,
+      "scale": 0.331839,
+      "placement": [
+        65,
+        91
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": true
+    },
+    "sprite/lavender-yoga/directions/1/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        52,
+        297,
+        279,
+        613
+      ],
+      "actorBounds": [
+        0,
+        0,
+        226,
+        316
+      ],
+      "headWidth": 191.0,
+      "scale": 0.387435,
+      "placement": [
+        68,
+        68
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/lavender-yoga/directions/1/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        371,
+        297,
+        607,
+        614
+      ],
+      "actorBounds": [
+        0,
+        0,
+        236,
+        317
+      ],
+      "headWidth": 191.0,
+      "scale": 0.387435,
+      "placement": [
+        69,
+        67
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/lavender-yoga/directions/1/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        681,
+        297,
+        921,
+        611
+      ],
+      "actorBounds": [
+        0,
+        0,
+        240,
+        314
+      ],
+      "headWidth": 193.0,
+      "scale": 0.38342,
+      "placement": [
+        68,
+        70
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/lavender-yoga/directions/1/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        995,
+        297,
+        1232,
+        612
+      ],
+      "actorBounds": [
+        0,
+        0,
+        237,
+        315
+      ],
+      "headWidth": 192.0,
+      "scale": 0.385417,
+      "placement": [
+        69,
+        69
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/lavender-yoga/directions/2/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        11,
+        626,
+        298,
+        933
+      ],
+      "actorBounds": [
+        0,
+        0,
+        287,
+        307
+      ],
+      "headWidth": 217.0,
+      "scale": 0.341014,
+      "placement": [
+        65,
+        85
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/lavender-yoga/directions/2/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        322,
+        607,
+        620,
+        930
+      ],
+      "actorBounds": [
+        0,
+        0,
+        298,
+        323
+      ],
+      "headWidth": 240.0,
+      "scale": 0.308333,
+      "placement": [
+        67,
+        90
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/lavender-yoga/directions/2/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        638,
+        601,
+        940,
+        917
+      ],
+      "actorBounds": [
+        0,
+        0,
+        302,
+        316
+      ],
+      "headWidth": 241.0,
+      "scale": 0.307054,
+      "placement": [
+        67,
+        93
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/lavender-yoga/directions/2/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        954,
+        628,
+        1239,
+        933
+      ],
+      "actorBounds": [
+        0,
+        0,
+        285,
+        305
+      ],
+      "headWidth": 217.0,
+      "scale": 0.341014,
+      "placement": [
+        65,
+        86
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/lavender-yoga/directions/3/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        50,
+        927,
+        290,
+        1231
+      ],
+      "actorBounds": [
+        0,
+        0,
+        240,
+        304
+      ],
+      "headWidth": 193.0,
+      "scale": 0.38342,
+      "placement": [
+        69,
+        73
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/lavender-yoga/directions/3/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        338,
+        923,
+        613,
+        1235
+      ],
+      "actorBounds": [
+        0,
+        0,
+        275,
+        312
+      ],
+      "headWidth": 202.0,
+      "scale": 0.366337,
+      "placement": [
+        63,
+        76
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/lavender-yoga/directions/3/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        641,
+        922,
+        940,
+        1215
+      ],
+      "actorBounds": [
+        0,
+        0,
+        299,
+        293
+      ],
+      "headWidth": 219.0,
+      "scale": 0.3379,
+      "placement": [
+        61,
+        91
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/lavender-yoga/directions/3/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        995,
+        927,
+        1229,
+        1231
+      ],
+      "actorBounds": [
+        0,
+        0,
+        234,
+        304
+      ],
+      "headWidth": 188.0,
+      "scale": 0.393617,
+      "placement": [
+        69,
+        70
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+      "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/0/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        18,
+        4,
+        300,
+        296
+      ],
+      "actorBounds": [
+        0,
+        0,
+        282,
+        292
+      ],
+      "headWidth": 214.0,
+      "scale": 0.345794,
+      "placement": [
+        65,
+        89
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/0/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        330,
+        5,
+        614,
+        296
+      ],
+      "actorBounds": [
+        0,
+        0,
+        284,
+        291
+      ],
+      "headWidth": 215.0,
+      "scale": 0.344186,
+      "placement": [
+        66,
+        90
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/0/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        653,
+        8,
+        926,
+        295
+      ],
+      "actorBounds": [
+        0,
+        0,
+        273,
+        287
+      ],
+      "headWidth": 210.0,
+      "scale": 0.352381,
+      "placement": [
+        65,
+        89
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/0/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        967,
+        8,
+        1241,
+        295
+      ],
+      "actorBounds": [
+        1,
+        0,
+        274,
+        287
+      ],
+      "headWidth": 210.0,
+      "scale": 0.352381,
+      "placement": [
+        66,
+        89
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/1/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        54,
+        300,
+        280,
+        615
+      ],
+      "actorBounds": [
+        0,
+        0,
+        226,
+        315
+      ],
+      "headWidth": 184.0,
+      "scale": 0.402174,
+      "placement": [
+        68,
+        63
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/1/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        371,
+        301,
+        594,
+        614
+      ],
+      "actorBounds": [
+        0,
+        0,
+        223,
+        313
+      ],
+      "headWidth": 188.0,
+      "scale": 0.393617,
+      "placement": [
+        69,
+        67
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/1/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        684,
+        300,
+        905,
+        614
+      ],
+      "actorBounds": [
+        0,
+        0,
+        221,
+        314
+      ],
+      "headWidth": 188.0,
+      "scale": 0.393617,
+      "placement": [
+        69,
+        66
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/1/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        1001,
+        299,
+        1220,
+        614
+      ],
+      "actorBounds": [
+        0,
+        0,
+        218,
+        315
+      ],
+      "headWidth": 185.0,
+      "scale": 0.4,
+      "placement": [
+        69,
+        64
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/2/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        8,
+        630,
+        301,
+        929
+      ],
+      "actorBounds": [
+        0,
+        0,
+        293,
+        299
+      ],
+      "headWidth": 225.0,
+      "scale": 0.328889,
+      "placement": [
+        66,
+        92
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/2/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        328,
+        612,
+        621,
+        922
+      ],
+      "actorBounds": [
+        0,
+        0,
+        292,
+        310
+      ],
+      "headWidth": 227.0,
+      "scale": 0.325991,
+      "placement": [
+        67,
+        89
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/2/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        640,
+        607,
+        939,
+        916
+      ],
+      "actorBounds": [
+        0,
+        0,
+        299,
+        309
+      ],
+      "headWidth": 235.0,
+      "scale": 0.314894,
+      "placement": [
+        66,
+        93
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/2/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        964,
+        631,
+        1252,
+        929
+      ],
+      "actorBounds": [
+        2,
+        0,
+        288,
+        298
+      ],
+      "headWidth": 213.0,
+      "scale": 0.347418,
+      "placement": [
+        65,
+        86
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/3/0": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        43,
+        924,
+        273,
+        1231
+      ],
+      "actorBounds": [
+        0,
+        0,
+        230,
+        307
+      ],
+      "headWidth": 193.0,
+      "scale": 0.38342,
+      "placement": [
+        68,
+        72
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/3/1": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        336,
+        924,
+        616,
+        1235
+      ],
+      "actorBounds": [
+        1,
+        0,
+        280,
+        311
+      ],
+      "headWidth": 203.0,
+      "scale": 0.364532,
+      "placement": [
+        63,
+        77
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/3/2": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        644,
+        922,
+        943,
+        1219
+      ],
+      "actorBounds": [
+        0,
+        0,
+        299,
+        297
+      ],
+      "headWidth": 216.0,
+      "scale": 0.342593,
+      "placement": [
+        63,
+        88
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
+    },
+    "sprite/jeans/directions/3/3": {
+      "tile": [
+        224,
+        208
+      ],
+      "pivot": [
+        112,
+        190
+      ],
+      "sourceCell": [
+        993,
+        925,
+        1224,
+        1232
+      ],
+      "actorBounds": [
+        0,
+        0,
+        231,
+        307
+      ],
+      "headWidth": 192.0,
+      "scale": 0.385417,
+      "placement": [
+        69,
+        72
+      ],
+      "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+      "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+      "sourceBoundsTouchingEdge": false
     }
   }
 }
