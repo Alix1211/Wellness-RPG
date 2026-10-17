@@ -12,7 +12,7 @@ class FetchGame {
   const [a,b]=host.querySelectorAll('.fetch-controls button');this.buttons=[a,b];
   const bind=(button,fn)=>{button.onpointerdown=e=>{if(e.pointerType==='mouse'&&e.button!==0)return;e.preventDefault();button.focus({preventScroll:true});fn();};button.onclick=e=>{if(e.detail===0)fn();};};bind(a,()=>this.tap());bind(b,()=>this.jump());
   this.key=e=>{if(e.repeat||!['ArrowRight',' ','ArrowUp'].includes(e.key))return;e.preventDefault();e.key==='ArrowRight'?this.tap():this.jump();};host.tabIndex=0;host.addEventListener('keydown',this.key);
-  this.stopped=false;this.last=performance.now();const loop=now=>{if(this.stopped)return;const dt=Math.min(.035,(now-this.last)/1000);this.last=now;if(!document.hidden)this.step(dt);this.raf=requestAnimationFrame(loop);};this.raf=requestAnimationFrame(loop);this.draw();
+  this.stopped=false;this.last=performance.now();const loop=now=>{if(this.stopped)return;const dt=Math.min(.035,(now-this.last)/1000);this.last=now;if(!document.hidden&&!window.MEDIA_PAUSED)this.step(dt);this.raf=requestAnimationFrame(loop);};this.raf=requestAnimationFrame(loop);this.draw();
  }
  tap(){const s=this.s;if(s.phase!=='run')return false;s.speed=Math.min(900,s.speed+95);this.onEvent('tap');return true;}
  jump(){const s=this.s;if(s.phase!=='run'||s.y>0||s.vy>0||s.land>0||s.stagger>.15)return false;s.vy=605;s.jumpAge=0;s.land=0;this.onEvent('jump');return true;}
@@ -41,7 +41,8 @@ class FetchGame {
  draw(){
   const c=this.ctx,s=this.s,w=this.w,h=this.h;c.clearRect(0,0,w,h);
   // Foreground and far wall share distance, with a 20% parallax wall.
-  if(this.bg?.naturalWidth){const bw=h*this.bg.naturalWidth/this.bg.naturalHeight,offset=(s.distance*.2)%bw;for(let i=-1;i<=Math.ceil(w/bw)+1;i++)c.drawImage(this.bg,i*bw-offset,0,bw,h);}
+  if(window.MEDIA_BACKGROUND){}
+  else if(this.bg?.naturalWidth){const bw=h*this.bg.naturalWidth/this.bg.naturalHeight,offset=(s.distance*.2)%bw;for(let i=-1;i<=Math.ceil(w/bw)+1;i++)c.drawImage(this.bg,i*bw-offset,0,bw,h);}
   else{c.fillStyle='#cbe7dd';c.fillRect(0,0,w,h);}
   c.fillStyle='#fff4d51f';c.fillRect(0,0,w,h);
   const fh=h-this.floor+20,fw=fh*3,offset=s.distance%(fw*2);

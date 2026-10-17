@@ -132,3 +132,12 @@ User requested corridor picture frames before populating the map, with a photo-c
 - `source-frame-rects.json`에 실제 소스 경계, `sprite-alignment.json` version3에 원본 경로/SHA256/추출·배치 정보를 기록. 준비 JSON은 새72프레임으로 교체. source originals remain unchanged.
 - 확인: 72개 공통 크기·머리 기준·바닥 pivot, 모델5방향 이동 점프·제자리 점프·착지. 새 그림을 로드한 실제 Chromium의 두 손가락 스틱+점프/독립 해제, 한 손가락 이동 직후 점프, 3복장/세로 렌더, 전체55장면·세 게임·집 양방향 이동. v6의 이미지/집 저장·게임 기록·음원 테스트도 재확인. Android 실기기 확인은 남아 있다.
 - 최종 전달본: `index.html` = `builds/wellness-life-home-hero-v7.html`. 이전 v6 전달본도 builds에 보존한다.
+
+
+## v8 session media editor
+- All 9 minigames have full viewport background and portrait edit buttons. Scope: room/game session, or game default. IndexedDB saves editable source plus translation, zoom and rotation; explicit save/cancel/reset.
+- Whole scene backgrounds remain behind transparent game canvases. Fetch scrolling scenery is skipped when a custom full background exists; foreground collision art remains unchanged.
+- Legacy mgClock/fetch simulation and new LifeMini pause during editing. Resize rerenders saved transform at viewport aspect ratio.
+- Clothed chestnut/green-eye portraits derived from original hero sheets; movement sprites unchanged.
+- QA: test_media_v8.cjs passed all 9 editors, transform persistence/reopen, pause and portrait save; zero page errors. test_life_models.cjs passed.
+- This update does not implement other pending water pull-control/cylinder point-layout/NPC/dialogue requests.

@@ -1,0 +1,41 @@
+[
+  {
+    "outfit": "jeans",
+    "file": "assets/characters/portraits/defaults-v8/jeans.webp",
+    "source": "assets/characters/sprites/four-legged/chestnut-green/1000081395.png",
+    "sourceSha256": "717a64a2d9edc4a4f33ec8f09a1a838e65d32ad3f4c4a5de34f4b98ede6c5db2",
+    "sourceActorBounds": [
+      18,
+      4,
+      300,
+      296
+    ],
+    "crop": "top79% of cleaned front idle actor; no source redrawing"
+  },
+  {
+    "outfit": "office",
+    "file": "assets/characters/portraits/defaults-v8/office.webp",
+    "source": "assets/characters/sprites/four-legged/chestnut-green/1000081393.png",
+    "sourceSha256": "767715a3494b38afbb16a17e565951a8ac4b36742ae30ba8dc348e5c55fa988c",
+    "sourceActorBounds": [
+      6,
+      3,
+      290,
+      298
+    ],
+    "crop": "top79% of cleaned front idle actor; no source redrawing"
+  },
+  {
+    "outfit": "lavender-yoga",
+    "file": "assets/characters/portraits/defaults-v8/lavender-yoga.webp",
+    "source": "assets/characters/sprites/four-legged/chestnut-green/1000081394.png",
+    "sourceSha256": "b310e85d6cc149561ecc3d94b142c60089b4bcda0b3ca45949ad3fa1868fe171",
+    "sourceActorBounds": [
+      18,
+      0,
+      298,
+      297
+    ],
+    "crop": "top79% of cleaned front idle actor; no source redrawing"
+  }
+]

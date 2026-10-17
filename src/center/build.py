@@ -19,6 +19,8 @@ bundle=script('const ART='+json.dumps(prepared_data,ensure_ascii=False)+';const 
 bundle+=script('const NPC_ART='+(ROOT/'src/center/npc-assets.json').read_text()+';const NPC_MANIFEST='+(ROOT/'src/center/npc-manifest.json').read_text()+';')
 suite=runpy.run_path(str(ROOT/'src/minigames/life-suite/build.py'))['document']({'template':True})
 bundle+=script('const SUITE_DOCUMENT='+json.dumps(suite,ensure_ascii=False)+';')
+bundle+=script('const PORTRAITS='+json.dumps({p.stem:data(p) for p in (ROOT/'assets/characters/portraits/defaults-v8').glob('*.webp')})+';')
+bundle+=script((ROOT/'src/center/media.js').read_text())
 bundle+=script((ROOT/'src/center/model.js').read_text())+script((ROOT/'src/center/life.js').read_text())+script((ROOT/'src/center/gallery.js').read_text())+script((ROOT/'src/center/app.js').read_text())
 license=(legacy/'vendor/MATTER-LICENSE.txt').read_text()
 out=(ROOT/'src/center/shell.html').read_text().replace('<!--BUNDLES-->',bundle)
