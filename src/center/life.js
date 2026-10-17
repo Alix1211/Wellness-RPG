@@ -6,21 +6,24 @@ function rand(n){let x=(n*1664525+1013904223)>>>0;return ()=>{x=(x*1664525+10139
 function key(s){return s.type==='corridor'?`c${s.floor}`:`r${s.floor}-${s.room}`;}
 function create(scene){const M=root.CenterModel,f=M.FLOORS[scene.floor],b=M.bounds(scene),corridor=scene.type==='corridor',seed=scene.floor*31+(corridor?0:scene.room+1)*71,rng=rand(seed+19),list=[];
  function add(a,x,y,id,staff=false){x=M.clamp(x,b.left+45,b.right-45);y=M.clamp(y,b.top+12,b.bottom-28);const r=rand(seed*100+id*37+5);list.push({id:`${key(scene)}-${id}`,actor:a,x,y,homeX:x,homeY:y,face:r()>.5?1:-1,phase:r()*6.28,timer:1+r()*4,mode:'idle',time:0,walk:0,target:null,rng:r,staff,bounds:{...b,left:Math.max(b.left,x-(corridor?240:140)),right:Math.min(b.right,x+(corridor?240:140)),top:Math.max(b.top+22,y-26),bottom:Math.min(b.bottom-32,y+26)}});}
- const members=[...pool('member'),...pool('casual-member')];
+ const company=f.place==='company';
+ const moving=pool('member').filter(a=>company?['member-4','member-6'].includes(a.id):!['member-4','member-6'].includes(a.id));
+ const women=[...moving,...pool(company?'office-member':'yoga-member')],men=pool(company?'office':'trainer');
+ const members=women;
  if(corridor){
-  add(pick(pool('casual'),scene.floor+4),365,505,0);
+  add(pick(men,scene.floor+4),365,505,0);
   for(let i=0;i<f.rooms.length;i++){
    add(pick(members,scene.floor*3+i),555+i*570,570+(i%2)*38,i*3+1);
-   add(pick(pool(i%2?'office-member':'yoga-member'),scene.floor+i),830+i*570,520,i*3+2);
-   if(i%2===0)add(pick(pool('trainer'),scene.floor*2+i),960+i*570,493,i*3+3);
+   add(pick(pool(company?'office-member':'yoga-member'),scene.floor+i),830+i*570,520,i*3+2);
+   if(i%2===0)add(pick(men,scene.floor*2+i),960+i*570,493,i*3+3);
   }
  }else{
-  const r=f.rooms[scene.room],staffRole=r.service==='reception'?'office':r.service==='recovery'?'casual':'trainer';
+  const r=f.rooms[scene.room],staffRole=company?'office':'trainer';
   add(pick(pool(staffRole),scene.floor*3+scene.room),820,Math.max(b.top+12,555),0,true);
   const count=r.kind==='toilet'?2:r.kind==='group'?5:3;
   for(let i=0;i<count;i++){
    const x=[300,1040,475,950,180][i],y=Math.min(b.bottom-38,b.top+35+(i%2)*36);
-   const a=i===1?pick(pool(r.service?'office-member':'yoga-member'),seed):pick(members,seed+i);
+   const a=i===1?pick(pool(company?'office-member':'yoga-member'),seed):pick(members,seed+i);
    add(a,x,y,i+1);
   }
  }

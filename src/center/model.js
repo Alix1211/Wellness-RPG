@@ -13,11 +13,24 @@
  };
  const specs=[['로비 · 편의시설',['lobby','shop','recovery','recovery','toilet']],['기초 훈련층',['basic','basic','basic','toilet']],['기구 훈련층',['gear','gear','gear','toilet']],['단체 훈련층',['group','group','group','toilet']],['자세 점검층',['posture','posture','posture','toilet']],['집중 훈련층',['punish','punish','punish','recovery','toilet']]];
  const FLOORS=specs.map(([name,kinds],fi)=>({number:fi+1,name,width:420+kinds.length*570,rooms:kinds.map((kind,i)=>({id:`f${fi+1}-${kind}-${i+1}`,kind,number:`${fi+1}${String(i+1).padStart(2,'0')}`,x:570+i*570,...TYPES[kind]}))}));
+ const COMPANY_TYPES={
+  companyLobby:{name:'회사 로비',bg:'company/lobby',color:'#8daec5',service:'companyReception',games:[]},
+  sharedOffice:{name:'공용 사무실',bg:'company/shared',color:'#89acc7',service:'office',games:[]},
+  privateOffice:{name:'개인 사무실',bg:'company/private',color:'#9faac1',service:'office',games:[]},
+  meeting:{name:'회의실',bg:'company/meeting',color:'#96b9c6',service:'meeting',games:[]},
+  lounge:{name:'휴게실',bg:'company/lounge',color:'#9bbda9',service:'recovery',games:[]},
+  pantry:{name:'탕비실',bg:'company/pantry',color:'#bdb494',service:'pantry',games:[]},
+  companyToilet:{name:'화장실',bg:'company/toilet',color:'#9ab9c5',service:'companyToilet',games:[]}
+ };
+ Object.assign(TYPES,COMPANY_TYPES);
+ FLOORS.forEach(f=>f.place='center');
+ const companySpecs=[['로비 · 지원시설',['companyLobby','lounge','pantry','companyToilet']],['공용 업무층',['sharedOffice','sharedOffice','meeting','pantry','companyToilet']],['개인 업무층',['privateOffice','privateOffice','meeting','lounge','companyToilet']]];
+ companySpecs.forEach(([name,kinds],fi)=>FLOORS.push({place:'company',number:fi+1,name,width:420+kinds.length*570,rooms:kinds.map((kind,i)=>({id:`company-f${fi+1}-${kind}-${i+1}`,kind,number:`${fi+1}${String(i+1).padStart(2,'0')}`,x:570+i*570,...TYPES[kind]}))}));
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
  function bounds(scene){
   if(scene.type==='corridor')return {left:60,right:FLOORS[scene.floor].width-60,top:443,bottom:672};
   const k=FLOORS[scene.floor].rooms[scene.room].kind;
-  return {left:75,right:1205,top:k==='punish'?590:k==='recovery'?555:k==='lobby'?570:k==='shop'?570:k==='toilet'?555:500,bottom:674};
+  return {left:75,right:1205,top:FLOORS[scene.floor].place==='company'?515:k==='punish'?590:k==='recovery'?555:k==='lobby'?570:k==='shop'?570:k==='toilet'?555:500,bottom:674};
  }
  function entrance(floor,index){return {x:FLOORS[floor].rooms[index].x,y:455};}
  const JUMP_DURATION=.7;

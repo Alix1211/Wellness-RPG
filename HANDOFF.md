@@ -89,3 +89,13 @@ User requested corridor picture frames before populating the map, with a photo-c
 - NPCs update only in the current scene, pause in dialogs/minigames, and are depth-sorted with the player. No stat/economy/story changes. Existing staff interaction point, entrances, controls and minigame host remain connected.
 - Sources: src/center/life.js, gallery.js, prepare_npcs.py, npc-assets.json, npc-manifest.json; tests: tools/test_center_life.cjs. Offline artifact: index.html and builds/wellness-center-alive-v3.html.
 - Chrome validation: all 32 scenes' NPC bounds, all 14 source sheets, 148 loaded frames, travel/gestures/poses/hops, direct frame hit, photo upload/reload/reset persistence, gallery toolbar in portrait and rooms, no pageerror. Existing 72-frame protagonist and real moving multi-touch jump regression passed. Android device testing remains pending.
+
+
+## 2026-10-17 회사 지도 · 복장 분리 v4
+
+- 상단 ⇄ 장소 이동: 센터 6개 층과 회사 3개 층을 즉시 오간다. 회사 진입 시 주인공은 office 복장, 센터 진입 시 lavender-yoga로 전환한다. 이후 복장 버튼은 계속 사용 가능하다. 엘리베이터는 현재 건물 층만 표시한다.
+- 회사 14개 공간: 1F 로비/휴게실/탕비실/화장실, 2F 공용 사무실 2개/회의실/탕비실/화장실, 3F 개인 사무실 2개/회의실/휴게실/화장실. 인접 방/복도 출입, 액자 사진 변경, 기존 저장/조작을 유지한다.
+- 회사 배경 7종은 Canvas로 그린 밝은 푸른 사무실이다. 책상/모니터/바퀴 의자/회의 가구/소파/식물/탕비 시설을 포함한다. 새 사용자 그림을 생성하거나 원본 시트를 수정하지 않았다. 회사 업무 미니게임, 경제/급여/취업 조건은 아직 연결하지 않았다.
+- 센터 NPC: trainer 남성, yoga-member 여성, member-0/1/2/3/5 요가복 이동 인물. 회사 NPC: office 남성, office-member 여성, member-4/6 오피스룩 이동 인물. casual, casual-member는 어느 건물에도 배치하지 않는다. 주인공 시트는 기존 것을 유지한다.
+- 검증: 실제 headless Chromium에서 9개 층/49개 장면/총 271개 NPC의 복장 분리와 프레임 로드, 모든 방 진입/복귀/렌더, 층별 화장실, 장소 버튼 양방향 이동, 회사 엘리베이터 3개 층만 노출, 412×915 세로 툴바 위치 확인. pageerror 0. JS 문법 검사 통과. Android 실기기 확인은 남아 있다.
+- 오프라인 전달본: builds/wellness-center-company-v4.html (루트 index.html과 동일).
