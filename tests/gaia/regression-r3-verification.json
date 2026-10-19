@@ -1,0 +1,38 @@
+{
+  "checks": [
+    "room dialogue is an exact original authored line",
+    "three before-start cancels and pending room load cancellation leave jump active",
+    "pending game launch cancellation cannot resurrect iframe or block touch",
+    "quest pickup/cancel restricted to relevant rooms",
+    "two daily rests only, no repeated healing or time farming",
+    "actual water canvas touch triggers decoded reaction playback",
+    "held water firing repeats real audio events",
+    "fetch uses supplied run/jump art at opposite edges and accepts touch",
+    "portrait cylinder preserves foreground ratio with blurred same-image fill",
+    "rest limit persists after reload"
+  ],
+  "errors": [],
+  "audio": {
+    "events": {
+      "reaction_sigh": 1
+    },
+    "state": "running",
+    "errors": []
+  },
+  "controls": [
+    {
+      "action": "run",
+      "x": 702,
+      "right": 788,
+      "width": 86,
+      "clickable": true
+    },
+    {
+      "action": "jump",
+      "x": 12,
+      "right": 98,
+      "width": 86,
+      "clickable": true
+    }
+  ]
+}
