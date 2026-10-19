@@ -109,6 +109,17 @@
 - **GitHub scope:** Only append to `HANDOFF.md`. Original HTML and former FIX2 stay available, no GitHub game code touched.
 - **Next step:** Android landscape visual test and adjust spacing if requested; use the Library WIGGLE-SQUARE HTML as newest game-file baseline and preserve all sound/image/road changes.
 
+### 2026-10-19 13:55 KST | END / HANDOFF | ChatGPT (Behind sprite replacement)
+
+- **Exact user request:** Stop image generation. Cut and use the exact user-uploaded `뒤를조심(1).png` (1992×1168 transparent RGBA) in **뒤를 조심!!** game: top row 6 frames, second row 5 return frames (first duplicate excluded), lower three directional comedic knockback images. Animate them in order, freeze the leg-spread pose briefly and **ONLY allow hits then**, while the actor moves left-right along a large fan-shaped curved slide. Do not add new images or change other games.
+- **Working baseline:** `/GAIA-RPG-test-20261019-AUDIO-IMAGE-WIGGLE-SQUARE.html` in Library, **NOT** the older GitHub game `index.html`. Existing sound, new image overrides, square landscape Wiggle Find and road movement retained.
+- **Actual new executable:** `/GAIA-RPG-test-20261019-BEHIND-SPRITE.html` (52,284,190 bytes; SHA256 `c95d42ebeb6da0da8ac7c91b98ebc973a66b18d50bce42901ea7a8a0f9a6d7c0`, Library ID `libfile_f8a6fbbfb93c81919dd04457cdf3739a`). **This is the newest game-file baseline.**
+- **Download package:** `/GAIA-RPG-20261019-BEHIND-SPRITE.zip` (40,555,201 bytes; SHA256 `7a885ef90128c506a9de1ce24ff48a7fdc21c2eb57d1324f68d5200ebd3b0c88`, Library ID `libfile_604b523604908191b90840ddbbc6baa2`). Contains HTML, README, changelog and source-sprite ZIP. Frame archive `/GAIA-BEHIND-SPRITE-ASSETS-20261019.zip` (Library ID `libfile_f33f6a7b57a48191ade68583ce41b357`) includes exact cut 11 movement + 3 knockback PNG frames and original user PNG. Changelog `/GAIA-BEHIND-SPRITE-CHANGELOG-20261019.md` (Library ID `libfile_0535c3b983788191b7f91b4d0e4d9f92`).
+- **Only game kind 4 changed:** extended `MINI_SOURCE.main` image loading / preview; adapted `MINI_SOURCE.behind` target timing, rendering, motion/collision gate and directional fly animation. Movement uses 16%-84% screen width and a sine-shaped fan arc with rise up to 13% of height, alternating direction. Holding the sixth frame lasts 0.52 s; `target.open` gates collision. Throw inputs, trajectories, scoring/timer and other game code not intentionally changed.
+- **Verification:** Node syntax check on extracted `main` and `behind` passed, image archive ZIP CRC passed. Headless Chromium test using the same game build loaded all 14 cut assets (11 + 3), opened Behind kind=4 and rendered its active game canvas. Parent iframe harness used `about:blank` and emitted IndexedDB permission warning and a separate `null.textContent` pageerror; full game progression/real Android hit timing still require user testing. After this test, the variant flight path CSS received a small syntax-checked change (left/up/right), not independently replay-tested in browser. Avoid claiming all end-to-end tests passed.
+- **Status:** All generated executable/ZIP/change log saved in Library; **GitHub game source not changed**. This `HANDOFF.md` record only is committed to GitHub. Preserve original game HTML and sprite sheet.
+- **Next session:** Read HANDOFF first, then use `GAIA-RPG-test-20261019-BEHIND-SPRITE.html` as the latest test HTML and validate target timing on tablet; never replace it with previous game builds.
+
 ## Project scope
 
 - Repository: `Alix1211/Wellness-RPG`, separate from the original Wellness repository.
