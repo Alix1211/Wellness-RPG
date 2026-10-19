@@ -189,6 +189,14 @@
 - **Validation limits:** This is a **targeted browser fixture**, NOT full 54MB game integrated execution or Android device verification. The user must test player/NPC animations on their tablet; if missing, capture JS page errors instead of claiming resolved.
 - **Scope/status:** Runtime fix stored in Library; no GitHub game source changed. Only this HANDOFF entry is committed. Preserve originals and use `ROOMS-RESTORED-SIGNS.html` as latest *test* baseline after tablet confirmation.
 
+## GAIA world and quest reference (2026-10-19)
+
+- **AI reading protocol:** Before story/event/stat work, read [docs/gaia/README.md](docs/gaia/README.md) and then *only* the relevant [WORLD_RULES.md](docs/gaia/WORLD_RULES.md), [GAMEPLAY_LOOP.md](docs/gaia/GAMEPLAY_LOOP.md), or [EVENT_QUEST_CATALOG.md](docs/gaia/EVENT_QUEST_CATALOG.md). This saves context tokens; never load entire world/Gemini transcripts on every session.
+- **User decisions:** Residents' shamelessly ordinary daily life is the humor; the heroine is not special; avoid artificial moral conflict/forced jokes. Preserve strong everyday vocabulary and agreed female→male honorific / male→female informal language patterns. The user-proposed Amazon '7호' quest is a key tone reference.
+- **Confirmed RPG direction:** repeat fast-decay training/work/home loop; prefer temporary home/company access locks over automatic firing/divorce; night class **2x stat awards + 2x game difficulty**; nighttime road exists per user, spouse night dates and high-difficulty male NPC events are design ideas. HP exhaustion after 1–2 missions and unlimited recovery are known problems. Event numeric thresholds and rewards in the catalog are NOT approved implementation values.
+- **Source status:** original 17-page DOCX and original Gemini chat log remain in user-provided Library/conversation files. Full originals could NOT be committed in this session; do not falsely claim they live in this GitHub repo. Docs here are an index/record, not faithful replacements for full source prose. Ask only when exact original wording is needed and no source is accessible.
+- **Scope:** documentation-only additions; no game source, save data, gameplay image, or runtime modified.
+
 ## Project scope
 
 - Repository: `Alix1211/Wellness-RPG`, separate from the original Wellness repository.
