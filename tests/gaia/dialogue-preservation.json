@@ -1,0 +1,14 @@
+{
+  "STORY": {
+    "equal": true,
+    "sha256": "4fd480cf4bb2d5e9920106456bb715064da99f2e1f0432642dd556ead59384f5"
+  },
+  "ORIGINAL_DIALOGUE": {
+    "equal": true,
+    "sha256": "1f584a3571785497edeafe830cff0384f58cd61439525b364a0e62a901705e9b"
+  },
+  "MINI_SOURCE": {
+    "equal": true,
+    "sha256": "a4dcfea20dc95f63f982e55d031e965e0f41c80b1e6113c592043e3e44bbcfb9"
+  }
+}

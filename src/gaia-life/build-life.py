@@ -128,6 +128,7 @@ parts[13]=js_value(s,'CITY_ENCOUNTER_DOCUMENT',cylinder_media)
 parts[7]+='\n'+(ROOT/'life-model.js').read_text()
 parts[15]=parts[15].replace("function injectGame(doc,config)","function nightBridge(config){return '<script>('+window.GaiaNightBridge.toString()+')('+JSON.stringify(config.difficultyMultiplier||1)+');</'+'script>';}\nfunction injectGame(doc,config)")
 exec((ROOT/'repair-build.py').read_text())
+exec((ROOT/'final-fixes.py').read_text())
 out=original
 for m,p in reversed(list(zip(scripts,parts))):out=out[:m.start(2)]+p+out[m.end(2):]
 addon=(ROOT/'life-addon.js').read_text().replace('/*BGM_SOURCE*/',json.dumps('data:audio/ogg;base64,'+base64.b64encode((ROOT/'assets/music/loopcity.ogg').read_bytes()).decode()))

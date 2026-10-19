@@ -1,3 +1,9 @@
+# 01:52 이후 최신 오류 수정
+
+먼저 [REVIEW-20261020.md](docs/gaia/REVIEW-20261020.md)를 읽으세요. 원본 대사 복원 및 취소/입력/음향/버튼/휴식 수정. 실행은 `python3 tools/gaia/restore.py`. 최신 SHA256 a79f04b4707ccaecdb23cf34593d88a15d7534a72e4d3927a530c9e1087142b0.
+
+---
+
 # 최신 인수인계 · 2026-10-20
 
 현재 실행 기준: 복원한 `GAIA-LIFE-20261020.html`. 먼저 [다음 AI 점검 문서](docs/gaia/REVIEW-20261020.md)와 [현재 상태](PROJECT_STATUS.md)를 읽으세요. 전체 완성/실기기 검증 완료 상태가 아닙니다.
