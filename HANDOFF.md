@@ -147,6 +147,17 @@
 - Source: newest Library/working HTML `GAIA-RPG-test-20261019-BEHIND-SLIDE-FIX.html`, not GitHub's older `index.html`.
 - Status: inspecting shared `#roomScene #dialoguePanel` / `.bubble-copy` CSS. No code changed yet.
 
+### 2026-10-19 14:45 KST | END / HANDOFF | ChatGPT (dialogue box alignment)
+
+- **User request:** In all in-game story conversations, dialogue text appeared visibly too low inside its bubble. Raise the text and increase dialogue bubble size by ~5% globally.
+- **Baseline:** Library `GAIA-RPG-test-20261019-BEHIND-SLIDE-FIX.html` (52,284,456 bytes, SHA256 `5811252aa0bb9dad01d06745bd3d33c28561d2627de1524e81a81db5398d1f46`). Do not overwrite this with the older GitHub `index.html`.
+- **Change only to shared room/story bubble CSS, affecting all NPC, male (mint), and female (pink) story dialogue:** `#roomScene #dialoguePanel` landscape width 43→45.15% and height 25→26.25%; portrait width 55→57.75% and height 25→26.25% (including male-specific portrait selector). Interior `.bubble-copy` top reduced 35→25% (male 34→24%) with matching bottom spacing 29% (male 30%) to lift the title and text while allowing room for multiline dialogue. Speaker names, spoken content and script remain unchanged.
+- **Latest Library game-file baseline:** `/GAIA-RPG-test-20261019-DIALOGUE-ALIGN.html` (52,284,869 bytes, SHA256 `a4c84600f73f53d4d056e7ef4f7a344cba9d5daa99a0b1da4a52fb8cb49e7ead`, Library ID `libfile_3b9db1ae4ea881918b7f9a2b4a20a1eb`).
+- **Package:** `/GAIA-RPG-20261019-DIALOGUE-ALIGN.zip` (38,378,792 bytes, SHA256 `038d1096ee4043579006212b833f48d11b5f6f102ca2aabc270102400ee9dfa4`, Library ID `libfile_a9e8b239cea481918b6df1c4c4822f11`). Changelog `/GAIA-DIALOGUE-ALIGN-CHANGELOG.md`, Library ID `libfile_6b5b5f784af88191a90585162230452b`.
+- **Verification:** Direct source comparison confirmed *only* a targeted CSS override added to the baseline; ZIP CRC passed; Chromium representative dialogue-bubble fixture at 1280×720 and 400×850 confirmed both pink/mint bubble dimensions and text boundaries without overflow. No full 52MB end-to-end game run or Android tablet test performed for this one-style change.
+- **Status:** HTML, ZIP and changelog saved in Library. GitHub `main` game code unaffected; only this HANDOFF documentation written. Existing minigames, Behind animation, audio, images, street travel and saves preserved as byte-identical code.
+- **Next AI:** Use `GAIA-RPG-test-20261019-DIALOGUE-ALIGN.html` as latest game test baseline, and check real dialogue visually on tablet before any further font/bubble tuning.
+
 ## Project scope
 
 - Repository: `Alix1211/Wellness-RPG`, separate from the original Wellness repository.
