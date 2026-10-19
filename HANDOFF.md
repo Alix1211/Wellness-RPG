@@ -120,6 +120,19 @@
 - **Status:** All generated executable/ZIP/change log saved in Library; **GitHub game source not changed**. This `HANDOFF.md` record only is committed to GitHub. Preserve original game HTML and sprite sheet.
 - **Next session:** Read HANDOFF first, then use `GAIA-RPG-test-20261019-BEHIND-SPRITE.html` as the latest test HTML and validate target timing on tablet; never replace it with previous game builds.
 
+### 2026-10-19 KST | START / UPDATE / END | ChatGPT (Behind motion speed and crop fix)
+
+- **User feedback:** In latest Behind sprite test, movement/animation are **far too fast**, and the invisible game-canvas boundary clips the character's **head**. Requested correction only to Behind; do not generate or redraw any image.
+- **Baseline:** Library `/GAIA-RPG-test-20261019-BEHIND-SPRITE.html` based on exact user-supplied `뒤를조심(1).png`, including existing audio/image, landscape square Wiggle Find, and street travel. Do NOT substitute older GitHub `index.html`.
+- **Changes restricted to embedded `MINI_SOURCE.behind`:** Frame step `0.105s → 0.22s` (about half speed); hit pose open hold `0.52s → 0.95s`. Lower actor foot anchor from canvas `62% → 84%`; lower fan arc rise `13% → 7%` of canvas height; clamp horizontal slide inset by visual sprite half-width plus padding to keep entire sprite inside the canvas. Since slower motion reduces chances in a 30s game, adjust success denominator `14 → 8` and fast-hit bonus age window `2.3s → 4.0s`. Hit detection remains **only during open pose**, all physics/throw inputs/other games unchanged.
+- **New verified Library deliverables (game code NOT committed to GitHub):**
+  - `/GAIA-RPG-test-20261019-BEHIND-SLOW-SAFE.html` (52,284,238 bytes; SHA256 `6cc1eb530b22d3132813012a72b8a2aeeb2e3cff649570c8cc81c65073593058`, Library ID `libfile_8755f6860fe88191a9d29cd7b6cc6803`) is the newest test baseline.
+  - `/GAIA-RPG-20261019-BEHIND-SLOW-SAFE.zip` (38,379,007 bytes; SHA256 `149a3354b294773286dc393ec28e6df6a0d45f087b5daeedbcbd4e567e955b89`, Library ID `libfile_df60db3c2cc481918fb2fb525e152099`).
+  - `/BEHIND-SLOW-SAFE-CHANGELOG.md` (Library ID `libfile_0ba56352f19c81918b7d49b74d6c9110`).
+- **Validation:** Embedded Behind JavaScript passes `node --check`; ZIP CRC test passes. Chromium ran the new 52MB HTML: loaded all 11 movement + 3 knockback original-sprite frames; Behind kind 4 canvas rendered and screenshot saved. Numerical fan-arc/canvas tests passed at 840x540, 600x700, 400x720, 1280x720 and 960x540, with minimum head clearances 64.8, 167, 306.4, 86.4, 64.8px. Chromium harness on `about:blank` emitted known IndexedDB permission and null.textContent errors; no Android device validation and no complete 30s Behind playthrough has been performed.
+- **Scope/status:** Saved updated offline test game and README/change log to Library, preserved previous HTML and source assets; only this HANDOFF entry is committed to GitHub `main`. Please confirm movement pace and visibility on user's tablet before further tuning.
+- **Next action:** Open `GAIA-RPG-test-20261019-BEHIND-SLOW-SAFE.html` (not prior fast version), test Behind on landscape tablet, preserve all other game functions.
+
 ## Project scope
 
 - Repository: `Alix1211/Wellness-RPG`, separate from the original Wellness repository.
