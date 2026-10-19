@@ -142,6 +142,11 @@
 - **Verification**: `node --check` passed on actual extracted Behind script; deterministic 16s simulation confirmed open-pose positions vary (example x=571,353,391,540,231 on 840 canvas), continuous ~74px travel during first 0.95s hold, 452px overall horizontal range, hit gate bound to held pose. Chromium test loaded the full 52MB HTML, found all 14 user sprite frames and active Behind canvas; audio/other game paths not retested here. The isolated harness emitted pre-existing IndexedDB permission and null.textContent errors. Real tablet targeting play remains user verification.
 - **Status**: New executable, ZIP and MD persisted in Library. Only this HANDOFF documentation committed to GitHub; no GitHub game code changed. Preserve earlier test artifacts and use new `BEHIND-SLIDE-FIX.html` as latest game baseline for future changes.
 
+### 2026-10-19 14:45 KST | START | ChatGPT (global dialogue bubble alignment)
+- User instruction: In **all story dialogue boxes**, text is vertically too low relative to its speech bubble; raise text and increase the bubble approximately 5%. No change to dialogue content, minigames, or characters.
+- Source: newest Library/working HTML `GAIA-RPG-test-20261019-BEHIND-SLIDE-FIX.html`, not GitHub's older `index.html`.
+- Status: inspecting shared `#roomScene #dialoguePanel` / `.bubble-copy` CSS. No code changed yet.
+
 ## Project scope
 
 - Repository: `Alix1211/Wellness-RPG`, separate from the original Wellness repository.
