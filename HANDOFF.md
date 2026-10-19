@@ -1,5 +1,49 @@
 # Handoff — GAIA CITY Wellness RPG
 
+## Mandatory shared AI work log protocol (2026-10-19)
+
+**User instruction, applies to ChatGPT, ChatGPT Work, Claude, Codex, and any other AI/chat/session working on this project.** This `HANDOFF.md` is the common cross-session record in the private `Alix1211/Wellness-RPG` repository. It is not optional background documentation.
+
+### Every work session: required sequence
+
+1. **Before beginning any project work:** Read the latest `HANDOFF.md` from the **actual branch/repository being worked on**. Review its latest work log, user decisions, pending changes, and any relevant older sections. Check the actual GitHub working branch/commit and files as needed; do not assume a previous conversation's copy is current.
+2. **At the beginning of the session:** Append a dated **START** entry to the work log below, including the AI/tool or chat context, branch and baseline commit (if known), the user's requested task, and which working artifact is authoritative. If direct repository access is unavailable, explicitly identify the unsaved local log and incorporate it into this file at the next possible opportunity; do not claim it was committed.
+3. **Whenever the user makes an important decision or correction:** Record the exact decision, restrictions, and its status as soon as feasible. Preserve user terminology. Do not quietly rewrite or reinterpret prior confirmed choices.
+4. **After each actual change:** Update this log with affected file paths, what changed, verification/tests, GitHub commit or local/uncommitted status, unresolved issues, and next actions. Never write 'completed', 'uploaded', 'tested', or 'merged' unless that event really occurred and was checked.
+5. **At the end of the session or when handing off to another AI/chat:** Append a dated **END/HANDOFF** entry with the last verifiable working version, completed and pending work, warnings, and the exact next action. The next AI must read this file **first**.
+6. **When Work usage limits, another chat, or another AI forces a switch:** Continue using the common log and verify what was committed. Work-local files, downloaded HTMLs, user-supplied assets, and GitHub `main` may differ. Explicitly distinguish them. **Never overwrite the newer working artifact with an older GitHub build.**
+7. **Concurrent branches:** Record the working branch, commit hash, any unmerged work, and the intended merge path. Do not assume an AI or Work session automatically pulls/pushes another branch or local edits.
+
+### Work log entry format
+
+```markdown
+### YYYY-MM-DD HH:MM KST | START / UPDATE / END | AI or chat
+- User instruction / confirmed decision:
+- Working source: file + location, repo + branch + baseline commit (if verified)
+- Changed files / actual modifications:
+- Status: completed, pending, local-only, or GitHub-committed
+- Test/verification (pass/fail/not run):
+- Commit / output file (only if verified):
+- Next action / constraints:
+```
+
+### Known handoff at protocol creation (2026-10-19 KST)
+
+- **User-identified latest work file:** `GAIA-RPG-test-20261019.html`. User reports this is newer than the GitHub build; its full contents and location have **not** been verified in this repository.
+- **Current feature being worked on:** Street / inter-location travel. The agreed direction involves side-scrolling running and jumping, destination icons placed in the road area (the road itself is **not** the character's travel lane), different travel times by destination, and morning/afternoon/night visual assets. Check the newest working file before claiming any element is implemented.
+- **Status boundary:** Existing GitHub `main` and its nine-minigame standalone editor are not automatically equivalent to the most recent Work/local artifact. Verify and reconcile deliberately; preserve original assets and already-working features.
+- **This entry:** Documents the user-mandated process only. It does not claim to have implemented the travel feature or imported the latest HTML.
+
+### 2026-10-19 KST | UPDATE / HANDOFF | ChatGPT (chat)
+
+- User instruction / confirmed decision: All AIs and chats must read this MD **at each start**, record important user instructions and start/end points, and **update it after changes**, using it to share project status.
+- Working source: `HANDOFF.md` on `main`; latest separate HTML `GAIA-RPG-test-20261019.html` named by user, not verified in GitHub.
+- Changed files / actual modifications: Added this mandatory process and initial shared status to `HANDOFF.md` only.
+- Status: Documentation change submitted to GitHub `main`; no game code changed.
+- Test/verification: Confirm file update by reading it back after commit.
+- Next action / constraints: Review this log **before any further change**; locate/inspect the latest HTML before altering the street travel system.
+
+
 ## Project scope
 
 - Repository: `Alix1211/Wellness-RPG`, separate from the original Wellness repository.
