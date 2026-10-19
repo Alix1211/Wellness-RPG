@@ -44,6 +44,22 @@
 - Next action / constraints: Review this log **before any further change**; locate/inspect the latest HTML before altering the street travel system.
 
 
+### 2026-10-19 11:29 KST | UPDATE / HANDOFF | ChatGPT (audio review)
+
+- User instruction / current intent: Review user-supplied female game voice/sound tracks to replace the previous awkward Western female voice sounds, and keep impact SFX (slap/punch) separate from character vocal reactions so slow strikes and rapid repeated hits can be controlled independently. This is **sound-source collection/review**, not authorization to modify current game files yet.
+- New user-provided audio candidates (conversation attachments, **not GitHub-committed**):
+  - `로프 자르기.wav`: 69.92s, female vocal/breathing track intended for rope cutting
+  - `실린더 게임120.wav`: 38.50s, cylinder-game variant marked 120
+  - `실린더 게임150.wav`: 38.04s, cylinder-game variant marked 150
+  - `게임시작시.ogg`: 0.85s, game-start English phrase (“Are you ready?”)
+  - `자세잡기 게임.wav`: 36.12s, posture/balance-game breathing track
+- Earlier conversation sound sources: 8 short reaction MP3s, `찰싹1.wav`, `찰싹2.wav`, `찰싹3.wav` (vocal/impact mixtures), plus Freesound `face-punch-91909.mp3` and `slap-in-the-face-101869.mp3`. These are not confirmed uploaded to this GitHub repository.
+- Verified metadata only for new five: `실린더 게임150.wav` has a noticeably hotter average level (~-24.4 dBFS RMS) than `실린더 게임120.wav` (~-37.3 dBFS RMS); volume normalization/limiting needs review if blending or switching. No game/runtime tests performed.
+- Working source: GitHub `main` HANDOFF only; newer game HTML remains user-identified `GAIA-RPG-test-20261019.html`, unverified in this repo.
+- Changed files / actual modifications: This documentation log only. No audio transformed, added to GitHub, or integrated in HTML; no game source modified.
+- Status: Audio candidates supplied and identified; integration and licensing details pending.
+- Next action / constraints: Wait for user direction on actual edit, select game event/loop timing and volume, preserve original audio, and never overwrite the newer local Work HTML.
+
 ## Project scope
 
 - Repository: `Alix1211/Wellness-RPG`, separate from the original Wellness repository.
