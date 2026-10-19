@@ -83,6 +83,21 @@
 - Saved ZIP to Library `/GAIA-RPG-AUDIO-OPEN.zip`, ID `libfile_a5af1b8b7da48191b2e6e1977c561dee`; no game code or audio changed, and original test HTML is still preserved.
 - Delivery guidance: Download ZIP, extract HTML, then open locally using Chrome, rather than attempting to preview a 50 MB embedded-media HTML inside chat or a ZIP viewer. GitHub game runtime remains untouched.
 
+### 2026-10-19 KST | END / HANDOFF | ChatGPT (audio repair and user ZIP images)
+
+- **User requests and correction:** Fix overall sound issues (cylinder female audio silent, rope female audio silent, water-game reactions silent); **completely remove** intermittent game-start “Are you ready?”; then replace images in **백만 대 챌린지** and **움찔 찾기** using the **just provided user ZIP**, NOT older sheets.
+- **User-provided image ZIP identified:** Library `/이미지 교체(1).zip` (~7.99 MB), same content as `/이미지 교체.zip`. Contains `백만대-센터.png`, `백만대-일반.png`, `백만대-회사.png` (1536×1024 each, 2×2), and `움찔 찾기/센터 나 일반/01..09.png` (250px square), `움찔 찾기/회사/01..09.png` (300px square). Preserve original ZIP and source images.
+- **Actual working source:** user’s latest `GAIA-RPG-test-20261019.html` (from Library). Rebuilt previous audio experiment *from this version*, with separate audio bridge, without overwriting the original or touching street travel.
+- **SOUND FIX:** Moved sound unlock to parent input capture (tap/touch/keyboard), before iframe game launch; legacy voices disabled via alternate sound bridge and legacy 7-voice life-suite array emptied. Omitted `start` sound sample entirely from runtime source map (no “Are you ready?”). Roped-game voice loop, cylinder 120→150 on repeated taps, water touch/holding breathing reaction. Effects independent from female voice; mixer preserved. Existing 9-game results/physics untouched.
+- **IMAGE FIX:** At legacy iframe build time, replace only `MINI_ASSETS` entries for game kind 0 animals (9 for company, 9 for all other places) and kind 3 `poses/tap1..3.webp` (center/office/other variants). Source 2×2 sheet split with alpha-preserving individual crops. Fourth crop retained in original ZIP, not displayed in 3-actor game. No effect on game logic or hitboxes.
+- **Verified Library deliverables (not GitHub source):**
+  - `/GAIA-RPG-test-20261019-AUDIO-IMAGE-FIX.html` (51,931,727 bytes, SHA256 `11f559231a31dba99088d0244464ecdce0725cfd60aeb58570d862f27d20d7c9`, Library ID `libfile_83b999c960488191b33379c185edea62`).
+  - `/GAIA-RPG-20261019-SOUND-IMAGE-FIX.zip` (38,115,773 bytes, SHA256 `00beaedd410cc13c0204551f9d8b3e62d46c0c31bb27f31488b1a3fbc676667c`, Library ID `libfile_f59dc907df688191869cc5865d8997dc`). Contains HTML, changelog, README; ZIP CRC test passed.
+  - `/GAIA-CHANGELOG-20261019.md` (Library ID `libfile_1a42167493ac81918ae5ebfdf7aa7bee`).
+- **Browser verification:** Prior sound fix test showed rope background voice start/pause stop, cylinder 120 start→150 rapid taps, water shoot→female reaction event; no reported bridge-level play/decode errors. Separate Chromium test loaded the final image-enhanced HTML and entered actual `움찔 찾기` in company + center and `백만 대` in company + center, confirming proper data images inside iframe. Verified 9+9 and 3+3 asset mappings. `about:blank` test runs showed IndexedDB restrictions from the test origin and an unrelated page error; no full 9-game run or Android audio listening was done.
+- **Status:** Sound and image changes completed and uploaded to user's Library (separate offline HTML), with changelog. Only this HANDOFF documentation was committed to GitHub `main`. **Do not claim** the GitHub `index.html` contains these changes and do not replace the newer work with older `main`.
+- **Next AI:** Read `HANDOFF.md` first, then `/GAIA-CHANGELOG-20261019.md` and **use `/GAIA-RPG-test-20261019-AUDIO-IMAGE-FIX.html` as the latest TEST baseline**, confirm Android audibility in all 9 minigames and location-specific images; integrate new Work changes carefully rather than blindly replacing the HTML.
+
 ## Project scope
 
 - Repository: `Alix1211/Wellness-RPG`, separate from the original Wellness repository.
