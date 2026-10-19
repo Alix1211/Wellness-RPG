@@ -75,6 +75,14 @@
 - **Status:** Sound-integrated latest HTML and asset pack persisted in Library, not merged into GitHub game `main`; this `HANDOFF.md` update only is GitHub-committed. Source attribution/license for public distribution and in-game listening/volume tuning are pending.
 - **Next AI MUST:** Read this entry and the Library `/GAIA-SOUND-CHANGELOG.md`; open **`/GAIA-RPG-test-20261019-AUDIO.html`** as the new authoritative audio-enhanced test build, preserve its street/inter-location work, then conduct practical Android listening and gameplay tests before integrating audio changes with any newer Work revisions. Avoid blindly overwriting existing other AI/Work game files.
 
+### 2026-10-19 KST | AUDIO delivery ZIP / accessibility fix | ChatGPT
+
+- User report: Original 50 MB sound-enhanced HTML link did not open in their client. Do not assume the file/content is missing.
+- Confirmed `/mnt/data/GAIA-RPG-test-20261019-AUDIO.html` exists (50,008,124 bytes), and Chromium `page.set_content` initialized `GameHost`, with all 24 `GaiaAudioStatus.sources` present. This confirms runtime initialization in the test harness, **not** successful preview/open in every user's client.
+- Created `GAIA-RPG-AUDIO-OPEN.zip` (36,781,079 bytes, SHA256 `f47d471fb5bd53d3dcd6e0c08138aefdf3a7b3c2e23b190aa7dd8c3032f3e45a`). ZIP holds the unchanged sound-enhanced HTML and `START-HERE.txt` extraction instructions; zip test passed.
+- Saved ZIP to Library `/GAIA-RPG-AUDIO-OPEN.zip`, ID `libfile_a5af1b8b7da48191b2e6e1977c561dee`; no game code or audio changed, and original test HTML is still preserved.
+- Delivery guidance: Download ZIP, extract HTML, then open locally using Chrome, rather than attempting to preview a 50 MB embedded-media HTML inside chat or a ZIP viewer. GitHub game runtime remains untouched.
+
 ## Project scope
 
 - Repository: `Alix1211/Wellness-RPG`, separate from the original Wellness repository.
