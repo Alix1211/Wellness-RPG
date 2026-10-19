@@ -98,6 +98,17 @@
 - **Status:** Sound and image changes completed and uploaded to user's Library (separate offline HTML), with changelog. Only this HANDOFF documentation was committed to GitHub `main`. **Do not claim** the GitHub `index.html` contains these changes and do not replace the newer work with older `main`.
 - **Next AI:** Read `HANDOFF.md` first, then `/GAIA-CHANGELOG-20261019.md` and **use `/GAIA-RPG-test-20261019-AUDIO-IMAGE-FIX.html` as the latest TEST baseline**, confirm Android audibility in all 9 minigames and location-specific images; integrate new Work changes carefully rather than blindly replacing the HTML.
 
+### 2026-10-19 KST | END / HANDOFF | ChatGPT (Wiggle Find landscape square layout)
+
+- **User request:** Keep portrait presentation as is. In landscape mode, make the `움찔 찾기` 3×3 picture grid a large **square** and move time, score, streak and countdown progress **to the side**.
+- **Source baseline:** `GAIA-RPG-test-20261019-AUDIO-IMAGE-FIX2.html`, which already preserves the user ZIP image swaps, sound fixes and newest available street/inter-location travel work. Do **not** regress by copying the GitHub `index.html`.
+- **Change scope:** Only the `MINI_SOURCE.main` code embedded in latest standalone HTML. `mgWiggle()` now uses three separate HUD fields; on wide landscape (width >=700px) it puts the HUD/progress in the existing right-side NPC panel, scales the nine-image grid as one square up to available viewport height, and handles orientation changes and listener cleanup. Portrait HUD is restored to its previous original board location. Existing square-image `object-fit:cover` setting retained. Other minigames, audio, image assets, score, timing, and travel code not intentionally changed.
+- **Authoritative new test artifact saved in Library root (NOT GitHub game source):** `/GAIA-RPG-test-20261019-AUDIO-IMAGE-WIGGLE-SQUARE.html`, 51,932,644 bytes, SHA256 `72823b24aa2d8be0b5eabaeafaa119ea63ca7e5a83f4cd97ab8907aa18153a70`, Library ID `libfile_3dd50ba1eb648191aa23ac0a340c991c`.
+- **Download ZIP:** `/GAIA-RPG-20261019-WIGGLE-SQUARE.zip`, SHA256 `387da22b2edba779fa5b394386ee4bd6970e19ecfa34e9a0290651def9c57929`, Library ID `libfile_7b8a485ea554819187bb5567055da4f2`. Change log: `/GAIA-WIGGLE-SQUARE-CHANGELOG.md`, Library ID `libfile_b8b5384325ec8191913c5f8974a0c48e`.
+- **Validation:** Extracted `MINI_SOURCE.main` passed `node --check`. Chromium fixture reusing the production CSS passed square grid and non-overlapping side HUD at 1280×720, 1024×768, 960×540, 854×480; rotating to 650×980 returned HUD to board and cleared landscape class. ZIP integrity/CRC test passed. **Full 52 MB integrated Chromium run timed out** in the isolated environment; real Android screen test still pending. Do not describe the integration as fully tested.
+- **GitHub scope:** Only append to `HANDOFF.md`. Original HTML and former FIX2 stay available, no GitHub game code touched.
+- **Next step:** Android landscape visual test and adjust spacing if requested; use the Library WIGGLE-SQUARE HTML as newest game-file baseline and preserve all sound/image/road changes.
+
 ## Project scope
 
 - Repository: `Alix1211/Wellness-RPG`, separate from the original Wellness repository.
