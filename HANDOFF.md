@@ -190,6 +190,7 @@
 - **Scope/status:** Runtime fix stored in Library; no GitHub game source changed. Only this HANDOFF entry is committed. Preserve originals and use `ROOMS-RESTORED-SIGNS.html` as latest *test* baseline after tablet confirmation.
 
 ## GAIA world and quest reference (2026-10-19)
+  - Extra primary reference: [7-page EX-Hardcore original DOCX](docs/gaia/sources/gaia_city_worldbuilding_hardcore_uncensored_v2.docx), uploaded byte-for-byte on 2026-10-19 (19,080 bytes). Adult fictional worldbuilding with explicit language. Keep the original verbatim; consult only relevant sections as needed, not every session. Treat as supplemental to the 17-page baseline; any conflict defers to later user corrections. This is documentation/archive only, not new gameplay implementation.
 
 - **AI reading protocol:** Before story/event/stat work, read [docs/gaia/README.md](docs/gaia/README.md) and then *only* the relevant [WORLD_RULES.md](docs/gaia/WORLD_RULES.md), [GAMEPLAY_LOOP.md](docs/gaia/GAMEPLAY_LOOP.md), or [EVENT_QUEST_CATALOG.md](docs/gaia/EVENT_QUEST_CATALOG.md). This saves context tokens; never load entire world/Gemini transcripts on every session.
 - **User decisions:** Residents' shamelessly ordinary daily life is the humor; the heroine is not special; avoid artificial moral conflict/forced jokes. Preserve strong everyday vocabulary and agreed female→male honorific / male→female informal language patterns. The user-proposed Amazon '7호' quest is a key tone reference.
