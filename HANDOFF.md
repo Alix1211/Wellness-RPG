@@ -1,3 +1,11 @@
+# 최신 인수인계 · 2026-10-20
+
+현재 실행 기준: 복원한 `GAIA-LIFE-20261020.html`. 먼저 [다음 AI 점검 문서](docs/gaia/REVIEW-20261020.md)와 [현재 상태](PROJECT_STATUS.md)를 읽으세요. 전체 완성/실기기 검증 완료 상태가 아닙니다.
+
+아래는 이전 기록입니다. 최신 결정과 충돌하면 위 문서가 우선합니다.
+
+---
+
 # Handoff — GAIA CITY Wellness RPG
 
 ## Mandatory shared AI work log protocol (2026-10-19)

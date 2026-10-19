@@ -1,0 +1,16 @@
+{
+  "sha256": "66ccdcab6bce1d892e4a6114bd765fabe65d622b9fbd65479fc85c08ff016ca5",
+  "size": 62380581,
+  "compression": "gzip",
+  "parts": [
+    "builds/gaia-life-20261020/html.gz.part-00",
+    "builds/gaia-life-20261020/html.gz.part-01",
+    "builds/gaia-life-20261020/html.gz.part-02",
+    "builds/gaia-life-20261020/html.gz.part-03",
+    "builds/gaia-life-20261020/html.gz.part-04",
+    "builds/gaia-life-20261020/html.gz.part-05",
+    "builds/gaia-life-20261020/html.gz.part-06",
+    "builds/gaia-life-20261020/html.gz.part-07",
+    "builds/gaia-life-20261020/html.gz.part-08"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "checks": [
+    "portrait touch jump on road",
+    "portrait run touch delivered",
+    "center arrival +10G once, automatic lobby and registration, basic goal",
+    "five room lessons progress sequentially to recovery with short dialogue",
+    "field jump after games",
+    "automatic night class, no mixer UI, no repeating portrait background",
+    "street encounter running audio/impact playback, exit cleanup, touch jump resumes",
+    "dinner errand hands off to center with protagonist reminder"
+  ],
+  "errors": []
+}
