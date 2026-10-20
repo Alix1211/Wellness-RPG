@@ -97,3 +97,8 @@
   - `punish_hero_sheet1_stocks_chains_x.png` (목 칼·사슬 기둥·의자·X자 십자가·앉은 포즈 등 9컷)
   - `punish_hero_sheet2_stocks_ropes_bench.png` (기둥·벤치·매달림·눕기 등 9컷)
 - 적용(18시 이후): 게임 안 체벌방(6F 체벌방 3개, 미니게임 tap·behind)의 예전 주인공 이미지를 위 현재 주인공 이미지로 교체. 교체 대상(현재 HTML 안의 예전 이미지 위치)은 작업 시작 때 찾아서 먼저 보고한다.
+
+## 움직이는 시트(내가 만든 것) 저장소 보관 (13:53)
+- `assets/characters/sprites/animated/squat/`: 스쿼트 앞/뒤 × 요가복·청바지·오피스 6종 (PNG·WebP 시트, 미리보기 GIF, manifest: 12프레임, 프레임 275×456, 6열×2행, 12fps, 반복)
+- `assets/characters/sprites/animated/crawl-jump/`: 기기·점프 × 요가복·청바지·오피스 6종 (같은 구성)
+- 모두 주인공 기준. 이제까지 작업 공간에만 있던 파일을 저장소에 올림.
