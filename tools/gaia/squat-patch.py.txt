@@ -27,7 +27,8 @@ for k in ['yoga','office','jeans']:
 for k,n in [('yoga','wood'),('office','marble'),('jeans','blocks')]:
     art[k]['floor']=b64(R/('assets/backgrounds/squat-floors/%s.webp'%n),'image/webp')
 doc=(R/'src/gaia-life/squat-game.html').read_text(encoding='utf8')
-js='window.SQUAT_ART='+json.dumps(art)+';window.SQUAT_BALL='+json.dumps(b64(R/'assets/props/squat-object.webp','image/webp'))+';\nconst SQUAT_DOCUMENT='+json.dumps(doc).replace('</','<\\/')+';\n'
+FXD={k:b64(R/('assets/props/squat-fx/%s.webp'%n),'image/webp') for k,n in [('ph','paddle-heart'),('pp','paddle-paw'),('fs','fx-slap'),('fo','fx-ouch')]}
+js='window.SQUAT_ART='+json.dumps(art)+';window.SQUAT_FX='+json.dumps(FXD)+';window.SQUAT_BALL='+json.dumps(b64(R/'assets/props/squat-object.webp','image/webp'))+';\nconst SQUAT_DOCUMENT='+json.dumps(doc).replace('</','<\\/')+';\n'
 sub(W/'script-13.js',[('const CITY_ENCOUNTER_DOCUMENT="',js+'const CITY_ENCOUNTER_DOCUMENT="')])
 # ---- beds (script-19, page-level sources) ----
 BP=R/'assets/audio/bpm'
@@ -35,7 +36,7 @@ SQ=R/'assets/audio/squat'
 add=''.join('window.GAIA_SOUND_SOURCES.%s=%s;'%(k,json.dumps(b64((BP if f.startswith('bpm') else SQ)/f,'audio/ogg'))) for k,f in [('squat90_bed','bpm090.ogg'),('squat120_bed','bpm120.ogg'),('squat150_bed','bpm150.ogg'),('squat90_bgm','squat90_bgm.ogg'),('squat120_bgm','squat120_bgm.ogg'),('squat150_bgm','squat150_bgm.ogg')]+[('perfect_0%d'%i,'perfect_0%d.ogg'%i) for i in range(1,8)])
 sub(W/'script-19.js',[('};window.GAIA_GAME_BRIDGE="','};'+add+'window.GAIA_GAME_BRIDGE="')])
 # ---- host (script-16) ----
-SQC=("function squatConfig(){const o=world.outfit,k=o==='lavender-yoga'?'yoga':o==='office'?'office':'jeans',A=(window.SQUAT_ART||{})[k]||{};const base=Math.max(1,Math.min(3,life.battle.difficulty||1));return{difficulty:Math.min(3,base+((session&&session.night)||(roomContext&&roomContext.challenge)?1:0)),front:A.front,back:A.back,fb:A.fb,bb:A.bb,ball:window.SQUAT_BALL,floor:A.floor};}\n")
+SQC=("function squatConfig(){const o=world.outfit,k=o==='lavender-yoga'?'yoga':o==='office'?'office':'jeans',A=(window.SQUAT_ART||{})[k]||{};const base=Math.max(1,Math.min(3,life.battle.difficulty||1));return{difficulty:Math.min(3,base+((session&&session.night)||(roomContext&&roomContext.challenge)?1:0)),front:A.front,back:A.back,fb:A.fb,bb:A.bb,ball:window.SQUAT_BALL,floor:A.floor,fx:window.SQUAT_FX};}\n")
 sub(W/'script-16.js',[
 ("async function startGame(){",SQC+"async function startGame(){"),
 ("const doc=typeof game==='number'?legacyHost(game,roomContext.r,config):(game==='cylinder'?CITY_ENCOUNTER_DOCUMENT:SUITE_DOCUMENT)",
