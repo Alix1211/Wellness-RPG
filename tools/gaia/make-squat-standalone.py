@@ -7,9 +7,9 @@ s19=(W/'script-19.js').read_text(encoding='utf8')
 i=s19.index('window.GAIA_SOUND_SOURCES=')+len('window.GAIA_SOUND_SOURCES=')
 srcs,_=json.JSONDecoder().raw_decode(s19[i:])
 BP=R/'assets/audio/bpm'
-for k,f in [('squat60_bed','bpm060.ogg'),('squat90_bed','bpm090.ogg'),('squat120_bed','bpm120.ogg')]:
+for k,f in [('squat90_bed','bpm090.ogg'),('squat120_bed','bpm120.ogg'),('squat150_bed','bpm150.ogg')]:
     srcs[k]='data:audio/ogg;base64,'+base64.b64encode((BP/f).read_bytes()).decode()
-keep=['hit_punch','reaction_happy','reaction_surprise','reaction_whine','reaction_displeased','squat60_bed','squat90_bed','squat120_bed']
+keep=['hit_punch','reaction_happy','reaction_surprise','reaction_whine','reaction_displeased','squat90_bed','squat120_bed','squat150_bed']
 srcs={k:srcs[k] for k in keep}
 s13=(W/'script-13.js').read_text(encoding='utf8')
 j=s13.index('window.SQUAT_ART=')+len('window.SQUAT_ART=')
@@ -30,7 +30,7 @@ iframe{position:fixed;inset:0;width:100%;height:100%;border:0;background:#000}
 #menu[hidden],iframe[hidden]{display:none}
 small{opacity:.7}
 </style></head><body>
-<div id="menu"><h1>스쿼트 시험판</h1><div><small>의상</small></div><div class="row" id="o"><button data-v="yoga" class="on">요가복(센터)</button><button data-v="office">오피스(회사)</button><button data-v="jeans">청바지</button></div><div><small>난이도</small></div><div class="row" id="t"><button data-v="1" class="on">쉬움 60</button><button data-v="2">보통 90</button><button data-v="3">어려움 120</button></div><button id="go">시작</button></div>
+<div id="menu"><h1>스쿼트 시험판</h1><div><small>의상</small></div><div class="row" id="o"><button data-v="yoga" class="on">요가복(센터)</button><button data-v="office">오피스(회사)</button><button data-v="jeans">청바지</button></div><div><small>난이도</small></div><div class="row" id="t"><button data-v="1" class="on">쉬움 90</button><button data-v="2">보통 120</button><button data-v="3">어려움 150</button></div><button id="go">시작</button></div>
 <iframe id="f" hidden></iframe>
 <script>
 const DOC=__DOC__,ART=__ART__,SRC=__SRC__,BG=__BG__;

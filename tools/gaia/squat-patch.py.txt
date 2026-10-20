@@ -29,7 +29,7 @@ js='window.SQUAT_ART='+json.dumps(art)+';\nconst SQUAT_DOCUMENT='+json.dumps(doc
 sub(W/'script-13.js',[('const CITY_ENCOUNTER_DOCUMENT="',js+'const CITY_ENCOUNTER_DOCUMENT="')])
 # ---- beds (script-19, page-level sources) ----
 BP=R/'assets/audio/bpm'
-add=''.join('window.GAIA_SOUND_SOURCES.%s=%s;'%(k,json.dumps(b64(BP/f,'audio/ogg'))) for k,f in [('squat60_bed','bpm060.ogg'),('squat90_bed','bpm090.ogg'),('squat120_bed','bpm120.ogg')])
+add=''.join('window.GAIA_SOUND_SOURCES.%s=%s;'%(k,json.dumps(b64(BP/f,'audio/ogg'))) for k,f in [('squat90_bed','bpm090.ogg'),('squat120_bed','bpm120.ogg'),('squat150_bed','bpm150.ogg')])
 sub(W/'script-19.js',[('};window.GAIA_GAME_BRIDGE="','};'+add+'window.GAIA_GAME_BRIDGE="')])
 # ---- host (script-16) ----
 SQC=("function squatConfig(){const o=world.outfit,k=o==='lavender-yoga'?'yoga':o==='office'?'office':'jeans',A=(window.SQUAT_ART||{})[k]||{};const base=Math.max(1,Math.min(3,life.battle.difficulty||1));return{difficulty:Math.min(3,base+((session&&session.night)||(roomContext&&roomContext.challenge)?1:0)),front:A.front,back:A.back,fb:A.fb,bb:A.bb};}\n")
@@ -38,7 +38,7 @@ sub(W/'script-16.js',[
 ("const doc=typeof game==='number'?legacyHost(game,roomContext.r,config):(game==='cylinder'?CITY_ENCOUNTER_DOCUMENT:SUITE_DOCUMENT)",
  "if(game==='squat')config.squat=squatConfig();const doc=typeof game==='number'?legacyHost(game,roomContext.r,config):(game==='cylinder'?CITY_ENCOUNTER_DOCUMENT:game==='squat'?SQUAT_DOCUMENT:SUITE_DOCUMENT)"),
 ("const native=['water','rope','cylinder'].includes(config.kind);const audioKeys=config.kind==='water'?[",
- "const native=['water','rope','cylinder','squat'].includes(config.kind);const audioKeys=config.kind==='squat'?['hit_punch','reaction_happy','reaction_surprise','reaction_whine','reaction_displeased','squat60_bed','squat90_bed','squat120_bed']:config.kind==='water'?["),
+ "const native=['water','rope','cylinder','squat'].includes(config.kind);const audioKeys=config.kind==='squat'?['hit_punch','reaction_happy','reaction_surprise','reaction_whine','reaction_displeased','squat90_bed','squat120_bed','squat150_bed']:config.kind==='water'?["),
 ("{water:'물병',rope:'줄 자르기',cylinder:'리듬',travel:'이동'}[g]","{water:'물병',rope:'줄 자르기',cylinder:'리듬',travel:'이동',squat:'스쿼트'}[g]"),
 ])
 # ---- model (script-07): gains + one game per room ----
