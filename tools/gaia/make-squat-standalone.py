@@ -34,16 +34,16 @@ small{opacity:.7}
 <div id="menu"><h1>스쿼트 시험판</h1><div><small>의상</small></div><div class="row" id="o"><button data-v="yoga" class="on">요가복(센터)</button><button data-v="office">오피스(회사)</button><button data-v="jeans">청바지</button></div><div><small>난이도</small></div><div class="row" id="t"><button data-v="1" class="on">쉬움 90</button><button data-v="2">보통 120</button><button data-v="3">어려움 150</button></div><button id="go">시작</button></div>
 <iframe id="f" hidden></iframe>
 <script>
-const DOC=__DOC__,ART=__ART__,SRC=__SRC__,BG=__BG__;
+const DOC=__DOC__,ART=__ART__,SRC=__SRC__,BG=__BG__,BGV=__BGV__;
 let outfit='yoga',tier=1;
 for(const [id,set] of [['o',v=>outfit=v],['t',v=>tier=+v]])document.getElementById(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;set(b.dataset.v);for(const x of document.getElementById(id).children)x.classList.toggle('on',x===b);});
 function launch(){const A=ART[outfit],cfg={background:BG[outfit],squat:{difficulty:tier,front:A.front,back:A.back,fb:A.fb,bb:A.bb}};
- const boot='<script>window.GAIA_SOUND_SOURCES='+JSON.stringify(SRC)+';<\/script>';
+ const boot='<script>window.GAIA_SOUND_SOURCES='+JSON.stringify(SRC)+';window.SQUAT_BGV='+JSON.stringify(BGV)+';<\/script>';
  const html=DOC.replace('/*LIFE_CONFIG*/',JSON.stringify(cfg).replace(/</g,'\\u003c')).replace('<meta',boot+'<meta');
  const f=document.getElementById('f');f.srcdoc=html;f.hidden=false;document.getElementById('menu').hidden=true;}
 function back(){const f=document.getElementById('f');f.srcdoc='';f.hidden=true;document.getElementById('menu').hidden=false;}
 document.getElementById('go').onclick=launch;
 addEventListener('message',e=>{const d=e.data||{};if(d.type==='game-retry')launch();else if(d.type==='wellness-close')back();});
 </script></body></html>'''
-page=page.replace('__DOC__',json.dumps(doc).replace('</','<\\/')).replace('__ART__',json.dumps(art)).replace('__SRC__',json.dumps(srcs)).replace('__BG__',json.dumps(bgs))
+page=page.replace('__DOC__',json.dumps(doc).replace('</','<\\/')).replace('__ART__',json.dumps(art)).replace('__SRC__',json.dumps(srcs)).replace('__BG__',json.dumps(bgs)).replace('__BGV__',json.dumps(('data:video/mp4;base64,'+base64.b64encode((R/'assets/video/squat-bg-90.mp4').read_bytes()).decode()) if (R/'assets/video/squat-bg-90.mp4').exists() else ''))
 OUT.write_text(page,encoding='utf8');print(OUT,len(page)//1024,'KB')

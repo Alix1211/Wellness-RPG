@@ -30,7 +30,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 const CFG=/*LIFE_CONFIG*/;
 const SQ=CFG.squat||{difficulty:1};
 const TIER=Math.max(1,Math.min(3,+SQ.difficulty||1));
-const RULE={1:{bpm:90,off:.19,key:'squat90_bed',bgm:'squat90_bgm',perfect:.11,good:.30,swap:0,name:'쉬움',beats:28,lead:4,both:0},2:{bpm:120,off:.09,key:'squat120_bed',bgm:'squat120_bgm',perfect:.12,good:.26,swap:.35,name:'보통',beats:36,lead:4,both:.10},3:{bpm:150,off:.17,key:'squat150_bed',bgm:'squat150_bgm',perfect:.105,good:.22,swap:.5,name:'어려움',beats:44,lead:4,both:.32}}[TIER];
+const RULE={1:{bpm:90,off:.19,key:'squat90_bed',bgm:'squat90_bgm',bgmg:1.1,perfect:.11,good:.30,swap:0,name:'쉬움',beats:28,lead:4,both:0},2:{bpm:120,off:.09,key:'squat120_bed',bgm:'squat120_bgm',perfect:.12,good:.26,swap:.35,name:'보통',beats:36,lead:4,both:.10},3:{bpm:150,off:.17,key:'squat150_bed',bgm:'squat150_bgm',perfect:.105,good:.22,swap:.5,name:'어려움',beats:44,lead:4,both:.32}}[TIER];
 const PER=60/RULE.bpm,FW=275,FH=456,FRAMES=12,COLS=6;
 const $=s=>document.querySelector(s),cv=$('#cv'),g=cv.getContext('2d');
 let W=0,H=0,DPR=1;
@@ -53,7 +53,11 @@ async function prep(names){await Promise.all(names.map(async n=>{decoded[n]=awai
 function shot(name,when,vol){const b=decoded[name];if(!b||!ac)return null;try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=b;gn.gain.value=vol;s.connect(gn).connect(master);s.start(Math.max(when,ac.currentTime));sched.push(s);s.onended=()=>{const i=sched.indexOf(s);if(i>=0)sched.splice(i,1);try{s.disconnect();gn.disconnect();}catch{}};return s;}catch{return null;}}
 let lastVoice=-9;
 function voice(name,vol){const now=performance.now();if(now-lastVoice<320)return;lastVoice=now;shot(name,0,vol);}
-function stopAll(){for(const s of sched.splice(0)){try{s.onended=null;s.stop();}catch{}}if(bed){try{bed.stop();}catch{}bed=null;}}
+let vid=null,vidOk=false,vidT=0;
+function initVid(){const src=window.SQUAT_BGV;if(!src||RULE.bpm!==90)return;try{vid=document.createElement('video');vid.muted=true;vid.loop=true;vid.playsInline=true;vid.setAttribute('playsinline','');vid.preload='auto';vid.style.cssText='position:fixed;left:0;top:0;width:2px;height:2px;opacity:.01;pointer-events:none';vid.src=src;document.body.appendChild(vid);vid.load();}catch{vid=null;}}
+initVid();
+function vidSync(t){if(!vid)return;const d=vid.duration||10;if(state!=='play'){if(!vid.paused)vid.pause();return;}const x=t-(t0+RULE.off);if(x<0){return;}const want=(x+.02)%d;if(vid.paused){vid.currentTime=want;vid.play().catch(()=>{});return;}const now=performance.now();if(now-vidT<350)return;vidT=now;let diff=vid.currentTime-want;if(diff>d/2)diff-=d;if(diff<-d/2)diff+=d;if(Math.abs(diff)>.07)vid.currentTime=(want+.06)%d;}
+function stopAll(){if(vid&&!vid.paused)vid.pause();for(const s of sched.splice(0)){try{s.onended=null;s.stop();}catch{}}if(bed){try{bed.stop();}catch{}bed=null;}}
 let SYNC=0;try{SYNC=+localStorage.getItem('squat-sync')||0;}catch{}
 const INPUT=.05;
 const latency=()=>(ac?(ac.outputLatency||ac.baseLatency||0):0)+.02;
@@ -94,7 +98,7 @@ async function begin(){
  await Promise.all([ready,prep(names)]);
  stopAll();
  t0=ac.currentTime+.25;
- if(decoded[RULE.bgm]){try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=decoded[RULE.bgm];s.loop=true;gn.gain.value=1;s.connect(gn).connect(master);s.start(t0);sched.push(s);}catch{}}
+ if(decoded[RULE.bgm]){try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=decoded[RULE.bgm];s.loop=true;gn.gain.value=RULE.bgmg||1;s.connect(gn).connect(master);s.start(t0);sched.push(s);}catch{}}
  if(decoded[RULE.key]){try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=decoded[RULE.key];s.loop=true;gn.gain.value=.62;s.connect(gn).connect(master);s.start(t0);bed=s;}catch{}}
  for(const e of events){e.time=beatT(e.beat);if(e.c===1)shot('hit_punch',e.time+latency()*0,.62);}
  state='play';paused=false;$('#veil').hidden=true;$('#tier').textContent='스쿼트 · '+RULE.name;
@@ -119,8 +123,10 @@ function frameOf(c,t){let best=null;
 function draw(now){
  const t=state==='play'?gt():(ac?gt():0);
  g.clearRect(0,0,W,H);
+ vidSync(t);const vv=vid&&vid.readyState>=2?vid:null;
+ if(vv){const s=Math.max(W/vv.videoWidth,H/vv.videoHeight);g.drawImage(vv,(W-vv.videoWidth*s)/2,(H-vv.videoHeight*s)/2,vv.videoWidth*s,vv.videoHeight*s);g.fillStyle='#2a223012';g.fillRect(0,0,W,H);}else{
  if(img.bg){const s=Math.max(W/img.bg.width,H/img.bg.height);g.drawImage(img.bg,(W-img.bg.width*s)/2,(H-img.bg.height*s)/2,img.bg.width*s,img.bg.height*s);}else{g.fillStyle='#3a2c40';g.fillRect(0,0,W,H);}
- g.fillStyle='#2a22308c';g.fillRect(0,0,W,H);
+ g.fillStyle='#2a22308c';g.fillRect(0,0,W,H);}
  const floorY=H*.66,s=Math.min(W*.46/FW,H*.4/FH);
  // lead-in count & beat pulse
  if(state==='play'){const bi=(t-t0-RULE.off)/PER-1;
