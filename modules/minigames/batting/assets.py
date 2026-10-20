@@ -12,6 +12,7 @@ def extract():
   (assets/'order.json').write_text(json.dumps(list(data)),encoding='utf-8')
   for key,uri in data.items():
    mime,encoded=uri.split(',',1);ext='png' if 'image/png' in mime else 'webp'
+   (assets/(key+('.webp' if ext=='png' else '.png'))).unlink(missing_ok=True)
    (assets/(key+'.'+ext)).write_bytes(base64.b64decode(encoded))
  print('Extracted assets to',assets)
 def build():

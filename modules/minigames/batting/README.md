@@ -51,3 +51,9 @@
 - 합성 타격음: 실제 pointer 터치 후 BufferSource 시작 오프셋0 및 시작15ms 내 비제로 파형 확인. Android 스피커에서 직접 청취하지 못했습니다.
 - 재현: `npm install --no-save playwright`, `npx playwright install chromium`, `node modules/minigames/batting/test-distance.cjs`. 커스텀 브라우저는 BROWSER_PATH 환경변수.
 - APK 미빌드, 본체 미통합, 영구 저장 없음. 외부 클로드는 실제 사용자 기기 소리 확인을 우선 진행해 주세요.
+
+## 18:34 이후 — 짝 스티커 정리
+- 기존 fx-02의 갈색 사각 배경과 왼쪽 이웃 그림 조각을 이미지 편집으로 제거했습니다.
+- `fx-02-clean.png`가 정리된 투명 원본이며 게임 안 `ASSETS["fx-02"]`도 이 PNG입니다.
+- 에셋 추출 후 `assets/fx-02.png`로 나옵니다. 같은 키의 오래된 webp가 PNG를 덮지 않도록 추출 도구도 수정했습니다.
+- 타격 효과 수(보통1/정타2), 소리, 점수 규칙은 그대로입니다.
