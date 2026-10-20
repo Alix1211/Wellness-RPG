@@ -7,9 +7,10 @@ s19=(W/'script-19.js').read_text(encoding='utf8')
 i=s19.index('window.GAIA_SOUND_SOURCES=')+len('window.GAIA_SOUND_SOURCES=')
 srcs,_=json.JSONDecoder().raw_decode(s19[i:])
 BP=R/'assets/audio/bpm'
-for k,f in [('squat90_bed','bpm090.ogg'),('squat120_bed','bpm120.ogg'),('squat150_bed','bpm150.ogg')]:
-    srcs[k]='data:audio/ogg;base64,'+base64.b64encode((BP/f).read_bytes()).decode()
-keep=['hit_punch','reaction_happy','reaction_surprise','reaction_whine','reaction_displeased','squat90_bed','squat120_bed','squat150_bed']
+SQ=R/'assets/audio/squat'
+for k,f in [('squat90_bed','bpm090.ogg'),('squat120_bed','bpm120.ogg'),('squat150_bed','bpm150.ogg')]+[('squat%d_bgm'%b,'squat%d_bgm.ogg'%b) for b in (90,120,150)]+[('perfect_0%d'%i,'perfect_0%d.ogg'%i) for i in range(1,8)]:
+    srcs[k]='data:audio/ogg;base64,'+base64.b64encode(((BP if f.startswith('bpm') else SQ)/f).read_bytes()).decode()
+keep=['hit_punch','reaction_happy','reaction_surprise','reaction_whine','reaction_displeased','squat90_bed','squat120_bed','squat150_bed','squat90_bgm','squat120_bgm','squat150_bgm']+['perfect_0%d'%i for i in range(1,8)]
 srcs={k:srcs[k] for k in keep}
 s13=(W/'script-13.js').read_text(encoding='utf8')
 j=s13.index('window.SQUAT_ART=')+len('window.SQUAT_ART=')
