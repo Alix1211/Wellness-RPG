@@ -103,10 +103,21 @@
     const now=performance.now();if(now-lastHit<opts.hitGap)return;
     lastHit=now;play(which==='punch'?'hit_punch':'hit_slap',which==='punch'?.7:.65,'effect');
   }
-  function reset(){epoch++;stopBed();clearPool(voices);clearPool(effects);tapTimes=[];lastHit=-100000;lastVoice=-100000;activeKind=null;}
+  function reset(){epoch++;shootStop();stopBed();clearPool(voices);clearPool(effects);tapTimes=[];lastHit=-100000;lastVoice=-100000;activeKind=null;}
   function resultCue(win){const c=ensureContext();if(!c)return;const notes=win?[392,494,587]:[392,330,247];notes.forEach((hz,i)=>{const o=c.createOscillator(),g=c.createGain(),at=c.currentTime+i*.16;o.type='sine';o.frequency.value=hz;g.gain.setValueAtTime(0,at);g.gain.linearRampToValueAtTime(.1,at+.015);g.gain.exponentialRampToValueAtTime(.001,at+.24);o.connect(g).connect(master);o.start(at);o.stop(at+.25);o.onended=()=>{o.disconnect();g.disconnect()};});events[win?'result_win':'result_fail']=(events[win?'result_win':'result_fail']||0)+1;}
+  let shoot=null,shootPos=0,shootTok=0;
+  async function shootStart(){
+    if(shoot||!sources.water_shoot)return;
+    const tok=++shootTok;const buffer=await load('water_shoot'),ctx=ac;if(!buffer||!ctx||tok!==shootTok||shoot)return;
+    try{const node=ctx.createBufferSource(),gain=ctx.createGain(),t=ctx.currentTime,from=shootPos%buffer.duration;node.buffer=buffer;node.loop=true;
+      gain.gain.setValueAtTime(0,t);gain.gain.linearRampToValueAtTime(.55,t+.03);node.connect(gain).connect(master);node.start(0,from);
+      shoot={node,gain,at:t,from,dur:buffer.duration};events.water_shoot=(events.water_shoot||0)+1;
+    }catch(e){noteError('shoot',e);}
+  }
+  function shootStop(){shootTok++;if(!shoot)return;const s=shoot;shoot=null;try{const t=ac.currentTime;s.gain.gain.cancelScheduledValues(t);s.gain.gain.setValueAtTime(s.gain.gain.value,t);s.gain.gain.linearRampToValueAtTime(0,t+.09);s.node.stop(t+.1);shootPos=(s.from+(t-s.at))%s.dur;setTimeout(()=>{try{s.node.disconnect();s.gain.disconnect();}catch{}},250);}catch{}}
+  
   function onGame(event,kind,actor,name,mood,force){
-    if(event==='bridge-ready')return;if(window.LifeMini?.sound.enabled===false&&event!=='bed-stop'&&event!=='voices-stop')return;unlock();
+    if(event==='bridge-ready')return;if(window.LifeMini?.sound.enabled===false&&event!=='bed-stop'&&event!=='voices-stop'&&event!=='shoot-stop')return;unlock();
     activeKind=kind;
     switch(event){
       case 'outcome-fail':stopBed();clearPool(voices);play('reaction_sigh',.6,'voice');resultCue(false);break;
@@ -124,6 +135,8 @@
         // Water input must be audible even on short taps, and independent of the bed tracks.
         if(performance.now()-lastVoice>650){lastVoice=performance.now();play(sample,sample==='reaction_pant'?.43:.62,'voice');}break;
       }
+      case 'shoot-start':shootStart();break;
+      case 'shoot-stop':shootStop();break;
       case 'cylinder-tap':{
         const t=performance.now();tapTimes.push(t);tapTimes=tapTimes.filter(v=>t-v<1800);
         if(tapTimes.length>=5&&sources.cylinder150_bed)startBed('cylinder150_bed');

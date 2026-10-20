@@ -1,0 +1,46 @@
+"""R8: water-gun sound for the toilet (water) game. Plays a looping clip while the shot is held, resumes where it stopped.
+Usage: python3 water-shoot-patch.py WORKDIR(extracted scripts) REPO_ROOT"""
+import sys,base64
+from pathlib import Path
+W=Path(sys.argv[1]);R=Path(sys.argv[2])
+def sub(path,pairs):
+    s=open(path,encoding='utf8').read()
+    for old,new,cnt in pairs:
+        assert s.count(old)==cnt,(str(path),old[:80],s.count(old))
+        s=s.replace(old,new)
+    open(path,'w',encoding='utf8').write(s)
+ogg=base64.b64encode((R/'assets/audio/toilet_bed_loop.ogg').read_bytes()).decode()
+# 1) sound source
+sub(W/'script-19.js',[('window.GAIA_SOUND_SOURCES={"reaction_displeased"','window.GAIA_SOUND_SOURCES={"water_shoot":"data:audio/ogg;base64,'+ogg+'","reaction_displeased"',1)])
+# 2) engine (parent copy = real newlines, iframe copy = escaped)
+def code(nl):
+    lines=["let shoot=null,shootPos=0,shootTok=0;",
+    "async function shootStart(){",
+    "  if(shoot||!sources.water_shoot)return;",
+    "  const tok=++shootTok;const buffer=await load('water_shoot'),ctx=ac;if(!buffer||!ctx||tok!==shootTok||shoot)return;",
+    "  try{const node=ctx.createBufferSource(),gain=ctx.createGain(),t=ctx.currentTime,from=shootPos%buffer.duration;node.buffer=buffer;node.loop=true;",
+    "    gain.gain.setValueAtTime(0,t);gain.gain.linearRampToValueAtTime(.55,t+.03);node.connect(gain).connect(master);node.start(0,from);",
+    "    shoot={node,gain,at:t,from,dur:buffer.duration};events.water_shoot=(events.water_shoot||0)+1;",
+    "  }catch(e){noteError('shoot',e);}",
+    "}",
+    "function shootStop(){shootTok++;if(!shoot)return;const s=shoot;shoot=null;try{const t=ac.currentTime;s.gain.gain.cancelScheduledValues(t);s.gain.gain.setValueAtTime(s.gain.gain.value,t);s.gain.gain.linearRampToValueAtTime(0,t+.09);s.node.stop(t+.1);shootPos=(s.from+(t-s.at))%s.dur;setTimeout(()=>{try{s.node.disconnect();s.gain.disconnect();}catch{}},250);}catch{}}",
+    ""]
+    return ('  '+(nl+'  ').join(lines)+nl)
+def engine(seg,nl):
+    pairs=[("function reset(){epoch++;stopBed();","function reset(){epoch++;shootStop();stopBed();"),
+      ("function onGame(event,kind,actor,name,mood,force){",code(nl).lstrip(' ')+"  function onGame(event,kind,actor,name,mood,force){"),
+      ("event!=='voices-stop')return;unlock();","event!=='voices-stop'&&event!=='shoot-stop')return;unlock();"),
+      ("case 'cylinder-tap':{","case 'shoot-start':shootStart();break;"+nl+"      case 'shoot-stop':shootStop();break;"+nl+"      case 'cylinder-tap':{")]
+    for old,new in pairs:
+        assert seg.count(old)==1,(old[:60],seg.count(old))
+        seg=seg.replace(old,new)
+    return seg
+p=W/'script-19.js';s=p.read_text(encoding='utf8');k=s.index('window.GAIA_NATIVE_AUDIO="')
+# only the iframe copy (escaped) runs the water game; the page-level engine ignores water events
+p.write_text(s[:k]+engine(s[k:],'\\n'),encoding='utf8')
+# 3) water game document: report shooting changes to the sound engine
+sub(W/'script-02.js',[("function tick(t){const dt=Math.min(.04,(t-(last||t))/1000);last=t;if(started&&!paused&&!document.hidden){model.update(dt);if(kind==='water'",
+ "var wasShoot=false;function tick(t){if(kind==='water'&&model){const sh=!!(model.shooting&&started&&!paused&&!document.hidden);if(sh!==wasShoot){wasShoot=sh;window.GaiaAudioStatus?.event(sh?'shoot-start':'shoot-stop','water');}}const dt=Math.min(.04,(t-(last||t))/1000);last=t;if(started&&!paused&&!document.hidden){model.update(dt);if(kind==='water'",1)])
+# 4) host: give the water game the new clip
+sub(W/'script-16.js',[("const audioKeys=config.kind==='water'?['reaction_effort',","const audioKeys=config.kind==='water'?['water_shoot','reaction_effort',",1)])
+print('patched')
