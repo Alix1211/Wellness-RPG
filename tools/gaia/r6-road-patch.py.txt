@@ -1,0 +1,18 @@
+SP='/tmp/claude-0/-home-claude/4e5cfed1-182d-5cad-9d5f-12b059f8ca12/scratchpad'
+def sub(path,pairs):
+    s=open(path,encoding='utf8').read()
+    for old,new in pairs:
+        assert s.count(old)==1,(path,old[:70],s.count(old))
+        s=s.replace(old,new)
+    open(path,'w',encoding='utf8').write(s)
+sub(SP+'/r6/script-13.js',[
+("goal:Math.max(100,host.life.battle?.goal||500)","goal:Math.max(100,host.life.battle?.roadGoal||900)"),
+("안정구간에서 하트 보너스! 60초 안에 1,000점!","안정구간에서 하트 보너스! 제한 시간 안에 목표 점수를 채우세요!"),
+])
+sub(SP+'/r6/script-16.js',[
+("const gold=result.success?12:0;life.gold+=gold;const gained=",
+ "const great=!!(result.success&&!result.penalty&&(result.score||0)>=1100);const gold=result.success?(great?18:12):0;life.gold+=gold;const gained="),
+("toast(result.success?(result.penalty?'체력 -3 · 보상 +12 G · '+gainText:'보상 +12 G · '+gainText):'체력 -5 · 보상 없음');",
+ "toast(result.success?(result.penalty?'체력 -3 · 보상 +12 G · '+gainText:(great?'우수! 보상 +18 G · ':'보상 +12 G · ')+gainText):'체력 -5 · 보상 없음');"),
+])
+print('ok')

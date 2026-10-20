@@ -12,7 +12,7 @@
    - center games rebalanced so one full center cycle (5, water, rope, 0, 2, 3, 4) gives ~31/31/30/31 (was bo40/ge31/ki28/um24). Per-game sums unchanged.
    - diminishing gain: each stat gain x (1 - stat/250).
    - gates: besides average (job 50, home 80) the lowest stat must be >= 30 (job, close 25) and >= 60 (home, close 55). Messages updated.
-   - Open question: cylinder pass threshold (900 pass / 1100 excellent proposed) not applied; needs score samples.
+   - Road cylinder (20 s): pass goal 900 (`life.battle.roadGoal`, default 900; was 500), excellent >= 1100 gives +18 G instead of +12 G. Kane's device average is ~1000 points. Room cylinder (30 s, goal 500) unchanged. Stale help text '60초 안에 1,000점' replaced.
 
 ## Not done
 - Late-night queue scene (new scene + lines).
