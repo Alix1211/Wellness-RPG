@@ -110,7 +110,7 @@
     if(shoot||!sources.water_shoot)return;
     const tok=++shootTok;const buffer=await load('water_shoot'),ctx=ac;if(!buffer||!ctx||tok!==shootTok||shoot)return;
     try{const node=ctx.createBufferSource(),gain=ctx.createGain(),t=ctx.currentTime,from=shootPos%buffer.duration;node.buffer=buffer;node.loop=true;
-      gain.gain.setValueAtTime(0,t);gain.gain.linearRampToValueAtTime(.55,t+.03);node.connect(gain).connect(master);node.start(0,from);
+      gain.gain.setValueAtTime(0,t);gain.gain.linearRampToValueAtTime(.6,t+.03);node.connect(gain).connect(master);node.start(0,from);
       shoot={node,gain,at:t,from,dur:buffer.duration};events.water_shoot=(events.water_shoot||0)+1;
     }catch(e){noteError('shoot',e);}
   }
