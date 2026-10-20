@@ -1,0 +1,25 @@
+"""R10: dialogue male portrait = faced man (upper body) instead of the shadow.
+suit = company, tracksuit = center, casual = street/others. Usage: python3 dialogue-men-patch.py WORKDIR REPO_ROOT"""
+import sys,base64,json
+from pathlib import Path
+W=Path(sys.argv[1]);R=Path(sys.argv[2]);D=R/'assets/characters/dialogue-men'
+def sub(path,pairs):
+    s=open(path,encoding='utf8').read()
+    for old,new,*c in pairs:
+        n=c[0] if c else 1
+        assert s.count(old)==n,(str(path),old[:80],s.count(old))
+        s=s.replace(old,new)
+    open(path,'w',encoding='utf8').write(s)
+def url(n): return 'data:image/webp;base64,'+base64.b64encode((D/(n+'.webp')).read_bytes()).decode()
+cnt={'suit':12,'tracksuit':12,'casual':8}
+art='window.DIALOGUE_MEN={'+','.join(k+':['+','.join(json.dumps(url('%s_%02d'%(k,i))) for i in range(1,c+1))+']' for k,c in cnt.items())+'};\n'
+css=("#roomScene #malePortraitSlot{translate:none!important}#roomScene #malePortrait{opacity:1!important;width:auto;height:80%;max-height:none;top:auto;bottom:0;filter:drop-shadow(0 3px 8px #50334640)}"
+"@media (orientation:portrait){#roomScene #malePortrait{width:150%;height:auto;top:10%;bottom:auto}#roomScene #malePortraitSlot,#roomScene #femalePortraitSlot{transition:opacity .22s ease}#roomScene:not(.male-speaking) #malePortraitSlot{opacity:0}#roomScene.male-speaking #femalePortraitSlot{opacity:0}}"
+"#roomScene #malePortrait.speaking{animation:maleSpeak2 .3s ease-out}@keyframes maleSpeak2{50%{transform:scale(1.025)}}")
+styler="document.head.append(Object.assign(document.createElement('style'),{textContent:"+json.dumps(css)+"}));\n"
+sub(W/'script-13.js',[("const CITY_ENCOUNTER_DOCUMENT=\"",art+styler+"const CITY_ENCOUNTER_DOCUMENT=\"")])
+OLD="$('#malePortrait').src=ROOM_ART.silhouettes[String((world.scene.floor+world.scene.room)%3+4).padStart(2,'0')]||ROOM_ART.silhouettes['01'];"
+NEW="$('#malePortrait').src=dialogueMan(r)||ROOM_ART.silhouettes[String((world.scene.floor+world.scene.room)%3+4).padStart(2,'0')]||ROOM_ART.silhouettes['01'];"
+FN=("function dialogueMan(r){const A=window.DIALOGUE_MEN;if(!A)return null;const p=place(),k=p==='company'?'suit':p==='center'?'tracksuit':'casual',list=A[k];let h=0;const id=String(r.id||'');for(let i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return list[h%list.length];}\n")
+sub(W/'script-16.js',[(OLD,NEW),("async function openRoom(r,options={}){",FN+"async function openRoom(r,options={}){")])
+print('patched')
