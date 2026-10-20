@@ -1,7 +1,7 @@
 {
-  "build": "20261020-R18",
-  "sha256": "0dc19c135da06106d2c248ed71aa3d6fa080d088c47b4cf6237a849a7db01fdb",
-  "size": 66951760,
+  "build": "20261020-R19",
+  "sha256": "069c4abb17c49956f593e4df80af2071a11a04912a5d3ba099def4e030ed48e5",
+  "size": 66951992,
   "compression": "gzip",
   "parts": [
     "builds/gaia-life-20261020/html.gz.part-00",
