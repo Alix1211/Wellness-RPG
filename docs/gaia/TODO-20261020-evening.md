@@ -75,3 +75,9 @@
 - `four_office_standing_hesitant.png`: 우물쭈물·곤란 버전 (같은 인물·같은 옷, 눈썹 처지고 홍조, 손을 모으거나 가슴 앞에 쥠).
 - 케인님이 말씀하신 "차이"는 같은 인물의 밝은 버전 ↔ 우물쭈물 버전 한 쌍으로 보인다. 요가복에도 같은 한 쌍이 있는지는 확인 필요.
 - 방향: 여자끼리 대화는 밝은 버전, 남자 앞은 우물쭈물 버전. 적용은 지시 시.
+
+## 요가복 우물쭈물 시트 2종 추가 (12:44, `assets/characters/cast4/`)
+- `four_standing_yoga_hesitant.png` (요가복 서기, 우물쭈물 버전. 밝은/차분 버전은 `four_standing_front_yoga.png`)
+- `four_kneel_back_yoga_hesitant.png` (요가복 무릎 꿇기·엎드림·뒷모습 12컷, 어두운 글로우 배경)
+- 오피스 쪽은 이미 `four_office_standing_bright/hesitant`, `four_distressed_poses_office`, `four_kneel_crawl_office` 보유. 이번에 다시 보내신 오피스 3장은 기존과 같은 이미지라 중복 저장하지 않음.
+- 케인님이 원본 PNG 사용을 요청하셨으므로, 원본이 올라오면 위 전체를 원본으로 교체한다.
