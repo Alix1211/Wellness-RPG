@@ -158,3 +158,9 @@
 - 새로 받은 60·90BPM 곡은 저장소에 없었으므로 `assets/audio/bpm/`에 OGG로 보관(원본 WAV는 케인님 보유). 120·150도 같은 폴더에 같이 둠.
 - 파일명 `037…20BPM`, `045…40BPM`은 잘린 이름이 아니라 번호 순서(037→20, 045→40, 052→60, 059→90, 067→120, 074→150)로 보아 20BPM·40BPM 느린 곡으로 판단(추정). 필요 시 박자 분석으로 확인.
 - 때리는 소리 원본: `assets/audio/freesound_community-face-punch-91909.mp3`.
+
+## 효과음 구조 확인 (16:12, GPT 안내문과 대조 완료)
+- 소리는 개별 파일이 아니라 본체의 `window.GAIA_SOUND_SOURCES`(data:audio base64)에 내장. 재생 코드 `src/gaia-life/native-audio-runtime.js`. 키 이름은 제가 본체에서 찾은 것과 일치.
+- 용도 대응(GPT 안내): `reaction_whine`=미스, `reaction_surprise`=보통 타격, `reaction_happy`=정타. 그 외 displeased(불만), cry(울음), effort(힘줌), sigh(한숨), pant(숨참). 타격 `hit_slap`·`hit_punch`, 반복 트랙 rope/cylinder120/cylinder150/balance, 대상별 반응 `tap_mix_1_1~3_3`(9개).
+- 현재 소리는 `water·rope·cylinder` 종류의 게임에만 iframe으로 주입됨(patch-runtime.py). 새 미니게임 모듈은 `wellness-sfx {name}`을 본체가 받아 위 키로 재생하는 연결을 본체 셸에서 만들어야 함.
+- 구형 `legacy-wellness/미니게임/audio/01~07.ogg`와 반응음 키의 대응은 확인되지 않아 추측하지 않음.
