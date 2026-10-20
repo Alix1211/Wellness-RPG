@@ -1,0 +1,52 @@
+"""R12: squat rhythm game (kind 'squat'), one game per room, yoga standing woman removed.
+Usage: python3 squat-patch.py WORKDIR REPO_ROOT"""
+import sys,base64,json,io
+from pathlib import Path
+import numpy as np
+from PIL import Image
+W=Path(sys.argv[1]);R=Path(sys.argv[2])
+def sub(path,pairs):
+    s=open(path,encoding='utf8').read()
+    for old,new in pairs:
+        assert s.count(old)==1,(str(path),old[:90],s.count(old))
+        s=s.replace(old,new)
+    open(path,'w',encoding='utf8').write(s)
+def b64(p,mime): return 'data:'+mime+';base64,'+base64.b64encode(Path(p).read_bytes()).decode()
+# ---- sprites + document (script-13) ----
+SP=R/'assets/characters/sprites/animated/squat'
+def bottom(path):
+    a=np.array(Image.open(path).convert('RGBA'));tops=[]
+    for i in range(12):
+        r,c=divmod(i,6);f=a[r*456:(r+1)*456,c*275:(c+1)*275,3];ys=np.where(f>40)[0];tops.append(int(ys.min()))
+    return int(np.argmax(tops))
+art={}
+for k in ['yoga','office','jeans']:
+    art[k]={'front':b64(SP/f'{k}_squat_front_sheet.webp','image/webp'),'back':b64(SP/f'{k}_squat_back_sheet.webp','image/webp'),
+            'fb':bottom(SP/f'{k}_squat_front_sheet.webp'),'bb':bottom(SP/f'{k}_squat_back_sheet.webp')}
+    print(k,art[k]['fb'],art[k]['bb'])
+doc=(R/'src/gaia-life/squat-game.html').read_text(encoding='utf8')
+js='window.SQUAT_ART='+json.dumps(art)+';\nconst SQUAT_DOCUMENT='+json.dumps(doc).replace('</','<\\/')+';\n'
+sub(W/'script-13.js',[('const CITY_ENCOUNTER_DOCUMENT="',js+'const CITY_ENCOUNTER_DOCUMENT="')])
+# ---- beds (script-19, page-level sources) ----
+BP=R/'assets/audio/bpm'
+add=''.join('window.GAIA_SOUND_SOURCES.%s=%s;'%(k,json.dumps(b64(BP/f,'audio/ogg'))) for k,f in [('squat60_bed','bpm060.ogg'),('squat90_bed','bpm090.ogg'),('squat120_bed','bpm120.ogg')])
+sub(W/'script-19.js',[('};window.GAIA_GAME_BRIDGE="','};'+add+'window.GAIA_GAME_BRIDGE="')])
+# ---- host (script-16) ----
+SQC=("function squatConfig(){const o=world.outfit,k=o==='lavender-yoga'?'yoga':o==='office'?'office':'jeans',A=(window.SQUAT_ART||{})[k]||{};const base=Math.max(1,Math.min(3,life.battle.difficulty||1));return{difficulty:Math.min(3,base+((session&&session.night)||(roomContext&&roomContext.challenge)?1:0)),front:A.front,back:A.back,fb:A.fb,bb:A.bb};}\n")
+sub(W/'script-16.js',[
+("async function startGame(){",SQC+"async function startGame(){"),
+("const doc=typeof game==='number'?legacyHost(game,roomContext.r,config):(game==='cylinder'?CITY_ENCOUNTER_DOCUMENT:SUITE_DOCUMENT)",
+ "if(game==='squat')config.squat=squatConfig();const doc=typeof game==='number'?legacyHost(game,roomContext.r,config):(game==='cylinder'?CITY_ENCOUNTER_DOCUMENT:game==='squat'?SQUAT_DOCUMENT:SUITE_DOCUMENT)"),
+("const native=['water','rope','cylinder'].includes(config.kind);const audioKeys=config.kind==='water'?[",
+ "const native=['water','rope','cylinder','squat'].includes(config.kind);const audioKeys=config.kind==='squat'?['hit_punch','reaction_happy','reaction_surprise','reaction_whine','reaction_displeased','squat60_bed','squat90_bed','squat120_bed']:config.kind==='water'?["),
+("{water:'물병',rope:'줄 자르기',cylinder:'리듬',travel:'이동'}[g]","{water:'물병',rope:'줄 자르기',cylinder:'리듬',travel:'이동',squat:'스쿼트'}[g]"),
+])
+# ---- model (script-07): gains + one game per room ----
+sub(W/'script-07.js',[
+("rope:{ki:8,bo:5,ge:3,um:3}};","rope:{ki:8,bo:5,ge:3,um:3},squat:{ki:6,bo:8,um:4,ge:2}};"),
+(" const HOME_ROOMS=[",
+ " FLOORS.filter(f=>f.place==='center').forEach(f=>{let a=0,b=0;f.rooms.forEach(r=>{if(r.kind==='posture')r.games=[[2],['squat'],[2]][a++%3];else if(r.kind==='punish')r.games=[[3],[4],[3]][b++%3];});});\n {const cf=FLOORS.filter(f=>f.place==='company')[1];const m=cf&&cf.rooms.find(r=>r.kind==='meeting');if(m)m.games=['squat'];}\n const HOME_ROOMS=["),
+])
+# ---- NPC: remove the standing yoga woman (center members) ----
+sub(W/'script-08.js',[("const count=1;","const count=company?1:0;")])
+print('patched')

@@ -1,0 +1,164 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><title>스쿼트</title><style>
+html,body{margin:0;height:100%;overflow:hidden;background:#2a2230;font-family:system-ui,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+#hud{position:fixed;left:0;right:0;top:max(14px,env(safe-area-inset-top));display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;color:#fff;text-shadow:0 2px 6px #3b2a3fcc}
+#tier{font-size:12px;letter-spacing:.08em;opacity:.85}
+#score{font-size:30px;font-weight:800;line-height:1}
+#combo{font-size:13px;min-height:16px;font-weight:700;color:#ffd7ea}
+#count{position:fixed;left:0;right:0;top:34%;text-align:center;font-size:84px;font-weight:900;color:#fff;text-shadow:0 4px 18px #7a3a62cc;pointer-events:none;opacity:0}
+#pads{position:fixed;left:0;right:0;bottom:max(16px,env(safe-area-inset-bottom));display:flex;gap:14px;justify-content:center;padding:0 16px;box-sizing:border-box}
+.pad{flex:1;max-width:210px;height:min(17vh,120px);border:0;border-radius:26px;font:inherit;font-weight:800;font-size:22px;color:#fff;background:linear-gradient(#ff8fbd,#ee5f9b);box-shadow:0 6px 0 #b83f78,0 12px 22px #3b1f3a66;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;touch-action:none}
+.pad small{font-size:12px;font-weight:600;opacity:.85}
+.pad.on{transform:translateY(5px);box-shadow:0 1px 0 #b83f78,0 4px 10px #3b1f3a66;filter:brightness(1.08)}
+#veil{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#2a223099;backdrop-filter:blur(3px)}
+#veil[hidden]{display:none}
+.card{width:min(84vw,340px);padding:26px 20px 20px;border-radius:26px;background:#fff8f2;color:#4a3a45;text-align:center;box-shadow:0 12px 40px #1a102066;display:flex;flex-direction:column;gap:12px;align-items:center}
+.card h1{margin:0;font-size:26px}
+.card p{margin:0;font-size:15px;opacity:.85}
+.stats{display:flex;gap:16px;justify-content:center;font-size:14px;font-weight:700}
+.row{display:flex;gap:10px;width:100%}
+.btn{flex:1;min-height:48px;border:0;border-radius:15px;font:inherit;font-weight:800;font-size:16px;color:#fff;background:#548b7a;cursor:pointer}
+.btn.alt{background:#c9a9ba}
+</style></head><body>
+<canvas id="cv"></canvas>
+<div id="hud"><div id="tier"></div><div id="score">0</div><div id="combo"></div></div>
+<div id="count"></div>
+<div id="pads"><button class="pad" id="padF" data-c="0">앞모습<small>정면</small></button><button class="pad" id="padB" data-c="1">뒷모습<small>후면</small></button></div>
+<div id="veil"><div class="card" id="card"></div></div>
+<script>
+'use strict';
+const CFG=/*LIFE_CONFIG*/;
+const SQ=CFG.squat||{difficulty:1};
+const TIER=Math.max(1,Math.min(3,+SQ.difficulty||1));
+const RULE={1:{bpm:60,off:.76,key:'squat60_bed',perfect:.10,good:.22,swap:0,name:'쉬움',beats:24,lead:4},2:{bpm:90,off:.19,key:'squat90_bed',perfect:.085,good:.19,swap:.35,name:'보통',beats:32,lead:4},3:{bpm:120,off:.09,key:'squat120_bed',perfect:.075,good:.16,swap:.5,name:'어려움',beats:40,lead:4}}[TIER];
+const PER=60/RULE.bpm,FW=275,FH=456,FRAMES=12,COLS=6;
+const $=s=>document.querySelector(s),cv=$('#cv'),g=cv.getContext('2d');
+let W=0,H=0,DPR=1;
+function resize(){DPR=Math.min(2,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);g.setTransform(DPR,0,0,DPR,0,0);}
+addEventListener('resize',resize);resize();
+const img={bg:null,f:null,b:null,ball:null};
+function loadImg(src){return new Promise(ok=>{if(!src)return ok(null);const i=new Image();i.onload=()=>ok(i);i.onerror=()=>ok(null);i.src=src;});}
+const ready=Promise.all([loadImg(CFG.background),loadImg(SQ.front),loadImg(SQ.back),loadImg(SQ.ball)]).then(([a,b,c,d])=>{img.bg=a;img.f=b;img.b=c;img.ball=d;});
+const FRAC=[(+SQ.fb||6)/FRAMES,(+SQ.bb||6)/FRAMES];
+/* ---------- audio ---------- */
+const SRC=window.GAIA_SOUND_SOURCES||{};
+let ac=null,master=null,bufs={},bed=null,sched=[],t0=0;
+function soundOn(){try{return parent.LifeMini?.sound?.enabled!==false;}catch{return true;}}
+function volume(){try{return parent.GaiaAudioStatus?.options?.volume??.8;}catch{return .8;}}
+function ensureAC(){if(ac)return ac;const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;ac=new C({latencyHint:'interactive'});const comp=ac.createDynamicsCompressor();comp.threshold.value=-14;comp.knee.value=12;comp.ratio.value=6;master=ac.createGain();master.gain.value=soundOn()?volume():0;master.connect(comp);comp.connect(ac.destination);return ac;}
+async function buf(name){if(!SRC[name]||!ac)return null;if(!bufs[name]){bufs[name]=Promise.resolve().then(()=>{const raw=atob(SRC[name].split(',')[1]);return Uint8Array.from(raw,c=>c.charCodeAt(0)).buffer;}).then(a=>ac.decodeAudioData(a)).catch(()=>null);}return bufs[name];}
+const decoded={};
+async function prep(names){await Promise.all(names.map(async n=>{decoded[n]=await buf(n);}));}
+function shot(name,when,vol){const b=decoded[name];if(!b||!ac)return null;try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=b;gn.gain.value=vol;s.connect(gn).connect(master);s.start(Math.max(when,ac.currentTime));sched.push(s);s.onended=()=>{const i=sched.indexOf(s);if(i>=0)sched.splice(i,1);try{s.disconnect();gn.disconnect();}catch{}};return s;}catch{return null;}}
+let lastVoice=-9;
+function voice(name,vol){const now=performance.now();if(now-lastVoice<320)return;lastVoice=now;shot(name,0,vol);}
+function stopAll(){for(const s of sched.splice(0)){try{s.onended=null;s.stop();}catch{}}if(bed){try{bed.stop();}catch{}bed=null;}}
+const latency=()=>(ac?(ac.outputLatency||ac.baseLatency||0):0)+.02;
+const gt=()=>ac?ac.currentTime-latency():0;
+/* ---------- plan ---------- */
+function rngMaker(seed){let x=seed>>>0||1;return()=>{x=(x*1664525+1013904223)>>>0;return x/4294967296;};}
+const M=[
+ [[0,0,2],[1,2,2]],[[1,0,2],[0,2,2]],[[0,0,2],[0,2,2]],[[1,0,2],[1,2,2]],
+ [[0,0,1],[0,1,1],[1,2,2]],[[1,0,1],[1,1,1],[0,2,2]]
+];
+const MS=[
+ [[0,0,2],[1,0,2],[0,2,2],[1,2,2]],
+ [[0,0,2],[1,0,2],[0,2,1],[1,3,1]],
+ [[0,0,1],[1,1,1],[0,2,1],[1,3,1]]
+];
+function validAdd(evs,add){for(const a of add)for(const e of evs){if(e.c!==a.c)continue;const need=(e.len+a.len)/2;if(Math.abs(e.beat-a.beat)<need-1e-6)return false;}return true;}
+function makePlan(){const r=rngMaker((Date.now()&0xffff)+TIER*977),evs=[];const total=RULE.beats,lead=RULE.lead;
+ if(TIER===1){let last=-1,run=0;for(let b=0;b<total;b+=2){let c=r()<.5?0:1;if(c===last&&run>=2)c=1-c;run=c===last?run+1:1;last=c;evs.push({c,beat:lead+b,len:2});}}
+ else{const pool=TIER===2?M:M.concat(MS);let lastIdx=-1,same=0;for(let b=0;b<total;b+=4){let pick=null;for(let k=0;k<14&&!pick;k++){const i=Math.floor(r()*pool.length);if(i===lastIdx&&same>=1)continue;const add=pool[i].map(([c,o,l])=>({c,beat:lead+b+o,len:l}));if(validAdd(evs,add)){pick=add;same=i===lastIdx?same+1:0;lastIdx=i;}}if(pick)evs.push(...pick);}}
+ evs.sort((a,b)=>a.beat-b.beat||a.c-b.c);
+ return evs;}
+/* ---------- state ---------- */
+let state='ready',events=[],score=0,combo=0,best=0,strays=0,counts={perfect:0,good:0,miss:0},pops=[],parts=[],paused=false,endAt=0,reported=false;
+const X=[.27,.73],pos=[X[0]*1,X[1]*1],target=[X[0],X[1]];
+const shake=[0,0],squash=[0,0];
+const beatT=i=>t0+RULE.off+PER*(i+1);
+function layoutPlan(){let nextSwap=RULE.lead+4;const arr=[];const r=rngMaker(Date.now()&0xffffff);
+ for(let b=nextSwap;b<RULE.beats+RULE.lead;b+=4){if(r()<RULE.swap){let sp=TIER===3?[[.27,.73],[.73,.27],[.4,.6],[.6,.4],[.5,.5]][Math.floor(r()*5)]:[[.27,.73],[.73,.27]][Math.floor(r()*2)];arr.push({beat:b-1.2,x:sp});}}
+ return arr;}
+let moves=[];
+async function begin(){
+ events=makePlan().map(e=>({...e,res:null}));moves=layoutPlan();
+ score=0;combo=0;best=0;strays=0;counts={perfect:0,good:0,miss:0};pops=[];parts=[];reported=false;
+ target[0]=pos[0]=X[0];target[1]=pos[1]=X[1];
+ $('#score').textContent='0';$('#combo').textContent='';
+ ensureAC();await ac.resume().catch(()=>{});
+ const names=[RULE.key,'hit_punch','reaction_happy','reaction_surprise','reaction_whine','reaction_displeased'];
+ await Promise.all([ready,prep(names)]);
+ stopAll();
+ t0=ac.currentTime+.25;
+ if(decoded[RULE.key]){try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=decoded[RULE.key];s.loop=true;gn.gain.value=.62;s.connect(gn).connect(master);s.start(t0);bed=s;}catch{}}
+ for(const e of events){e.time=beatT(e.beat);if(e.c===1)shot('hit_punch',e.time+latency()*0,.62);}
+ state='play';paused=false;$('#veil').hidden=true;$('#tier').textContent='스쿼트 · '+RULE.name;
+}
+function judge(res,e){e.res=res;counts[res]++;
+ if(res==='miss'){combo=0;pops.push({c:e.c,t:performance.now(),text:'앗…',col:'#c9c2ff'});voice('reaction_whine',.55);shake[e.c]=.35;}
+ else{combo++;best=Math.max(best,combo);score+=res==='perfect'?100:60;squash[e.c]=1;
+  pops.push({c:e.c,t:performance.now(),text:res==='perfect'?'완벽!':'좋아요',col:res==='perfect'?'#ffe27a':'#ffd0e6'});
+  if(res==='perfect'){voice('reaction_happy',.6);for(let i=0;i<9;i++)parts.push({c:e.c,x:0,y:0,vx:(Math.random()-.5)*240,vy:-120-Math.random()*160,life:0,ttl:.7+Math.random()*.4,ch:i%3?'♥':'✦'});}
+  else voice('reaction_surprise',.55);}
+ $('#score').textContent=Math.max(0,score-strays*12);$('#combo').textContent=combo>=3?combo+' 콤보':'';}
+function tap(c){if(state!=='play'||paused)return;const t=gt();let hit=null;
+ for(const e of events){if(e.c!==c||e.res)continue;const d=Math.abs(t-e.time);if(d<=RULE.good&&(!hit||d<hit.d))hit={e,d};}
+ if(!hit){strays++;combo=0;shake[c]=.2;$('#score').textContent=Math.max(0,score-strays*12);$('#combo').textContent='';return;}
+ judge(hit.d<=RULE.perfect?'perfect':'good',hit.e);}
+for(const b of document.querySelectorAll('.pad')){const c=+b.dataset.c;b.addEventListener('pointerdown',ev=>{ev.preventDefault();b.classList.add('on');tap(c);});const off=()=>b.classList.remove('on');b.addEventListener('pointerup',off);b.addEventListener('pointercancel',off);b.addEventListener('pointerleave',off);}
+addEventListener('keydown',e=>{if(e.repeat)return;if(e.key==='ArrowLeft'||e.key==='a'||e.key==='f')tap(0);if(e.key==='ArrowRight'||e.key==='d'||e.key==='b')tap(1);});
+/* ---------- drawing ---------- */
+function frameOf(c,t){let best=null;
+ for(const e of events){if(e.c!==c)continue;const len=PER*e.len,start=e.time-FRAC[c]*len,ph=(t-start)/len;if(ph>=0&&ph<1){const d=Math.abs(t-e.time);if(!best||d<best.d)best={d,ph};}}
+ return best?Math.min(FRAMES-1,Math.floor(best.ph*FRAMES)):0;}
+function draw(now){
+ const t=state==='play'?gt():(ac?gt():0);
+ g.clearRect(0,0,W,H);
+ if(img.bg){const s=Math.max(W/img.bg.width,H/img.bg.height);g.drawImage(img.bg,(W-img.bg.width*s)/2,(H-img.bg.height*s)/2,img.bg.width*s,img.bg.height*s);}else{g.fillStyle='#3a2c40';g.fillRect(0,0,W,H);}
+ g.fillStyle='#2a22308c';g.fillRect(0,0,W,H);
+ const floorY=H*.66,s=Math.min(W*.46/FW,H*.4/FH);
+ // lead-in count & beat pulse
+ if(state==='play'){const bi=(t-t0-RULE.off)/PER-1;
+  for(const m of moves){if(!m.done&&bi>=m.beat){m.done=true;target[0]=m.x[0];target[1]=m.x[1];}}
+  const cn=$('#count');if(bi>=0&&bi<RULE.lead+.9){const k=Math.floor(bi),ph=bi-k;let txt='';if(bi>=RULE.lead)txt='GO';else if(k>=1)txt=String(RULE.lead-k);cn.textContent=txt;cn.style.opacity=txt?String(Math.max(0,1-ph*.9)):'0';cn.style.transform='scale('+(1+ph*.22)+')';}else cn.style.opacity='0';
+  for(const e of events){if(!e.res&&t>e.time+RULE.good)judge('miss',e);}
+  if(!reported&&events.length&&events.every(e=>e.res)&&t>events[events.length-1].time+.9)finish();
+ }
+ for(let c=0;c<2;c++)pos[c]+=(target[c]-pos[c])*Math.min(1,.12);
+ const order=[0,1].sort((a,b)=>pos[a]-pos[b]);
+ for(const c of order){
+  const x=pos[c]*W+(shake[c]>0?Math.sin(now/22)*shake[c]*10:0);
+  const sheet=c===0?img.f:img.b;
+  const fr=state==='play'?frameOf(c,t):0;
+  // ball
+  const r=40*s,by=floorY-r+4*s,sq=squash[c];
+  const nearE=state==='play'?events.reduce((m,e)=>e.c===c?Math.min(m,Math.abs(t-e.time)):m,9):9;
+  const press=Math.max(0,1-nearE/.12)*.22+sq*.15;
+  g.save();g.translate(x,by+r*press);g.scale(1+press*.7,1-press);
+  if(img.ball){g.drawImage(img.ball,-r,-r,r*2,r*2);}else{const gr=g.createRadialGradient(-r*.35,-r*.4,r*.1,0,0,r);gr.addColorStop(0,'#ffd1e6');gr.addColorStop(.55,'#ff8fbd');gr.addColorStop(1,'#d9559b');g.fillStyle=gr;g.beginPath();g.arc(0,0,r,0,7);g.fill();g.fillStyle='#ffffff55';g.beginPath();g.ellipse(-r*.35,-r*.45,r*.28,r*.16,-.5,0,7);g.fill();}
+  g.restore();
+  if(sheet){const col=fr%COLS,row=Math.floor(fr/COLS);g.drawImage(sheet,col*FW,row*FH,FW,FH,x-FW*s/2,floorY-450*s,FW*s,FH*s);}
+  g.fillStyle='#00000030';g.beginPath();g.ellipse(x,floorY+2*s,FW*s*.34,10*s,0,0,7);g.fill();
+  shake[c]=Math.max(0,shake[c]-.016);squash[c]=Math.max(0,squash[c]-.07);
+ }
+ const nowMs=performance.now();
+ pops=pops.filter(p=>nowMs-p.t<800);
+ for(const p of pops){const a=(nowMs-p.t)/800,x=pos[p.c]*W,y=floorY-FH*s*.92-a*40;g.globalAlpha=1-a*a;g.font='800 '+Math.round(26+(1-a)*8)+'px system-ui,sans-serif';g.textAlign='center';g.lineWidth=5;g.strokeStyle='#3b2a3f';g.strokeText(p.text,x,y);g.fillStyle=p.col;g.fillText(p.text,x,y);g.globalAlpha=1;}
+ parts=parts.filter(p=>p.life<p.ttl);
+ for(const p of parts){p.life+=.016;p.vy+=520*.016;p.x+=p.vx*.016;p.y+=p.vy*.016;const x=pos[p.c]*W+p.x,y=floorY-FH*s*.35+p.y;g.globalAlpha=Math.max(0,1-p.life/p.ttl);g.fillStyle=p.ch==='♥'?'#ff6fa8':'#ffe27a';g.font='22px system-ui';g.textAlign='center';g.fillText(p.ch,x,y);g.globalAlpha=1;}
+ requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+/* ---------- flow ---------- */
+function showReady(){const c=$('#card');c.innerHTML='<h1>스쿼트</h1><p>공에 닿는 순간 해당 버튼을 눌러요</p><div class="stats"><span>'+RULE.name+'</span><span>'+RULE.bpm+' BPM</span></div><div class="row"><button class="btn" id="go">시작</button></div>';$('#veil').hidden=false;$('#go').onclick=()=>{$('#go').disabled=true;begin();};}
+function finish(){reported=true;state='result';stopAll();
+ const n=events.length,pts=Math.max(0,score-strays*12),ratio=n?Math.min(1,pts/(n*100)):0,ok=ratio>=.5;
+ try{parent.postMessage({type:'wellness-result',score:Math.round(pts),ratio,success:ok,detail:{counts,strays,best,tier:TIER}},'*');}catch{}
+ const c=$('#card');c.innerHTML='<h1>'+(ok?'성공!':'아쉬워요')+'</h1><div class="stats"><span>완벽 '+counts.perfect+'</span><span>좋아요 '+counts.good+'</span><span>놓침 '+counts.miss+'</span></div><p>'+Math.round(pts)+'점 · 최고 '+best+' 콤보</p><div class="row"><button class="btn alt" id="again">다시</button><button class="btn" id="close">닫기</button></div>';
+ $('#veil').hidden=false;$('#again').onclick=()=>{try{parent.postMessage({type:'game-retry'},'*');}catch{}};$('#close').onclick=()=>{try{parent.postMessage({type:'wellness-close'},'*');}catch{}};}
+window.LifeMini={get started(){return state==='play';},get paused(){return paused;},sound:{enabled:true},pause(v){paused=!!v;try{if(ac){if(v)ac.suspend();else ac.resume();}}catch{}}};
+window.SquatGame={get events(){return events;},gt,tap,get state(){return state;},get counts(){return counts;},rule:RULE};
+showReady();
+</script>
+</html>
