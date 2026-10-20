@@ -37,7 +37,7 @@ small{opacity:.7}
 const DOC=__DOC__,ART=__ART__,SRC=__SRC__,BG=__BG__,BGV=__BGV__,BALL=__BALL__;
 let outfit='yoga',tier=1;
 for(const [id,set] of [['o',v=>outfit=v],['t',v=>tier=+v]])document.getElementById(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;set(b.dataset.v);for(const x of document.getElementById(id).children)x.classList.toggle('on',x===b);});
-function launch(){const A=ART[outfit],cfg={background:BG[outfit],squat:{difficulty:tier,front:A.front,back:A.back,fb:A.fb,bb:A.bb,ball:BALL}};
+function launch(){const A=ART[outfit],cfg={background:BG[outfit],squat:{difficulty:tier,front:A.front,back:A.back,fb:A.fb,bb:A.bb,ball:BALL,floor:A.floor}};
  const boot='<script>window.GAIA_SOUND_SOURCES='+JSON.stringify(SRC)+';window.SQUAT_BGV='+JSON.stringify(BGV)+';<\/script>';
  const html=DOC.replace('/*LIFE_CONFIG*/',JSON.stringify(cfg).replace(/</g,'\\u003c')).replace('<meta',boot+'<meta');
  const f=document.getElementById('f');f.srcdoc=html;f.hidden=false;document.getElementById('menu').hidden=true;}
