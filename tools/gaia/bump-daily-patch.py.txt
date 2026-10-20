@@ -1,0 +1,9 @@
+# R9: corridor bump (center/company) opens the encounter at most once per in-game day.
+import sys
+p=sys.argv[1]
+s=open(p,encoding='utf-8').read()
+old="(encounterCooldown.get(n.id)||0)<time);if(man){encounterCooldown.set(man.id,time+30);"
+new="(encounterCooldown.get(n.id)||0)<time&&life.bumpDay!==life.day);if(man){encounterCooldown.set(man.id,time+30);life.bumpDay=life.day;save();"
+assert s.count(old)==1
+open(p,'w',encoding='utf-8').write(s.replace(old,new))
+print('ok')
