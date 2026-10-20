@@ -1,0 +1,56 @@
+"""R7 road encounter: random casual man + apology/pray/surprised hero poses, and a flee confirm (70%) on back/close.
+Usage: python3 road-cast-patch.py WORKDIR(extracted scripts)  REPO_ROOT"""
+import sys,base64,json
+from pathlib import Path
+W=Path(sys.argv[1]);R=Path(sys.argv[2]);ENC=R/'assets/characters/encounter'
+def sub(path,pairs):
+    s=open(path,encoding='utf8').read()
+    for old,new in pairs:
+        assert s.count(old)==1,(str(path),old[:80],s.count(old))
+        s=s.replace(old,new)
+    open(path,'w',encoding='utf8').write(s)
+def url(name):
+    return 'data:image/webp;base64,'+base64.b64encode((ENC/(name+'.webp')).read_bytes()).decode()
+OUT=['jeans','office','lavender-yoga']
+art='window.CAST_ART={men:['+','.join(json.dumps(url('man_%02d'%i)) for i in range(1,11))+'],hero:{'+','.join(json.dumps(o)+':{'+','.join('%s:%s'%(p,json.dumps(url('hero_%s_%s'%(o,p)))) for p in ['bow','pray','surprised','kneel','run'])+'}' for o in OUT)+'}};\n'
+# ---- iframe document (inside script-13) ----
+CAST_JS=("const CAST=GAME_CONFIG.cityCast||null;let castEl=null,castMan=null,castHero=null;const castLand=innerWidth>innerHeight*1.1,castU=castLand?62:36;"
+"function castFit(im){im.onload=()=>{im.style.height=(im.naturalHeight/511*castU)+'vh';};}"
+"function castShow(pose){if(!CAST)return;if(!castEl){castEl=document.createElement('div');castEl.id='cityCast';castEl.style.cssText='position:fixed;left:0;right:0;bottom:0;height:'+(castU+2)+'vh;display:flex;align-items:flex-end;justify-content:'+(castLand?'flex-start':'center')+';padding-left:'+(castLand?'2vw':'0')+';pointer-events:none;z-index:5';castMan=new Image();castHero=new Image();for(const im of [castMan,castHero]){im.style.cssText='width:auto;max-height:100%;filter:drop-shadow(0 4px 6px #0003)';castFit(im);castEl.append(im);}castHero.style.marginLeft='-2vw';castMan.src=CAST.man;document.body.append(castEl);}castHero.src=CAST[pose];castEl.style.display='flex';}"
+"function castHide(){if(castEl)castEl.style.display='none';}\n")
+sub(W/'script-13.js',[
+("const CITY_ENCOUNTER_DOCUMENT=\"",art+"const CITY_ENCOUNTER_DOCUMENT=\""),
+("function overlay(title,body,label,fn){Q('#overlay').hidden=false;",CAST_JS.replace('\n','\\n')+"function overlay(title,body,label,fn){Q('#overlay').hidden=false;"),
+("function begin(){if(reported&&parent!==window){parent.postMessage({type:'game-retry'},'*');return;}penalty=false;","function begin(){if(reported&&parent!==window){parent.postMessage({type:'game-retry'},'*');return;}castHide();penalty=false;"),
+("function showResult(r){document.body.classList.remove('city-penalty-intro');overlay(","function showResult(r){document.body.classList.remove('city-penalty-intro');if(GAME_CONFIG.cityEncounter)castShow(r.success?'pray':'surprised');overlay("),
+("function startPenalty(attempt){penalty=true;","function startPenalty(attempt){castHide();penalty=true;"),
+("overlay(p[0],p[1],'미션 시작!',begin);}else overlay(titles[kind],'',","overlay(p[0],p[1],'미션 시작!',begin);castShow('bow');if(GAME_CONFIG.cityRetry){castHide();begin();}}else overlay(titles[kind],'',"),
+])
+# ---- host (script-16) ----
+FLEE=r"""const castMen={};let cityLast=null,cityBump=0,fleeBox=null,fleePaused=false;
+function castFor(o){const A=window.CAST_ART;if(!A)return null;if(!castMen[o.id])castMen[o.id]=A.men[Math.floor(Math.random()*A.men.length)];const h=A.hero[o.outfit]||A.hero.jeans;return{man:castMen[o.id],bow:h.bow,pray:h.pray,surprised:h.surprised};}
+function fleeClose(){if(fleeBox){fleeBox.remove();fleeBox=null;}}
+function fleeCard(img,title,sub,buttons){fleeBox.replaceChildren();const card=document.createElement('div');card.style.cssText='width:min(86vw,340px);padding:20px 18px 18px;border-radius:22px;background:#fffaf3;color:#4a3a45;text-align:center;box-shadow:0 8px 40px #0006;display:flex;flex-direction:column;align-items:center;gap:12px';
+ if(img){const im=new Image();im.src=img;im.style.cssText='height:34vh;max-width:70%;object-fit:contain';card.append(im);}
+ const t=document.createElement('div');t.textContent=title;t.style.cssText='font-size:22px;font-weight:800;line-height:1.35';card.append(t);
+ if(sub){const s=document.createElement('div');s.textContent=sub;s.style.cssText='font-size:14px;line-height:1.5;opacity:.8';card.append(s);}
+ const row=document.createElement('div');row.style.cssText='display:flex;gap:10px;width:100%;justify-content:center;flex-wrap:wrap';
+ for(const [label,fn,primary] of buttons){const b=document.createElement('button');b.textContent=label;b.style.cssText='flex:1;min-width:110px;min-height:46px;border-radius:14px;border:0;font:inherit;font-weight:700;cursor:pointer;'+(primary?'background:#548b7b;color:#fff':'background:#efe3d8;color:#6a4f5a');b.onclick=fn;row.append(b);}
+ if(buttons.length)card.append(row);fleeBox.append(card);return card;}
+function cityFleeAsk(){const enc=CityTravel.encounter;if(!enc||enc.settled||fleeBox)return;const o=cityLast||{};const H=window.CAST_ART?.hero?.[o.outfit]||window.CAST_ART?.hero?.jeans||{};fleePaused=false;
+ try{const f=$('#miniFrame').contentWindow.LifeMini;if(f&&f.started&&!f.paused){f.pause(true);fleePaused=true;}}catch{}
+ fleeBox=document.createElement('div');fleeBox.id='cityFlee';fleeBox.style.cssText='position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;background:#2c2a3a99;backdrop-filter:blur(3px);font-family:system-ui,sans-serif';document.body.append(fleeBox);
+ const stay=()=>{fleeClose();if(fleePaused){try{$('#miniFrame').contentWindow.LifeMini.pause(false);}catch{}}fleePaused=false;};
+ const run=()=>{const ok=Math.random()<.7;if(ok){const card=fleeCard(H.run,'도망쳤습니다!','',[]);const im=card.querySelector('img');try{im?.animate([{transform:'translateX(-18vw) scale(1)',opacity:1},{transform:'translateX(70vw) scale(.7)',opacity:.1}],{duration:1500,easing:'ease-in',fill:'forwards'});}catch{}setTimeout(()=>{fleeClose();fleePaused=false;CityTravel.settle({success:false,penalty:false,fled:true,taps:0});},1500);}
+  else{const card=fleeCard(H.kneel,'붙잡혔습니다……','미션이 더 어려워집니다',[['다시 시작',()=>{fleeClose();fleePaused=false;cityBump=Math.min(2,cityBump+1);cityEncounter(cityLast,{retry:true});},true]]);try{card.querySelector('img')?.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],{duration:260,iterations:2});}catch{}}};
+ fleeCard(null,'도망치시겠습니까?','',[['도망친다',run,true],['계속한다',stay,false]]);}
+"""
+sub(W/'script-16.js',[
+("async function cityEncounter(options){resetInput();",FLEE+"async function cityEncounter(options,extra={}){if(!extra.retry)cityBump=0;cityLast=options;resetInput();"),
+("difficulty:life.battle.difficulty||1,penalty:true},audio:[],layout,","difficulty:Math.min(3,(life.battle.difficulty||1)+cityBump),penalty:true},cityCast:castFor(options),cityRetry:!!extra.retry,audio:[],layout,"),
+("else CityTravel.cancelEncounter();return;}if(mode!=='game')return;","else cityFleeAsk();return;}if(mode!=='game')return;"),
+("else CityTravel.cancelEncounter();}else if(d?.type==='studio-open')","else cityFleeAsk();}else if(d?.type==='studio-open')"),
+("cancelled:!!result.cancelled});","cancelled:!!result.cancelled,fled:!!result.fled});"),
+("toast(result.success?(result.penalty?'체력 -3 · 보상 +12 G · '+gainText:(great?","toast(result.fled?'도망쳤습니다 · 보상 없음':result.success?(result.penalty?'체력 -3 · 보상 +12 G · '+gainText:(great?"),
+])
+print('patched')
