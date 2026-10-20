@@ -1,0 +1,13 @@
+"""R11: new punish-room background (bg key '체벌방', 1280x720 jpeg). Usage: python3 punish-bg-patch.py WORKDIR REPO_ROOT"""
+import sys,base64,io
+from pathlib import Path
+from PIL import Image
+W=Path(sys.argv[1]);R=Path(sys.argv[2])
+im=Image.open(R/'assets/backgrounds/punish-room-bg-1536x864.jpg').convert('RGB').resize((1280,720),Image.LANCZOS)
+b=io.BytesIO();im.save(b,'JPEG',quality=84,optimize=True)
+uri='data:image/jpeg;base64,'+base64.b64encode(b.getvalue()).decode()
+def sub(path,old,new):
+    s=open(path,encoding='utf8').read();assert s.count(old)==1,(old,s.count(old));open(path,'w',encoding='utf8').write(s.replace(old,new))
+sub(W/'script-00.js','"bg/마사지실": "data:image/jpeg;base64,','"bg/체벌방": "'+uri+'", "bg/마사지실": "data:image/jpeg;base64,')
+sub(W/'script-07.js',"punish:{name:'체벌방',bg:'마사지실'","punish:{name:'체벌방',bg:'체벌방'")
+print('ok',len(uri)//1024,'KB')
