@@ -1,0 +1,56 @@
+{
+  "build": "20261020-R3",
+  "browser": "Chromium 141.0.7390.37",
+  "origin": "file://",
+  "viewport": "412x850 / 412x915",
+  "securityDisabled": false,
+  "autoplay": "user-gesture-required",
+  "checks": [
+    "held road touch -> cylinder intro stays -> start and canvas input -> cancel -> road jump",
+    "three repeat street entries, before-start cancel, viewport resize and return input",
+    "water first fire produces nonzero PCM; sound menu toggles mute and restores playback",
+    "water real finish keeps result until confirm, returns once, field jump works",
+    "rope first start produces nonzero PCM without parent audio",
+    "street result persists until confirm and settles once"
+  ],
+  "audio": [
+    {
+      "kind": "street-cylinder",
+      "peak": 0.12305788695812225,
+      "state": "running",
+      "events": {
+        "cylinder120_bed": 1
+      },
+      "errors": []
+    },
+    {
+      "kind": "water-first-tap",
+      "peak": 0.40854957699775696,
+      "state": "running",
+      "events": {
+        "reaction_pant": 1
+      },
+      "errors": []
+    },
+    {
+      "kind": "water-unmute",
+      "peak": 0.42971864342689514,
+      "state": "running",
+      "events": {
+        "reaction_pant": 1,
+        "reaction_sigh": 1
+      },
+      "errors": []
+    },
+    {
+      "kind": "rope-first-start",
+      "peak": 0.10183503478765488,
+      "state": "running",
+      "events": {
+        "rope_bed": 1
+      },
+      "errors": []
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,35 @@
+SP='/tmp/claude-0/-home-claude/4e5cfed1-182d-5cad-9d5f-12b059f8ca12/scratchpad'
+def sub(path,pairs):
+    s=open(path,encoding='utf8').read()
+    for old,new in pairs:
+        assert s.count(old)==1,(path,old[:60],s.count(old))
+        s=s.replace(old,new)
+    open(path,'w',encoding='utf8').write(s)
+# ---- script-07: GaiaLife
+sub(SP+'/r6/script-07.js',[
+("normalHP:12,nightHP:14,workPay:96};","normalHP:12,nightHP:14,workPay:96,jobFloorClose:25,jobFloorOpen:30,homeFloorClose:55,homeFloorOpen:60};"),
+("const up={0:{ge:10,bo:3,ki:2,um:2},1:{um:10,ki:3,ge:2,bo:2},2:{ki:10,ge:3,bo:2,um:2},3:{bo:10,um:3,ki:2,ge:2},4:{ge:8,bo:6,um:3,ki:2},5:{bo:10,ki:3,ge:2,um:2},water:{um:10,ge:3,ki:2,bo:2},rope:{ki:7,bo:7,ge:3,um:2},cylinder:{um:8,ki:6,bo:3,ge:2}};",
+ "const up={0:{ge:10,ki:3,bo:2,um:2},1:{um:10,ki:3,ge:2,bo:2},2:{ki:10,ge:3,bo:2,um:2},3:{bo:8,um:5,ki:2,ge:2},4:{ge:8,um:5,bo:4,ki:2},5:{bo:8,um:4,ki:3,ge:2},water:{um:10,ge:3,ki:2,bo:2},rope:{ki:8,bo:5,ge:3,um:3}};\nfunction randomPair(rng=Math.random){const a=keys.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a.slice(0,2);}"),
+("function gain(s,game,ratio,success,night){const delta={},l=s.living,mult=night?2:1,quality=success?.75+clamp(ratio,0,1)*.25:.22;for(const[k,v]of Object.entries(up[game]||{})){const old=s.stats[k];s.stats[k]=round(clamp(old+v*quality*mult,0,100));delta[k]=round(s.stats[k]-old);}",
+ "function gain(s,game,ratio,success,night){const delta={},l=s.living,mult=night?2:1,quality=success?.75+clamp(ratio,0,1)*.25:.22;let table=up[game]||{};if(game==='cylinder'){const [a,b]=randomPair();table={[a]:11,[b]:8};}for(const[k,v]of Object.entries(table)){const old=+s.stats[k]||0,room=1-old/250;s.stats[k]=round(clamp(old+v*quality*mult*room,0,100));delta[k]=round(s.stats[k]-old);}"),
+("function gates(s){const l=s.living,a=average(s);if(s.employed)l.jobLocked=l.jobLocked?a<R.jobOpen:a<R.jobClose;else l.jobLocked=false;if(l.married)l.homeLocked=l.homeLocked?a<R.homeOpen:a<R.homeClose;else l.homeLocked=false;",
+ "function lowest(s){return Math.min(...keys.map(k=>+s.stats[k]||0));}\nfunction gates(s){const l=s.living,a=average(s),m=lowest(s);if(s.employed)l.jobLocked=l.jobLocked?(a<R.jobOpen||m<R.jobFloorOpen):(a<R.jobClose||m<R.jobFloorClose);else l.jobLocked=false;if(l.married)l.homeLocked=l.homeLocked?(a<R.homeOpen||m<R.homeFloorOpen):(a<R.homeClose||m<R.homeFloorClose);else l.homeLocked=false;"),
+("출근 보류 · 평균 50까지 재훈련","출근 보류 · 평균 50, 가장 낮은 스탯 30까지 재훈련"),
+("귀가 보류 · 평균 80까지 재훈련","귀가 보류 · 평균 80, 가장 낮은 스탯 60까지 재훈련"),
+("const api={R,keys,average,","const api={R,keys,randomPair,lowest,average,"),
+])
+# ---- script-16: road encounter reward = two random stats
+sub(SP+'/r6/script-16.js',[
+("const gold=result.success?12:0;life.gold+=gold;if(result.success)for(const k of ['ki','um'])life.stats[k]=Math.min(100,(life.stats[k]||0)+1);",
+ "const gold=result.success?12:0;life.gold+=gold;const gained=result.success?L.randomPair():[];for(const k of gained)life.stats[k]=Math.min(100,(life.stats[k]||0)+1);const gainText=gained.map(k=>STAT_NAMES[k]+' +1').join(' · ');"),
+("toast(result.success?(result.penalty?'체력 -3 · 보상 +12 G':'보상 +12 G'):'체력 -5 · 보상 없음');",
+ "toast(result.success?(result.penalty?'체력 -3 · 보상 +12 G · '+gainText:'보상 +12 G · '+gainText):'체력 -5 · 보상 없음');"),
+])
+# ---- script-13: road encounter intro / result lines inside the embedded document
+sub(SP+'/r6/script-13.js',[
+("model=makeModel();overlay(titles[kind],'','시작',begin);",
+ "model=makeModel();if(GAME_CONFIG.cityEncounter){const I=[['앗! 죄송합니다 주인님!','제가 길을 막고 서 있었습니다! 이 천박한 몸으로 부딪혀서 정말 죄송합니다! 속죄의 뜻으로 지금 바로 미션을 시작하게 해 주십시오!'],['으앗! 제 잘못입니다!','앞을 안 보고 걷던 암캐가 감히 귀하신 분께 부딪혔습니다! 용서해 주실 때까지 무릎 꿇고 사과하겠습니다! 부디 미션으로 벌해 주십시오!'],['죄송합니다 죄송합니다!','머리를 땅에 박고 백 번이라도 사과드리겠습니다! 제발 미션으로 용서받을 기회를 주십시오!'],['이 못난 몸이 감히!','부딪힌 순간부터 심장이 속죄하고 싶어서 뛰고 있습니다! 길가에 엎드려 빌 테니 마음껏 시험해 주십시오! 미션 시작을 청원합니다!']];const p=I[Math.floor(Math.random()*I.length)];overlay(p[0],p[1],'미션 시작!',begin);}else overlay(titles[kind],'','시작',begin);"),
+("overlay(r.success?'성공':'실패',r.detail||String(r.score??r.taps??0),'확인',",
+ "overlay(GAME_CONFIG.cityEncounter?(r.success?'용서해 주셔서 감사합니다!':'아앙…… 죄송합니다……'):(r.success?'성공':'실패'),r.detail||String(r.score??r.taps??0),'확인',"),
+])
+print('patched')
