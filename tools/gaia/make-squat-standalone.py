@@ -18,7 +18,7 @@ art,_=json.JSONDecoder().raw_decode(s13[j:])
 s00=(W/'script-00.js').read_text(encoding='utf8')
 def bg(name):
     m=re.search(r'"'+re.escape(name)+r'": "(data:image/(?:jpeg|webp);base64,[A-Za-z0-9+/=]+)"',s00);return m.group(1)
-bgs={'yoga':bg('bg/운동실'),'office':bg('bg/company/meeting'),'jeans':bg('bg/운동실')}
+bgs={'yoga':bg('bg/요가실'),'office':bg('bg/company/meeting'),'jeans':bg('bg/../city/park')}
 doc=(R/'src/gaia-life/squat-game.html').read_text(encoding='utf8')
 page=r'''<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><title>스쿼트 시험판</title><style>
 html,body{margin:0;height:100%;background:#2a2230;font-family:system-ui,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#fff}
