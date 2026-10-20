@@ -18,9 +18,24 @@ s=sub(s,"back=document.createElement('button');back.id='cityReturn';","const tes
 wr('script-13.js',s)
 # cylinder is portrait-only: always use the portrait layout
 s=rd('script-06.js')
-s=sub(s,"const ori=innerHeight>innerWidth?'portrait':'landscape',ls=layout[ori]||{}","const ori=(innerHeight>innerWidth||cfg.kind==='cylinder'||window.GAME_CONFIG?.kind==='cylinder')?'portrait':'landscape',ls=layout[ori]||{}")
+s=sub(s,"const ori=innerHeight>innerWidth?'portrait':'landscape',ls=layout[ori]||{}","const ori=(innerHeight>innerWidth||cfg.kind==='cylinder'||document.body.classList.contains('cylinder-game'))?'portrait':'landscape',ls=layout[ori]||{}")
 wr('script-06.js',s)
 s=rd('script-12.js')
-s=sub(s,"ori=orientation();config[ori]||={};","ori=(inGame&&frame?.contentWindow?.GAME_CONFIG?.kind==='cylinder')?'portrait':orientation();config[ori]||={};")
+s=sub(s,"ori=orientation();config[ori]||={};","ori=(inGame&&frame?.contentDocument?.body?.classList.contains('cylinder-game'))?'portrait':orientation();config[ori]||={};")
 wr('script-12.js',s)
+# side bars of the cylinder are plain black (background clipped to the portrait box)
+s=rd('script-06.js')
+a=".cylinder-game .play{width:min(100vw,calc((100dvh - 44px)*9/16))!important;"
+s=sub(s,a,"html:has(body.cylinder-game),body.cylinder-game{background:#000!important}body.cylinder-game::before,body.cylinder-game::after{content:'';position:fixed;top:0;bottom:0;width:max(0px,calc((100vw - 100dvh*9/16)/2));background:#000;z-index:1;pointer-events:none}body.cylinder-game::before{left:0}body.cylinder-game::after{right:0}\\n"+a)
+wr('script-06.js',s)
+s=rd('script-06.js')
+a=".cylinder-game .play{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;aspect-ratio:auto!important;margin:0!important;border-radius:0!important}"
+s=sub(s,a,a+".cylinder-game .play{inset:0 auto 0 50%!important;width:min(100vw,calc(100dvh*9/16))!important;transform:translateX(-50%)!important}.cylinder-game .overlay{left:50%!important;right:auto!important;width:min(100vw,calc(100dvh*9/16))!important;transform:translateX(-50%)!important}")
+wr('script-06.js',s)
+s=rd('script-16.js')
+s=sub(s,"const stay=()=>{fleeClose();if(fleePaused){try{$('#miniFrame').contentWindow.LifeMini.pause(false);}catch{}}fleePaused=false;};","const stay=()=>{fleeClose();if(fleePaused){try{$('#miniFrame').contentWindow.LifeMini.pause(false);}catch{}}fleePaused=false;try{$('#miniFrame').focus();$('#miniFrame').contentWindow.focus();}catch{}};")
+wr('script-16.js',s)
+s=rd('script-16.js')
+s=s.rstrip()+"\n;(()=>{let last=null;setInterval(()=>{const f=document.getElementById('miniFrame'),L=document.getElementById('miniLayer');if(!f||!L)return;try{const d=f.contentDocument;const cyl=!!(d&&d.body&&d.body.classList.contains('cylinder-game'));L.style.background=(cyl&&!L.hidden)?'#000':'';if(d&&d!==last&&d.readyState==='complete'){last=d;f.focus();f.contentWindow.focus();}}catch(e){}},250);})();\n"
+wr('script-16.js',s)
 print('r30 patched')
