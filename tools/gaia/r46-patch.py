@@ -9,9 +9,9 @@ from PIL import Image
 W=Path(sys.argv[1]);R=Path(sys.argv[2]);D=R/'assets/company-v2'
 T_STORE,T_DRAW=560,600
 SPEED=1.25
-CG=606      # 회사 바닥선(주인공·인물 발 위치)
-CF=612      # 센터 바닥선
-SG=600      # 거리 바닥선
+CG=626      # 회사 바닥선(주인공·인물 발 위치)
+CF=642      # 센터 바닥선
+SG=620      # 거리 바닥선
 # 층: [그림 파일, 구역[(종류, 이름, 비율)]]
 CO=[('로비 · 지원시설',[('f1_a_lobby_lounge',[('companyLobby','회사 로비',.51),('lounge','휴게실',.49)]),('f1_b_pantry_toilet',[('pantry','탕비실',.5),('companyToilet','화장실',.5)])]),
     ('공용 업무층',[('f2_a_shared_office_x2',[('sharedOffice','공용 사무실 A',.53),('sharedOffice','공용 사무실 B',.47)]),('f2_b_meeting_pantry_toilet',[('meeting','회의실',.43),('pantry','탕비실',.31),('companyToilet','화장실',.26)])]),
