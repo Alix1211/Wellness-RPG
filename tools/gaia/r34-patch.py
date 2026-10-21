@@ -19,7 +19,7 @@ def sets_of(name,extra_stage=None):
 # 방 키 -> 담당 인물
 ROOMMAP={
  'n:lobby':['도윤','유리'],'n:basic':['서하준'],'n:shop':['점원','서하준'],'n:gear':['이안','윤서'],
- 'n:group':['한시우'],'n:posture':['한시우'],'n:punish':['정민호'],'n:special':['정민호'],'n:recovery':['오 선생'],
+ 'n:group':['한시우'],'n:posture':['한시우'],'n:punish':['정민호'],'n:special':['도윤'],'n:recovery':['오 선생'],
  'o:lobby':['강태오','송 회장'],'o:open':['재현','강태오','지안'],'o:exec':['백도현','차재원','오 부장','송 회장'],
  'o:wc':['지안','오 부장'],'o:lounge':['오 부장','지안']}
 EXTRA={ # 조연(R1~R17) -> 방 키
@@ -113,4 +113,18 @@ s=sub(s,"function pickResultLine(rec){const set=RESULT_LINES[rec.game];if(!set)r
 s=sub(s,"const lines=[res,flow].filter(Boolean).map(text=>({speaker:'주인공',text,male:false}));",
  "const lines=[].concat(Array.isArray(res)?res.map(gLine):res?[{speaker:'주인공',text:res,male:false}]:[],flow?[{speaker:'주인공',text:flow,male:false}]:[]);")
 wr('script-16.js',s)
+
+# ---- 거리 만남: 남성은 복장과 상관없이 거칠게 (script-13 안의 만남 문서)
+MN=["야, 앞 안 보고 다니냐 이년아. 무릎부터 꿇어.","부딪쳤으면 사과가 먼저지, 암캐야. 입으로 해.","눈깔 어디다 두고 다녀, 시팔년아. 이리 와.","길 한복판에서 남자 몸에 부딪혀? 치마 올리고 사과해.","사과는 입으로, 무릎 꿇고, 큰 소리로. 다들 보게.","부딪친 건 사고고 지금부터 사건이야. 따라와, 이년아.","이 골목 아무도 없다. 이리 와서 입 벌려.","용서해 달라고? 그럼 오늘 내 심부름부터 해, 암캐야.","미안해하는 표정은 마음에 든다. 계속 지어봐, 이년아.","시팔, 옷 다 더러워졌네. 네 혀로 닦아.","남자한테 부딪힌 년이 서 있을 자격이 있냐. 엎드려.","좋아, 용서해 주지. 대신 오늘 하루 내 거다."]
+s=rd('script-13.js')
+key='const CITY_ENCOUNTER_DOCUMENT='
+i=s.find(key);assert i>=0 and s.count(key)==1
+j=i+len(key)
+html,end=json.JSONDecoder().raw_decode(s[j:])
+old="overlay(p[0],p[1],'미션 시작!',begin);"
+assert html.count(old)==1
+html=html.replace(old,"const MN="+jd(MN)+";overlay(MN[Math.floor(Math.random()*MN.length)],p[0]+' '+p[1],'미션 시작!',begin);")
+s=s[:j]+json.dumps(html,ensure_ascii=False).replace('<','\\u003c')+s[j+end:]
+wr('script-13.js',s)
+print('street patched')
 print('r34 patched; rooms',len(OD),'story',len(newS),'results',list(RES))
