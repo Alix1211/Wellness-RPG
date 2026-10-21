@@ -56,3 +56,9 @@
 - 에뮬레이터 별도 AVD 재시도는 프로세스 signal11 종료. 실제 Android 설치/플레이/음향은 미검증으로 명시. 물리 기기 연결 없음.
 - README/HANDOFF/PROJECT_STATUS를 R60+APK 빌드 완료/온라인 배포 주소 미정/미검증 범위로 교체. android/README.md, docs/gaia/APK-20261021.md, APK-verification.json 추가.
 - 최종 APK와 설치 안내, 개인 서명 백업 ZIP을 사용자 전달 파일로 준비. ZIP은 임시 위치에서 완성·CRC 검사 후 fsync/rename. 서명 키는 GitHub 대상에서 제외.
+
+## 2026-10-21 19:14 KST — 전달 저장 및 GitHub 반영 완료
+- Android 소스/재빌드 절차/상태 문서 16개 파일을 main 커밋 305bad3bf490d6192a79a712231a1a53fe429148로 반영. 커밋 변경 목록에서 게임 builds/ 파일 변경이 없음을 재확인.
+- 사용자 전달 파일 저장 성공: GAIA-LIFE-R60.apk, GAIA-LIFE-APK-guide.md, GAIA-LIFE-signing-backup.zip. 모든 로컬 파일에 저장 식별 메타데이터 적용 성공.
+- APK 보관 ID libfile_15437e6641b88191a8f7c24ce453b0dc, 안내문 libfile_bd511e0f2acc8191a5b0da3b7ec58433, 개인 키 백업 libfile_a1ab0261ad488191b43f8dd297e88ec4. 세 항목 모두 최초 버전 0.
+- 최종 상태: 빌드/서명/원본 무변경 검증 및 업데이트 로직 검사 완료. 기기 실행·실제 음향·터치·저장 UI 검증은 사용자 설치 후 필요. 온라인 자동 배포는 주소 결정 전까지 비활성.
