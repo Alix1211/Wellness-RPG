@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """R54: 줄 자르기 기본 그림 — 물구나무 그림의 가랑이를 입구(360,900)에 맞춰 720x1280 배경으로 합성해 기본값으로 넣음.
-(기기에 저장된 '그림 변경' 그림이 있으면 그쪽이 우선)
+(배경 슬롯과 별개의 층으로 그려서, 게임 안에서 방 배경이 깔려도 항상 보임)
 usage: r54-patch.py WORKDIR REPO   (r53 위에 적용)"""
 import sys,io,base64
 from pathlib import Path
@@ -17,5 +17,6 @@ cv.alpha_composite(im,(round(360-CX*SC),round(900-CY*SC)))
 b=io.BytesIO();cv.save(b,'WEBP',quality=88,method=6)
 uri='data:image/webp;base64,'+base64.b64encode(b.getvalue()).decode()
 p=W/'script-02.js';s=p.read_text(encoding='utf8')
-s=sub(s,"try{const d=await db();const values=","if(kind==='rope'){const im=new Image();im.src='"+uri+"';images.bg=im;}try{const d=await db();const values=")
+s=sub(s,"try{const d=await db();const values=","if(kind==='rope'){const im=new Image();im.src='"+uri+"';window.__ropeFig=im;}try{const d=await db();const values=")
+s=sub(s,"function drawRope(){const p=model.ball;","function drawRope(){const p=model.ball;if(window.__ropeFig&&window.__ropeFig.complete&&window.__ropeFig.naturalWidth)ctx.drawImage(window.__ropeFig,0,0,720,1280);")
 p.write_text(s,encoding='utf8');print('r54 patched',len(uri))
