@@ -49,5 +49,20 @@ for role,(yg,of) in SHEETS.items():
     a,m=tiles(role,0,'pose',[y[3],y[1]]);actors.append(a);metrics[role+'0']=m
     o=order(comps(SRC/'chibi'/of,8),4,2)
     a,m=tiles(role,1,'side',o);actors.append(a);metrics[role+'1']=m
+# ---- 오 부장: 케인님의 이전 시뮬레이터(Wellness) 에셋으로 교체 — 센터=기어가기 4컷(걷기), 회사=오피스 서기·합장
+B=SRC/'boss'
+runs=[]
+for i in range(1,5):
+    im=Image.open(B/f'run0{i}.webp').convert('RGBA');runs.append(im.crop(im.getbbox()))
+actors=[a for a in actors if a['role']!='boss'];metrics={k:v for k,v in metrics.items() if not k.startswith('boss')}
+a,m=tiles('boss',0,'side',runs+runs);actors.append(a);metrics['boss0']=m
+def cellcrop(file,box):
+    a=np.array(Image.open(file).convert('RGBA'));x0,y0,x1,y1=box;a=a[y0:y1,x0:x1].copy();mask=a[:,:,3]>100
+    lab,k=nd.label(mask);sizes=np.bincount(lab.ravel());sizes[0]=0
+    keep=np.isin(lab,[i for i in range(1,k+1) if sizes[i]>2500]);keep=nd.binary_dilation(nd.binary_fill_holes(keep),iterations=2)
+    a[:,:,3]=np.where(keep,a[:,:,3],0);im=Image.fromarray(a);return im.crop(im.getbbox())
+SH=B/'office_yoga_basic_sheet.png'
+cells=[cellcrop(SH,(60,0,360,400)),cellcrop(SH,(60,410,360,800))]
+a,m=tiles('boss',1,'pose',[cells[0],cells[1]]);actors.append(a);metrics['boss1']=m
 json.dump({'actors':actors,'metrics':metrics},open(OUT/'npc.json','w'))
 print(len(actors),'actors')
