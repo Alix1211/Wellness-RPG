@@ -78,12 +78,12 @@ button:disabled{filter:grayscale(1) opacity(.55);cursor:not-allowed}
 #field.orgmode::before{content:"";position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,0) 40%,rgba(120,120,160,.55));z-index:1;pointer-events:none}
 
 /* 하단 */
-#bottom{flex:0 0 40vh;position:relative;display:flex;align-items:flex-end;padding:0 1vw 1vh;background:linear-gradient(180deg,#ffd6e8,#ffeff7);border-top:2px solid var(--pink)}
+#bottom{flex:0 0 42vh;position:relative;display:flex;align-items:flex-end;padding:0 1vw 1vh;background:linear-gradient(180deg,#ffd6e8,#ffeff7);border-top:2px solid var(--pink)}
 .pile{flex:0 0 9vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:1.5vh;margin-bottom:2vh}
 .pile b{font-size:3.4vh;color:var(--pink-d)}
 .pile em{font-style:normal;font-size:1.3vh;color:#8a6a80}
 #hand{flex:1 1 auto;display:flex;justify-content:center;align-items:flex-end;min-width:0;height:100%;padding-bottom:.4vh}
-.card{position:relative;flex:0 0 auto;width:15vh;height:31vh;margin:0 -.6vh;border-radius:1.6vh;background:var(--cream);border:.5vh solid #fff;box-shadow:0 .4vh 1vh rgba(90,42,70,.35);display:flex;flex-direction:column;padding:.8vh .8vh .6vh;transition:transform .15s,margin .15s;transform-origin:bottom center;overflow:hidden}
+.card{position:relative;flex:0 0 auto;width:15.6vh;margin:0 -.9vh;padding:.5vh;border-radius:1.4vh;background:var(--cream);border:.4vh solid #fff;box-shadow:0 .4vh 1vh rgba(90,42,70,.35);display:grid;grid-template-columns:auto 1fr;gap:.4vh;transition:transform .15s;transform-origin:bottom center;overflow:hidden}
 .card:hover{transform:translateY(-4vh) scale(1.2);z-index:10}
 .card.sel{transform:translateY(-6vh) scale(1.22);z-index:11;box-shadow:0 0 0 .5vh var(--pink-d),0 1vh 2vh rgba(224,86,143,.6)}
 .card.t-공격{background:linear-gradient(180deg,#ffe0ec,#fff6ef 40%)}
@@ -93,14 +93,6 @@ button:disabled{filter:grayscale(1) opacity(.55);cursor:not-allowed}
 .card.g-희귀{border-color:var(--lav-d);box-shadow:0 0 1.4vh var(--lav),0 .4vh 1vh rgba(90,42,70,.35)}
 .card.g-토큰{border-style:dashed;border-color:var(--pink-d)}
 .card.dis{filter:grayscale(.85) brightness(.95);opacity:.7}
-.card .cost{position:absolute;top:.4vh;left:.4vh;width:3.4vh;height:3.4vh;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#ffd36b 55%,#e8a317);border:.3vh solid #fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:2vh;color:#7a4a00;z-index:2;box-shadow:0 1px 3px rgba(0,0,0,.3)}
-.card .cost.dc{background:radial-gradient(circle at 35% 30%,#fff,#9be3ff 55%,#3aa6d9);color:#064a6e}
-.card .cname{margin:0 0 .4vh 3.4vh;font-weight:900;font-size:1.5vh;line-height:1.15;min-height:3.4vh;display:flex;align-items:center}
-.card .art{position:relative;flex:0 0 7.4vh;border-radius:1vh;overflow:hidden;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.3vh;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.45);border:.25vh solid #fff}
-.card .art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.card .meta{font-size:1.15vh;font-weight:800;color:#8a6a80;text-align:center;margin:.3vh 0}
-.card .ctext{flex:1;font-size:1.35vh;font-weight:700;line-height:1.3;text-align:center;display:flex;align-items:center;justify-content:center;padding:0 .2vh}
-.card .ex{position:absolute;right:.5vh;bottom:.3vh;font-size:1.1vh;color:#b0708f;font-weight:800}
 #endTurn{position:absolute;right:1.4vw;bottom:2vh;padding:1.2vh 2.6vh;border-radius:3vh;background:linear-gradient(180deg,#ff8fb8,#e0568f);color:#fff;font-weight:900;font-size:2.2vh;box-shadow:0 .5vh 0 #b13c70;z-index:12}
 #endTurn:active{transform:translateY(.4vh);box-shadow:0 .1vh 0 #b13c70}
 
@@ -116,3 +108,11 @@ button:disabled{filter:grayscale(1) opacity(.55);cursor:not-allowed}
 #overlay p{margin:0 0 2vh;font-size:2vh;font-weight:700}
 #overlay .row{display:flex;gap:1.4vh;justify-content:center}
 #overlay button{background:var(--pink-d);color:#fff;border-radius:3vh;padding:1.2vh 2.4vh;font-weight:900;font-size:2vh}
+
+.card .cost{grid-column:1;grid-row:1;width:3.2vh;height:3.2vh;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#ffd36b 55%,#e8a317);border:.3vh solid #fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.9vh;color:#7a4a00;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.card .cost.dc{background:radial-gradient(circle at 35% 30%,#fff,#9be3ff 55%,#3aa6d9);color:#064a6e}
+.card .cname{grid-column:2;grid-row:1;align-self:center;font-weight:900;font-size:1.45vh;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .art{grid-column:1/3;grid-row:2;position:relative;aspect-ratio:5/7;border-radius:.8vh;overflow:hidden;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.3vh;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.45);border:.25vh solid #fff}
+.card .art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.card .ctext{grid-column:1/3;grid-row:3;min-height:5.6vh;font-size:1.25vh;font-weight:700;line-height:1.25;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.card .ctext small{font-size:1vh;color:#b0708f;font-weight:800}

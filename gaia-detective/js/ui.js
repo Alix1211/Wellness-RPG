@@ -7,6 +7,7 @@
 
   // ── 이미지 경로 ──
   const heroSrc = k => A.base + A.hero[k];
+  const cardImg = id => window.GAIA_IMG ? (window.GAIA_IMG['cards/' + id + '.webp'] || '') : A.cardArt + id + '.webp';
   const sprite = e => A.base + e.def.sprite + '.png';
 
   // ── 시작 ──
@@ -108,9 +109,9 @@
       el.className = 'card t-' + d.type + ' g-' + d.grade + (chk.ok ? '' : ' dis') + (selUid === c.uid ? ' sel' : '');
       const reduced = cost < d.cost;
       el.innerHTML = '<div class="cost' + (reduced ? ' dc' : '') + '">' + cost + '</div><div class="cname">' + d.name + '</div>' +
-        '<div class="art" style="background:' + artColor(d) + '"><img alt="" onerror="this.remove()" src="' + A.cardArt + d.id + '.webp"><span>' + d.folder + '</span></div>' +
-        '<div class="meta">' + d.type + ' · ' + d.grade + '</div><div class="ctext">' + d.text + '</div>' + (d.exhaust ? '<div class="ex">소멸</div>' : '');
-      if (n > 6) el.style.marginLeft = el.style.marginRight = (-0.6 - (n - 6) * 0.5) + 'vh';
+        '<div class="art" style="background:' + artColor(d) + '"><img alt="" onerror="this.remove()" src="' + cardImg(d.id) + '"><span>' + d.folder + '</span></div>' +
+        '<div class="ctext"><small>' + d.type + (d.exhaust ? ' · 소멸' : '') + '</small>' + d.text + '</div>';
+      if (n > 6) el.style.marginLeft = el.style.marginRight = (-0.9 - (n - 6) * 0.55) + 'vh';
       const rot = (i - (n - 1) / 2) * 2.2; el.style.rotate = rot + 'deg';
       el.title = chk.ok ? '' : chk.reason;
       el.addEventListener('click', () => onCard(c.uid));
