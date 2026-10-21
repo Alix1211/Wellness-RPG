@@ -14,7 +14,7 @@ def uri(im,q=88):
 frame=Image.open(R/'assets/ui-v2/cut/frame.png').convert('RGBA');pill1=Image.open(R/'assets/ui-v2/cut/pill1.png').convert('RGBA');pill2=Image.open(R/'assets/ui-v2/cut/pill2.png').convert('RGBA');pill3=pill2;slot=sh.crop((893,632,957,698))
 V={'frame':uri(frame,92),'pill1':uri(pill1),'pill2':uri(pill2),'pill3':uri(pill3),'slot':uri(slot)}
 CSS=""":root{--u2-frame:url(@@frame@@);--u2-pill1:url(@@pill1@@);--u2-pill2:url(@@pill2@@);--u2-pill3:url(@@pill3@@);--u2-slot:url(@@slot@@)}
-dialog#panel{border-style:solid!important;border-color:transparent!important;border-width:60px 38px 44px!important;border-image:var(--u2-frame) 52 fill/70px/0 stretch!important;background:none!important;box-shadow:none!important;border-radius:0!important;padding:4px 8px!important;width:min(94vw,640px)!important;max-height:92dvh!important;color:#7a4a60;overflow:auto;scrollbar-width:thin}
+dialog#panel{border-style:solid!important;border-color:transparent!important;border-width:85px 38px 44px!important;border-image:var(--u2-frame) 63 52 52 52 fill/85px 70px 70px 70px/0 stretch!important;background:none!important;box-shadow:none!important;border-radius:0!important;padding:4px 8px!important;width:min(94vw,640px)!important;max-height:92dvh!important;color:#7a4a60;overflow:auto;scrollbar-width:thin}
 dialog#panel.compact-menu{width:min(94vw,520px)!important}
 dialog#panel h2{margin:0 0 10px!important;text-align:center;font-size:20px!important;font-weight:700;color:#8a4a68;letter-spacing:.04em}
 dialog#panel h2:empty,dialog#panel:has(.profile-tabs) h2{display:none}
@@ -42,7 +42,7 @@ dialog#panel .inventory-grid button:disabled{opacity:1}
 dialog#panel p,dialog#panel small{color:#7a4a60}
 dialog#panel .panel-list>p{margin:5px 2px}
 dialog#panel .life-log{display:block;margin:2px 0;font-size:12px}
-@media (max-height:460px){dialog#panel{border-width:56px 34px 40px!important;max-height:94dvh!important}dialog#panel .panel-button{height:42px!important;min-height:42px!important;font-size:14px!important}dialog#panel .inventory-grid button{font-size:10px}}
+@media (max-height:460px){dialog#panel{border-width:68px 34px 40px!important;border-image-width:66px 52px 52px 52px!important;max-height:94dvh!important}dialog#panel .panel-button{height:42px!important;min-height:42px!important;font-size:14px!important}dialog#panel .inventory-grid button{font-size:10px}}
 """
 for k,v in V.items():CSS=CSS.replace("@@"+k+"@@",v)
 p=W/'script-16.js';s=p.read_text(encoding='utf8')
