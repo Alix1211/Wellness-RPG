@@ -1,114 +1,114 @@
 {
  "hero_jeans_bow": [
-  228,
-  448
+  415,
+  814
  ],
  "hero_office_bow": [
-  228,
-  448
+  415,
+  814
  ],
  "hero_lavender-yoga_bow": [
-  228,
-  447
+  415,
+  812
  ],
  "hero_jeans_pray": [
-  200,
-  472
+  364,
+  859
  ],
  "hero_office_pray": [
-  202,
-  471
+  368,
+  856
  ],
  "hero_lavender-yoga_pray": [
-  203,
-  472
+  369,
+  858
  ],
  "hero_jeans_surprised": [
-  207,
-  473
+  377,
+  860
  ],
  "hero_office_surprised": [
-  208,
-  470
+  378,
+  854
  ],
  "hero_lavender-yoga_surprised": [
-  208,
-  473
+  378,
+  860
  ],
  "hero_jeans_kneel": [
-  299,
-  413
+  543,
+  751
  ],
  "hero_office_kneel": [
-  299,
-  413
+  543,
+  750
  ],
  "hero_lavender-yoga_kneel": [
-  298,
-  413
+  541,
+  751
  ],
  "hero_jeans_run": [
-  266,
-  449
+  484,
+  817
  ],
  "hero_office_run": [
-  254,
-  448
+  461,
+  815
  ],
  "hero_lavender-yoga_run": [
-  266,
-  446
+  484,
+  810
  ],
  "hero_jeans_crawl": [
-  294,
-  421
+  534,
+  766
  ],
  "hero_office_crawl": [
-  292,
-  423
+  530,
+  769
  ],
  "hero_lavender-yoga_crawl": [
-  287,
-  419
+  521,
+  761
  ],
  "man_01": [
-  190,
-  504
+  346,
+  916
  ],
  "man_02": [
-  195,
-  503
+  355,
+  914
  ],
  "man_03": [
-  191,
-  503
+  347,
+  914
  ],
  "man_04": [
-  196,
-  504
+  357,
+  916
  ],
  "man_05": [
-  215,
-  505
+  390,
+  918
  ],
  "man_06": [
-  191,
-  504
+  347,
+  917
  ],
  "man_07": [
-  181,
-  499
+  329,
+  907
  ],
  "man_08": [
-  190,
-  504
+  345,
+  917
  ],
  "man_09": [
-  216,
-  499
+  392,
+  908
  ],
  "man_10": [
-  201,
-  502
+  366,
+  912
  ]
 }

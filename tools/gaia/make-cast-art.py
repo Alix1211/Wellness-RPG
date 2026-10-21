@@ -8,7 +8,7 @@ from PIL import Image
 from scipy import ndimage as ndi
 ROOT=Path(sys.argv[1]) if len(sys.argv)>1 else Path('.')
 CH=ROOT/'assets/characters'; OUT=CH/'encounter'; OUT.mkdir(exist_ok=True)
-K=0.55  # one scale for every figure so hero and men keep their relative size
+K=1.0  # 원본 해상도 유지 (예전 0.55배 축소는 화질 저하의 원인이었음)
 def clean(a):
     al=a[...,3].astype(np.int32)
     keep=al>=110
@@ -43,7 +43,7 @@ def save(a,name):
     ys,xs=np.where(a[...,3]>0);box=(xs.min(),ys.min(),xs.max()+1,ys.max()+1)
     im=Image.fromarray(a).crop(box)
     im=im.resize((max(1,round(im.width*K)),max(1,round(im.height*K))),Image.LANCZOS)
-    im.save(OUT/(name+'.webp'),'WEBP',quality=82,alpha_quality=92,method=6)
+    im.save(OUT/(name+'.webp'),'WEBP',quality=96,alpha_quality=100,method=6)
     return im.size
 manifest={}
 OUTFITS=['jeans','office','lavender-yoga']
