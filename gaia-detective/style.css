@@ -116,3 +116,19 @@ button:disabled{filter:grayscale(1) opacity(.55);cursor:not-allowed}
 .card .art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .card .ctext{grid-column:1/3;grid-row:3;min-height:5.6vh;font-size:1.25vh;font-weight:700;line-height:1.25;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .card .ctext small{font-size:1vh;color:#b0708f;font-weight:800}
+#muteBtn{background:var(--pink);color:#fff;border-radius:50%;width:3.6vh;height:3.6vh;font-size:1.9vh;margin-left:auto}
+#turnBox{margin-left:0!important}
+#flash{position:absolute;inset:0;pointer-events:none;z-index:9;background:radial-gradient(circle,#fff 0%,rgba(255,143,184,.85) 55%,rgba(255,79,168,.4));opacity:0}
+#flash.on{animation:flash .9s forwards}
+@keyframes flash{0%{opacity:0}12%{opacity:1}100%{opacity:0}}
+#field.shake{animation:fshake .3s}
+@keyframes fshake{0%,100%{translate:0 0}20%{translate:-1vh .6vh}40%{translate:1vh -.6vh}60%{translate:-.7vh -.4vh}80%{translate:.7vh .4vh}}
+.pt{position:absolute;font-size:3vh;pointer-events:none;animation:pt .9s ease-out forwards;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+@keyframes pt{0%{transform:translate(0,0) scale(.4) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.1) rotate(var(--rot));opacity:0}}
+.comic{position:absolute;font-weight:900;font-size:5.4vh;color:#fff;-webkit-text-stroke:.5vh #e0245e;paint-order:stroke fill;text-shadow:0 .5vh 0 #b01a4a;pointer-events:none;white-space:nowrap;animation:comic .75s ease-out forwards}
+@keyframes comic{0%{transform:translate(-50%,-50%) scale(.2) rotate(var(--r));opacity:0}25%{transform:translate(-50%,-50%) scale(1.35) rotate(var(--r));opacity:1}70%{transform:translate(-50%,-60%) scale(1) rotate(var(--r));opacity:1}100%{transform:translate(-50%,-90%) scale(1) rotate(var(--r));opacity:0}}
+.flycard{position:fixed;z-index:50;pointer-events:none;border-radius:1.4vh;overflow:hidden;box-shadow:0 1vh 2vh rgba(0,0,0,.4);transition:transform .38s cubic-bezier(.3,.1,.6,1),opacity .38s}
+.stamp{animation:stamp .4s cubic-bezier(.2,1.6,.4,1)}
+@keyframes stamp{0%{transform:translate(-50%,-50%) rotate(-12deg) scale(2.6);opacity:0}100%{transform:translate(-50%,-50%) rotate(-12deg) scale(1);opacity:1}}
+#dopaBar.ready b{animation:glowtxt .5s infinite alternate}
+@keyframes glowtxt{to{transform:scale(1.12)}}

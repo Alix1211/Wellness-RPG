@@ -10,7 +10,9 @@ for f in os.listdir(G):
     if f.endswith(('.png','.jpg')): imgs[f]=b64(G+f,'image/jpeg' if f.endswith('.jpg') else 'image/png')
 for f in os.listdir(CARDS):
     if f.endswith('.webp'): imgs['cards/'+f]=b64(CARDS+f,'image/webp')
-pre='window.GAIA_IMG={'+','.join('"%s":"%s"'%(k,v) for k,v in sorted(imgs.items()))+'};\n'
+PUNCH='../assets/audio/freesound_community-face-punch-91909.mp3'
+snd='window.GAIA_SND={"punch":"%s"};\n'%b64(PUNCH,'audio/mpeg') if os.path.exists(PUNCH) else ''
+pre=snd+'window.GAIA_IMG={'+','.join('"%s":"%s"'%(k,v) for k,v in sorted(imgs.items()))+'};\n'
 for m in re.finditer(r'<script src="([^"]+)"></script>',html):
     s=open(m.group(1),encoding='utf-8').read()
     if m.group(1)=='data/config.js': s=pre+s
