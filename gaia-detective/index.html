@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>GAIA CITY: DETECTIVE</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <div id="hud">
+    <div class="hudbox" id="hpBox"><span class="ico">♥</span><div class="bar hp"><i id="hpFill"></i><b id="hpTxt"></b></div></div>
+    <div class="hudbox" id="energyBox"><div id="energy"></div></div>
+    <div class="hudbox stat"><span class="lab">도파민</span><div class="bar dopa" id="dopaBar"><i id="dopaFill"></i><b id="dopaTxt"></b></div></div>
+    <div class="hudbox stat"><span class="lab">조임력</span><div class="bar tight"><i id="tightFill"></i><b id="tightTxt"></b></div></div>
+    <div class="hudbox stat"><span class="lab">윤활도</span><div class="bar lube"><i id="lubeFill"></i><b id="lubeTxt"></b></div></div>
+    <div class="hudbox" id="turnBox">TURN <b id="turnNo">1</b></div>
+    <button id="devBtn" title="개발용">⚙</button>
+  </div>
+
+  <div id="field">
+    <div id="bg"></div>
+    <div id="hintBar"></div>
+    <div id="hero"><div id="bubble"></div><img id="heroImg" alt=""><div class="heroTag"><span id="blockTag"></span></div></div>
+    <div id="enemies"></div>
+    <div id="fx"></div>
+    <div id="banner"></div>
+  </div>
+
+  <div id="bottom">
+    <div class="pile" id="pileDraw"><b id="nDraw">0</b><span>뽑을 카드</span></div>
+    <div id="hand"></div>
+    <div class="pile right" id="pileDisc"><b id="nDisc">0</b><span>버린 카드</span><em id="nExh"></em></div>
+    <button id="endTurn">턴 종료</button>
+  </div>
+
+  <div id="dev" class="hidden">
+    <h4>개발용 패널</h4>
+    <label>전투 <select id="devEnc"></select></label>
+    <button id="devStart">시작</button>
+    <div class="row"><button data-dev="dopa30">도파민 +30</button><button data-dev="dopa100">도파민 100</button><button data-dev="tight10">조임력 +10</button><button data-dev="lube50">윤활도 +50</button></div>
+    <label>손패에 추가 <select id="devCard"></select></label>
+    <button id="devAdd">추가</button>
+  </div>
+
+  <div id="overlay" class="hidden"><div class="box"><h2 id="ovTitle"></h2><p id="ovMsg"></p><div class="row"><button id="ovAgain">같은 전투 다시</button><button id="ovDev">전투 고르기</button></div></div></div>
+</div>
+
+<script src="data/config.js"></script>
+<script src="data/cards.js"></script>
+<script src="data/enemies.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
