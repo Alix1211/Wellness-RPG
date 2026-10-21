@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""R54: 줄 자르기 기본 그림 — 물구나무 그림의 가랑이를 입구(360,900)에 맞춰 720x1280 배경으로 합성해 기본값으로 넣음.
+"""R54: 줄 자르기 기본 그림 — X자 틀 그림의 가랑이를 입구(360,900)에 맞춰 720x1280 배경으로 합성해 기본값으로 넣음.
 (배경 슬롯과 별개의 층으로 그려서, 게임 안에서 방 배경이 깔려도 항상 보임)
 usage: r54-patch.py WORKDIR REPO   (r53 위에 적용)"""
 import sys,io,base64
@@ -8,9 +8,9 @@ from PIL import Image
 W=Path(sys.argv[1]);R=Path(sys.argv[2])
 def sub(s,old,new,n=1):
     assert s.count(old)==n,(old[:60],s.count(old));return s.replace(old,new)
-fig=Image.open(R/'assets/rope-v2/figure-handstand.png').convert('RGBA')
-CX,CY=414,98          # 그림 속 가랑이 점
-SC=700/fig.width      # 판 폭(720)에 여백을 두고 맞춤
+fig=Image.open(R/'assets/rope-v2/figure-cross.png').convert('RGBA')
+CX,CY=200,190         # 그림 속 가랑이 점
+SC=1.5               # 가랑이 아래로 약 350px 남게 (판 높이 1280, 입구 900)
 im=fig.resize((round(fig.width*SC),round(fig.height*SC)),Image.LANCZOS)
 cv=Image.new('RGBA',(720,1280),(0,0,0,0))
 cv.alpha_composite(im,(round(360-CX*SC),round(900-CY*SC)))
