@@ -1,7 +1,7 @@
 {
-  "build": "20261021-R44",
-  "sha256": "bd009dcdd9a25451ccaac24fb2b87a4c62d98e3b449484e7bb511d68ea720c2f",
-  "size": 84057722,
+  "build": "20261021-R45",
+  "sha256": "d551a549fd7fa95d0e03e66b6a6bee76dbd237507bb09939a5d531ec38fb9953",
+  "size": 85079347,
   "compression": "gzip",
   "parts": [
     "builds/gaia-life-20261020/html.gz.part-00",
@@ -15,6 +15,7 @@
     "builds/gaia-life-20261020/html.gz.part-08",
     "builds/gaia-life-20261020/html.gz.part-09",
     "builds/gaia-life-20261020/html.gz.part-10",
-    "builds/gaia-life-20261020/html.gz.part-11"
+    "builds/gaia-life-20261020/html.gz.part-11",
+    "builds/gaia-life-20261020/html.gz.part-12"
   ]
 }
