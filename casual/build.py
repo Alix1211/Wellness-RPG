@@ -21,6 +21,6 @@ s=s.replace('id="miniFrame"','id="rpgMiniFrame"')
 pos=s.rfind('</body>');assert pos>0
 s=s[:pos]+font_script+(here/'shell.html').read_text()+'<script>\n'+(here/'app.js').read_text()+'\n</script>'+s[pos:]
 s=s.replace('<title>GAIA', '<title>GAIA CASUAL')
-output=root/'GAIA-CASUAL-01.html';output.write_text(s)
-data=output.read_bytes();manifest={'build':'CASUAL-01','size':len(data),'sha256':hashlib.sha256(data).hexdigest(),'baseline':'R61','edition':'casual','storageKey':'gaia-casual-save-v1'}
+output=root/'GAIA-CASUAL-02.html';output.write_text(s)
+data=output.read_bytes();manifest={'build':'CASUAL-02','size':len(data),'sha256':hashlib.sha256(data).hexdigest(),'baseline':'R61','edition':'casual','storageKey':'gaia-casual-save-v1'}
 (here/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');print(json.dumps(manifest))

@@ -3,7 +3,7 @@
 window.CasualSources={
  art:ART,portraits:PORTRAITS,
  make(id,stage,outfit,location){
-  world.outfit=outfit;const kind={balance:2,fetch:5}[id]??id;
+  world.outfit=outfit;const kind={wiggle:0,merge:1,balance:2,tap:3,behind:4,fetch:5}[id]??id;
   const r={id:'casual-'+id,name:'',bg:location==='company'?'company/meeting':id==='fetch'?'../city/park':'요가실'};
   const config={kind,roomId:r.id,outfit,autoStart:false,audio:[],casual:true,stage,
    layout:{portrait:{},landscape:{},targets:{}},background:ART['bg/'+r.bg],
@@ -14,6 +14,7 @@ window.CasualSources={
   if(id==='rope')config.layout.targets.goal={x:.5,y:789/1280,z:(190-stage*9)/150,sx:1,sy:1,r:0};
   if(id==='cylinder')config.layout.targets.main={x:.5,y:.5,z:1,sx:1,sy:1,r:0,src:PORTRAITS[outfit]};
   if(id==='water')for(let i=0;i<(stage<4?2:4);i++){const t=(stage<4?[{x:80,y:230},{x:390,y:230}]:[{x:80,y:62},{x:390,y:62},{x:80,y:336},{x:390,y:336}])[i];config.layout.targets['water'+i]={x:(t.x+125)/720,y:(t.y+125)/720,z:(50-stage*2)/(stage<4?32:19),sx:1,sy:1,r:0};}
+  if(id==='squat'){config.squat={...squatConfig(),difficulty:stage<4?1:stage<8?2:3,stage,plea:'스쿼트 · '+stage+'단계'};config.background=ART[config.squat.bgKey]||config.background;}
   let doc;
   if(typeof kind==='number'){
    doc=legacyHost(kind,r,config);
@@ -32,8 +33,21 @@ window.CasualSources={
     's.speed=Math.max(s.stagger>0?130:270+window.CASUAL_STAGE*7,s.speed-(s.stagger>0?300:155)*dt);');
    // Stop completion bookkeeping before constructing the old result panel.
    doc=doc.replace('return finishOriginal(score,ratio,message);','mgCleanup();mgStopVoice();if(mgRound)mgRound.finished=true;');
-   doc=doc.replace("ratio},'*');", "ratio,success:ratio>=(window.CASUAL_STAGE<4?.4:.45+window.CASUAL_STAGE*.025)},'*');");
+   doc=doc.replace("ratio},'*');", "ratio,success:ratio>=(.35+window.CASUAL_STAGE*.035)},'*');");
    doc=doc.replace(/<p class="mg-small"[^>]*>.*?<\/p>/g,'');
+   doc=doc.replace('windowT=Math.max(.95,1.35-(25-time)*.016);','windowT=Math.max(.55,1.65-window.CASUAL_STAGE*.07-(25-time)*.012);');
+   doc=doc.replace('Math.min(1,score/500)','Math.min(1,score/(230+window.CASUAL_STAGE*35))');
+   doc=doc.replace('(7.5+elapsed*.35)','(5+window.CASUAL_STAGE*.5+elapsed*(.20+window.CASUAL_STAGE*.02))');
+   doc=doc.replace("onEvent:event=>{","onEvent:event=>{if(['collision','jump','clear'].includes(event))parent.postMessage({type:'gaia-haptic',event:event==='clear'?'tick':event},'*');");
+   doc=doc.replace('falls++;reset=1.1;',"falls++;parent.postMessage({type:'gaia-haptic',event:'collision'},'*');reset=1.1;");
+   doc=injectGame(doc,config);
+  }else if(id==='squat'){
+   doc=SQUAT_DOCUMENT.replace('/*LIFE_CONFIG*/',JSON.stringify(config).replace(/</g,'\\u003c'));
+   doc=doc.replace('const PER=60/RULE.bpm', 'RULE.perfect*=1-(CFG.stage-1)*.018;RULE.good*=1-(CFG.stage-1)*.018;RULE.beats+=(CFG.stage<4?CFG.stage-1:CFG.stage<8?CFG.stage-4:CFG.stage-8)*2;const PER=60/RULE.bpm');
+   doc=doc.replace("{type:'wellness-result',score:","{type:'wellness-result',roomId:CFG.roomId,score:");
+   doc=doc.replace('showReady();', "window.SquatGame.setSound=function(v){window.__sqSound=v;if(master)master.gain.value=v?volume():0;};showReady();");
+   doc=doc.replace('master.gain.value=soundOn()?volume():0;', 'master.gain.value=window.__sqSound===false?0:soundOn()?volume():0;');
+   doc=doc.replace("function judge(res,e,err){", "function judge(res,e,err){parent.postMessage({type:'gaia-haptic',event:res==='perfect'?'hit':res==='good'?'tick':'collision'},'*');");
    doc=injectGame(doc,config);
   }else if(id==='batting'){
    doc=injectBatting(BATTING_DOCUMENT,config);
@@ -78,7 +92,7 @@ window.CasualSources={
   const fontFace=id==='batting'?'<style>'+GAME_SKIN.match(/@font-face\s*\{[^}]*\}/g).join('')+'</style>':'';
   const css=`<style>html,body,button,#time,#score{font-family:Gaia,system-ui,sans-serif!important}html,body{overscroll-behavior:none}#art,#retry,#pause,#sound,.mg-side,.mg-small,.mg-difficulty{display:none!important}.mg-scene{grid-template-columns:1fr!important;grid-template-rows:1fr!important}.mg-board{padding-bottom:8px!important}.mg-preview,.mg-result,.mg-animal-grid,.mg-canvas-wrap{margin-bottom:0!important;padding-bottom:0!important}#mgDialog{width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important}.mg-head{display:none!important}.mg-scene{height:100%!important}.mg-controls button{min-height:58px!important}#sceneMenu,#sceneMenuPanel,#studioButton,#sceneEditorToggle{display:none!important}</style>`;
   // All games pause on document lifecycle, including pointer holds and sound.
-  const end='<script>addEventListener("pagehide",()=>{window.MEDIA_PAUSED=true;try{window.LifeMini?.pause(true);window.GaiaAudioStatus?.reset();if(typeof mgCleanup==="function")mgCleanup();if(typeof mgStopVoice==="function")mgStopVoice();document.querySelectorAll("audio,video").forEach(x=>x.pause());}catch{}});</'+'script>';
+  const end='<script>document.addEventListener("pointerdown",e=>{if(!window.MEDIA_PAUSED&&e.button<=0)parent.postMessage({type:"gaia-haptic",event:"tap"},"*");},true);let hcuts=0;setInterval(()=>{const n=window.LifeMini?.model?.cuts||0;if(n>hcuts)parent.postMessage({type:"gaia-haptic",event:"tick"},"*");hcuts=n;},90);addEventListener("pagehide",()=>{window.MEDIA_PAUSED=true;try{window.LifeMini?.pause(true);window.GaiaAudioStatus?.reset();if(typeof mgCleanup==="function")mgCleanup();if(typeof mgStopVoice==="function")mgStopVoice();document.querySelectorAll("audio,video").forEach(x=>x.pause());}catch{}});</'+'script>';
   return doc.replace('<meta',fontFace+css+'<meta').replace('</html>',end+'</html>');
  }
 };

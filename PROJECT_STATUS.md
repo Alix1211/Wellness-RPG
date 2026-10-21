@@ -1,15 +1,15 @@
-# GAIA CITY — CASUAL-01
+# GAIA CITY — CASUAL-02
 
-현재 분기는 기존 RPG를 보존한 캐주얼 전환 테스트판입니다. main은 R60 그대로 유지됩니다.
+사용자가 기존 게임을 모두 유지하도록 명확히 지시했습니다. 게임을 임의로 빼지 않습니다. 스쿼트는 가장 재미있게 했던 게임이므로 맨 앞에 배치했습니다.
 
-- 작업 분기: `codex/gaia-casual-01`.
-- 새 코드/재현 절차: [casual/README.md](casual/README.md).
-- 선택 → 게임 → 결과 → 성장 → 다음 단계 흐름. 여섯 게임, 게임별 10단계.
-- 강제미션·퀘스트·생활비·스탯 감소·입장 체력·실패 후 강제 후속 게임은 새 플레이 경로에서 제외.
-- HTML `GAIA-CASUAL-01.html`, 별도 Android 패키지 `com.gaia.casual` / GAIA CASUAL.
-- 저장 `gaia-casual-save-v1`; 기존 RPG 저장과 원본 HTML은 보존. 기존판 자동변환/삭제 없음.
-- 브라우저 검증 55항목: 실제 물병/줄 1단계 성공, 여섯 게임의 생명주기·실패·중단·재도전, 저장과 중복 보상 등.
-- 60단계 조합 문서 생성과 JS 문법 검사 통과. **60단계 전체 플레이/난이도 검증은 미완료**.
-- APK 서명/정렬/CRC/내장 HTML 해시 검증. **실기기 설치·터치·스피커 확인은 미완료**.
-- 실패한 검증 시도와 수정 이력: [casual/WORKLOG.md](casual/WORKLOG.md).
-- 다음: 사용자 기기에서 새 앱 테스트 후, 게임별 난이도와 연출을 하나씩 조정. 사용자가 요청하기 전 기존 RPG/main을 교체하지 않음.
+- 분기 `codex/gaia-casual-01`, main R60 보존.
+- 게임 11종: 스쿼트, 물병, 줄 자르기, 균형, 물어와, 배팅, 움찔 찾기, 소시지 합치기, 백만대, 뒤를 조심, 실린더.
+- 각 10단계, 총 110단계. 문서 생성/문법 검사는 전체 통과. 전체 110단계 실플레이/난이도 검증은 아직 안 됨.
+- 빠진 다섯 게임을 복원. 기존 캐주얼 저장은 스탯/기록 유지, 새 게임 기록만 초기화해 추가. 저장 키 `gaia-casual-save-v1` 유지.
+- 네이티브 직접 진동: GaiaHaptics Java 브리지 → VibratorManager(31+)/Vibrator → VibrationEffect. VIBRATE 권한. 터치/정타/충돌/점프/줄 절단/성공/실패. 반복 없음, 호출 제한, 백그라운드 취소.
+- 집에서 진동 켜기/끄기 + 진동 테스트. 소리 설정과 독립. 브라우저에서는 직접 진동 기능을 사용할 수 없음을 표시.
+- APK `GAIA-CASUAL-02.apk`, `com.gaia.casual`, versionCode 2, 1.1-CASUAL-02. 기존 CASUAL-01 위에 업데이트 설치, 삭제하지 않음. 같은 서명 키 유지.
+- `verification-02.json`: 93개 브라우저 검사 통과. 스쿼트 별도 자연 종료/성공 검사 `squat-play-verification.json`: DOM 입력으로 2800점, 성공 및 보상. 점수 주입 없음.
+- 실기기 설치/터치/음향/진동 모터는 아직 확인 못 함. APK 컴파일/서명/정렬/내장 HTML 일치 검증과 실제 기기 검증을 혼동하지 않음.
+
+재현과 구현: [casual/README.md](casual/README.md). 작업 이력: [casual/WORKLOG.md](casual/WORKLOG.md).

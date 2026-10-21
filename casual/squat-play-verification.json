@@ -1,0 +1,23 @@
+{
+  "result": {
+    "id": 1,
+    "game": "squat",
+    "stage": 1,
+    "roomId": "casual-squat",
+    "started": 3438.9000000003725,
+    "paused": false,
+    "done": true,
+    "seconds": 25.93869999999926,
+    "lastTick": 29377.699999999255,
+    "success": true,
+    "first": true,
+    "score": "2800",
+    "delta": {
+      "ki": 6,
+      "bo": 1.5
+    }
+  },
+  "errors": [],
+  "input": "DOM keyboard events timed inside the game document through the real SquatGame judgement; no score injection.",
+  "physicalDevice": false
+}
