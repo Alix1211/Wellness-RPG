@@ -3,6 +3,20 @@
 window.CasualSources={
  art:ART,portraits:PORTRAITS,
  make(id,stage,outfit,location){
+  if(!window.__casualNativeAudioFixed){
+   window.GAIA_NATIVE_AUDIO=window.GAIA_NATIVE_AUDIO
+    .replace('.then(a=>ctx.decodeAudioData(a)).catch', '.then(a=>ctx.decodeAudioData(a)).then(b=>window.GaiaAudioTools.prepare(b,name)).catch')
+    .replace('node.start();events[name]', 'node.start();window.GaiaAudioTools.note(name,vol);events[name]')
+    .replace("gap=activeKind===3?290:520","gap=activeKind===3?420:650")
+    .replace('(!forced&&Math.random()>opts.voiceChance)','false')
+    .replace("if(Math.random()<.6)react(0,true)","react(0,true)")
+    .replace("if(Math.random()<.16)react(0)","react(0,false,'blush')")
+    .replace("else if(name==='bonk')hit('punch');break;","else if(name==='bonk')hit('punch');else if(name==='pop'||name==='boing'){hit('slap');react(actor||0,true,'blush');}else if(name==='whoosh')react(actor||0,true,'surprise');else if(name==='ding')resultCue(true);break;")
+    .replace("play(choices[Math.floor(Math.random()*choices.length)],.5,'voice');","play(choices[Math.floor(Math.random()*choices.length)],.35,'voice');play(['reaction_effort','reaction_surprise','reaction_whine'][i],.85,'voice');")
+    .replace("n==='reaction_cry'?.5:.65","n==='reaction_cry'?.65:.85");
+   window.GAIA_GAME_BRIDGE=window.GAIA_GAME_BRIDGE.replace("name==='slap'||name==='bonk'","['slap','bonk','pop','boing','whoosh','ding'].includes(name)").replace("const playing=!!document.querySelector('#mgDialog[open] .mg-controls');","const playing=!window.MEDIA_PAUSED&&!!document.querySelector('#mgDialog[open] .mg-controls');");
+   window.__casualNativeAudioFixed=true;
+  }
   world.outfit=outfit;const kind={wiggle:0,merge:1,balance:2,tap:3,behind:4,fetch:5}[id]??id;
   const r={id:'casual-'+id,name:'',bg:location==='company'?'company/meeting':id==='fetch'?'../city/park':'요가실'};
   const config={kind,roomId:r.id,outfit,autoStart:false,audio:[],casual:true,stage,
@@ -41,6 +55,8 @@ window.CasualSources={
    doc=doc.replace("onEvent:event=>{","onEvent:event=>{if(['collision','jump','clear'].includes(event))parent.postMessage({type:'gaia-haptic',event:event==='clear'?'tick':event},'*');");
    doc=doc.replace('falls++;reset=1.1;',"falls++;parent.postMessage({type:'gaia-haptic',event:'collision'},'*');reset=1.1;");
    doc=injectGame(doc,config);
+   const localAudio='<script>window.GAIA_SOUND_SOURCES='+JSON.stringify(window.GAIA_SOUND_SOURCES)+';'+window.GAIA_NATIVE_AUDIO+'</'+'script>';
+   doc=doc.replace('<meta',localAudio+'<meta');
   }else if(id==='squat'){
    doc=SQUAT_DOCUMENT.replace('/*LIFE_CONFIG*/',JSON.stringify(config).replace(/</g,'\\u003c'));
    doc=doc.replace('const PER=60/RULE.bpm', 'RULE.perfect*=1-(CFG.stage-1)*.018;RULE.good*=1-(CFG.stage-1)*.018;RULE.beats+=(CFG.stage<4?CFG.stage-1:CFG.stage<8?CFG.stage-4:CFG.stage-8)*2;const PER=60/RULE.bpm');
@@ -48,9 +64,24 @@ window.CasualSources={
    doc=doc.replace('showReady();', "window.SquatGame.setSound=function(v){window.__sqSound=v;if(master)master.gain.value=v?volume():0;};showReady();");
    doc=doc.replace('master.gain.value=soundOn()?volume():0;', 'master.gain.value=window.__sqSound===false?0:soundOn()?volume():0;');
    doc=doc.replace("function judge(res,e,err){", "function judge(res,e,err){parent.postMessage({type:'gaia-haptic',event:res==='perfect'?'hit':res==='good'?'tick':'collision'},'*');");
+   // Add the missing slap sample to the subset used by the squat document.
    doc=injectGame(doc,config);
+   doc=doc.replace('<meta','<script>window.GAIA_SOUND_SOURCES.hit_slap='+JSON.stringify(window.GAIA_SOUND_SOURCES.hit_slap)+';</'+'script><meta');
+   doc=doc.replace("'hit_punch','reaction_happy'", "'hit_slap','hit_punch','reaction_happy'");
+   doc=doc.replace('.then(a=>ac.decodeAudioData(a)).catch', '.then(a=>ac.decodeAudioData(a)).then(b=>window.GaiaAudioTools.prepare(b,name)).catch');
+   doc=doc.replace('s.start(Math.max(when,ac.currentTime));sched.push(s);','s.start(Math.max(when,ac.currentTime));window.GaiaAudioTools.note(name,vol);sched.push(s);');
+   doc=doc.replace("shot('hit_punch',ac.currentTime+.13,.7)","shot('hit_slap',ac.currentTime,.85)");
+   doc=doc.replace('else{combo++;best=',"else{shot('hit_slap',ac.currentTime,.85);combo++;best=");
+   doc=doc.replace("lastPerfect=i;voice(PERFECTS[i],.55);", "lastPerfect=i;shot(PERFECTS[i],0,.36);voice(['reaction_happy','reaction_surprise','reaction_whine'][i%3],.88);");
+   doc=doc.replace("else voice('reaction_surprise',.55);", "else voice('reaction_surprise',.88);");
+   doc=doc.replace("voice('reaction_whine',.55)","voice('reaction_whine',.82)");
+   doc=doc.replace('gn.gain.value=RULE.bgmg||1;', 'gn.gain.value=.38;');
+   doc=doc.replace('gn.gain.value=.62;', 'gn.gain.value=.28;');
   }else if(id==='batting'){
    doc=injectBatting(BATTING_DOCUMENT,config);
+   doc=doc.replace("(fade?1.15:.60)","(fade?1.15:.88)");
+   doc=doc.replace("Sound.play(p?'hit_punch':'hit_slap');shake","Sound.play(p?'hit_punch':'hit_slap');Sound.play(p?'homerun':'normal',true);shake");
+   doc=doc.replace('node.start(startAt,starts.get(k)||0);','node.start(startAt,starts.get(k)||0);window.GaiaAudioTools.note(k,voice?1:.95);');
    doc=doc.replace('rule=RULES[CFG.difficulty];',
     'rule={...RULES[CFG.difficulty],window:.19-window.GAME_SCENE.stage*.009,speed:245+window.GAME_SCENE.stage*12,amplitude:Math.max(0,window.GAME_SCENE.stage-3)*8};');
   }else{
@@ -89,11 +120,12 @@ window.CasualSources={
    doc=doc.replace('/*LIFE_CONFIG*/',JSON.stringify(config).replace(/</g,'\\u003c'));
    doc=injectGame(doc,config);
   }
+  if(typeof kind!=='number'&&id!=='batting')doc=doc.replace('<meta','<script>Object.assign(window.GAIA_SOUND_SOURCES,'+JSON.stringify(window.GAIA_SOUND_SOURCES)+');</'+'script><meta');
   const fontFace=id==='batting'?'<style>'+GAME_SKIN.match(/@font-face\s*\{[^}]*\}/g).join('')+'</style>':'';
   const css=`<style>html,body,button,#time,#score{font-family:Gaia,system-ui,sans-serif!important}html,body{overscroll-behavior:none}#art,#retry,#pause,#sound,.mg-side,.mg-small,.mg-difficulty{display:none!important}.mg-scene{grid-template-columns:1fr!important;grid-template-rows:1fr!important}.mg-board{padding-bottom:8px!important}.mg-preview,.mg-result,.mg-animal-grid,.mg-canvas-wrap{margin-bottom:0!important;padding-bottom:0!important}#mgDialog{width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important}.mg-head{display:none!important}.mg-scene{height:100%!important}.mg-controls button{min-height:58px!important}#sceneMenu,#sceneMenuPanel,#studioButton,#sceneEditorToggle{display:none!important}</style>`;
   // All games pause on document lifecycle, including pointer holds and sound.
   const end='<script>document.addEventListener("pointerdown",e=>{if(!window.MEDIA_PAUSED&&e.button<=0)parent.postMessage({type:"gaia-haptic",event:"tap"},"*");},true);let hcuts=0;setInterval(()=>{const n=window.LifeMini?.model?.cuts||0;if(n>hcuts)parent.postMessage({type:"gaia-haptic",event:"tick"},"*");hcuts=n;},90);addEventListener("pagehide",()=>{window.MEDIA_PAUSED=true;try{window.LifeMini?.pause(true);window.GaiaAudioStatus?.reset();if(typeof mgCleanup==="function")mgCleanup();if(typeof mgStopVoice==="function")mgStopVoice();document.querySelectorAll("audio,video").forEach(x=>x.pause());}catch{}});</'+'script>';
-  return doc.replace('<meta',fontFace+css+'<meta').replace('</html>',end+'</html>');
+  return doc.replace('<meta','<script>'+window.CASUAL_AUDIO_TOOLS+'</'+'script>'+fontFace+css+'<meta').replace('</html>',end+'</html>');
  }
 };
 mode='casual';

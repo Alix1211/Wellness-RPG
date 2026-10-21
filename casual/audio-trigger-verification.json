@@ -1,0 +1,207 @@
+{
+  "results": [
+    {
+      "id": "wiggle",
+      "prepared": {
+        "reaction_effort": {
+          "original": 0.8386848072562358,
+          "trim": 0.03790929705215419,
+          "duration": 0.8007936507936508,
+          "peak": 0.5633546113967896,
+          "rms": 0.06741197955762142
+        },
+        "hit_slap": {
+          "original": 1.2,
+          "trim": 0.5818548752834467,
+          "duration": 0.6181632653061224,
+          "peak": 0.8661856651306152,
+          "rms": 0.05457374408338553
+        }
+      },
+      "played": {
+        "reaction_effort": 1,
+        "hit_slap": 1
+      },
+      "errors": []
+    },
+    {
+      "id": "merge",
+      "prepared": {
+        "hit_slap": {
+          "original": 1.2,
+          "trim": 0.5818548752834467,
+          "duration": 0.6181632653061224,
+          "peak": 0.8661856651306152,
+          "rms": 0.05457374408338553
+        },
+        "reaction_happy": {
+          "original": 1.0448979591836736,
+          "trim": 0,
+          "duration": 1.0448979591836736,
+          "peak": 0.34822291135787964,
+          "rms": 0.07563143271615583
+        }
+      },
+      "played": {
+        "hit_slap": 1,
+        "reaction_happy": 1
+      },
+      "errors": []
+    },
+    {
+      "id": "tap",
+      "prepared": {
+        "tap_mix_1_1": {
+          "original": 0.8959863945578231,
+          "trim": 0,
+          "duration": 0.8959863945578231,
+          "peak": 0.4910421669483185,
+          "rms": 0.09847201219165691
+        },
+        "hit_punch": {
+          "original": 1.4639909297052154,
+          "trim": 0.7165714285714285,
+          "duration": 0.747437641723356,
+          "peak": 0.8398042321205139,
+          "rms": 0.036735364614680986
+        },
+        "reaction_effort": {
+          "original": 0.8386848072562358,
+          "trim": 0.03790929705215419,
+          "duration": 0.8007936507936508,
+          "peak": 0.5633546113967896,
+          "rms": 0.06741197955762142
+        }
+      },
+      "played": {
+        "tap_mix_1_1": 1,
+        "hit_punch": 1,
+        "reaction_effort": 1
+      },
+      "errors": []
+    },
+    {
+      "id": "behind",
+      "prepared": {
+        "reaction_surprise": {
+          "original": 0.61,
+          "trim": 0,
+          "duration": 0.61,
+          "peak": 0.4254394769668579,
+          "rms": 0.09643610271863415
+        }
+      },
+      "played": {
+        "reaction_surprise": 1
+      },
+      "errors": []
+    },
+    {
+      "id": "water",
+      "prepared": {
+        "reaction_effort": {
+          "original": 0.8386848072562358,
+          "trim": 0.03790929705215419,
+          "duration": 0.8007936507936508,
+          "peak": 0.5633546113967896,
+          "rms": 0.06741197955762142
+        },
+        "reaction_sigh": {
+          "original": 1.301360544217687,
+          "trim": 0.03693424036281179,
+          "duration": 1.2644444444444445,
+          "peak": 0.5414636731147766,
+          "rms": 0.10468590857930589
+        }
+      },
+      "played": {
+        "reaction_effort": 1,
+        "reaction_sigh": 1
+      },
+      "errors": []
+    },
+    {
+      "id": "rope",
+      "prepared": {
+        "hit_slap": {
+          "original": 1.2,
+          "trim": 0.5818548752834467,
+          "duration": 0.6181632653061224,
+          "peak": 0.8661856651306152,
+          "rms": 0.05457374408338553
+        },
+        "reaction_displeased": {
+          "original": 1.36,
+          "trim": 0,
+          "duration": 1.36,
+          "peak": 0.36327794194221497,
+          "rms": 0.08773049710207312
+        }
+      },
+      "played": {
+        "hit_slap": 1,
+        "reaction_displeased": 1
+      },
+      "errors": []
+    },
+    {
+      "id": "balance",
+      "prepared": {
+        "reaction_effort": {
+          "original": 0.8386848072562358,
+          "trim": 0.03790929705215419,
+          "duration": 0.8007936507936508,
+          "peak": 0.5633546113967896,
+          "rms": 0.06741197955762142
+        }
+      },
+      "played": {
+        "reaction_effort": 1
+      },
+      "errors": []
+    },
+    {
+      "id": "fetch",
+      "prepared": {
+        "hit_punch": {
+          "original": 1.4639909297052154,
+          "trim": 0.7165714285714285,
+          "duration": 0.747437641723356,
+          "peak": 0.8398042321205139,
+          "rms": 0.036735364614680986
+        },
+        "reaction_surprise": {
+          "original": 0.61,
+          "trim": 0,
+          "duration": 0.61,
+          "peak": 0.4254394769668579,
+          "rms": 0.09643610271863415
+        }
+      },
+      "played": {
+        "hit_punch": 1,
+        "reaction_surprise": 1
+      },
+      "errors": []
+    },
+    {
+      "id": "cylinder",
+      "prepared": {
+        "reaction_happy": {
+          "original": 1.0448979591836736,
+          "trim": 0,
+          "duration": 1.0448979591836736,
+          "peak": 0.34822291135787964,
+          "rms": 0.07563143271615583
+        }
+      },
+      "played": {
+        "reaction_happy": 1
+      },
+      "errors": []
+    }
+  ],
+  "errors": [],
+  "method": "Real DOM pointer/keyboard inputs; no direct audio event calls or score injection.",
+  "physicalDevice": false
+}

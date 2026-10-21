@@ -14,13 +14,15 @@ s=s.replace("KEY='gaia-rpg-road-v1',oldWorld='gaia-rpg-road-world-v1'", "KEY='ga
 # Never read old RPG fallback slots in this edition, even during factory setup.
 s=s.replace("localStorage.getItem('gaia-rpg-rebuild-v12')",'null').replace("localStorage.getItem('gaia-rpg-play-v11')",'null').replace("localStorage.getItem('wellness-rpg-center-v1')",'null')
 s=s.replace("if(e.source!==$('#miniFrame').contentWindow||mode!=='game')","if(mode!=='game'||e.source!==$('#miniFrame')?.contentWindow)")
+# Old parent mixer must not cut the new child mixers based on a hidden RPG layer.
+s=s.replace("if(!ml||ml.hidden){if(bed||bedPending||voices.length||effects.length)reset();}","if((!ml||ml.hidden)&&!window.GaiaCasual?.run){if(bed||bedPending||voices.length||effects.length)reset();}")
 # Register the already-embedded Korean font for the new shell.
-font_script='<script>document.head.insertAdjacentHTML("beforeend","<style>"+GAME_SKIN.match(/@font-face\\s*\\{[^}]*\\}/g).join("\\n")+"</style>");</script>'
+font_script='<script>window.CASUAL_AUDIO_TOOLS='+json.dumps((here/'audio-tools.js').read_text())+';'+(here/'audio-tools.js').read_text()+'</script><script>document.head.insertAdjacentHTML("beforeend","<style>"+GAME_SKIN.match(/@font-face\\s*\\{[^}]*\\}/g).join("\\n")+"</style>");</script>'
 # Keep the old DOM for inert factory references, but avoid duplicate frame IDs.
 s=s.replace('id="miniFrame"','id="rpgMiniFrame"')
 pos=s.rfind('</body>');assert pos>0
 s=s[:pos]+font_script+(here/'shell.html').read_text()+'<script>\n'+(here/'app.js').read_text()+'\n</script>'+s[pos:]
 s=s.replace('<title>GAIA', '<title>GAIA CASUAL')
-output=root/'GAIA-CASUAL-02.html';output.write_text(s)
-data=output.read_bytes();manifest={'build':'CASUAL-02','size':len(data),'sha256':hashlib.sha256(data).hexdigest(),'baseline':'R61','edition':'casual','storageKey':'gaia-casual-save-v1'}
+output=root/'GAIA-CASUAL-03.html';output.write_text(s)
+data=output.read_bytes();manifest={'build':'CASUAL-03','size':len(data),'sha256':hashlib.sha256(data).hexdigest(),'baseline':'R61','edition':'casual','storageKey':'gaia-casual-save-v1'}
 (here/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');print(json.dumps(manifest))

@@ -1,0 +1,431 @@
+{
+  "results": [
+    {
+      "id": "squat",
+      "audio": {
+        "prepared": {
+          "hit_punch": {
+            "original": 1.4639909297052154,
+            "trim": 0.7165714285714285,
+            "duration": 0.747437641723356,
+            "peak": 0.8398042321205139,
+            "rms": 0.036735364614680986
+          },
+          "perfect_04": {
+            "original": 0.2970975056689342,
+            "trim": 0.08779591836734695,
+            "duration": 0.20931972789115647,
+            "peak": 0.7317982912063599,
+            "rms": 0.10822850048400373
+          },
+          "perfect_07": {
+            "original": 0.39709750566893426,
+            "trim": 0.06210430839002268,
+            "duration": 0.33501133786848075,
+            "peak": 0.6466720700263977,
+            "rms": 0.12468590444767425
+          },
+          "perfect_02": {
+            "original": 0.37709750566893424,
+            "trim": 0.15106122448979592,
+            "duration": 0.2260544217687075,
+            "peak": 0.766838788986206,
+            "rms": 0.12069222827743296
+          },
+          "perfect_03": {
+            "original": 0.2970975056689342,
+            "trim": 0.03296598639455782,
+            "duration": 0.26414965986394556,
+            "peak": 0.8018917441368103,
+            "rms": 0.2412232731368665
+          },
+          "perfect_01": {
+            "original": 0.2970975056689342,
+            "trim": 0.07042630385487529,
+            "duration": 0.22668934240362812,
+            "peak": 0.8173674941062927,
+            "rms": 0.22756857154090535
+          },
+          "perfect_05": {
+            "original": 0.27709750566893426,
+            "trim": 0.05484807256235828,
+            "duration": 0.22226757369614514,
+            "peak": 0.7609394788742065,
+            "rms": 0.1290681367790248
+          },
+          "hit_slap": {
+            "original": 1.2,
+            "trim": 0.5818548752834467,
+            "duration": 0.6181632653061224,
+            "peak": 0.8661856651306152,
+            "rms": 0.05457374408338553
+          },
+          "reaction_displeased": {
+            "original": 1.36,
+            "trim": 0,
+            "duration": 1.36,
+            "peak": 0.36327794194221497,
+            "rms": 0.08773049710207312
+          },
+          "reaction_surprise": {
+            "original": 0.61,
+            "trim": 0,
+            "duration": 0.61,
+            "peak": 0.4254394769668579,
+            "rms": 0.09643610271863415
+          },
+          "perfect_06": {
+            "original": 0.31709750566893424,
+            "trim": 0.0670249433106576,
+            "duration": 0.2500907029478458,
+            "peak": 0.7895926237106323,
+            "rms": 0.11680212859156507
+          },
+          "reaction_happy": {
+            "original": 1.0448979591836736,
+            "trim": 0,
+            "duration": 1.0448979591836736,
+            "peak": 0.34822291135787964,
+            "rms": 0.07563143271615583
+          },
+          "reaction_whine": {
+            "original": 1.4719954648526077,
+            "trim": 0.039269841269841274,
+            "duration": 1.4327437641723355,
+            "peak": 0.7441494464874268,
+            "rms": 0.11003684234342086
+          }
+        },
+        "played": {
+          "hit_slap": 1,
+          "perfect_02": 1,
+          "reaction_surprise": 1
+        },
+        "errors": []
+      },
+      "maxRMS": 0.2309977670100378,
+      "contexts": [
+        "running",
+        "running"
+      ],
+      "nativeErrors": [],
+      "trigger": "Timed keyboard DOM input through judgement"
+    },
+    {
+      "id": "wiggle",
+      "audio": {
+        "prepared": {
+          "hit_slap": {
+            "original": 1.2,
+            "trim": 0.5818548752834467,
+            "duration": 0.6181632653061224,
+            "peak": 0.8661856651306152,
+            "rms": 0.05457374408338553
+          },
+          "reaction_effort": {
+            "original": 0.8386848072562358,
+            "trim": 0.03790929705215419,
+            "duration": 0.8007936507936508,
+            "peak": 0.5633546113967896,
+            "rms": 0.06741197955762142
+          }
+        },
+        "played": {
+          "hit_slap": 1,
+          "reaction_effort": 1
+        },
+        "errors": []
+      },
+      "maxRMS": 0.1986965963668365,
+      "contexts": [
+        "running"
+      ],
+      "nativeErrors": [],
+      "trigger": "Installed event mixer health check"
+    },
+    {
+      "id": "merge",
+      "audio": {
+        "prepared": {
+          "hit_slap": {
+            "original": 1.2,
+            "trim": 0.5818548752834467,
+            "duration": 0.6181632653061224,
+            "peak": 0.8661856651306152,
+            "rms": 0.05457374408338553
+          },
+          "reaction_effort": {
+            "original": 0.8386848072562358,
+            "trim": 0.03790929705215419,
+            "duration": 0.8007936507936508,
+            "peak": 0.5633546113967896,
+            "rms": 0.06741197955762142
+          }
+        },
+        "played": {
+          "hit_slap": 1,
+          "reaction_effort": 1
+        },
+        "errors": []
+      },
+      "maxRMS": 0.18890992109341723,
+      "contexts": [
+        "running"
+      ],
+      "nativeErrors": [],
+      "trigger": "Installed event mixer health check"
+    },
+    {
+      "id": "tap",
+      "audio": {
+        "prepared": {
+          "reaction_effort": {
+            "original": 0.8386848072562358,
+            "trim": 0.03790929705215419,
+            "duration": 0.8007936507936508,
+            "peak": 0.5633546113967896,
+            "rms": 0.06741197955762142
+          },
+          "tap_mix_1_2": {
+            "original": 0.8959863945578231,
+            "trim": 0,
+            "duration": 0.8959863945578231,
+            "peak": 0.6469210982322693,
+            "rms": 0.10980002741979558
+          },
+          "hit_punch": {
+            "original": 1.4639909297052154,
+            "trim": 0.7165714285714285,
+            "duration": 0.747437641723356,
+            "peak": 0.8398042321205139,
+            "rms": 0.036735364614680986
+          }
+        },
+        "played": {
+          "reaction_effort": 1,
+          "tap_mix_1_2": 1,
+          "hit_punch": 1
+        },
+        "errors": []
+      },
+      "maxRMS": 0.18226160077157805,
+      "contexts": [
+        "running"
+      ],
+      "nativeErrors": [],
+      "trigger": "Installed event mixer health check"
+    },
+    {
+      "id": "behind",
+      "audio": {
+        "prepared": {
+          "reaction_surprise": {
+            "original": 0.61,
+            "trim": 0,
+            "duration": 0.61,
+            "peak": 0.4254394769668579,
+            "rms": 0.09643610271863415
+          },
+          "hit_punch": {
+            "original": 1.4639909297052154,
+            "trim": 0.7165714285714285,
+            "duration": 0.747437641723356,
+            "peak": 0.8398042321205139,
+            "rms": 0.036735364614680986
+          }
+        },
+        "played": {
+          "reaction_surprise": 1,
+          "hit_punch": 1
+        },
+        "errors": []
+      },
+      "maxRMS": 0.21692164311271123,
+      "contexts": [
+        "running"
+      ],
+      "nativeErrors": [],
+      "trigger": "Installed event mixer health check"
+    },
+    {
+      "id": "water",
+      "audio": {
+        "prepared": {
+          "reaction_effort": {
+            "original": 0.8386848072562358,
+            "trim": 0.03790929705215419,
+            "duration": 0.8007936507936508,
+            "peak": 0.5633546113967896,
+            "rms": 0.06741197955762142
+          },
+          "hit_slap": {
+            "original": 1.2,
+            "trim": 0.5818548752834467,
+            "duration": 0.6181632653061224,
+            "peak": 0.8661856651306152,
+            "rms": 0.05457374408338553
+          }
+        },
+        "played": {
+          "reaction_effort": 1,
+          "hit_slap": 1
+        },
+        "errors": []
+      },
+      "maxRMS": 0.19759791689583336,
+      "contexts": [
+        "running"
+      ],
+      "nativeErrors": [],
+      "trigger": "Installed event mixer health check"
+    },
+    {
+      "id": "rope",
+      "audio": {
+        "prepared": {
+          "hit_slap": {
+            "original": 1.2,
+            "trim": 0.5818548752834467,
+            "duration": 0.6181632653061224,
+            "peak": 0.8661856651306152,
+            "rms": 0.05457374408338553
+          },
+          "reaction_effort": {
+            "original": 0.8386848072562358,
+            "trim": 0.03790929705215419,
+            "duration": 0.8007936507936508,
+            "peak": 0.5633546113967896,
+            "rms": 0.06741197955762142
+          }
+        },
+        "played": {
+          "hit_slap": 1,
+          "reaction_effort": 1
+        },
+        "errors": []
+      },
+      "maxRMS": 0.18379343906756737,
+      "contexts": [
+        "running"
+      ],
+      "nativeErrors": [],
+      "trigger": "Installed event mixer health check"
+    },
+    {
+      "id": "balance",
+      "audio": {
+        "prepared": {
+          "hit_slap": {
+            "original": 1.2,
+            "trim": 0.5818548752834467,
+            "duration": 0.6181632653061224,
+            "peak": 0.8661856651306152,
+            "rms": 0.05457374408338553
+          },
+          "reaction_effort": {
+            "original": 0.8386848072562358,
+            "trim": 0.03790929705215419,
+            "duration": 0.8007936507936508,
+            "peak": 0.5633546113967896,
+            "rms": 0.06741197955762142
+          }
+        },
+        "played": {
+          "hit_slap": 1,
+          "reaction_effort": 1
+        },
+        "errors": []
+      },
+      "maxRMS": 0.19759021156022474,
+      "contexts": [
+        "running"
+      ],
+      "nativeErrors": [],
+      "trigger": "Installed event mixer health check"
+    },
+    {
+      "id": "fetch",
+      "audio": {
+        "prepared": {
+          "hit_slap": {
+            "original": 1.2,
+            "trim": 0.5818548752834467,
+            "duration": 0.6181632653061224,
+            "peak": 0.8661856651306152,
+            "rms": 0.05457374408338553
+          },
+          "reaction_effort": {
+            "original": 0.8386848072562358,
+            "trim": 0.03790929705215419,
+            "duration": 0.8007936507936508,
+            "peak": 0.5633546113967896,
+            "rms": 0.06741197955762142
+          }
+        },
+        "played": {
+          "hit_slap": 1,
+          "reaction_effort": 1
+        },
+        "errors": []
+      },
+      "maxRMS": 0.1986965963668365,
+      "contexts": [
+        "running"
+      ],
+      "nativeErrors": [],
+      "trigger": "Installed event mixer health check"
+    },
+    {
+      "id": "batting",
+      "audio": {
+        "prepared": {},
+        "played": {
+          "hit_punch": 1,
+          "homerun": 1
+        },
+        "errors": []
+      },
+      "maxRMS": 0.32907669279960466,
+      "contexts": [
+        "running"
+      ],
+      "nativeErrors": [],
+      "trigger": "Timed keyboard DOM input through judgement"
+    },
+    {
+      "id": "cylinder",
+      "audio": {
+        "prepared": {
+          "reaction_surprise": {
+            "original": 0.61,
+            "trim": 0,
+            "duration": 0.61,
+            "peak": 0.4254394769668579,
+            "rms": 0.09643610271863415
+          },
+          "hit_slap": {
+            "original": 1.2,
+            "trim": 0.5818548752834467,
+            "duration": 0.6181632653061224,
+            "peak": 0.8661856651306152,
+            "rms": 0.05457374408338553
+          }
+        },
+        "played": {
+          "reaction_surprise": 1,
+          "hit_slap": 1
+        },
+        "errors": []
+      },
+      "maxRMS": 0.23289911096253743,
+      "contexts": [
+        "running"
+      ],
+      "nativeErrors": [],
+      "trigger": "Installed event mixer health check"
+    }
+  ],
+  "errors": [],
+  "physicalSpeakersVerified": false,
+  "notes": "Graph RMS measures generated audio, not actual device speaker output. Squat/batting use gameplay judgement inputs; nine other games exercise their installed audio handler."
+}
