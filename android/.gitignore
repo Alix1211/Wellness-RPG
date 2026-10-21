@@ -1,0 +1,7 @@
+/build/
+/private/
+/app/src/main/assets/game.html.gz
+/app/src/main/assets/bundled.json
+*.apk
+*.idsig
+local.properties

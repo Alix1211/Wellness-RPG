@@ -1,0 +1,34 @@
+{
+  "apk": "GAIA-LIFE-R60.apk",
+  "bytes": 64905823,
+  "sha256": "015d8e7bfd5915a54c3910224524a0795bec9b2146ae02f202ce0a5508212340",
+  "game": {
+    "build": "20261021-R60",
+    "sha256": "575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244",
+    "size": 87031121,
+    "compression": "gzip",
+    "parts": [
+      "builds/gaia-life-20261020/html.gz.part-00",
+      "builds/gaia-life-20261020/html.gz.part-01",
+      "builds/gaia-life-20261020/html.gz.part-02",
+      "builds/gaia-life-20261020/html.gz.part-03",
+      "builds/gaia-life-20261020/html.gz.part-04",
+      "builds/gaia-life-20261020/html.gz.part-05",
+      "builds/gaia-life-20261020/html.gz.part-06",
+      "builds/gaia-life-20261020/html.gz.part-07",
+      "builds/gaia-life-20261020/html.gz.part-08",
+      "builds/gaia-life-20261020/html.gz.part-09",
+      "builds/gaia-life-20261020/html.gz.part-10",
+      "builds/gaia-life-20261020/html.gz.part-11",
+      "builds/gaia-life-20261020/html.gz.part-12"
+    ]
+  },
+  "game_unchanged": true,
+  "signature_verified": true,
+  "zipalign_verified": true,
+  "update_store_tests": 12,
+  "remote_update_tests": 10,
+  "scripts_parsed": 23,
+  "physical_device_test": false,
+  "emulator_test": "not_completed: emulator process exited with signal 11"
+}
