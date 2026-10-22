@@ -1,5 +1,5 @@
 // 마트·카지노 상점 — 지도에서 건물을 눌러 언제든 입장. 사기/팔기: 칸을 한 번 누르면 정보, 두 번 연속(더블클릭·더블탭)하면 바로 거래.
-// 진열은 한 바퀴(run.lap)마다 새로 바뀌고, 산 칸은 품절. 슬롯머신은 버튼만(준비 중, 회색).
+// 진열은 한 바퀴(run.lap)마다 새로 바뀌고, 산 칸은 품절. 슬롯머신은 케인이 준 틀 그림(ui/slot/frame.webp) 위에서 동작.
 (function () {
   const G = window.GAIA, $ = id => document.getElementById(id), IT = G.items;
   const art = k => window.GAIA_IMG ? (window.GAIA_IMG['ui/items/' + k + '.webp'] || '') : '../assets/gaia-detective/ui/items/' + k + '.webp';
@@ -7,9 +7,13 @@
   const KINDS = { mart: { name: '마트' }, casino: { name: '카지노' } };
   const rnd = a => a[Math.floor(Math.random() * a.length)];
   const pickN = (a, n) => { const b = a.slice(), o = []; while (o.length < n && b.length) o.push(b.splice(Math.floor(Math.random() * b.length), 1)[0]); return o; };
-  // 슬롯머신 규칙(수치는 여기서만 조정): 릴 3개, 심볼 8종(무작위 아이템 7종 + 골드). 3개 일치=그 아이템 경품, 골드3=판돈×10, 골드2=판돈×2, 다른 그림 2개=판돈 반환
-  const SLOT = { bet: 20, gold3: 10, gold2: 2, pair: 1 };
-  let root, kind = 'mart', sel = null, last = { t: 0, key: '' }, msg = '', mode = 'shop', syms = null, spinning = false, slotMsg = '', reel = ['gold', 'gold', 'gold'];
+  // 슬롯머신 규칙(수치는 여기서만 조정): 3×3 릴, 심볼 8종(무작위 아이템 7종 + 골드). 줄 수(1·3·5)×줄당 판돈이 한 번 돌릴 때의 판돈.
+  // 한 줄에 3개 일치=그 아이템 경품(골드3=줄당×gold3), 골드2=줄당×gold2, 다른 그림 2개=줄당×pair. 한 바퀴(run.lap)당 LIMIT번까지, 다 쓰면 바니맨이 나타나 막음.
+  const SLOT = { bets: [10, 20, 50], lines: [1, 3, 5], gold3: 30, gold2: 3, pair: 2, limit: 20 };
+  const ROWS = [[[0, 0], [0, 1], [0, 2]], [[1, 0], [1, 1], [1, 2]], [[2, 0], [2, 1], [2, 2]]], DIAG = [[[0, 0], [1, 1], [2, 2]], [[2, 0], [1, 1], [0, 2]]];
+  const WX = [[474, 665], [714, 912], [964, 1156]], WY = [[241, 392], [439, 587], [632, 779]]; // 틀 그림 속 릴 창 9칸(1672×941 기준)
+  const slotArt = k => window.GAIA_IMG ? (window.GAIA_IMG['ui/slot/' + k + '.webp'] || '') : '../assets/gaia-detective/ui/slot/' + k + '.webp';
+  let root, kind = 'mart', sel = null, last = { t: 0, key: '' }, msg = '', mode = 'shop', syms = null, spinning = false, slotMsg = '', grid = null, nLines = 0, nBet = 1;
   const run = () => G.run.get();
 
   function stockOf(k) {
@@ -53,7 +57,7 @@
     sel = null; G.run.save(); if (G.sfx) G.sfx.play('click'); paint();
   }
   function paint() {
-    if (mode === 'slot') return paintSlot();
+    if (mode === 'slot') return drawSlot();
     const r = run(), st = stockOf(kind);
     root.innerHTML = '<div class="shwin"><h2></h2><div class="shbody"><div class="clerk"></div><div class="shcol"><b>진열대</b><div class="shgrid" id="shStock"></div></div><div class="shcol"><b>내 소지품 <i></i></b><div class="shgrid" id="shMine"></div></div></div><div class="shinfo"><div class="shtxt"></div><div class="shbtns"></div></div></div>';
     const w = root.firstChild; w.querySelector('h2').textContent = KINDS[kind].name;
@@ -75,44 +79,109 @@
   function mk(parent, txt, fn, dis, purple) { const b = document.createElement('button'); b.textContent = txt; b.disabled = !!dis; if (purple) b.className = 'pu'; b.addEventListener('click', () => { if (G.sfx) G.sfx.play('click'); fn(); }); parent.appendChild(b); }
   // ── 슬롯머신 ──
   const symHTML = id => id === 'gold' ? '<i class="coin"></i>' : '<img alt="" draggable="false" src="' + art(id) + '">';
-  function newSyms() { syms = pickN(IT.list.map(d => d.id), 7).concat(['gold']); }
-  function openSlot() { mode = 'slot'; slotMsg = '판돈 ' + SLOT.bet + '원 — 돌리기를 눌러 보세요'; paintSlot(); }
-  function paintSlot() {
-    const r = run();
-    root.innerHTML = '<div class="shwin slotwin"><h2>슬롯머신</h2><div class="reels"></div><div class="legend"><b>오늘의 심볼</b><div class="lgrid"></div></div><div class="shinfo"><div class="shtxt"></div><div class="shbtns"></div></div></div>';
-    const w = root.firstChild, rl = w.querySelector('.reels');
-    for (let i = 0; i < 3; i++) { const d = document.createElement('div'); d.className = 'rl'; d.id = 'rl' + i; d.innerHTML = symHTML(reel[i]); rl.appendChild(d); }
-    const lg = w.querySelector('.lgrid'); syms.forEach(id => { const d = document.createElement('div'); d.className = 'ls'; d.innerHTML = symHTML(id); lg.appendChild(d); });
-    w.querySelector('.shtxt').innerHTML = '<span></span>'; w.querySelector('.shtxt').firstChild.textContent = slotMsg;
-    const bt = w.querySelector('.shbtns');
-    mk(bt, '돌리기 (' + SLOT.bet + '원)', spin, spinning || r.gold < SLOT.bet, false);
-    const g = document.createElement('div'); g.className = 'shgold'; g.textContent = r.gold + '원'; bt.appendChild(g);
-    mk(bt, '나가기', () => { if (spinning) return; mode = 'shop'; paint(); }, spinning, true);
+  const pc = (v, t) => (v / t * 100).toFixed(3) + '%';
+  const used = () => { const r = run(); if (!r.slot || r.slot.lap !== r.lap) r.slot = { lap: r.lap, n: 0 }; return r.slot; };
+  const total = () => SLOT.lines[nLines] * SLOT.bets[nBet];
+  function newSyms() { syms = pickN(IT.list.map(d => d.id), 7).concat(['gold']); grid = null; }
+  function openSlot() {
+    mode = 'slot'; spinning = false;
+    if (!grid) grid = [0, 1, 2].map(() => [0, 1, 2].map(() => rnd(syms)));
+    slotMsg = used().n >= SLOT.limit ? '오늘은 여기까지' : '돌려 보세요';
+    drawSlot();
   }
+  function drawSlot() {
+    root.innerHTML = '<div class="slotscr"><div class="slhud"><button id="slExit">나가기</button><div class="grp"><div class="shgold" id="slCnt"></div><div class="shgold" id="slGold"></div></div></div>' +
+      '<div class="slstage"><img class="bgirl" alt="" draggable="false" src="' + clerkSrc('casino') + '"><div class="slm" id="slm"></div><div class="jp hidden" id="slJp"></div></div></div>';
+    const m = $('slm'); let h = '';
+    for (let c = 0; c < 3; c++) {
+      const cx = (WX[c][0] + WX[c][1]) / 2;
+      h += '<div class="rc" id="rc' + c + '" style="left:' + pc(cx - 100, 1672) + '"><div class="strip" id="st' + c + '"></div></div>';
+    }
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) h += '<div class="wn" id="wn' + r + c + '" style="left:' + pc(WX[c][0], 1672) + ';top:' + pc(WY[r][0], 941) + ';width:' + pc(WX[c][1] - WX[c][0], 1672) + ';height:' + pc(WY[r][1] - WY[r][0], 941) + '"></div>';
+    h += '<img class="slframe" alt="" draggable="false" src="' + slotArt('frame') + '"><div class="slplate" id="slPlate"></div>';
+    [687, 828, 967].forEach((x, i) => { h += '<button class="slb" id="slB' + i + '" style="left:' + pc(x - 62, 1672) + '"></button>'; });
+    h += '<button class="sllev" id="slLev" aria-label="레버"></button>';
+    m.innerHTML = h;
+    for (let c = 0; c < 3; c++) showCol(c, [grid[0][c], grid[1][c], grid[2][c]]);
+    $('slExit').addEventListener('click', () => { if (spinning) return; if (G.sfx) G.sfx.play('click'); mode = 'shop'; paint(); });
+    $('slB0').addEventListener('click', () => { if (spinning || used().n >= SLOT.limit) return; nLines = (nLines + 1) % SLOT.lines.length; clk(); slotMsg = ''; hud(); });
+    $('slB1').addEventListener('click', () => { if (spinning || used().n >= SLOT.limit) return; nBet = (nBet + 1) % SLOT.bets.length; clk(); slotMsg = ''; hud(); });
+    $('slB2').addEventListener('click', spin); $('slLev').addEventListener('click', spin);
+    if (used().n >= SLOT.limit) showBunnyMan();
+    hud();
+  }
+  const clk = () => { if (G.sfx) G.sfx.play('click'); };
+  function showCol(c, v) { // 릴 한 줄에 세 심볼을 그대로 보여 줌
+    const st = $('st' + c); st.style.height = '100%'; st.style.transition = 'none'; st.style.transform = 'none';
+    st.innerHTML = v.map(id => '<div class="cell" style="height:' + (100 / 3).toFixed(3) + '%">' + symHTML(id) + '</div>').join('');
+  }
+  function hud() {
+    const r = run(), n = used().n, lim = n >= SLOT.limit, tot = total();
+    $('slGold').textContent = r.gold + '원'; $('slCnt').textContent = '오늘 ' + n + '/' + SLOT.limit + '회';
+    $('slB0').textContent = SLOT.lines[nLines] + '줄'; $('slB1').textContent = SLOT.bets[nBet] + '원'; $('slB2').textContent = '돌리기';
+    $('slB0').disabled = $('slB1').disabled = spinning || lim;
+    const cant = spinning || lim || r.gold < tot;
+    $('slB2').disabled = cant; $('slLev').disabled = cant;
+    $('slExit').disabled = spinning; $('slExit').style.filter = spinning ? 'grayscale(1) opacity(.55)' : '';
+    $('slPlate').textContent = slotMsg || (lim ? '오늘은 여기까지' : r.gold < tot ? '용돈이 모자랍니다' : '판돈 ' + tot + '원');
+  }
+  function showBunnyMan() {
+    const st = document.querySelector('.slstage'); if (!st || st.querySelector('.bman')) return;
+    const im = document.createElement('img'); im.className = 'bman'; im.alt = ''; im.draggable = false; im.src = slotArt('bunnyman'); st.appendChild(im);
+  }
+  function lineSet() { const n = SLOT.lines[nLines]; return n === 1 ? [ROWS[1]] : n === 3 ? ROWS : ROWS.concat(DIAG); }
   function spin() {
-    const r = run(); if (spinning || r.gold < SLOT.bet) return;
-    r.gold -= SLOT.bet; G.run.save(); spinning = true; slotMsg = '두근두근…';
-    const res = [0, 1, 2].map(() => rnd(syms));
-    paintSlot();
-    const stopAt = [700, 1100, 1500], timers = [];
-    [0, 1, 2].forEach(i => {
-      const el = $('rl' + i); el.classList.add('spin');
-      timers[i] = setInterval(() => { el.innerHTML = symHTML(rnd(syms)); }, 70);
-      setTimeout(() => { clearInterval(timers[i]); el.classList.remove('spin'); el.innerHTML = symHTML(res[i]); reel[i] = res[i]; if (G.sfx) G.sfx.play('click'); if (i === 2) settle(res); }, stopAt[i]);
-    });
+    const r = run(), tot = total(), sc = used(); if (spinning || sc.n >= SLOT.limit || r.gold < tot) return;
+    r.gold -= tot; sc.n++; G.run.save(); spinning = true; slotMsg = '두근두근…'; hud();
+    document.querySelectorAll('.wn').forEach(e => e.classList.remove('on'));
+    const res = [0, 1, 2].map(() => [0, 1, 2].map(() => rnd(syms)));
+    for (let c = 0; c < 3; c++) {
+      const prev = [grid[0][c], grid[1][c], grid[2][c]], ids = prev.slice(), N = 12 + c * 5;
+      for (let i = 0; i < N; i++) ids.push(rnd(syms));
+      const fin = [res[0][c], res[1][c], res[2][c]]; ids.push.apply(ids, fin);
+      const st = $('st' + c), len = ids.length;
+      st.style.transition = 'none'; st.style.height = (len / 3 * 100).toFixed(3) + '%'; st.style.transform = 'translateY(0)';
+      st.innerHTML = ids.map(id => '<div class="cell" style="height:' + (100 / len).toFixed(4) + '%">' + symHTML(id) + '</div>').join('');
+      $('rc' + c).classList.add('mv'); void st.offsetHeight;
+      const dur = 1000 + c * 450;
+      st.style.transition = 'transform ' + dur + 'ms cubic-bezier(.17,.7,.22,1)';
+      st.style.transform = 'translateY(-' + ((len - 3) / len * 100).toFixed(4) + '%)';
+      setTimeout(() => { $('rc' + c).classList.remove('mv'); clk(); if (c === 2) { grid = res; settle(res); } }, dur);
+    }
   }
   function settle(res) {
-    const r = run(), cnt = {}; res.forEach(s => { cnt[s] = (cnt[s] || 0) + 1; });
-    const top = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a])[0], n = cnt[top];
-    if (n === 3 && top === 'gold') { const g = SLOT.bet * SLOT.gold3; r.gold += g; slotMsg = '골드 3개! 대박! +' + g + '원'; }
-    else if (n === 3) {
-      const d = IT.byId[top];
-      if (r.items.length < IT.slots) { r.items.push(top); slotMsg = '3개 일치! ' + d.name + ' 획득!'; } else { r.gold += IT.sell(d); slotMsg = '3개 일치! ' + d.name + ' (소지품이 가득 차서 ' + IT.sell(d) + '원으로 받음)'; }
-    }
-    else if (n === 2 && top === 'gold') { const g = SLOT.bet * SLOT.gold2; r.gold += g; slotMsg = '골드 2개! +' + g + '원'; }
-    else if (n === 2) { const g = SLOT.bet * SLOT.pair; r.gold += g; slotMsg = '2개 일치 — 판돈 ' + g + '원 돌려받음'; }
-    else slotMsg = '아쉽네요… 꽝!';
-    spinning = false; G.run.save(); paintSlot();
+    const r = run(), per = SLOT.bets[nBet]; let gold = 0, jackpot = false; const items = [], win = [], full = [];
+    lineSet().forEach(L => {
+      const s = L.map(p => res[p[0]][p[1]]), cnt = {}; s.forEach(x => { cnt[x] = (cnt[x] || 0) + 1; });
+      const top = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a])[0], n = cnt[top];
+      if (n === 3 && top === 'gold') { gold += per * SLOT.gold3; jackpot = true; }
+      else if (n === 3) { items.push(top); jackpot = true; }
+      else if (n === 2 && top === 'gold') gold += per * SLOT.gold2;
+      else if (n === 2) gold += per * SLOT.pair;
+      else return;
+      L.forEach(p => { if (res[p[0]][p[1]] === top) win.push(p); });
+    });
+    items.forEach(id => { const d = IT.byId[id]; if (r.items.length < IT.slots) r.items.push(id); else { gold += IT.sell(d); full.push(d.name); } });
+    r.gold += gold; G.run.save();
+    win.forEach(p => { const e = $('wn' + p[0] + p[1]); if (e) e.classList.add('on'); });
+    const parts = []; if (gold) parts.push('+' + gold + '원'); if (items.length) parts.push('경품 ' + items.length + '개');
+    slotMsg = parts.length ? (jackpot ? '잭팟! ' : '') + parts.join(' ') : '꽝…';
+    spinning = false; hud();
+    if (items.length) prizeToast(items, full);
+    if (jackpot) jackpotFx();
+    if (used().n >= SLOT.limit) setTimeout(() => { if (mode === 'slot') { showBunnyMan(); slotMsg = '오늘은 여기까지'; hud(); } }, jackpot ? 2200 : 900);
+  }
+  function prizeToast(ids, full) {
+    const st = document.querySelector('.slstage'); if (!st) return;
+    const d = document.createElement('div'); d.className = 'slprize';
+    d.innerHTML = '<div class="pi">' + ids.map(id => '<img alt="" src="' + art(id) + '">').join('') + '</div><b></b>';
+    d.querySelector('b').textContent = ids.map(id => IT.byId[id].name).join(', ') + (full.length ? ' (가득 차서 판매됨)' : '');
+    st.appendChild(d); setTimeout(() => d.remove(), 2700);
+  }
+  function jackpotFx() {
+    const j = $('slJp'); if (!j) return;
+    j.innerHTML = '<img alt="" src="' + slotArt('jp_girl') + '"><img alt="" src="' + slotArt('jp_boy') + '">'; j.classList.remove('hidden');
+    setTimeout(() => { if (j) j.classList.add('hidden'); }, 2500);
   }
 
   function open(k) { if (!root) build(); kind = k; sel = null; msg = ''; mode = 'shop'; spinning = false; last = { t: 0, key: '' }; if (k === 'casino') newSyms(); root.classList.remove('hidden'); paint(); }
