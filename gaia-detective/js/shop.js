@@ -4,7 +4,7 @@
   const G = window.GAIA, $ = id => document.getElementById(id), IT = G.items;
   const art = k => window.GAIA_IMG ? (window.GAIA_IMG['ui/items/' + k + '.webp'] || '') : '../assets/gaia-detective/ui/items/' + k + '.webp';
   const clerkSrc = k => window.GAIA_IMG ? (window.GAIA_IMG['ui/clerk/' + k + '.webp'] || '') : '../assets/gaia-detective/ui/clerk/' + k + '.webp'; // 점원 초상화(없으면 숨김)
-  const KINDS = { mart: { name: '마트', shop: true }, casino: { name: '카지노', shop: true }, police: { name: '경찰서', who: 'ma' }, studio: { name: '촬영소', who: 'studio' }, park: { name: '공원', who: 'civ7' }, villa: { name: '주인공 빌라', who: 'yoon' }, club: { name: '클럽', who: 'civ1' }, farm: { name: '착유농장', who: 'civ5' } };
+  const KINDS = { mart: { name: '마트', shop: true }, casino: { name: '카지노', shop: true }, police: { name: '경찰서', who: 'ma' }, studio: { name: '촬영소', who: 'studio' }, park: { name: '공원', who: 'civ7' }, villa: { name: '주인공 빌라', who: 'yoon', home: true }, club: { name: '클럽', who: 'civ1' }, farm: { name: '착유농장', who: 'civ5' } };
   const rnd = a => a[Math.floor(Math.random() * a.length)];
   const pickN = (a, n) => { const b = a.slice(), o = []; while (o.length < n && b.length) o.push(b.splice(Math.floor(Math.random() * b.length), 1)[0]); return o; };
   // 슬롯머신 규칙(수치는 여기서만 조정): 3×3 릴, 심볼 8종(무작위 아이템 7종 + 골드). 줄 수(1·3·5)×줄당 판돈이 한 번 돌릴 때의 판돈.
@@ -85,20 +85,37 @@
     if (K.who === 'studio') { const o = (D.shop && D.shop.studio) || {}; return { name: o.name, enter: o.enter, talk: o.enter, leave: o.leave }; }
     const n = (D.npc && D.npc[K.who]) || {}; return { name: n.name, enter: n.start, talk: (n.start || []).concat(n.attack || []), leave: n.flee };
   };
+  // ── 집 체력단련(스쿼트 미니게임) — 수치는 여기서만 조정. 스탯(run.stat)은 아직 전투에 연결되지 않은 기록용 [임시] ──
+  const TRAIN = { limit: 3, stat: '체력', gain: { fail: 0, ok: 1, great: 2 } };
+  const usedT = () => { const r = run(); if (!r.train || r.train.lap !== r.lap) r.train = { lap: r.lap, n: 0 }; return r.train; };
+  let trainMsg = '';
+  function train() {
+    if (usedT().n >= TRAIN.limit) return;
+    G.minigame.play('squat', {
+      wl: run().wl,
+      canRetry: () => usedT().n < TRAIN.limit,
+      onResult: r => {
+        const rr = run(), t = usedT(), tier = r.ratio >= 0.8 ? 'great' : r.success ? 'ok' : 'fail', gain = TRAIN.gain[tier];
+        t.n++; rr.stat = rr.stat || {}; rr.stat[TRAIN.stat] = (rr.stat[TRAIN.stat] || 0) + gain; G.run.save();
+        trainMsg = gain ? TRAIN.stat + ' +' + gain + ' (누적 ' + rr.stat[TRAIN.stat] + ')' : '이번에는 오르지 않았습니다';
+      },
+      onClose: () => { const m = trainMsg; trainMsg = ''; if (mode === 'entry') drawEntry(m || undefined); }
+    });
+  }
   function toEntry() { mode = 'entry'; sel = null; setBg(.05); paint(); }
   function drawEntry(line) {
-    const L = LN(), q = (G.shop.quest || {})[kind];
-    root.innerHTML = '<div class="entry"><div class="enplace"></div><img class="enpc" alt="" draggable="false" src="' + clerkSrc(kind) + '"><div class="enbox"><b class="enname"></b><p class="entxt"></p><div class="enbtns"></div></div></div>';
+    const K = KINDS[kind], h = G.run.here(kind), npc = !K.home || !!h, L = npc ? LN() : {}, q = (G.shop.quest || {})[kind]; // 집은 이번 단계가 아닐 땐 상대(NPC) 없이 조용히
+    root.innerHTML = '<div class="entry"><div class="enplace"></div><img class="enpc" alt="" draggable="false" src="' + (npc ? clerkSrc(kind) : '') + '"><div class="enbox"><b class="enname"></b><p class="entxt"></p><div class="enbtns"></div></div></div>';
     root.querySelector('.enplace').textContent = KINDS[kind].name;
     const pc0 = root.querySelector('.enpc'); pc0.onerror = () => pc0.remove();
     root.querySelector('.enname').textContent = L.name || '';
-    root.querySelector('.entxt').textContent = line || rnd(L.enter || ['어서 오세요']);
+    root.querySelector('.entxt').textContent = line || (npc ? rnd(L.enter || ['어서 오세요']) : '');
     const bt = root.querySelector('.enbtns');
-    const K = KINDS[kind], h = G.run.here(kind);
     if (K.shop) mk(bt, kind === 'casino' ? '상점' : '물건 사기', () => { mode = 'shop'; setBg(.28); paint(); }, false, false);
     if (kind === 'casino') mk(bt, '슬롯머신', openSlot, false, true);
+    if (K.home) { const u = usedT(); mk(bt, '운동하기 ' + (TRAIN.limit - u.n) + '/' + TRAIN.limit, train, u.n >= TRAIN.limit, true); }
     mk(bt, h && h.kind === 'rest' ? '들어가기' : '출동', () => { if (!h) return; root.classList.add('hidden'); G.run.go(kind); }, !h, false);
-    const tk = mk(bt, '대화하기', () => drawEntry(rnd(L.talk || L.enter || ['…'])), false, true); if (q && tk) tk.classList.add('blink');
+    const tk = npc ? mk(bt, '대화하기', () => drawEntry(rnd(L.talk || L.enter || ['…'])), false, true) : null; if (q && tk) tk.classList.add('blink');
     mk(bt, '나가기', () => { if (L.leave) { drawEntry(rnd(L.leave)); setTimeout(close, 900); } else close(); }, false, false);
   }
 

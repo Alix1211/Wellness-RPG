@@ -15,8 +15,10 @@
   const cur = () => STEPS()[run.step];
   const SHOPS = { mart: '마트', casino: '카지노' };
   const ENTRY = { police: 1, studio: 1, park: 1, villa: 1, club: 1, farm: 1 }; // 입장 화면(점원·선택지)이 있는 장소
+  const HOME = { villa: 1 }; // 주인공 집 — 체력단련(스쿼트)은 언제든. 이번 단계가 집이면 전투도 이어서 가능
   const here = id => { const c = cur(); return c && c.spot === id ? c : null; };
   function spotInfo(id) {
+    if (HOME[id]) { const h = here(id); return { state: 'open', title: h ? h.title : '', go: '들어가기', sub: h ? '전투 ' + (run.fi + 1) + ' / ' + h.fights.length + ' · 체력단련도 가능' : '체력단련 · 언제든 들를 수 있습니다' }; }
     if (SHOPS[id]) { const h = here(id); return { state: 'open', title: h ? h.title : SHOPS[id], sub: h ? '전투 ' + (run.fi + 1) + ' / ' + h.fights.length + ' · 상점도 이용 가능' : '언제든 들를 수 있습니다 (사고 팔기)', go: '들어가기' }; }
     const idxs = []; STEPS().forEach((s, i) => { if (s.spot === id) idxs.push(i); });
     if (!idxs.length) return { state: 'locked', sub: '아직 연결되지 않은 장소입니다', go: null };

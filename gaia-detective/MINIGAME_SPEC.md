@@ -143,7 +143,7 @@ G.minigame = {
 | 시험판(실행 가능, 슬라이더 편집기 포함) | `modules/minigames/minigame-squat-home-test.html` (8MB, 열어서 "시작"). 원본 시험판은 `minigame-squat-test.html`(수정 금지) |
 | 스쿼트 시트 앞/뒤 | `assets/gaia-detective/minigame/squat_home/squat_{front,back}_sheet_1650x912.webp` — 275×456 칸, 6열×2행, 12프레임 |
 | 받침대(투명 PNG, 케인 제작) | `.../squat_home/stand.png` |
-| 집 배경 세로/가로 (케인 제작, 바닥 포함) | `.../squat_home/bg_home_port.webp`, `bg_home_land.webp` |
+| 집 배경 세로/가로 | 새 파일 없음 — 장소 배경 `assets/gaia-detective/place/villa_{port,land}.webp`(=주인공 집)와 같은 그림이라 그것을 씁니다 |
 | 팔벌려 뛰기 시트 앞/뒤 (아직 게임 없음) | `.../squat_home/jumpingjack_{front,back}_sheet_6x2.webp` (프레임 약 307×707, 6×2) |
 
 ### 11-2. 게임 구조 (기존 스쿼트, 이미 분석 완료)
@@ -175,3 +175,14 @@ G.minigame = {
 
 ### 11-6. 팔벌려 뛰기 (참고, 미구현)
 시트는 있으나 **영상 품질이 낮아 케인이 포토샵 보정 중**입니다(손이 화면 위에서 잘리는 구간 제외하고 약 27프레임 한 번의 동작을 12프레임으로 뽑음, 머리카락 가장자리 흰 테두리 일부 남음). 게임 규칙은 아직 정해지지 않았으니 만들지 말고, 케인이 보정본을 주면 §11-2의 시트 규격(6×2, 발 바닥 정렬)에 맞춰 조립만 하세요.
+
+
+### 11-7. 구현 완료 현황 (2026-10-22, 이식 끝남 — 새로 만들지 말 것)
+스쿼트는 **GAIA에 이미 연결되어 있습니다.** 지도 "주인공 집"(villa) → 입장 화면의 **"운동하기 n/3"** 버튼.
+- 공통 모듈 `js/minigame.js`(`G.minigame.register/play/close/onResult/canRetry/layout`), 스쿼트 `js/minigame_squat.js`(게임 본체 문서 `DOC` + 이미지·소리 주소 + 배치 상수 `G.minigame.layout.squat`).
+- 입장 화면: `js/shop.js`(`TRAIN = {limit:3, stat:'체력', gain:{fail:0,ok:1,great:2}}` — 바퀴당 횟수·스탯 상승은 **[임시]**, 스탯 `run.stat`은 기록만 하고 전투에 연결 안 됨). 횟수를 다 쓰면 버튼이 회색, 결과 화면의 "다시"도 회색.
+- 집(villa)은 `js/run.js`의 `HOME`으로 **언제든 입장** 가능, 이번 단계가 집(2막 귀가 전투)이면 "출동"도 켜짐(아니면 회색). 이번 단계가 아닐 때는 상대(NPC)·대사 없이 조용히 표시.
+- 난이도는 월드 레벨로 쉬움→보통→어려움(`tierOf`, 임시). 소리는 `assets/gaia-detective/minigame/squat_home/snd/*.ogg`, 단일 빌드(`tools/build_single.py`)에는 base64로 포함(빌드 약 36MB).
+- 검증 완료: 세로 412×915·가로 915×412에서 시작→결과→닫기→횟수 차감, 소리 디코딩·재생. 미검증: 서버 없이 `index.html`을 열 때(file://) 소리 파일 불러오기(단일 빌드는 정상).
+- 남은 것: 배치 상수 최종값(케인이 시험판에서 "값 복사"), 스탯의 전투 효과, 팔벌려 뛰기.
+- `assets/gaia-detective/minigame/incoming/` 에 케인이 막 보낸 원본 2장(경찰 배팅 6프레임 시트, 로지 엎드린 뒷모습)이 **가공 전 원본 그대로** 있음. 용도: Wellness 컨베이어 벨트 배팅 미니게임(`modules/minigames/minigame-conveyor-batting.html`)용으로 보임 — 케인이 확정해 주기 전에는 가공·연결하지 말 것.

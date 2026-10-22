@@ -44,9 +44,14 @@ PLACE='../assets/gaia-detective/place/'
 for k in ('mart','casino','police','studio','park','villa','club','farm'):
     for o in ('port','land'):
         if os.path.exists(PLACE+k+'_'+o+'.webp'): imgs['place/'+k+'_'+o+'.webp']=b64(PLACE+k+'_'+o+'.webp','image/webp')
+MG='../assets/gaia-detective/minigame/squat_home/'
+for f in ('squat_front_sheet_1650x912.webp','squat_back_sheet_1650x912.webp','ball.webp','stand.png'):
+    imgs['minigame/squat_home/'+f]=b64(MG+f,'image/webp' if f.endswith('.webp') else 'image/png')
+for f in ('ph','pp','fs','fo'): imgs['minigame/squat_home/fx/'+f+'.webp']=b64(MG+'fx/'+f+'.webp','image/webp')
+minid={os.path.splitext(f)[0]:b64(MG+'snd/'+f,'audio/ogg') for f in sorted(os.listdir(MG+'snd'))}
 PUNCH='../assets/audio/freesound_community-face-punch-91909.mp3'
 sfxd={os.path.splitext(f)[0]:b64(SFX+f,'audio/ogg' if f.endswith('.ogg') else 'audio/mpeg') for f in sorted(os.listdir(SFX))} if os.path.isdir(SFX) else {}
-snd='window.GAIA_SND={"punch":"%s","sfx":{%s}};\n'%(b64(PUNCH,'audio/mpeg') if os.path.exists(PUNCH) else '', ','.join('"%s":"%s"'%(k,v) for k,v in sfxd.items()))
+snd='window.GAIA_SND={"punch":"%s","sfx":{%s},"mini":{%s}};\n'%(b64(PUNCH,'audio/mpeg') if os.path.exists(PUNCH) else '', ','.join('"%s":"%s"'%(k,v) for k,v in sfxd.items()), ','.join('"%s":"%s"'%(k,v) for k,v in minid.items()))
 pre=snd+'window.GAIA_IMG={'+','.join('"%s":"%s"'%(k,v) for k,v in sorted(imgs.items()))+'};\n'
 for m in re.finditer(r'<script src="([^"]+)"></script>',html):
     s=open(m.group(1),encoding='utf-8').read()

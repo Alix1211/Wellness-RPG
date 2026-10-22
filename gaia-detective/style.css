@@ -488,3 +488,10 @@ body.dragging{cursor:grabbing}
 .enbtns button:active{transform:translateY(.3vh)}
 .enbtns button.blink{animation:enblink .7s ease-in-out infinite alternate}
 @keyframes enblink{from{filter:brightness(1)}to{filter:brightness(1.35) drop-shadow(0 0 1.2vh #ffe36e)}}
+
+/* 미니게임 전체 화면(iframe) */
+#minigame{position:fixed;inset:0;z-index:90;background:#2a2230}
+#minigame.hidden{display:none}
+#minigame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#2a2230}
+.entry .enbtns button:disabled{filter:grayscale(1) opacity(.55)}
+.entry .entxt:empty,.entry .enname:empty{display:none}
