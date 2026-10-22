@@ -404,3 +404,13 @@
 - `data/story.js`: 장면 대사표(`act1`=처음 지도 열림, `act2`=새 지도 열림(2막)), 상대 npc(반장=police_2, 선배 경찰=police_4). `{next}`는 지금 불 켜진 장소 이름으로 자동 치환.
 - `js/story.js`: 대화창(탭=다음 줄/타자 완성, 건너뛰기 버튼). 런 상태 `seen`에 기록해 각 장면은 런당 한 번만. 지도 `open()`에서 `G.story.onMap()` 호출.
 - 빌드: `npc/police/police_2·4.webp` 포함. 장면 추가는 `scenes`에 키와 줄만 추가하고 `G.story.play('키')` 호출.
+
+## 안드로이드 앱 (진동·드라이브 저장·온라인 업데이트) — 스팀랩소디 구조 이식
+- 앱: `gaia-detective/android/` (패키지 com.gaia.detective, 이름 "GAIA CITY: DETECTIVE", 가로·세로 모두). 서명 키는 `android/gaia-detective.keystore`에 고정(바꾸면 덮어 설치 불가, 절대 교체 금지).
+- 게임 묶음: `tools/build_android_web.py`가 `android/web/`(APK 내장, git 제외)과 `detective-web.zip`(코드만)을 만든다. 앱 주소는 /assets/ 이고 그림·소리는 `gaia-detective/…`, `audio/…` 경로. 새 그림·소리 폴더가 생기면 이 스크립트의 `MEDIA_DIRS`에 추가해야 앱에 들어간다.
+- 자동 빌드(GitHub Actions): `detective-apk.yml`(android/ 변경 시, 릴리스 태그 `detective-app-latest`의 gaia-detective.apk, JUnit 포함), `detective-web.yml`(gaia-detective/·assets 변경 시, 태그 `detective-web-latest`의 detective-web.zip). 두 워크플로 모두 main·gaia-detective-assets 푸시에 반응.
+- 온라인 업데이트: 앱을 켤 때 `detective-web-latest`의 zip을 받아 원자적으로 교체(실패·오프라인이면 직전 버전 → APK 내장판). 바뀐 그림·소리는 해시 비교 후 raw.githubusercontent에서 필요할 때만 받음. **저장소가 공개여야 동작**(비공개면 조용히 내장판 사용).
+- 진동: `js/haptics.js` → `GaiaBridge.vibrate`(앱이 직접 울림, 웹 진동이 안 울리는 기기 대응) / 브라우저는 navigator.vibrate. 타격·피격·체포·절정·승리·버튼 틱에 연결, 켜짐/꺼짐은 `gaia_vib`. 뒤로 제스처 메뉴: 드라이브 저장 관리 / 진동 켜기·끄기 / 진동 테스트 / 종료.
+- 드라이브 저장: `js/save_sync.js` + MainActivity(SAF 파일 선택, 로그인 불필요). 규칙은 drive_save_sync 표준 그대로(저장 시각 대결 금지, 마지막으로 맞춘 버전 baseT 기준, 둘 다 바뀌면 선택창). 저장 키는 `gaia_*`(진행 `gaia_run_v1`에 시각 t를 자동 기록). 첫 기기는 '새 저장 파일 만들기', 다른 기기는 '기존 저장 파일 연결'.
+- 검증: 서버 빌드(testDebugUnitTest·assembleDebug) 성공, 앱 묶음을 웹 서버에 올려 전투·미니게임 문서·소리 파일 로딩 오류 없음 확인. **실기기(진동 모터·드라이브 선택창·업데이트 수신)는 케인이 확인 필요.**
+- 앱 코드(android/)가 바뀌면 새 APK 덮어 설치가 필요하고, 게임 내용만 바뀌면 앱 재시작으로 자동 반영된다.
