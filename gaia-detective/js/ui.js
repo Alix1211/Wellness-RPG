@@ -312,7 +312,9 @@
   function enemySay(i, key, chance) {
     const e = S.enemies[i]; if (!e) return;
     const D = G.dialogue && G.dialogue.enemy[e.def.id]; const L = D && D[key]; if (!L || (chance != null && Math.random() > chance)) return;
-    showBubble($('enemies').children[i] && $('enemies').children[i].querySelector('.sbub'), rnd(L), 'green');
+    const ee = $('enemies').children[i], bb = ee && ee.querySelector('.sbub'), im = ee && ee.querySelector('img.spr');
+    if (bb && im) bb.style.top = 'calc(1vh - ' + (parseFloat(im.style.height) * 0.16).toFixed(2) + 'vh)'; // 머리 하나 크기만큼 위로(임시: 적 그림 높이의 16%)
+    showBubble(bb, rnd(L), 'green');
   }
   function shakeEnemy(i) { const el = $('enemies').children[i]; if (!el) return; el.classList.remove('hurt'); void el.offsetWidth; el.classList.add('hurt'); }
 

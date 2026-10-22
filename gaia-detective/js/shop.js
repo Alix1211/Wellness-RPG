@@ -62,9 +62,8 @@
     if (mode === 'slot') return drawSlot();
     if (mode === 'entry') return drawEntry();
     const r = run(), st = stockOf(kind);
-    root.innerHTML = '<div class="shwin"><h2></h2><div class="shbody"><div class="clerk"></div><div class="shcol"><b>진열대</b><div class="shgrid" id="shStock"></div></div><div class="shcol"><b>내 소지품 <i></i></b><div class="shgrid" id="shMine"></div></div></div><div class="shinfo"><div class="shtxt"></div><div class="shbtns"></div></div></div>';
+    root.innerHTML = '<div class="shwin"><h2></h2><div class="shbody"><div class="shcol"><b>진열대</b><div class="shgrid" id="shStock"></div></div><div class="shcol"><b>내 소지품 <i></i></b><div class="shgrid" id="shMine"></div></div></div><div class="shinfo"><div class="shtxt"></div><div class="shbtns"></div></div></div>';
     const w = root.firstChild; w.querySelector('h2').textContent = KINDS[kind].name;
-    const cs = clerkSrc(kind); const cl = w.querySelector('.clerk'); fetchClerk(cl, cs);
     const A = $('shStock'), B = $('shMine');
     for (let i = 0; i < 20; i++) A.appendChild(tile('s' + i, st[i], null));
     for (let i = 0; i < IT.slots; i++) B.appendChild(tile('m' + i, r.items[i], null));
