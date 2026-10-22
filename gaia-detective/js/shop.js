@@ -9,7 +9,7 @@
   const pickN = (a, n) => { const b = a.slice(), o = []; while (o.length < n && b.length) o.push(b.splice(Math.floor(Math.random() * b.length), 1)[0]); return o; };
   // 슬롯머신 규칙(수치는 여기서만 조정): 3×3 릴, 심볼 8종(무작위 아이템 7종 + 골드). 줄 수(1·3·5)×줄당 판돈이 한 번 돌릴 때의 판돈.
   // 한 줄에 3개 일치=그 아이템 경품(골드3=줄당×gold3), 골드2=줄당×gold2, 다른 그림 2개=줄당×pair. 한 바퀴(run.lap)당 LIMIT번까지, 다 쓰면 바니맨이 나타나 막음.
-  const SLOT = { bets: [10, 20, 50], lines: [1, 3, 5], gold3: 30, gold2: 3, pair: 2, limit: 20 };
+  const SLOT = { bets: [10, 20, 50], lines: [1, 3, 5], gold3: 30, gold2: 3, pair: 2, limit: 10 };
   const ROWS = [[[0, 0], [0, 1], [0, 2]], [[1, 0], [1, 1], [1, 2]], [[2, 0], [2, 1], [2, 2]]], DIAG = [[[0, 0], [1, 1], [2, 2]], [[2, 0], [1, 1], [0, 2]]];
   const FW = 1225, FH = 1015, WX = [[240, 454], [490, 706], [741, 956]], WY = [[171, 390], [424, 635], [670, 879]]; // 틀 그림 속 릴 창 9칸(1225×1015 기준)
   const placeSrc = k => window.GAIA_IMG ? (window.GAIA_IMG['place/' + k + '_port.webp'] || '') : '../assets/gaia-detective/place/' + k + '_port.webp'; // 장소 세로 배경
