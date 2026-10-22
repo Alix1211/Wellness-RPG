@@ -10,6 +10,7 @@
   // ── 이미지 경로 ──
   const heroSrc = k => A.base + A.hero[k];
   const bgSrc = n => window.GAIA_IMG ? (window.GAIA_IMG['bg/' + n] || '') : A.bgBase + n;
+  const cardFrame = () => window.GAIA_IMG ? (window.GAIA_IMG['ui/card/frame.webp'] || '') : '../assets/gaia-detective/ui/card/frame.webp';
   const cardImg = id => window.GAIA_IMG ? (window.GAIA_IMG['cards/' + id + '.webp'] || '') : A.cardArt + id + '.webp';
   const sprite = e => A.base + e.def.sprite + '.png';
 
@@ -110,10 +111,10 @@
   function renderHand() {
     const h = $('hand'); h.innerHTML = '';
     const n = S.hand.length, vh = innerHeight / 100, avail = Math.max(200, h.clientWidth - 1.5 * vh);
-    const need = k => n * 15.6 * k * vh + Math.max(0, n - 1) * 0.8 * k * vh;
-    let k = 1.2; while (k > 0.95 && need(k) > avail) k = Math.round((k - 0.05) * 100) / 100;
+    const need = k => n * 18 * k * vh + Math.max(0, n - 1) * 0.8 * k * vh;
+    let k = 1.45; while (k > 0.95 && need(k) > avail) k = Math.round((k - 0.05) * 100) / 100;
     document.documentElement.style.setProperty('--k', k);
-    const cw = 15.6 * k * vh; let step = cw + 0.8 * k * vh;
+    const cw = 18 * k * vh; let step = cw + 0.8 * k * vh;
     if (n > 1 && need(k) > avail) step = (avail - cw) / (n - 1);
     S.hand.forEach((c, i) => {
       const d = G.cards[c.id], chk = G.canPlay(S, c.uid), cost = G.cost(S, c);
@@ -130,9 +131,13 @@
   function cardEl(id, cost) {
     const d = G.cards[id], el = document.createElement('div'); if (cost == null) cost = d.cost;
     el.className = 'card t-' + d.type + ' g-' + d.grade;
-    el.innerHTML = '<div class="cost' + (cost < d.cost ? ' dc' : '') + '">' + cost + '</div><div class="cname">' + d.name + '</div>' +
-      '<div class="art" style="background:' + artColor(d) + '"><img alt="" draggable="false" onerror="this.remove()" src="' + cardImg(d.id) + '"><span>' + d.folder + '</span></div>' +
-      '<div class="ctext"><small>' + d.type + (d.exhaust ? ' · 소멸' : '') + '</small>' + d.text + '</div>';
+    const nm = d.name.length, tl = d.text.length;
+    el.innerHTML = '<div class="art" style="background:' + artColor(d) + '"><img alt="" draggable="false" onerror="this.remove()" src="' + cardImg(d.id) + '"><span>' + d.folder + '</span></div>' +
+      '<img class="frame" alt="" draggable="false" src="' + cardFrame() + '">' +
+      '<div class="cost' + (cost < d.cost ? ' dc' : '') + '">' + cost + '</div>' +
+      '<div class="cname n' + (nm > 9 ? 3 : nm > 6 ? 2 : 1) + '">' + d.name + '</div>' +
+      '<div class="ctag">' + d.type + (d.exhaust ? ' · 소멸' : '') + '</div>' +
+      '<div class="ctext t' + (tl > 30 ? 3 : tl > 18 ? 2 : 1) + '"><span>' + d.text + '</span></div>';
     return el;
   }
   function artColor(d) { return d.type === '공격' ? 'linear-gradient(135deg,#ff8fb8,#c46bd6)' : d.type === '스킬' ? 'linear-gradient(135deg,#7ec8ff,#8f74e6)' : 'linear-gradient(135deg,#ffd36b,#ff8fb8)'; }
