@@ -42,7 +42,7 @@
     if (heroOverride) return heroOverride;
     if (S.p.orgActive) return 'serious';
     if (S.p.hp / S.p.maxHp <= 0.3) return 'cry';
-    return 'idle';
+    return 'shy';
   }
   function render() {
     const p = S.p;
@@ -72,7 +72,7 @@
 
   function enemyH(e) {
     const n = Math.max(1, S.enemies.length), ar = innerWidth / innerHeight * 100;
-    const base = Math.min(isPort() ? 30 : 34, (isPort() ? 0.9 : 0.5) * ar / (0.85 * n));
+    const base = Math.min(isPort() ? 19.5 : 34, (isPort() ? 0.66 : 0.5) * ar / (0.85 * n));
     return Math.round(base * (e.def.h || 1) * 10) / 10;
   }
   function buildEnemies() {
@@ -412,7 +412,7 @@
         case 'status': float(e.what, e.idx, 'st'); break;
         case 'pdmg':
           if (e.self) { float('-' + e.amount, 'heroCenter'); break; }
-          if (e.idx != null) { const img = $('heroImg'); heroOverride = 'shy'; $('heroImg').src = heroSrc('shy'); img.classList.remove('hit'); void img.offsetWidth; img.classList.add('hit'); }
+          if (e.idx != null) { const img = $('heroImg'); const hp = e.amount >= 14 ? 'fly' : 'cry'; heroOverride = hp; $('heroImg').src = heroSrc(hp); img.classList.remove('hit'); void img.offsetWidth; img.classList.add('hit'); }
           enemySay(e.idx, 'attack', 0.7); SFX.play('hurt'); if (!lowSaid && S.p.hp / S.p.maxHp <= 0.3) { lowSaid = true; setTimeout(() => { SFX.play('low'); heroSay('lowHp'); }, 700); } else if (Math.random() < 0.4) setTimeout(() => heroSay('hit'), 450); if (!e.blocked) { comic(HURT[Math.floor(Math.random() * HURT.length)], 'heroCenter'); } slash('heroCenter', 1, true); wind(true, 7); fieldShake(); float(e.blocked ? '-' + e.amount + ' (🛡' + e.blocked + ')' : '-' + e.amount, 'heroCenter'); await sleep(320); break;
         case 'disgust': heroSay('disgust', 0.7); SFX.play('disgust'); burst(e.idx, ['💦', '😑'], 5, 7); float('질림… 공격 취소!', e.idx, 'st'); await sleep(350); break;
         case 'fleeFail': float('봉쇄! 못 도망쳐', e.idx, 'st'); await sleep(350); break;
