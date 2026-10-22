@@ -11,7 +11,9 @@
   // 한 줄에 3개 일치=그 아이템 경품(골드3=줄당×gold3), 골드2=줄당×gold2, 다른 그림 2개=줄당×pair. 한 바퀴(run.lap)당 LIMIT번까지, 다 쓰면 바니맨이 나타나 막음.
   const SLOT = { bets: [10, 20, 50], lines: [1, 3, 5], gold3: 30, gold2: 3, pair: 2, limit: 20 };
   const ROWS = [[[0, 0], [0, 1], [0, 2]], [[1, 0], [1, 1], [1, 2]], [[2, 0], [2, 1], [2, 2]]], DIAG = [[[0, 0], [1, 1], [2, 2]], [[2, 0], [1, 1], [0, 2]]];
-  const WX = [[474, 665], [714, 912], [964, 1156]], WY = [[241, 392], [439, 587], [632, 779]]; // 틀 그림 속 릴 창 9칸(1672×941 기준)
+  const FW = 1225, FH = 1015, WX = [[240, 454], [490, 706], [741, 956]], WY = [[171, 390], [424, 635], [670, 879]]; // 틀 그림 속 릴 창 9칸(1225×1015 기준)
+  const placeSrc = k => window.GAIA_IMG ? (window.GAIA_IMG['place/' + k + '_port.webp'] || '') : '../assets/gaia-detective/place/' + k + '_port.webp'; // 장소 세로 배경
+  const setBg = dim => { const u = placeSrc(kind); root.style.background = (u ? 'linear-gradient(rgba(60,20,50,' + dim + '),rgba(60,20,50,' + dim + ')),url(' + u + ') center/cover no-repeat' : ''); };
   const slotArt = k => window.GAIA_IMG ? (window.GAIA_IMG['ui/slot/' + k + '.webp'] || '') : '../assets/gaia-detective/ui/slot/' + k + '.webp';
   let root, kind = 'mart', sel = null, last = { t: 0, key: '' }, msg = '', mode = 'shop', syms = null, spinning = false, slotMsg = '', grid = null, nLines = 0, nBet = 1;
   const run = () => G.run.get();
@@ -87,7 +89,7 @@
     mode = 'slot'; spinning = false;
     if (!grid) grid = [0, 1, 2].map(() => [0, 1, 2].map(() => rnd(syms)));
     slotMsg = used().n >= SLOT.limit ? '오늘은 여기까지' : '돌려 보세요';
-    drawSlot();
+    setBg(.1); drawSlot();
   }
   function drawSlot() {
     root.innerHTML = '<div class="slotscr"><div class="slhud"><button id="slExit">나가기</button><div class="grp"><div class="shgold" id="slCnt"></div><div class="shgold" id="slGold"></div></div></div>' +
@@ -95,15 +97,15 @@
     const m = $('slm'); let h = '';
     for (let c = 0; c < 3; c++) {
       const cx = (WX[c][0] + WX[c][1]) / 2;
-      h += '<div class="rc" id="rc' + c + '" style="left:' + pc(cx - 100, 1672) + '"><div class="strip" id="st' + c + '"></div></div>';
+      h += '<div class="rc" id="rc' + c + '" style="left:' + pc(cx - 107.5, FW) + '"><div class="strip" id="st' + c + '"></div></div>';
     }
-    for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) h += '<div class="wn" id="wn' + r + c + '" style="left:' + pc(WX[c][0], 1672) + ';top:' + pc(WY[r][0], 941) + ';width:' + pc(WX[c][1] - WX[c][0], 1672) + ';height:' + pc(WY[r][1] - WY[r][0], 941) + '"></div>';
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) h += '<div class="wn" id="wn' + r + c + '" style="left:' + pc(WX[c][0], FW) + ';top:' + pc(WY[r][0], FH) + ';width:' + pc(WX[c][1] - WX[c][0], FW) + ';height:' + pc(WY[r][1] - WY[r][0], FH) + '"></div>';
     h += '<img class="slframe" alt="" draggable="false" src="' + slotArt('frame') + '"><div class="slplate" id="slPlate"></div>';
-    [687, 828, 967].forEach((x, i) => { h += '<button class="slb" id="slB' + i + '" style="left:' + pc(x - 62, 1672) + '"></button>'; });
+    [462, 597, 733].forEach((x, i) => { h += '<button class="slb" id="slB' + i + '" style="left:' + pc(x - 50, FW) + '"></button>'; });
     h += '<button class="sllev" id="slLev" aria-label="레버"></button>';
     m.innerHTML = h;
     for (let c = 0; c < 3; c++) showCol(c, [grid[0][c], grid[1][c], grid[2][c]]);
-    $('slExit').addEventListener('click', () => { if (spinning) return; if (G.sfx) G.sfx.play('click'); mode = 'shop'; paint(); });
+    $('slExit').addEventListener('click', () => { if (spinning) return; if (G.sfx) G.sfx.play('click'); mode = 'shop'; setBg(.28); paint(); });
     $('slB0').addEventListener('click', () => { if (spinning || used().n >= SLOT.limit) return; nLines = (nLines + 1) % SLOT.lines.length; clk(); slotMsg = ''; hud(); });
     $('slB1').addEventListener('click', () => { if (spinning || used().n >= SLOT.limit) return; nBet = (nBet + 1) % SLOT.bets.length; clk(); slotMsg = ''; hud(); });
     $('slB2').addEventListener('click', spin); $('slLev').addEventListener('click', spin);
@@ -184,7 +186,7 @@
     setTimeout(() => { if (j) j.classList.add('hidden'); }, 2500);
   }
 
-  function open(k) { if (!root) build(); kind = k; sel = null; msg = ''; mode = 'shop'; spinning = false; last = { t: 0, key: '' }; if (k === 'casino') newSyms(); root.classList.remove('hidden'); paint(); }
+  function open(k) { if (!root) build(); kind = k; sel = null; msg = ''; mode = 'shop'; spinning = false; last = { t: 0, key: '' }; if (k === 'casino') newSyms(); root.classList.remove('hidden'); setBg(.28); paint(); }
   function close() { if (spinning) return; root.classList.add('hidden'); if (G.map.refresh) G.map.refresh(); }
   G.shop = { open: open, close: close, kinds: KINDS };
 })();

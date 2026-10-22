@@ -339,3 +339,9 @@
 
 ### 장소 배경 8장 도착 (2026-10-22 16:22, 가로 버전만)
 - `assets/gaia-detective/place/<이름>_land.webp` 8장(studio, villa, farm, club, mart, casino, police, park). 이름은 그림 내용으로 내가 붙임 → 케인 확인 필요. 세로 버전 대기 중. 아직 연결 안 함(입장 화면 구조는 위 "입장 흐름" 참고).
+
+### 장소 세로 배경 8장 + 새 슬롯 프레임 (2026-10-22 17:09)
+- `assets/gaia-detective/place/<이름>_port.webp` 8장 추가(가로 `_land`와 짝). 이름 매핑은 케인 확인 완료. 폐기된 이전 6장(웨딩홀·클럽·무대·뒷골목·로비·라운지 변형)은 사용하지 않음. 전투 배경 `bg/v2/*`는 그대로.
+- 연결: 마트·카지노 상점 화면 배경(`shop.js` `setBg`), 슬롯 화면은 `casino_port`. 단일 빌드는 mart·casino 두 장만 임베드(`tools/build_single.py`). 나머지 6장은 2막 입장 이벤트 연결 때 사용.
+- 슬롯 프레임 교체: `ui/slot/frame.webp` 1225×1015(케인이 직접 다시 그림, 비율이 정사각에 가까워짐). 좌표는 `shop.js`의 `FW/FH/WX/WY`와 style.css(`.slm` 비율, `.rc`, `.slb`, `.sllev`) 한 묶음. 상태 문구판(`.slplate`)은 프레임 아래로 이동(프레임 윗판은 리본 때문에 좁음).
+- 아직 안 한 것: 대사집·2막 시나리오 코드 반영(`dialogue.js`, `flow.js`), 입장 이벤트(바니걸/마트 점원 대화하기).
