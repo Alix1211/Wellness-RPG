@@ -4,9 +4,11 @@ Original source and RPG saves are never overwritten. Output is self-contained.
 """
 from pathlib import Path
 import re,hashlib,json
+from bgm_gate import patch_html
 root=Path(__file__).resolve().parents[1];here=Path(__file__).resolve().parent
 source=root/'GAIA-LIFE-20261020.html';s=source.read_text()
 assert hashlib.sha256(source.read_bytes()).hexdigest()=='e977dd33bbe5ddc2b4d4df86fa7c423e072f21d066b536efc83cec78443f1f66','Restore the recorded R61 baseline before building.'
+s=patch_html(s)
 a="CorridorDecor.bind(window.GameHost,canvas);resize();addEventListener('resize',resize);load().catch(e=>{console.error(e);$('#loading').textContent='불러오기 실패';});requestAnimationFrame(frame);"
 assert s.count(a)==1;s=s.replace(a,(here/'factory.js').read_text())
 s=s.replace("function save(){life.location=", "function save(){return;life.location=")
@@ -23,7 +25,8 @@ s=s.replace('id="miniFrame"','id="rpgMiniFrame"')
 pos=s.rfind('</body>');assert pos>0
 s=s[:pos]+font_script+(here/'shell.html').read_text()+'<script>'+(here/'media-editor.js').read_text()+'</script><script>\n'+(here/'app.js').read_text()+'\n</script>'+s[pos:]
 s=s.replace('<title>GAIA', '<title>GAIA CASUAL')
-output=root/'GAIA-CASUAL-05.html';output.write_text(s)
-data=output.read_bytes();manifest={'build':'CASUAL-05','size':len(data),'sha256':hashlib.sha256(data).hexdigest(),'baseline':'R61','edition':'casual','storageKey':'gaia-casual-save-v1'}
+output=root/'GAIA-CASUAL-06.html';output.write_text(s)
+data=output.read_bytes();manifest={'build':'CASUAL-06','size':len(data),'sha256':hashlib.sha256(data).hexdigest(),'baseline':'R61','edition':'casual','storageKey':'gaia-casual-save-v1'}
 (here/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');print(json.dumps(manifest))
+
 

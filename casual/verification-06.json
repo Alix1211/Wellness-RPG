@@ -1,0 +1,58 @@
+{
+  "build": "CASUAL-06",
+  "checks": [
+    "CASUAL-05 reproduces town BGM continuing inside squat",
+    "menu town BGM still plays",
+    "town BGM stops immediately at game entry",
+    "original squat BGM decodes and starts at nonzero gain",
+    "original squat rhythm track decodes and starts at nonzero gain",
+    "town BGM stays stopped across legacy 600ms timers",
+    "pause does not restart town BGM",
+    "resume restores squat music while town BGM stays stopped",
+    "media editor does not restart town BGM",
+    "town BGM resumes on return to menus",
+    "squat blocks town BGM",
+    "water blocks town BGM",
+    "rope blocks town BGM",
+    "balance blocks town BGM",
+    "fetch blocks town BGM",
+    "batting blocks town BGM",
+    "wiggle blocks town BGM",
+    "merge blocks town BGM",
+    "tap blocks town BGM",
+    "behind blocks town BGM",
+    "cylinder blocks town BGM",
+    "home mute also stops town BGM",
+    "home sound on resumes menu BGM",
+    "progress and stats unchanged",
+    "no JavaScript errors"
+  ],
+  "errors": [],
+  "squat": {
+    "bgm": "squat90_bgm",
+    "rhythm": "squat90_bed",
+    "tracks": [
+      {
+        "name": "squat90_bgm",
+        "duration": 42.85668934240363,
+        "at": 0.4415646258503402,
+        "stopped": false,
+        "loop": true,
+        "context": "running",
+        "gain": 0.3799999952316284,
+        "playing": true
+      },
+      {
+        "name": "squat90_bed",
+        "duration": 38.601836734693876,
+        "at": 0.4415646258503402,
+        "stopped": false,
+        "loop": true,
+        "context": "running",
+        "gain": 0.2800000011920929,
+        "playing": true
+      }
+    ]
+  },
+  "physical_android_test": false
+}

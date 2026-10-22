@@ -1,3 +1,19 @@
+# GAIA CITY — CASUAL-06 · 일반 BGM 충돌 수정 · 2026-10-22
+
+사용자 보고: 일반 BGM이 계속 흘러 스쿼트 고유 음악이 들리지 않음.
+
+- 재현 원인: 원래 RPG의 GaiaBGM은 GameHost.mode()만 보고 600ms 간격 및 pointer/message에서 재생을 재개함. 캐주얼 호스트는 mode=casual이므로 게임 중이라고 인식하지 못했음.
+- 기존 BGM sync에 GaiaCasual.run 및 GaiaCasual.state.sound를 반영. 게임 중(준비/편집/일시정지 포함)에는 일반 BGM 정지, 메뉴에서만 재생. 게임 진입/메뉴 복귀/결과/소리 변경에 즉시 sync 호출해 타이머를 기다리지 않음.
+- 스쿼트 자체 BGM/박자 트랙, 기존 효과·반응 음성은 변경하지 않음. 11종/편집 저장/기록/스탯/영상 폴더/진동 유지.
+- CASE-05 실제 재현 후 CASE-06 검증. 스쿼트 고유 BGM과 박자 트랙 각각 AudioBufferSourceNode의 디코드 이름/시작/loop/AudioContext running/0보다 큰 gain 확인. 실제 스피커 청취 검증 아님.
+- 11종 일반 BGM 중단, 메뉴 복귀 재개, 편집/일시정지 중 미재개, 집 소리 끄기/켜기, 스탯·진행 불변, JS 오류 없음. verification-06.json 및 verify-06.cjs.
+- source-diff-06.json: 전달된 05와 비교 시 2개 script 블록(일반 BGM 컨트롤러/캐주얼 호스트)만 변경, 모든 내장 이미지·음원 데이터 동일.
+- APK com.gaia.casual versionCode 6 / 1.5-CASUAL-06, 기존 개인 서명 그대로. 삭제 없이 업데이트 설치. 서명/zipalign/내장 HTML 해시 검사. 실제 Android 스피커/기기 동작 미검증.
+- 작업공간 정리 후 전달했던 GAIA-CASUAL-05.html을 복구해 build-from-05.py로 해시를 검증한 뒤 재생성. 정상 R61 재빌드용 build.py에도 같은 bgm_gate.patch_html을 적용. 05 원본 SHA cf2af069dbc0740f6f4b74d01a765c8e6b044e2636e84f24a7a86074af6fcc77.
+- main 보존. codex/gaia-casual-01 작업분기. 서명 키/비밀번호를 저장소나 게임 배포 파일에 넣지 않음.
+
+---
+
 # GAIA CITY — CASUAL-05 · 2026-10-22
 
 요청: 11종 전부 실린더와 같은 작은 톱니를 통해 이미지·음향 파일 편집.
@@ -66,4 +82,5 @@ main 보존, codex/gaia-casual-01 작업 분기. 재현: 기록된 R61 HTML → 
 - 초기 자동 검사에서 suspended AudioContext 분석기의 마지막 버퍼를 소리 재생으로 오인한 일시정지 false positive 수정.
 - 움찔 자동 클릭은 흔들림 안정 대기 중 다른 대상이 되어 오답을 누르는 문제가 있어 문서 내 DOM 클릭으로 입력. 배팅은 Window 대상 합성 키 이벤트에 matches 메서드가 없어 테스트가 실패했고 canvas 대상으로 바꾸어 실제 판정 입력을 검사. 게임 점수/결과 주입 안 함.
 - 실제 기기 스피커/음량은 이 환경에서 확인하지 못함.
+
 
