@@ -147,7 +147,7 @@
     const d = G.cards[id], el = document.createElement('div'); if (cost == null) cost = d.cost;
     el.className = 'card t-' + d.type + ' g-' + d.grade;
     const nm = d.name.length, tl = d.text.length;
-    el.innerHTML = '<div class="art" style="background:' + artColor(d) + '"><img alt="" draggable="false" onerror="this.remove()" src="' + cardImg(d.id) + '"><span>' + d.folder + '</span></div>' +
+    el.innerHTML = '<div class="art" style="background:' + artColor(d) + '"><img alt="" draggable="false" onerror="this.remove()" src="' + cardImg(d.id) + '"><span>' + (d.token ? '' : d.folder) + '</span></div>' +
       '<img class="frame" alt="" draggable="false" src="' + cardFrame(d.type) + '">' +
       '<div class="cost' + (cost < d.cost ? ' dc' : '') + '">' + cost + '</div>' +
       '<div class="cname n' + (nm > 10 ? 4 : nm > 8 ? 3 : nm > 6 ? 2 : 1) + '">' + d.name + '</div>' +

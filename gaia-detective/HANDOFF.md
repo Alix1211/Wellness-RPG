@@ -414,3 +414,7 @@
 - 드라이브 저장: `js/save_sync.js` + MainActivity(SAF 파일 선택, 로그인 불필요). 규칙은 drive_save_sync 표준 그대로(저장 시각 대결 금지, 마지막으로 맞춘 버전 baseT 기준, 둘 다 바뀌면 선택창). 저장 키는 `gaia_*`(진행 `gaia_run_v1`에 시각 t를 자동 기록). 첫 기기는 '새 저장 파일 만들기', 다른 기기는 '기존 저장 파일 연결'.
 - 검증: 서버 빌드(testDebugUnitTest·assembleDebug) 성공, 앱 묶음을 웹 서버에 올려 전투·미니게임 문서·소리 파일 로딩 오류 없음 확인. **실기기(진동 모터·드라이브 선택창·업데이트 수신)는 케인이 확인 필요.**
 - 앱 코드(android/)가 바뀌면 새 APK 덮어 설치가 필요하고, 게임 내용만 바뀌면 앱 재시작으로 자동 반영된다.
+
+## 토큰 카드 이미지 + 미니게임 진동
+- `cards/T01.webp` 신규(임시 생성 그림, 분홍→보라 방사 그라데이션). 토큰 카드는 폴더 라벨 "-" 숨김(ui.js cardEl).
+- 배팅(`minigame/batting_police/game.html`)·스쿼트(`js/minigame_squat.js`)에서 `parent.GAIA_HAPTICS.fx.miniPerfect/Good/Bad/Miss` 호출. 패턴은 haptics.js(임시값, 포코는 길고 강해야 느껴짐).

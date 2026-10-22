@@ -128,7 +128,7 @@ async function begin(){
  for(const e of events)e.time=beatT(e.beat);
  state='play';paused=false;$('#veil').hidden=true;$('#tier').textContent='스쿼트 · '+RULE.name;
 }
-function judge(res,e,err){e.res=res;counts[res]++;ripples.push({c:e.c,t:performance.now(),kind:res==='perfect'?2:res==='good'?1:0});
+function judge(res,e,err){e.res=res;counts[res]++;try{parent.GAIA_HAPTICS&&parent.GAIA_HAPTICS.fx[res==='perfect'?'miniPerfect':res==='good'?'miniGood':'miniMiss']();}catch(x){}ripples.push({c:e.c,t:performance.now(),kind:res==='perfect'?2:res==='good'?1:0});
  if(res==='miss'){combo=0;pops.push({c:e.c,t:performance.now(),text:'앗…',col:'#c9c2ff'});voice('reaction_whine',.55);shake[e.c]=.35;slap(e.c);}
  else{combo++;best=Math.max(best,combo);score+=res==='perfect'?100:60;squash[e.c]=1;
   pops.push({c:e.c,t:performance.now(),text:res==='perfect'?'완벽!':(err<0?'좋아요 · 빨랐어요':'좋아요 · 늦었어요'),col:res==='perfect'?'#ffe27a':'#ffd0e6'});

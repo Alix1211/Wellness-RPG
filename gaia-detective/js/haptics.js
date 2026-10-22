@@ -44,6 +44,10 @@
     heavyHurt: () => request([240, 60, 240, 60, 320], 2),
     arrest: () => request([130, 50, 130, 50, 380], 2),
     orgasm: () => request([220, 80, 220, 80, 360, 100, 900], 3),
+    miniPerfect: () => request([220, 60, 320], 2),
+    miniGood: () => request([170], 1),
+    miniBad: () => request([130], 1),
+    miniMiss: () => request([110], 1),
     victory: () => request([130, 60, 130, 60, 420], 2)
   };
   root.GAIA_HAPTICS = {
