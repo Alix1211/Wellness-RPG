@@ -9,9 +9,14 @@
 
   // ── 이미지 경로 ──
   const heroSrc = k => A.base + A.hero[k];
-  const bgSrc = n => window.GAIA_IMG ? (window.GAIA_IMG['bg/' + n] || '') : A.bgBase + n;
-  const cardFrame = () => window.GAIA_IMG ? (window.GAIA_IMG['ui/card/frame.webp'] || '') : '../assets/gaia-detective/ui/card/frame.webp';
-  const cardBack = () => window.GAIA_IMG ? (window.GAIA_IMG['ui/card/back.webp'] || '') : '../assets/gaia-detective/ui/card/back.webp';
+  const isPort = () => innerHeight > innerWidth;
+  const bgSrc = n => {
+    const m = /^bg_([a-z]+)\d*\.jpg$/.exec(n || ''), b = m ? 'bg_' + m[1] : 'bg_alley', o = isPort() ? 'port' : 'land';
+    return window.GAIA_IMG ? (window.GAIA_IMG['bg/v2/' + b + '_' + o + '.webp'] || '') : '../assets/gaia-detective/bg/v2/' + b + '_' + o + '.jpg';
+  };
+  let curBg = null;
+  const applyBg = () => { if (curBg) $('bg').style.backgroundImage = 'url(' + bgSrc(curBg) + ')'; };
+  const cardFrame = type => { const f = 'frame_' + (type === '스킬' ? 'mint' : 'pink') + '.webp'; return window.GAIA_IMG ? (window.GAIA_IMG['ui/card/' + f] || '') : '../assets/gaia-detective/ui/card/' + f; };
   const cardImg = id => window.GAIA_IMG ? (window.GAIA_IMG['cards/' + id + '.webp'] || '') : A.cardArt + id + '.webp';
   const sprite = e => A.base + e.def.sprite + '.png';
 
@@ -23,7 +28,7 @@
     S = G.newBattle({ enemies: enc.enemies, deck: opts.deck, hp: opts.hp, wl: opts.wl });
     selUid = null; busy = false; heroOverride = null; lowSaid = false; dopaSaid = false;
     $('overlay').classList.add('hidden');
-    $('bg').style.backgroundImage = 'url(' + bgSrc(enc.bg || A.bg[(bgN++) % A.bg.length]) + ')';
+    curBg = enc.bg || A.bg[(bgN++) % A.bg.length]; applyBg();
     buildEnemies();
     S.events = [];
     render();
@@ -49,13 +54,12 @@
     $('turnNo').textContent = S.turn;
     const en = $('energy'); en.innerHTML = '';
     const total = Math.max(C.player.energy + (p.orgActive ? C.orgasm.energyBonus : 0), p.energy);
-    for (let i = 0; i < total; i++) { const o = document.createElement('div'); o.className = 'orb' + (i < p.energy ? '' : ' off'); en.appendChild(o); }
+    for (let i = 0; i < total; i++) { const o = document.createElement('div'); o.className = 'orb' + (i < p.energy ? '' : ' off'); o.innerHTML = ic(i < p.energy ? 'energy_on' : 'energy_off', '●'); en.appendChild(o); }
     $('blockTag').innerHTML = p.block > 0 ? ic('block', '🛡') + ' ' + p.block : '';
     $('heroImg').src = heroSrc(heroPose());
     $('field').classList.toggle('orgmode', p.orgActive);
     renderEnemies();
     renderHand();
-    document.querySelectorAll('.pback').forEach(i => { if (!i.getAttribute('src')) i.src = cardBack(); });
     $('nDraw').textContent = S.drawPile.length; $('nDisc').textContent = S.discard.length;
     $('nExh').textContent = S.exhaust.length ? '소멸 ' + S.exhaust.length : '';
     hyd();
@@ -65,12 +69,16 @@
     if (needT) $('hintBar').textContent = '대상을 선택하세요 (카드를 다시 누르면 취소)';
   }
 
+  function enemyH(e) {
+    const n = Math.max(1, S.enemies.length), ar = innerWidth / innerHeight * 100;
+    const base = Math.min(isPort() ? 30 : 34, (isPort() ? 0.9 : 0.5) * ar / (0.85 * n));
+    return Math.round(base * (e.def.h || 1) * 10) / 10;
+  }
   function buildEnemies() {
     const box = $('enemies'); box.innerHTML = '';
     S.enemies.forEach((e, i) => {
       const el = document.createElement('div'); el.className = 'enemy'; el.dataset.i = i;
-      const hVh = 34 * (e.def.h || 1) / (S.enemies.length > 2 ? 1.12 : 1);
-      el.innerHTML = '<div class="intent"></div><img alt="" style="height:' + hVh + 'vh"><div class="estat"><div class="ename"></div><div class="bar"><i></i><b></b></div><div class="chips"></div></div><div class="sbub"><span></span></div>';
+      el.innerHTML = '<div class="intent"></div><img alt="" style="height:' + enemyH(e) + 'vh"><div class="estat"><div class="ename"></div><div class="bar"><i></i><b></b></div><div class="chips"></div></div><div class="sbub"><span></span></div>';
       el.querySelector('img').src = sprite(e);
       el.addEventListener('click', () => onEnemy(i));
       box.appendChild(el);
@@ -81,6 +89,7 @@
     S.enemies.forEach((e, i) => {
       const el = els[i]; if (!el) return;
       const live = !e.arrested && !e.fled;
+      el.querySelector('img').style.height = enemyH(e) + 'vh';
       el.classList.toggle('arrested', e.arrested);
       el.classList.toggle('fled', e.fled);
       el.classList.toggle('disgust', e.disgust > 0 && live);
@@ -114,7 +123,7 @@
     const h = $('hand'); h.innerHTML = '';
     const n = S.hand.length, vh = innerHeight / 100, avail = Math.max(200, h.clientWidth - 1.5 * vh);
     const need = k => n * 18 * k * vh + Math.max(0, n - 1) * 0.8 * k * vh;
-    let k = 1.45; while (k > 0.95 && need(k) > avail) k = Math.round((k - 0.05) * 100) / 100;
+    let k = 1.05; while (k > 0.95 && need(k) > avail) k = Math.round((k - 0.05) * 100) / 100;
     document.documentElement.style.setProperty('--k', k);
     const cw = 18 * k * vh; let step = cw + 0.8 * k * vh;
     if (n > 1 && need(k) > avail) step = (avail - cw) / (n - 1);
@@ -123,7 +132,8 @@
       const el = cardEl(d.id, cost);
       el.className += (chk.ok ? '' : ' dis') + (selUid === c.uid ? ' sel' : '');
       el.style.marginLeft = i ? (step - cw) + 'px' : '0';
-      el.style.rotate = ((i - (n - 1) / 2) * 1.5) + 'deg';
+      el.style.rotate = ((i - (n - 1) / 2) * 2.2) + 'deg';
+      el.style.translate = '0 ' + (Math.pow(Math.abs(i - (n - 1) / 2), 1.7) * 0.4 * k).toFixed(2) + 'vh';
       el.dataset.uid = c.uid; el.title = chk.ok ? '' : chk.reason;
       el.addEventListener('dragstart', ev => ev.preventDefault());
       el.addEventListener('pointerdown', ev => onCardDown(ev, c.uid, el));
@@ -135,7 +145,7 @@
     el.className = 'card t-' + d.type + ' g-' + d.grade;
     const nm = d.name.length, tl = d.text.length;
     el.innerHTML = '<div class="art" style="background:' + artColor(d) + '"><img alt="" draggable="false" onerror="this.remove()" src="' + cardImg(d.id) + '"><span>' + d.folder + '</span></div>' +
-      '<img class="frame" alt="" draggable="false" src="' + cardFrame() + '">' +
+      '<img class="frame" alt="" draggable="false" src="' + cardFrame(d.type) + '">' +
       '<div class="cost' + (cost < d.cost ? ' dc' : '') + '">' + cost + '</div>' +
       '<div class="cname n' + (nm > 10 ? 4 : nm > 8 ? 3 : nm > 6 ? 2 : 1) + '">' + d.name + '</div>' +
       '<div class="ctag">' + d.type + (d.exhaust ? ' · 소멸' : '') + '</div>' +
@@ -375,6 +385,7 @@
   const sel = $('devEnc'); G.encounters.forEach(e => { const o = document.createElement('option'); o.value = e.id; o.textContent = e.name; sel.appendChild(o); });
   const cs = $('devCard'); G.cardListAll.concat([G.cards.T01]).forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = (c.no ? c.no + '. ' : '') + c.name + (c.draft ? ' (초안)' : ''); cs.appendChild(o); });
   $('devBtn').addEventListener('click', () => $('dev').classList.toggle('hidden'));
+  window.addEventListener('resize', () => { applyBg(); if (S) render(); });
   $('devStart').addEventListener('click', () => { start(sel.value); $('dev').classList.add('hidden'); });
   $('devAdd').addEventListener('click', () => { if (!S || S.hand.length >= C.player.handLimit) return; S.hand.push({ uid: 9000 + Math.floor(Math.random() * 90000), id: cs.value }); render(); });
   document.querySelectorAll('[data-dev]').forEach(b => b.addEventListener('click', () => {

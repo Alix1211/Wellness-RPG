@@ -10,8 +10,13 @@ for f in os.listdir(G):
     if f.endswith(('.png','.jpg')): imgs[f]=b64(G+f,'image/jpeg' if f.endswith('.jpg') else 'image/png')
 for f in os.listdir(CARDS):
     if f.endswith('.webp'): imgs['cards/'+f]=b64(CARDS+f,'image/webp')
-for f in os.listdir(BG):
-    if f.endswith('.jpg'): imgs['bg/'+f]=b64(BG+f,'image/jpeg')
+BGV='../assets/gaia-detective/bg/v2/'
+import io
+from PIL import Image
+for f in sorted(os.listdir(BGV)):
+    if f.endswith('.jpg'):
+        buf=io.BytesIO(); Image.open(BGV+f).convert('RGB').save(buf,'WEBP',quality=80,method=6)
+        imgs['bg/v2/'+f[:-4]+'.webp']='data:image/webp;base64,'+base64.b64encode(buf.getvalue()).decode()
 for f in (os.listdir(BUB) if os.path.isdir(BUB) else []):
     if f.endswith('.png'): imgs['ui/bubbles/'+f]=b64(BUB+f,'image/png')
 MAP='../assets/gaia-detective/map/layers/'

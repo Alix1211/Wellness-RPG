@@ -58,6 +58,7 @@
     return out;
   }
   function cardRow(list, k, onPick, selId) {
+    k = Math.min(k, Math.round(0.8 * innerWidth / innerHeight * 100 / (18 * Math.min(3, Math.max(1, list.length))) * 100) / 100);
     const row = document.createElement('div'); row.className = 'cardrow'; row.style.setProperty('--k', k);
     list.forEach((d, i) => { const el = G.ui.cardEl(d.id, d.cost); el.classList.add('pick'); el.addEventListener('click', () => onPick(d, el, i)); row.appendChild(el); });
     return row;

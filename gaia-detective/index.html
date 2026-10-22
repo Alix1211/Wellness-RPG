@@ -8,16 +8,6 @@
 </head>
 <body>
 <div id="app">
-  <div id="hud">
-    <div class="hudbox" id="hpBox"><span class="ico ic" data-ic="heart">♥</span><div class="bar hp"><i id="hpFill"></i><b id="hpTxt"></b></div></div>
-    <div class="hudbox" id="energyBox"><div id="energy"></div></div>
-    <div class="hudbox stat"><span class="lab">도파민</span><div class="bar dopa" id="dopaBar"><i id="dopaFill"></i><b id="dopaTxt"></b></div></div>
-    <div class="hudbox stat"><span class="lab">조임력</span><div class="bar tight"><i id="tightFill"></i><b id="tightTxt"></b></div></div>
-    <div class="hudbox stat"><span class="lab">윤활도</span><div class="bar lube"><i id="lubeFill"></i><b id="lubeTxt"></b></div></div>
-    <div class="hudbox" id="turnBox">TURN <b id="turnNo">1</b></div>
-    <button id="muteBtn" title="소리">🔊</button><button id="devBtn" title="개발용">⚙</button>
-  </div>
-
   <div id="field">
     <div id="bg"></div>
     <div id="hintBar"></div>
@@ -27,12 +17,21 @@
     <div id="flash"></div><div id="banner"></div>
   </div>
 
-  <div id="bottom">
-    <div class="pile" id="pileDraw"><div class="pk"><img class="pback" alt="" draggable="false"><b id="nDraw">0</b></div><span>뽑을 카드</span></div>
-    <div id="hand"></div>
-    <div class="pile right" id="pileDisc"><div class="pk"><img class="pback" alt="" draggable="false"><b id="nDisc">0</b></div><span>버린 카드</span><em id="nExh"></em></div>
-    <button id="endTurn">턴 종료</button>
+  <div id="hud">
+    <div class="hudbox" id="hpBox"><span class="ico ic" data-ic="heart">♥</span><div class="bar hp"><i id="hpFill"></i><b id="hpTxt"></b></div></div>
+    <div class="hudbox" id="energyBox"><div id="energy"></div></div>
+    <div class="hudbox stat"><span class="ico ic" data-ic="dopa">도파민</span><div class="bar dopa" id="dopaBar"><i id="dopaFill"></i><b id="dopaTxt"></b></div></div>
+    <div class="hudbox stat"><span class="ico ic" data-ic="tight">조임력</span><div class="bar tight"><i id="tightFill"></i><b id="tightTxt"></b></div></div>
+    <div class="hudbox stat"><span class="ico ic" data-ic="lube">윤활도</span><div class="bar lube"><i id="lubeFill"></i><b id="lubeTxt"></b></div></div>
+    <div class="hudbox" id="turnBox"><span class="ico ic" data-ic="turn">TURN</span><b id="turnNo">1</b></div>
+    <button id="muteBtn" title="소리">🔊</button><button id="devBtn" title="개발용"><span class="ic" data-ic="settings">⚙</span></button>
   </div>
+
+  <div class="pile" id="pileDraw"><span class="ic" data-ic="pile_draw">🂠</span><b id="nDraw">0</b><span class="pl">뽑을 카드</span></div>
+  <div class="pile" id="pileDisc"><span class="ic" data-ic="pile_discard">🂠</span><b id="nDisc">0</b><span class="pl">버린 카드</span><em id="nExh"></em></div>
+
+  <div id="bottom"><div id="hand"></div></div>
+  <button id="endTurn">턴 종료</button>
 
   <div id="map" class="hidden">
     <div id="mapPan"></div>
