@@ -34,7 +34,7 @@
     buildEnemies();
     S.events = [];
     render();
-    banner('수사 개시!'); SFX.play('start');
+    banner('수사 개시!'); SFX.play('start'); if (SFX.bgm) SFX.bgm(S.enemies.some(e => e.kind === 'boss') ? 'boss' : 'battle');
     setTimeout(() => { heroSay('start'); const live = liveIdx(); if (live.length) setTimeout(() => enemySay(live[0], 'start'), 900); }, 700);
   }
 

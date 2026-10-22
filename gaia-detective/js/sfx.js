@@ -49,7 +49,7 @@
   // 배경에 계속 깔리는 소리(짧은 루프). 첫 터치 후 시작, 음소거하면 멈춤.
   let amb = null;
   function ambOn() {
-    if (amb || muted || !bufs.ambient) return; const c = ac(); if (!c) return;
+    if (amb || muted || !bufs.ambient || bwant) return; const c = ac(); if (!c) return;
     const s = c.createBufferSource(), g = c.createGain(); s.buffer = bufs.ambient; s.loop = true; g.gain.value = 0.45; s.connect(g).connect(c.destination); s.start(0); amb = s;
   }
   function ambOff() { if (amb) { try { amb.stop(); } catch (e) {} amb = null; } }
@@ -71,6 +71,39 @@
       if (vAudio) vAudio.pause(); const a = new Audio(vsrc(n)); a.volume = Math.min(1, vol * 1.6); vAudio = a; a.play().catch(() => {});
     } catch (e) {}
   }
+  // ── 스팀랩소디 소리(남성 비명·결과음·BGM) — 케인 저장소에서 가져온 것. 곡·소리 배정은 모두 임시 ──
+  const stmSrc = p => (window.GAIA_SND && window.GAIA_SND.stm && window.GAIA_SND.stm[p]) || (((G.assets && G.assets.sfxBase) || '../assets/gaia-detective/sfx/') + 'steam/' + p + '.ogg');
+  const sbuf = {}, sdone = {}, pad2 = n => (n < 10 ? '0' : '') + n;
+  function sLoad(p, cx) {
+    const c = cx || ac(); if (!c) return Promise.resolve(null); const key = (cx ? 'b:' : '') + p; if (sbuf[key]) return sbuf[key];
+    const u = stmSrc(p);
+    return (sbuf[key] = (u.indexOf('data:') === 0 ? Promise.resolve(dataToBuf(u)) : fetch(u).then(r => r.arrayBuffer()))
+      .then(ab => new Promise((res, rej) => { const q = c.decodeAudioData(ab, res, rej); if (q && q.then) q.then(res, rej); }))
+      .then(b => { if (!cx) sdone[p] = b; return b; }).catch(() => null));
+  }
+  function sPlay(p, gain) { sLoad(p).then(b => { if (!b || !ctx || muted) return; const s = ctx.createBufferSource(), g = ctx.createGain(); s.buffer = b; g.gain.value = gain; s.connect(g).connect(ctx.destination); s.start(0); }); }
+  let scLast = 0;
+  function scream() { const t = Date.now(); if (t - scLast < 450 || Math.random() > 0.8) return; scLast = t; sPlay('voice/m' + pad2(1 + Math.floor(Math.random() * 19)), 0.7); }
+  function sPreload() { for (let i = 1; i <= 19; i++) sLoad('voice/m' + pad2(i)); ['defeat', 'victory_F_1', 'victory_F_2', 'victory_F_3'].forEach(n => sLoad('results/' + n)); }
+  // BGM: 메모리 때문에 32kHz 전용 오디오 엔진으로 한 곡씩만 풀어 둔다. 지도·상점=여성 테마, 일반 전투=여성 전투, 보스전=악마 테마(임시)
+  const BG = { map: 'bgm/female_theme', battle: 'bgm/female_battle', boss: 'bgm/demon' }, BGV = 0.3;
+  let bctx = null, bnode = null, bgain = null, bwant = null, bplay = null, breq = 0;
+  function bc() {
+    if (!bctx) { try { bctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 32000 }); } catch (e) { try { bctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (x) { return null; } } }
+    if (bctx.state === 'suspended') bctx.resume(); return bctx;
+  }
+  function bgmHalt() { const n = bnode, g = bgain; bnode = bgain = bplay = null; if (!n) return; try { const t = bctx.currentTime; g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value, t); g.gain.linearRampToValueAtTime(0.0001, t + 0.6); n.stop(t + 0.65); } catch (e) {} }
+  function bgmGo() {
+    if (!bwant || muted || bplay === bwant) return; const c = bc(); if (!c) return; const key = bwant, id = ++breq;
+    bgmHalt(); bplay = key; ambOff();
+    Object.keys(sbuf).forEach(k => { if (k.indexOf('b:bgm/') === 0 && k !== 'b:' + BG[key]) delete sbuf[k]; }); // 다른 곡은 메모리에서 비움
+    sLoad(BG[key], c).then(b => {
+      if (!b || id !== breq || muted) { if (id === breq) bplay = null; return; }
+      const s = c.createBufferSource(), g = c.createGain(); s.buffer = b; s.loop = true; g.gain.setValueAtTime(0.0001, c.currentTime); g.gain.linearRampToValueAtTime(BGV, c.currentTime + 1.2); s.connect(g).connect(c.destination); s.start(0); bnode = s; bgain = g;
+    });
+  }
+  function bgmSet(k) { bwant = BG[k] ? k : null; if (!bwant) { bplay = null; breq++; bgmHalt(); return; } bgmGo(); }
+  function bgmDuck(sec) { if (!bgain) return; try { const t = bctx.currentTime; bgain.gain.cancelScheduledValues(t); bgain.gain.setValueAtTime(bgain.gain.value, t); bgain.gain.linearRampToValueAtTime(BGV * 0.25, t + 0.2); bgain.gain.linearRampToValueAtTime(BGV, t + sec); } catch (e) {} }
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const S = {
     click: () => tone('sine', 700, 500, 0.06, 0.25),
@@ -78,6 +111,7 @@
     hit: () => {
       try { if (playBuf('punch', Math.min(1.6, vol * 2.4))) return; if (!punch) punch = new Audio(punchSrc()); const a = punch.cloneNode(); a.volume = Math.min(1, vol * 1.4); a.play().catch(() => synthHit()); }
       catch (e) { synthHit(); }
+      scream();
     },
     hurt: () => { tone('sine', 220, 70, 0.22, 0.7); noise(0.1, 0.4, 900, 300); tone('triangle', 900, 500, 0.18, 0.25, 0.05); if (Math.random() < 0.85) voice(pick(['surprise', 'yelp', 'scare1', 'scare2'])); },
     block: () => { tone('square', 1100, 900, 0.12, 0.18); tone('sine', 1650, 1300, 0.2, 0.2, 0.02); if (Math.random() < 0.5) voice('strain'); },
@@ -90,8 +124,8 @@
     disgust: () => { tone('sawtooth', 420, 160, 0.4, 0.25); voice('displeased'); },
     orgasm: () => { [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => tone('sine', f, f, 0.45, 0.28, i * 0.07)); noise(0.7, 0.35, 3000, 9000, 0.35); tone('triangle', 1568, 2093, 0.6, 0.2, 0.4); },
     turn: () => { tone('sine', 880, 880, 0.3, 0.25); tone('sine', 1175, 1175, 0.4, 0.2, 0.12); },
-    win: () => { [523, 659, 784, 1047].forEach((f, i) => tone('triangle', f, f, 0.3, 0.3, i * 0.12)); },
-    lose: () => { [392, 349, 311, 262].forEach((f, i) => tone('triangle', f, f, 0.35, 0.3, i * 0.18)); voice('cry', true); },
+    win: () => { bgmDuck(3.5); const k = 'results/victory_F_' + (1 + Math.floor(Math.random() * 3)); if (sdone[k]) sPlay(k, 0.8); else [523, 659, 784, 1047].forEach((f, i) => tone('triangle', f, f, 0.3, 0.3, i * 0.12)); },
+    lose: () => { bgmDuck(3); if (sdone['results/defeat']) sPlay('results/defeat', 0.9); else [392, 349, 311, 262].forEach((f, i) => tone('triangle', f, f, 0.35, 0.3, i * 0.18)); voice('cry', true); },
     low: () => voice('sigh', true),
     start: () => voice('start', true)
   };
@@ -99,7 +133,8 @@
   G.sfx = {
     play: function (n) { if (muted || !S[n]) return; try { S[n](); } catch (e) {} },
     isMuted: () => muted,
-    toggle: function () { muted = !muted; try { localStorage.setItem('gaia_mute', muted ? '1' : '0'); } catch (e) {} if (muted) ambOff(); else ambOn(); return muted; },
-    unlock: function () { const c = ac(); preload(); return c; }
+    toggle: function () { muted = !muted; try { localStorage.setItem('gaia_mute', muted ? '1' : '0'); } catch (e) {} if (muted) { ambOff(); bplay = null; breq++; bgmHalt(); } else { ambOn(); bgmGo(); } return muted; },
+    bgm: bgmSet,
+    unlock: function () { const c = ac(); preload(); sPreload(); if (bwant && !bnode) { bplay = null; bgmGo(); } return c; }
   };
 })();

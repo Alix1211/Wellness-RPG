@@ -5,10 +5,10 @@
   const src = n => window.GAIA_IMG ? (window.GAIA_IMG['map/' + n + '.webp'] || '') : D.base + n + '.webp';
   const root = $('map'), pan = $('mapPan'), card = $('mapCard');
   let s = 1, ox = 0, oy = 0, vw = 0, vh = 0, W = 0, H = 0, land = true, curId = null;
-  const spots = {};
+  const spots = {}, PAD = 140; // PAD: 지도 둘레에 더 보이는 잔디 여백(지도 픽셀, 임시)
 
   function build() {
-    pan.innerHTML = '';
+    pan.innerHTML = ''; pan.style.setProperty('--map-grass', 'url(' + src('grass_tile') + ')'); // 지도 바깥 잔디(케인 그림, 이음새 제거 타일)
     D.sheets.forEach((sh, si) => {
       const el = document.createElement('div'); el.className = 'sheet'; el.dataset.si = si;
       const g = document.createElement('img'); g.src = src(sh.ground); g.draggable = false; el.appendChild(g);
@@ -46,8 +46,9 @@
   }
   function clamp() {
     const cw = W * s, ch = H * s;
-    ox = cw <= vw ? (vw - cw) / 2 : Math.min(0, Math.max(vw - cw, ox));
-    oy = ch <= vh ? (vh - ch) / 2 : Math.min(0, Math.max(vh - ch, oy));
+    const p = PAD * s; // 지도 둘레 잔디 여백
+    ox = cw + 2 * p <= vw ? (vw - cw) / 2 : Math.min(p, Math.max(vw - cw - p, ox));
+    oy = ch + 2 * p <= vh ? (vh - ch) / 2 : Math.min(p, Math.max(vh - ch - p, oy));
   }
   function apply() { clamp(); pan.style.transform = 'translate(' + ox + 'px,' + oy + 'px) scale(' + s + ')'; }
   function center(id) {
@@ -95,7 +96,7 @@
   let lastId = null, built = false;
   function open() {
     if (!built) { build(); built = true; }
-    root.classList.remove('hidden'); closeCard(); refresh(); layout(); center(lastId || D.start);
+    root.classList.remove('hidden'); closeCard(); refresh(); layout(); center(lastId || D.start); if (G.sfx) G.sfx.bgm('map');
     const h = $('mapHint'); h.classList.remove('fade'); void h.offsetWidth; h.classList.add('fade');
   }
   window.addEventListener('resize', () => { if (!root.classList.contains('hidden')) { layout(); } });

@@ -228,7 +228,7 @@
     setTimeout(() => { if (j) j.classList.add('hidden'); }, 2500);
   }
 
-  function open(k) { if (!root) build(); kind = k; sel = null; msg = ''; mode = 'entry'; spinning = false; last = { t: 0, key: '' }; if (k === 'casino') newSyms(); root.classList.remove('hidden'); setBg(.05); paint(); }
+  function open(k) { if (!root) build(); kind = k; sel = null; msg = ''; mode = 'entry'; spinning = false; last = { t: 0, key: '' }; if (k === 'casino') newSyms(); root.classList.remove('hidden'); setBg(.05); paint(); if (G.sfx) G.sfx.bgm('map'); }
   function close() { if (spinning) return; root.classList.add('hidden'); if (G.map.refresh) G.map.refresh(); }
   G.shop = { open: open, close: close, kinds: KINDS, quest: {} }; // quest[장소]=true 이면 '대화하기' 버튼이 깜빡임
 })();

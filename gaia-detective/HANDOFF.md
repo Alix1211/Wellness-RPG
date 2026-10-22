@@ -368,3 +368,11 @@
 ## 미니게임 추가 작업 안내 (GPT용)
 
 미니게임은 `gaia-detective/MINIGAME_SPEC.md` 한 문서만 읽고 작업합니다. 금지 사항, 연결 지점, 검증 목록, 케인이 정해야 할 미정 목록이 모두 들어 있습니다.
+
+### 지도 잔디 + 스팀랩소디 소리 연결 (2026-10-22 19:50, 모두 임시 배정)
+- **잔디:** 케인 그림(1254²)을 이음새 제거해 `map/layers/grass_tile.webp`(836²)로 저장, `style.css` `#mapPan::before` 타일(`--map-grass`, `map.js build`가 지정). 지도 둘레에 잔디 여백 `PAD=140`(지도 픽셀)까지 더 밀어 볼 수 있음. 물 버전은 안 함(케인이 잔디 선택).
+- **소리 출처:** 케인 저장소 `Alix1211/steam-rhapsody` `game/audio/`(남성 비명 19·여성 비명 7은 원작 구간표대로 낱개로 자름). 보관 위치 `assets/gaia-detective/sfx/steam/{voice,results,bgm}`, README 있음. 총·폭탄 효과음은 안 가져옴.
+- **연결(`js/sfx.js`, 배정은 임시):** 적 피격 때 남성 비명 랜덤(80%, 0.45초 간격 제한) / 승리=여성 승리 팡파르 3종 랜덤 / 패배=defeat + 기존 울음 / BGM: 지도·상점=female_theme, 일반 전투=female_battle, 보스전=demon(`G.sfx.bgm('map'|'battle'|'boss')`, 호출 지점: `map.js open`, `shop.js open`, `ui.js` 전투 시작). 승리·패배음 때 BGM 잠깐 낮춤. BGM이 켜지면 기존 앰비언트 루프는 끔. 음소거 버튼이 BGM도 끔.
+- **BGM 방식:** 32kHz 모노 전용 오디오 엔진, 한 곡씩만 메모리에 풀어 둠(휴대폰 메모리 때문). 파일은 56kbps ogg. male_theme·male_battle은 보관만(미사용).
+- **빌드:** `build_single.py`가 `GAIA_SND.stm`에 voice/results/bgm 임베드, sfx 폴더 안 하위 폴더는 건너뜀. 단일 빌드 약 43MB(+7MB). 헤드리스 검증: 지도 BGM 283.8초 루프·보스 BGM 전환·비명·승리음 재생, 오류 없음. 실제 귀로 듣는 확인은 케인 기기에서 필요.
+- **다른 결정:** 슬롯 한도 10회, 경찰서 배팅은 보관만(스쿼트 연결 유지/해제는 케인 답 대기), 맷집 훈련 연결 안 함.
