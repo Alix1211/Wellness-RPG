@@ -278,9 +278,17 @@
 - **배경**: `bg/v2/bg_{alley,club,lobby,lounge,stage,wedding}_{land,port}` 가로/세로 자동 선택(창 크기 바뀌면 다시 선택). 전투 `bg` 이름(`bg_lobby2.jpg` 등)에서 숫자 떼고 연결. 빌드는 webp로 변환해 내장(옛 `bg/*.jpg`는 더 이상 쓰지 않음).
 - **카드 틀**: `ui/card/frame_pink.webp`(공격·파워) / `frame_mint.webp`(스킬) — 케인님이 단순하게 다시 만든 것. 창은 투명, 그림은 틀 뒤. 글자 칸(코스트·이름·효과) 위치는 % 로 틀에 맞춤, 글자 수에 따라 크기 단계. 파워 카드 색은 케인님 답변 없어 임시로 핑크.
 - **카드 뒷면**: `ui/card/back_pink.webp`, `back_mint.webp` 저장만 함(미사용). 더미는 케인님 배치 그림대로 아이콘(`pile_draw`, `pile_discard`)+숫자 배지.
-- **메뉴 바 아이콘 연결**: heart, energy_on/off, dopa, tight, lube, turn, sound_on/off, settings. 게이지(체력·도파민·조임력·윤활도)는 아직 코드로 그린 막대.
+- **메뉴 바 아이콘 연결**: heart, energy_on/off, dopa, tight, lube, turn, sound_on/off, settings. 게이지는 아래 '화면 틀(ui/skin)'로 교체됨(채움 그라디언트만 코드).
 - **손패**: 최대 k 1.05(가로), 부채 회전+가장자리 살짝 내림, 마우스 올리면/고르면 위로 올라옴. 보상 카드 줄은 화면 폭에 맞춰 크기 제한.
 - **적 그림 4종**(barbari·bouncer·mohawk·leopard): `enemies/sheet_normal_v1…png`에서 인물별로 다시 오림(잘림·옆 사람 발 제거). 크기는 화면 비율로 계산(`enemyH`). 엘리트·보스는 leopard·bouncer 그림 재사용 중.
 - **아직 코드로 그려진 것(그림 필요)**: 게이지 틀·채움 4종, 턴 종료 버튼, 팝업 창(보상·휴식·지도 카드·결과), 말풍선 외 상태 칩, 건물 이름표, 체포!/놓침 도장, 배너 글씨, 터지는 이모지 이펙트, 의성어.
 - **전투 연출(코드, 구현 완료)**: 대기 숨쉬기(영웅 1.05초 크게, 절정 중 0.5초, 적은 인물마다 시차). 적 타격 때 베기 줄(14 이상이면 X자 두 줄)·충격 번쩍임·퍼지는 고리·바람 선·하트 이미지 폭죽, 큰 피해는 화면 흔들림+약한 번쩍임. 영웅이 맞으면 보라색 베기+바람. 체포는 하트·별 폭죽+핑크 안개 덩이. 절정은 안개 덩이+하트 비+바람+기존 번쩍임·배너. 도파민 70 이상이면 은은한 핑크 안개, 절정 중에는 짙게. 하트는 `ui/icons/heart.png` 사용. 위치·크기는 `ui.js`의 slash/impact/wind/fogPuff/heartRain, 스타일은 `style.css` 끝부분.\n- **방침**: 메뉴·설명창·버튼 등 화면 구성은 그림으로 받고, 효과는 코드로 함.
 - **작업 방식(케인님 요구)**: 한두 개씩 고치고 보고·푸시·MD를 반복하지 말 것. 요청을 모아 한 번에 끝내고 마지막에 한 번만 푸시·HANDOFF.
+
+
+### 화면 틀 이미지 (ui/skin) — 케인 제작 UI 시트 적용
+- 파일: `assets/gaia-detective/ui/skin/*.webp` (투명 누끼 처리·가장자리 잔상 제거 완료). 빌드는 `ui/skin/`를 `GAIA_IMG['ui/skin/이름.webp']`로 임베드.
+- 로딩: `js/icons.js`가 `--sk-이름` CSS 변수(url)로 걸고, `style.css` 맨 아래 "화면 틀 이미지" 블록이 9-slice(border-image)로 사용. 새 틀을 쓰려면 icons.js의 `SK` 배열에 이름 추가.
+- 적용: gauge_hp/dopa/tight/lube(HUD 게이지, 채움은 `.trk i` 코드), btn_end(턴 종료), enemy_plate(적 이름·체력), intent_plate(공격 의도)·intent_claw(다단 공격), stamp(체포 도장, `.stamp.art`), popup(보상·결과 팝업)+plate_title(팝업 제목), btn_pink/btn_purple(팝업·지도 카드 버튼), popup_map(지도 건물 카드, `--w` 단위로 배치), tag_open/tag_lock(지도 이름표), info3(지도 Lv·체력·덱 3칸), hint(안내 말풍선: 지도·전투 힌트).
+- 미사용: btn_plus(용도 미정), btn_pink2, pile_draw(skin판; 기존 ui/icons의 파일 아이콘+카운트 배지 유지), 카드 뒷면.
+- 여전히 코드로 그린 것: 버프·도주 의도 판, 상태 칩, 배너 글자, 게이지 채움, '놓침…' 도장.

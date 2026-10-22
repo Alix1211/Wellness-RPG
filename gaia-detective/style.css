@@ -275,3 +275,89 @@ body.dragging{cursor:grabbing}
 #fog i:nth-child(3){right:-10%;bottom:-4%;animation-delay:-4s}#fog i:nth-child(4){left:40%;top:18%;animation-delay:-1s;animation-duration:9s;opacity:.7}#fog i:nth-child(5){left:-8%;top:30%;animation-delay:-5s;animation-duration:10s;opacity:.6}
 @keyframes fogdrift{from{transform:translate(-4%,2%) scale(1)}to{transform:translate(8%,-5%) scale(1.18)}}
 @media (prefers-reduced-motion:reduce){#hero,.enemy img{animation:none!important}}
+
+/* ===== 화면 틀 이미지(ui/skin) 적용 — 9-slice ===== */
+.hudbox.stat .ico,#hpBox .ico{display:none}
+.bar{--h:5vh;--lw:1.36;--sk:var(--sk-gauge_hp);position:relative;width:15vw;min-width:130px;height:var(--h);background:none;overflow:visible;border:solid transparent;border-width:0 calc(var(--h)*.4) 0 calc(var(--h)*var(--lw));border-image:var(--sk) 0 30 0 105 fill / 0 calc(var(--h)*.4) 0 calc(var(--h)*var(--lw)) stretch;border-radius:0;filter:drop-shadow(0 .3vh .4vh rgba(60,20,40,.45))}
+.bar.hp{--sk:var(--sk-gauge_hp);--lw:1.36}
+.bar.dopa{--sk:var(--sk-gauge_dopa);--lw:1.27;border-image-slice:0 30 0 100 fill}
+.bar.tight{--sk:var(--sk-gauge_tight);--lw:1.02;border-image-slice:0 30 0 85 fill}
+.bar.lube{--sk:var(--sk-gauge_lube);--lw:1;border-image-slice:0 30 0 85 fill}
+.bar .trk{position:absolute;left:0;right:0;top:27%;bottom:27%;border-radius:2vh;overflow:hidden}
+.bar .trk i{position:absolute;left:0;top:0;bottom:0;border-radius:2vh}
+.bar b{position:absolute;left:0;right:0;top:0;bottom:0;color:#5a2a46;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 2px #fff;font-size:1.5vh;z-index:2}
+.bar.dopa.ready{animation:none;filter:drop-shadow(0 0 1.2vh #ff4fa8) drop-shadow(0 0 .5vh #ffd36b)}
+
+/* 적 이름·체력 판 */
+.estat{position:relative;display:block;width:19vh;aspect-ratio:460/138;margin-top:.2vh;background:var(--sk-enemy_plate) center/100% 100% no-repeat;filter:drop-shadow(0 .3vh .4vh rgba(60,20,40,.4))}
+.estat .ename{position:absolute;left:27%;right:5%;top:4%;height:50%;display:flex;align-items:center;justify-content:center;font-size:1.45vh;white-space:nowrap;text-shadow:none;overflow:hidden}
+.estat .ename em{margin-right:.4vh;padding:0 .5vh;font-size:1.1vh}
+.estat .bar{position:absolute;left:27%;right:6%;top:60%;height:33%;width:auto;min-width:0;border:0;border-image:none;filter:none}
+.estat .bar .trk{top:8%;bottom:8%;left:1%;right:1%}
+.estat .bar .trk i{background:linear-gradient(90deg,#3fae4f,#7fd96a)}
+.estat .bar b{font-size:1.15vh;color:#2f5a2a;text-shadow:0 0 2px #fff,0 0 2px #fff}
+.estat .chips{position:absolute;left:-10%;right:-10%;top:100%;margin-top:.2vh}
+
+/* 공격 의도 판 */
+.intent span{padding:0;border:0;background:none;border-radius:0}
+.intent .atk{display:flex;align-items:center;height:3.7vh;min-width:12vh;padding:0 1.4vh 0 4.6vh;background:var(--sk-intent_plate) 0 0/100% 100% no-repeat;font-size:2vh;color:#d6246a;filter:drop-shadow(0 .3vh .3vh rgba(60,20,40,.4))}
+.intent .atk .ic{display:none}
+.intent .atk.multi{height:4.4vh;min-width:10.6vh;padding:0 1.6vh 0 4.8vh;background-image:var(--sk-intent_claw)}
+.intent .atk.dis{height:auto;min-width:0;padding:.3vh 1.1vh;background:#fff;border:2px solid var(--pink-d);border-radius:2vh}
+.intent .atk.dis .ic{display:inline}
+.intent .buff,.intent .flee{padding:.3vh 1.1vh;border:2px solid var(--pink-d);border-radius:2vh;background:#fff}
+.intent .flee{background:#ff5a7a}
+.intent .buff{border-color:#a06bd6}
+
+/* 체포 도장 */
+.stamp.art{width:22vh;height:11.5vh;padding:0;border:0;border-radius:0;background:var(--sk-stamp) center/contain no-repeat;color:transparent;font-size:0}
+
+/* 턴 종료·팝업 버튼 */
+#endTurn,#panel button,#overlay button,#mapCard button{box-shadow:none;border:solid transparent;color:#fff;text-shadow:0 .2vh .3vh rgba(150,30,80,.75)}
+#endTurn{border-width:0 2.8vh;border-image:var(--sk-btn_end) 0 70 fill / 0 2.8vh stretch;background:none;height:6.6vh;min-width:17vh;padding:0;font-size:2.4vh;filter:drop-shadow(0 .5vh .5vh rgba(60,20,40,.5))}
+#endTurn:active{transform:translateY(.3vh);box-shadow:none}
+#panel button,#overlay button,#mapCard #mcGo{background:none;border-width:0 2.8vh;border-image:var(--sk-btn_pink) 0 60 fill / 0 2.8vh stretch;height:6vh;padding:0;border-radius:0;font-size:2vh}
+#mapCard #mcClose{background:none;border-width:0 2.8vh;border-image:var(--sk-btn_purple) 0 60 fill / 0 2.8vh stretch;height:6vh;padding:0;border-radius:0;font-size:2vh}
+#panel button:disabled,#overlay button:disabled,#mapCard button:disabled{filter:grayscale(1) opacity(.55)}
+
+/* 팝업(보상·휴식·결과) */
+#panel .box,#overlay .box{background:none;border:solid transparent;border-width:5.4vh;border-image:var(--sk-popup) 75 fill / 5.4vh stretch;border-radius:0;padding:0;gap:1.2vh;filter:drop-shadow(0 1vh 2vh rgba(40,10,30,.5))}
+#panel h2,#overlay h2{border:solid transparent;border-width:0 9vh;border-image:var(--sk-plate_title) 0 150 fill / 0 9vh stretch;height:7.4vh;display:flex;align-items:center;justify-content:center;margin:-3vh 0 .6vh;font-size:3vh;color:var(--pink-d)}
+
+/* 지도: 건물 이름표·정보·안내 */
+#mapPan .tag{height:100px;line-height:100px;padding:0;border:solid transparent;border-width:0 27px 0 95px;border-image:var(--sk-tag_open) 0 55 0 190 fill / 0 27px 0 95px stretch;background:none;border-radius:0;box-shadow:none;color:#c2406f;font-size:40px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
+#mapPan .spot.locked .tag{border-width:0 27px 0 100px;border-image:var(--sk-tag_lock) 0 55 0 200 fill / 0 27px 0 100px stretch;background:none;color:#7d6f86}
+#mapPan .spot.clear .tag{color:#2f8a5a}
+#mapInfo{width:40vh;aspect-ratio:760/124;padding:0;border:0;border-radius:0;background:var(--sk-info3) center/100% 100% no-repeat;filter:drop-shadow(0 .4vh .5vh rgba(60,20,40,.35))}
+#mapInfo span{position:absolute;top:18%;bottom:18%;display:flex;align-items:center;justify-content:center;font-size:1.9vh;font-weight:900;color:var(--ink)}
+#mapInfo .s1{left:15%;width:18%}#mapInfo .s2{left:47%;width:18%}#mapInfo .s3{left:79%;width:17%}
+#mapHint,#hintBar{background:none;border:solid transparent;border-width:2.4vh 4.4vh 2.6vh 6.6vh;border-image:var(--sk-hint) 45 80 45 130 fill / 2.4vh 4.4vh 2.6vh 6.6vh stretch;border-radius:0;padding:.6vh .4vh;color:var(--ink);font-size:1.8vh;filter:drop-shadow(0 .4vh .5vh rgba(60,20,40,.35))}
+#mapCard{width:min(48vh,92vw);min-width:0;max-width:none;aspect-ratio:760/453;padding:0 8%;border:0;border-radius:0;background:var(--sk-popup_map) center/100% 100% no-repeat;box-shadow:none;align-items:center;gap:0;filter:drop-shadow(0 .8vh 1.6vh rgba(40,10,30,.4))}
+#mapCard b{margin-top:6.5%;height:17%;display:flex;align-items:center;font-size:2.6vh}
+#mapCard span{margin-top:7%;font-size:1.7vh;min-height:2.2em}
+#mapCard .row{margin-top:auto;margin-bottom:9%}
+.intent{top:auto;bottom:100%;margin-bottom:.3vh}
+@media (orientation:portrait){
+  .bar{--h:4.2vh;width:24vw;min-width:0}
+  #hpBox .bar{width:36vw}
+  #pileDraw,#pileDisc{top:19vh}
+  #endTurn{top:35vh}
+  #hintBar{top:20vh}
+  #hero{left:-3vw}
+  .estat{width:17vh}
+  .estat .ename{font-size:1.3vh}
+}
+#mapCard b{margin-top:14.5%;height:15%;font-size:2.4vh}
+#mapCard span{margin-top:6%;font-size:1.6vh;min-height:0;line-height:1.3}
+#mapCard button{white-space:nowrap;flex:none}
+#mapCard .row{margin-bottom:8%}
+#panel h2,#overlay h2{height:10vh;margin:-4.6vh 0 0;border-width:0 10vh;border-image:var(--sk-plate_title) 0 150 fill / 0 10vh stretch;padding-bottom:.8vh}
+#mapCard{--w:calc(min(48vh,92vw)/100);padding:0 9%}
+#mapCard b{margin-top:calc(var(--w)*9.8);height:calc(var(--w)*13.7);font-size:calc(var(--w)*6.2)}
+#mapCard span{margin-top:calc(var(--w)*2);font-size:calc(var(--w)*3.9);line-height:1.3}
+#mapCard .row{margin-bottom:calc(var(--w)*3.6);gap:calc(var(--w)*2.4)}
+#mapCard button{height:calc(var(--w)*11.5);font-size:calc(var(--w)*4.6);border-width:0 calc(var(--w)*5.5);border-image-width:0 calc(var(--w)*5.5)}
+#mapCard #mcGo{border-image:var(--sk-btn_pink) 0 60 fill / 0 calc(var(--w)*5.5) stretch}
+#mapCard #mcClose{border-image:var(--sk-btn_purple) 0 60 fill / 0 calc(var(--w)*5.5) stretch}
+#mapCard span{width:100%;text-align:center;word-break:keep-all}
+#mapCard{padding:0 calc(var(--w)*9)}

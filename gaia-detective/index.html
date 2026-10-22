@@ -18,11 +18,11 @@
   </div>
 
   <div id="hud">
-    <div class="hudbox" id="hpBox"><span class="ico ic" data-ic="heart">♥</span><div class="bar hp"><i id="hpFill"></i><b id="hpTxt"></b></div></div>
+    <div class="hudbox" id="hpBox"><div class="bar hp"><span class="trk"><i id="hpFill"></i></span><b id="hpTxt"></b></div></div>
     <div class="hudbox" id="energyBox"><div id="energy"></div></div>
-    <div class="hudbox stat"><span class="ico ic" data-ic="dopa">도파민</span><div class="bar dopa" id="dopaBar"><i id="dopaFill"></i><b id="dopaTxt"></b></div></div>
-    <div class="hudbox stat"><span class="ico ic" data-ic="tight">조임력</span><div class="bar tight"><i id="tightFill"></i><b id="tightTxt"></b></div></div>
-    <div class="hudbox stat"><span class="ico ic" data-ic="lube">윤활도</span><div class="bar lube"><i id="lubeFill"></i><b id="lubeTxt"></b></div></div>
+    <div class="hudbox stat"><div class="bar dopa" id="dopaBar"><span class="trk"><i id="dopaFill"></i></span><b id="dopaTxt"></b></div></div>
+    <div class="hudbox stat"><div class="bar tight"><span class="trk"><i id="tightFill"></i></span><b id="tightTxt"></b></div></div>
+    <div class="hudbox stat"><div class="bar lube"><span class="trk"><i id="lubeFill"></i></span><b id="lubeTxt"></b></div></div>
     <div class="hudbox" id="turnBox"><span class="ico ic" data-ic="turn">TURN</span><b id="turnNo">1</b></div>
     <button id="muteBtn" title="소리">🔊</button><button id="devBtn" title="개발용"><span class="ic" data-ic="settings">⚙</span></button>
   </div>
@@ -35,7 +35,7 @@
 
   <div id="map" class="hidden">
     <div id="mapPan"></div>
-    <div id="mapInfo"></div>
+    <div id="mapInfo"><span class="s1"></span><span class="s2"></span><span class="s3"></span></div>
     <div id="mapHint">손가락으로 밀어서 지도를 움직이세요</div>
     <div id="mapCard" class="hidden"><b id="mcName"></b><span id="mcSub"></span><div class="row"><button id="mcClose">닫기</button><button id="mcGo">출동</button></div></div>
   </div>

@@ -79,7 +79,7 @@
     const box = $('enemies'); box.innerHTML = '';
     S.enemies.forEach((e, i) => {
       const el = document.createElement('div'); el.className = 'enemy'; el.dataset.i = i;
-      el.innerHTML = '<div class="intent"></div><img alt="" style="height:' + enemyH(e) + 'vh"><div class="estat"><div class="ename"></div><div class="bar"><i></i><b></b></div><div class="chips"></div></div><div class="sbub"><span></span></div>';
+      el.innerHTML = '<div class="intent"></div><img alt="" style="height:' + enemyH(e) + 'vh"><div class="estat"><div class="ename"></div><div class="bar"><span class="trk"><i></i></span><b></b></div><div class="chips"></div></div><div class="sbub"><span></span></div>';
       el.querySelector('img').src = sprite(e);
       el.addEventListener('click', () => onEnemy(i));
       box.appendChild(el);
@@ -101,7 +101,7 @@
       const it = el.querySelector('.intent');
       if (!live) it.innerHTML = '';
       else it.innerHTML = G.intentInfo(S, e).map(a => {
-        if (a.kind === 'atk') return '<span class="atk">' + (e.disgust > 0 ? ic('intent_disgust', '🚫') : (a.hits > 1 ? ic('intent_multi', '⚔') : ic('intent_atk', '⚔'))) + a.n + (a.hits > 1 ? '×' + a.hits : '') + '</span>';
+        if (a.kind === 'atk') return '<span class="atk' + (e.disgust > 0 ? ' dis' : a.hits > 1 ? ' multi' : '') + '">' + (e.disgust > 0 ? ic('intent_disgust', '🚫') : (a.hits > 1 ? ic('intent_multi', '⚔') : ic('intent_atk', '⚔'))) + a.n + (a.hits > 1 ? '×' + a.hits : '') + '</span>';
         if (a.kind === 'buff') return '<span class="buff">' + ic('intent_buff', '💪') + '+' + a.n + '</span>';
         return '<span class="flee">' + ic('intent_flee', '💨') + ' 도주!</span>';
       }).join('');
@@ -114,7 +114,7 @@
       if (e.immune) chips.push('질림면역 ' + e.immune);
       el.querySelector('.chips').innerHTML = chips.map(c => '<span class="chip">' + c + '</span>').join('');
       let st = el.querySelector('.stamp');
-      if ((e.arrested || e.fled) && !st) { st = document.createElement('div'); st.className = 'stamp'; st.textContent = e.arrested ? '체포!' : '놓침…'; el.appendChild(st); }
+      if ((e.arrested || e.fled) && !st) { st = document.createElement('div'); st.className = 'stamp' + (e.arrested ? ' art' : ''); st.textContent = e.arrested ? '체포!' : '놓침…'; el.appendChild(st); }
     });
   }
   function needsTargetNow() { const c = S.hand.find(h => h.uid === selUid); return c && G.cards[c.id].needsTarget; }

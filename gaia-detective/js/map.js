@@ -29,10 +29,10 @@
     Object.keys(spots).forEach(id => {
       const o = spots[id], inf = G.run.spotInfo(id);
       o.el.classList.remove('open', 'locked', 'clear'); o.el.classList.add(inf.state);
-      o.el.querySelector('.tag').textContent = (inf.state === 'locked' ? '🔒 ' : inf.state === 'clear' ? '✔ ' : '▶ ') + o.sp.name;
+      o.el.querySelector('.tag').textContent = (inf.state === 'clear' ? '✔ ' : '') + o.sp.name;
     });
     const r = G.run.get();
-    $('mapInfo').textContent = '월드 Lv.' + r.wl + ' · 체력 ' + r.hp + '/' + G.config.player.maxHp + ' · 덱 ' + r.deck.length + '장';
+    $('mapInfo').querySelector('.s1').textContent = 'Lv.' + r.wl; $('mapInfo').querySelector('.s2').textContent = r.hp + '/' + G.config.player.maxHp; $('mapInfo').querySelector('.s3').textContent = r.deck.length;
   }
 
   function layout() {
