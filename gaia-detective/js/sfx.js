@@ -37,16 +37,39 @@
     if (window.GAIA_SND && window.GAIA_SND.sfx && window.GAIA_SND.sfx[key]) return window.GAIA_SND.sfx[key];
     return ((G.assets && G.assets.sfxBase) || '../assets/gaia-detective/sfx/') + VF[n];
   }
+  // 녹음 파일은 WebAudio 버퍼로 재생한다(띠링 소리와 같은 경로). 일부 앱 내장 화면은 <audio> 재생을 막기 때문.
+  const bufs = {}; let loading = false, vNode = null;
+  function dataToBuf(u) { const b = atob(u.slice(u.indexOf(',') + 1)), a = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a.buffer; }
+  function loadBuf(key, src) {
+    const c = ac(); if (!c || bufs[key]) return;
+    const get = src.indexOf('data:') === 0 ? Promise.resolve(dataToBuf(src)) : fetch(src).then(r => r.arrayBuffer());
+    get.then(ab => new Promise((res, rej) => { const p = c.decodeAudioData(ab, res, rej); if (p && p.then) p.then(res, rej); }))
+      .then(b => { bufs[key] = b; }).catch(() => {});
+  }
+  function preload() {
+    if (loading) return; loading = true;
+    Object.keys(VF).forEach(n => loadBuf(n, vsrc(n)));
+    loadBuf('punch', punchSrc());
+  }
+  function playBuf(key, gain) {
+    const c = ac(), b = bufs[key]; if (!c || !b) return null;
+    const s = c.createBufferSource(), g = c.createGain(); s.buffer = b; g.gain.value = gain; s.connect(g).connect(c.destination); s.start(0); return s;
+  }
   function voice(n, force) {
     const now = Date.now(); if (!force && now - vLast < 700) return; vLast = now;
-    try { if (vAudio) vAudio.pause(); const a = new Audio(vsrc(n)); a.volume = Math.min(1, vol * 1.6); vAudio = a; a.play().catch(() => {}); } catch (e) {}
+    try {
+      if (vNode) { try { vNode.stop(); } catch (e) {} vNode = null; }
+      const node = playBuf(n, Math.min(1.6, vol * 2.4));
+      if (node) { vNode = node; return; }
+      if (vAudio) vAudio.pause(); const a = new Audio(vsrc(n)); a.volume = Math.min(1, vol * 1.6); vAudio = a; a.play().catch(() => {});
+    } catch (e) {}
   }
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const S = {
     click: () => tone('sine', 700, 500, 0.06, 0.25),
     card: () => noise(0.14, 0.5, 600, 2400),
     hit: () => {
-      try { if (!punch) punch = new Audio(punchSrc()); const a = punch.cloneNode(); a.volume = Math.min(1, vol * 1.4); a.play().catch(() => synthHit()); }
+      try { if (playBuf('punch', Math.min(1.6, vol * 2.4))) return; if (!punch) punch = new Audio(punchSrc()); const a = punch.cloneNode(); a.volume = Math.min(1, vol * 1.4); a.play().catch(() => synthHit()); }
       catch (e) { synthHit(); }
     },
     hurt: () => { tone('sine', 220, 70, 0.22, 0.7); noise(0.1, 0.4, 900, 300); tone('triangle', 900, 500, 0.18, 0.25, 0.05); if (Math.random() < 0.85) voice(pick(['surprise', 'yelp', 'scare1', 'scare2'])); },
@@ -70,6 +93,6 @@
     play: function (n) { if (muted || !S[n]) return; try { S[n](); } catch (e) {} },
     isMuted: () => muted,
     toggle: function () { muted = !muted; try { localStorage.setItem('gaia_mute', muted ? '1' : '0'); } catch (e) {} return muted; },
-    unlock: ac
+    unlock: function () { const c = ac(); preload(); return c; }
   };
 })();
