@@ -9,7 +9,7 @@ work=here/'android-work';(work/'android').mkdir(parents=True,exist_ok=True)
 shutil.copytree(root/'android/app/src/main',work/'android/app/src/main',dirs_exist_ok=True,ignore=shutil.ignore_patterns('assets'))
 for p in (work/'android/app/src/main').rglob('*'):
  if p.is_file() and p.suffix in ['.java','.xml']:
-  s=p.read_text().replace('com.gaia.life','com.gaia.casual').replace('GAIA LIFE','GAIA CASUAL').replace('1.1-R61','1.2-CASUAL-03').replace('1.0-R60','1.2-CASUAL-03').replace('R61','CASUAL-03').replace('R60','CASUAL-03').replace('android:versionCode="1"','android:versionCode="3"').replace('android:versionCode="2"','android:versionCode="3"')
+  s=p.read_text().replace('com.gaia.life','com.gaia.casual').replace('GAIA LIFE','GAIA CASUAL').replace('1.1-R61','1.3-CASUAL-04').replace('1.0-R60','1.3-CASUAL-04').replace('R61','CASUAL-04').replace('R60','CASUAL-04').replace('android:versionCode="1"','android:versionCode="4"').replace('android:versionCode="2"','android:versionCode="4"')
   # Let existing responsive games work in both tablet orientations.
   if p.suffix=='.xml' and p.name=='AndroidManifest.xml':
    s=s.replace('<uses-permission android:name="android.permission.INTERNET"/>','<uses-permission android:name="android.permission.INTERNET"/><uses-permission android:name="android.permission.VIBRATE"/>')
@@ -20,17 +20,24 @@ for p in (work/'android/app/src/main').rglob('*'):
    s=s.replace('protected void onResume(){super.onResume();','protected void onResume(){super.onResume();if(haptics!=null)haptics.foreground(true);')
    s=s.replace('protected void onDestroy(){','protected void onDestroy(){if(haptics!=null)haptics.foreground(false);')
    s=s.replace('web.removeJavascriptInterface("GaiaFiles");','web.removeJavascriptInterface("GaiaFiles");web.removeJavascriptInterface("GaiaHaptics");')
+   s=s.replace('GaiaHaptics haptics;', 'GaiaVideos videos; GaiaHaptics haptics;')
+   s=s.replace('haptics=new GaiaHaptics(this);', 'videos=new GaiaVideos(this,web);web.addJavascriptInterface(videos,"GaiaVideos");haptics=new GaiaHaptics(this);')
+   s=s.replace('Uri u=request.getUrl();if(!', 'WebResourceResponse media=videos.intercept(request);if(media!=null)return media;Uri u=request.getUrl();if(!')
+   s=s.replace('super.onActivityResult(code,result,data);', 'super.onActivityResult(code,result,data);if(code==GaiaVideos.PICK){videos.result(result,data);return;}')
+   s=s.replace('web.removeJavascriptInterface("GaiaHaptics");', 'web.removeJavascriptInterface("GaiaHaptics");web.removeJavascriptInterface("GaiaVideos");')
   if p.suffix=='.java':
    s=s.replace('void menu(){','void menu(){if(web!=null)web.evaluateJavascript("window.GaiaCasual?.pause()",null);')
    s=s.replace("try{window.GaiaAudioStatus?.reset();document.querySelectorAll","try{window.GaiaCasual?.pause();window.GaiaAudioStatus?.reset();document.querySelectorAll")
   s=s.replace('android:screenOrientation="sensorPortrait"','android:screenOrientation="fullSensor"')
   p.write_text(s)
+shutil.copyfile(here/'GaiaVideos.java',work/'android/app/src/main/java/com/gaia/life/GaiaVideos.java')
 shutil.copyfile(here/'GaiaHaptics.java',work/'android/app/src/main/java/com/gaia/life/GaiaHaptics.java')
-shutil.copyfile(root/'GAIA-CASUAL-03.html',work/'GAIA-LIFE-20261020.html')
+shutil.copyfile(root/'GAIA-CASUAL-04.html',work/'GAIA-LIFE-20261020.html')
 manifest=work/'builds/gaia-life-20261020';manifest.mkdir(parents=True,exist_ok=True);shutil.copyfile(here/'manifest.json',manifest/'manifest.json')
-s=re.sub(r"final=out/'GAIA-LIFE-R\d+\.apk'","final=out/'GAIA-CASUAL-03.apk'",(root/'android/build.py').read_text())
+s=re.sub(r"final=out/'GAIA-LIFE-R\d+\.apk'","final=out/'GAIA-CASUAL-04.apk'",(root/'android/build.py').read_text())
 (work/'android/build.py').write_text(s)
 env={**os.environ,'GAIA_KEYSTORE':str(root/'android/private/gaia-life.jks'),'GAIA_KEYSTORE_PASS_FILE':str(root/'android/private/password.txt')}
 subprocess.run([sys.executable,work/'android/build.py'],env=env,check=True)
-shutil.copyfile(work/'android/build/GAIA-CASUAL-03.apk',root/'GAIA-CASUAL-03.apk')
+shutil.copyfile(work/'android/build/GAIA-CASUAL-04.apk',root/'GAIA-CASUAL-04.apk')
 shutil.copyfile(work/'android/build/build-result.json',here/'apk-verification.json')
+

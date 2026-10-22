@@ -1,11 +1,11 @@
 {
-  "apk": "GAIA-CASUAL-03.apk",
-  "bytes": 64926303,
-  "sha256": "48e3d308d962881c7ded58668a2d5cd07580e55a0a02507d9aa8f4f6eba15fc8",
+  "apk": "GAIA-CASUAL-04.apk",
+  "bytes": 64930399,
+  "sha256": "b2e98f37fa1cfbf07b349c4cc73dedfc252677657e1db626f2f7f04248d9efb5",
   "game": {
-    "build": "CASUAL-03",
-    "size": 87082142,
-    "sha256": "eefd8eca754bee60620fcdc01678f9f8614a8a28fbd4b040ff5578445df7b8e5",
+    "build": "CASUAL-04",
+    "size": 87086720,
+    "sha256": "5e82c6c00b0e90722e27ffa1197a87e68d1fce1a3d014c46136b204b37f52b02",
     "baseline": "R61",
     "edition": "casual",
     "storageKey": "gaia-casual-save-v1"

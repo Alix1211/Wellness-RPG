@@ -37,14 +37,14 @@ public final class GaiaHaptics {
         final long[] pattern;final int amp;final boolean priority;
         if(event==null)return;
         switch(event){
-            case "tap":pattern=new long[]{0,14};amp=90;priority=false;break;
-            case "tick":pattern=new long[]{0,22};amp=125;priority=false;break;
-            case "jump":pattern=new long[]{0,24};amp=130;priority=false;break;
-            case "hit":pattern=new long[]{0,45};amp=220;priority=true;break;
-            case "collision":pattern=new long[]{0,65};amp=230;priority=true;break;
-            case "success":pattern=new long[]{0,30,55,50};amp=190;priority=true;break;
-            case "fail":pattern=new long[]{0,70,60,70};amp=220;priority=true;break;
-            case "test":pattern=new long[]{0,160};amp=255;priority=true;break;
+            case "tap":pattern=new long[]{0,35};amp=220;priority=false;break;
+            case "tick":pattern=new long[]{0,48};amp=240;priority=false;break;
+            case "jump":pattern=new long[]{0,55};amp=240;priority=false;break;
+            case "hit":pattern=new long[]{0,90};amp=255;priority=true;break;
+            case "collision":pattern=new long[]{0,130};amp=255;priority=true;break;
+            case "success":pattern=new long[]{0,65,65,110};amp=255;priority=true;break;
+            case "fail":pattern=new long[]{0,120,80,140};amp=255;priority=true;break;
+            case "test":pattern=new long[]{0,240};amp=255;priority=true;break;
             default:return;
         }
         if(!enabled||!foreground||!hasVibrator())return;
@@ -62,3 +62,4 @@ public final class GaiaHaptics {
         });
     }
 }
+
