@@ -84,19 +84,23 @@
     if (K.who === 'studio') { const o = (D.shop && D.shop.studio) || {}; return { name: o.name, enter: o.enter, talk: o.enter, leave: o.leave }; }
     const n = (D.npc && D.npc[K.who]) || {}; return { name: n.name, enter: n.start, talk: (n.start || []).concat(n.attack || []), leave: n.flee };
   };
-  // ── 집 체력단련(스쿼트 미니게임) — 수치는 여기서만 조정. 스탯(run.stat)은 아직 전투에 연결되지 않은 기록용 [임시] ──
-  const TRAIN = { limit: 3, stat: '체력', gain: { fail: 0, ok: 1, great: 2 } };
-  const usedT = () => { const r = run(); if (!r.train || r.train.lap !== r.lap) r.train = { lap: r.lap, n: 0 }; return r.train; };
+  // ── 훈련 미니게임 — 수치는 여기서만 조정. 스탯(run.stat)은 아직 전투에 연결되지 않은 기록용 [임시] ──
+  // 집 = 스쿼트(체력), 경찰서 = 컨베이어 배팅(맷집). 한 바퀴(run.lap)에 게임별 limit 번까지, 성공도에 따라 올림.
+  const TRAIN = {
+    villa:  { game: 'squat',   label: '운동하기',    stat: '체력', limit: 3, gain: { fail: 0, ok: 1, great: 2 } },
+    police: { game: 'batting', label: '맷집 훈련',   stat: '맷집', limit: 3, gain: { fail: 0, ok: 1, great: 2 } }
+  };
+  const usedT = id => { const r = run(); if (!r.train || r.train.lap !== r.lap) r.train = { lap: r.lap }; return { get n() { return r.train[id] || 0; }, inc() { r.train[id] = (r.train[id] || 0) + 1; } }; };
   let trainMsg = '';
-  function train() {
-    if (usedT().n >= TRAIN.limit) return;
-    G.minigame.play('squat', {
+  function train(id) {
+    const T = TRAIN[id]; if (!T || usedT(id).n >= T.limit) return;
+    G.minigame.play(T.game, {
       wl: run().wl,
-      canRetry: () => usedT().n < TRAIN.limit,
+      canRetry: () => usedT(id).n < T.limit,
       onResult: r => {
-        const rr = run(), t = usedT(), tier = r.ratio >= 0.8 ? 'great' : r.success ? 'ok' : 'fail', gain = TRAIN.gain[tier];
-        t.n++; rr.stat = rr.stat || {}; rr.stat[TRAIN.stat] = (rr.stat[TRAIN.stat] || 0) + gain; G.run.save();
-        trainMsg = gain ? TRAIN.stat + ' +' + gain + ' (누적 ' + rr.stat[TRAIN.stat] + ')' : '이번에는 오르지 않았습니다';
+        const rr = run(), tier = r.ratio >= 0.8 ? 'great' : r.success ? 'ok' : 'fail', gain = T.gain[tier];
+        usedT(id).inc(); rr.stat = rr.stat || {}; rr.stat[T.stat] = (rr.stat[T.stat] || 0) + gain; G.run.save();
+        trainMsg = gain ? T.stat + ' +' + gain + ' (누적 ' + rr.stat[T.stat] + ')' : '이번에는 오르지 않았습니다';
       },
       onClose: () => { const m = trainMsg; trainMsg = ''; if (mode === 'entry') drawEntry(m || undefined); }
     });
@@ -112,7 +116,7 @@
     const bt = root.querySelector('.enbtns');
     if (K.shop) mk(bt, kind === 'casino' ? '상점' : '물건 사기', () => { mode = 'shop'; setBg(.28); paint(); }, false, false);
     if (kind === 'casino') mk(bt, '슬롯머신', openSlot, false, true);
-    if (K.home) { const u = usedT(); mk(bt, '운동하기 ' + (TRAIN.limit - u.n) + '/' + TRAIN.limit, train, u.n >= TRAIN.limit, true); }
+    if (TRAIN[kind]) { const T = TRAIN[kind], u = usedT(kind); mk(bt, T.label + ' ' + (T.limit - u.n) + '/' + T.limit, () => train(kind), u.n >= T.limit, true); }
     mk(bt, h && h.kind === 'rest' ? '들어가기' : '출동', () => { if (!h) return; root.classList.add('hidden'); G.run.go(kind); }, !h, false);
     const tk = npc ? mk(bt, '대화하기', () => drawEntry(rnd(L.talk || L.enter || ['…'])), false, true) : null; if (q && tk) tk.classList.add('blink');
     mk(bt, '나가기', () => { if (L.leave) { drawEntry(rnd(L.leave)); setTimeout(close, 900); } else close(); }, false, false);

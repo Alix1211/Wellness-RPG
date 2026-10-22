@@ -105,8 +105,10 @@
   function bgmSet(k) { bwant = BG[k] ? k : null; if (!bwant) { bplay = null; breq++; bgmHalt(); return; } bgmGo(); }
   function bgmDuck(sec) { if (!bgain) return; try { const t = bctx.currentTime; bgain.gain.cancelScheduledValues(t); bgain.gain.setValueAtTime(bgain.gain.value, t); bgain.gain.linearRampToValueAtTime(BGV * 0.25, t + 0.2); bgain.gain.linearRampToValueAtTime(BGV, t + sec); } catch (e) {} }
   const pick = a => a[Math.floor(Math.random() * a.length)];
+  let tickT = 0;
   const S = {
-    click: () => tone('sine', 700, 500, 0.06, 0.25),
+    click: () => { if (Date.now() - tickT < 400) return; tone('sine', 700, 500, 0.06, 0.25); }, // 버튼 틱이 방금 났으면 중복 안 냄
+    tick: () => { tone('square', 1500, 1000, 0.035, 0.14); noise(0.02, 0.12, 4000, 3000); },
     card: () => noise(0.14, 0.5, 600, 2400),
     hit: () => {
       try { if (playBuf('punch', Math.min(1.6, vol * 2.4))) return; if (!punch) punch = new Audio(punchSrc()); const a = punch.cloneNode(); a.volume = Math.min(1, vol * 1.4); a.play().catch(() => synthHit()); }
@@ -129,12 +131,15 @@
     low: () => voice('sigh', true),
     start: () => voice('start', true)
   };
+  // 모든 버튼에 가벼운 틱(눌림 확인용). 비활성 버튼은 소리 없음 → 눌러도 안 되는 버튼을 구분할 수 있음
+  document.addEventListener('pointerdown', e => { const b = e.target && e.target.closest && e.target.closest('button'); if (!b || b.disabled || muted) return; tickT = Date.now(); try { S.tick(); } catch (x) {} }, true);
   function synthHit() { tone('sine', 180, 50, 0.16, 0.8); noise(0.08, 0.6, 1500, 400); }
   G.sfx = {
     play: function (n) { if (muted || !S[n]) return; try { S[n](); } catch (e) {} },
     isMuted: () => muted,
     toggle: function () { muted = !muted; try { localStorage.setItem('gaia_mute', muted ? '1' : '0'); } catch (e) {} if (muted) { ambOff(); bplay = null; breq++; bgmHalt(); } else { ambOn(); bgmGo(); } return muted; },
     bgm: bgmSet,
+    bgmGet: () => bwant,
     unlock: function () { const c = ac(); preload(); sPreload(); if (bwant && !bnode) { bplay = null; bgmGo(); } return c; }
   };
 })();

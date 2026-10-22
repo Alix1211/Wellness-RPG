@@ -387,6 +387,48 @@
       fxAdd(el, 2000);
     }
   }
+  // ── 오버스러운 연출: 케인 스티커 그림(ui/fx) + 불꽃·하트·물방울이 튕기며 터짐 ──
+  const FXN = { zzak: '02', chalssak: '01', kwang: '03', peng: '04', flash: '05', crash: '06', flinch: '07', startle: '08', throb: '09', bbong: '10', clatter: '11', whoosh: '12', ah: '13', oh: '14', gasp: '15', what: '16', bang3: '17', chalchal: '18', burstR: '19', burstW: '20', bolt: '21', spark: '22', heartB: '23', lines: '24' };
+  const fxSrc = k => window.GAIA_IMG ? (window.GAIA_IMG['ui/fx/fx-' + FXN[k] + '.webp'] || '') : '../assets/gaia-detective/ui/fx/fx-' + FXN[k] + '.webp';
+  function sticker(where, key, scale, delay) {
+    const p = pos(where), el = document.createElement('img'); el.className = 'stk'; el.alt = ''; el.src = fxSrc(key);
+    el.style.width = ((13 + Math.random() * 4) * (scale || 1) * vh()) + 'px'; el.style.left = (p.x + (Math.random() * 7 - 3.5) * vh()) + 'px'; el.style.top = (p.y - (2 + Math.random() * 4) * vh()) + 'px';
+    el.style.setProperty('--r', (Math.random() * 30 - 15) + 'deg'); if (delay) el.style.animationDelay = delay + 'ms'; fxAdd(el, 1000 + (delay || 0));
+  }
+  // 포물선(중력)으로 날아가다 바닥에서 한 번 튕김
+  function shoot(el, dx, dy, g, dur, spin, floor) {
+    const kf = [];
+    for (let i = 0; i <= 14; i++) { const t = i / 14; let y = dy * t + g * t * t; if (floor != null && y > floor) y = floor - (y - floor) * 0.45; kf.push({ transform: 'translate(' + (dx * t) + 'px,' + y + 'px) rotate(' + (spin * t) + 'deg) scale(' + (1 - 0.3 * t) + ')', opacity: t > 0.72 ? (1 - t) / 0.28 : 1, offset: t }); }
+    el.animate(kf, { duration: dur, easing: 'linear', fill: 'forwards' });
+  }
+  function pop(where, power, drops) {
+    const p = pos(where), u = vh(), f = $('fx'), pw = power || 1;
+    for (let i = 0; i < Math.round(8 + 6 * pw); i++) { // 불꽃: 사방으로 뻗는 줄기
+      const el = document.createElement('i'); el.className = 'spk'; el.style.left = p.x + 'px'; el.style.top = p.y + 'px';
+      const a = Math.random() * 360, r = (7 + Math.random() * 12) * u * (0.7 + pw * 0.18), kf = [];
+      for (let k = 0; k <= 8; k++) { const t = k / 8; kf.push({ transform: 'rotate(' + a + 'deg) translateY(' + (-r * (0.25 + t * 0.75)) + 'px) scaleY(' + (1.1 - t * 0.9) + ')', opacity: t > 0.6 ? (1 - t) / 0.4 : 1, offset: t }); }
+      el.animate(kf, { duration: 420 + Math.random() * 260, easing: 'ease-out', fill: 'forwards' }); fxAdd(el, 800);
+    }
+    const src = G.icons && G.icons.src('heart');
+    for (let i = 0; i < Math.round(3 + 3 * pw); i++) { // 하트: 크게 튀어 오름
+      const el = document.createElement('div'); el.className = 'hpp'; const sz = (2.4 + Math.random() * 2.6) * u; el.style.width = el.style.height = sz + 'px'; el.style.left = (p.x - sz / 2) + 'px'; el.style.top = (p.y - sz / 2) + 'px';
+      el.innerHTML = src ? '<img alt="" src="' + src + '">' : '💖'; shoot(el, (Math.random() * 2 - 1) * 14 * u, -(7 + Math.random() * 9) * u, (12 + Math.random() * 8) * u, 900 + Math.random() * 400, Math.random() * 120 - 60); fxAdd(el, 1400);
+    }
+    for (let i = 0; i < Math.round((drops ? 9 : 5) + 4 * pw); i++) { // 물방울: 펑펑 튀고 바닥에서 튕김
+      const el = document.createElement('i'); el.className = 'drp'; el.style.left = p.x + 'px'; el.style.top = p.y + 'px'; const s0 = 0.7 + Math.random() * 0.9; el.style.scale = s0;
+      shoot(el, (Math.random() * 2 - 1) * 16 * u, -(6 + Math.random() * 10) * u, (14 + Math.random() * 10) * u, 800 + Math.random() * 500, Math.random() * 40 - 20, 9 * u); fxAdd(el, 1400);
+    }
+  }
+  // 화면 아래에서 물방울·하트가 분수처럼 펑펑 솟음(절정용)
+  function fountain(n) {
+    const W = $('field').clientWidth, H = $('field').clientHeight, u = vh(), src = G.icons && G.icons.src('heart');
+    for (let i = 0; i < n; i++) {
+      const heart = i % 4 === 0, el = document.createElement(heart ? 'div' : 'i'); el.className = heart ? 'hpp' : 'drp'; const x = Math.random() * W;
+      if (heart) { const sz = (2.6 + Math.random() * 2.4) * u; el.style.width = el.style.height = sz + 'px'; el.innerHTML = src ? '<img alt="" src="' + src + '">' : '💖'; } else el.style.scale = 0.8 + Math.random();
+      el.style.left = x + 'px'; el.style.top = (H * 0.95) + 'px'; el.style.animationDelay = '0s';
+      setTimeout(() => { shoot(el, (Math.random() * 2 - 1) * 8 * u, -(H * (0.4 + Math.random() * 0.45)), H * 0.55, 1100 + Math.random() * 600, Math.random() * 90 - 45); fxAdd(el, 1900); }, Math.random() * 500);
+    }
+  }
   function softFlash() { const f = $('flash'); f.classList.remove('on', 'soft'); void f.offsetWidth; f.classList.add('soft', 'on'); setTimeout(() => f.classList.remove('soft'), 400); }
   (function () { const f = document.createElement('div'); f.id = 'fog'; f.innerHTML = '<i></i><i></i><i></i><i></i><i></i>'; $('field').insertBefore(f, $('hintBar')); })();
   function fieldShake() { const f = $('field'); f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake'); }
@@ -408,20 +450,20 @@
     for (const e of evs) {
       switch (e.type) {
         case 'play': if (S.p.orgActive && Math.random() < 0.5) heroSay('orgAttack'); else if (!e.line || Math.random() < 0.3) { if (!heroSay('attack')) say(e.line); } else say(e.line); await sleep(160); break;
-        case 'edmg': SFX.play(e.kind === 'reflect' ? 'stat' : 'hit'); if (e.kind !== 'reflect') { comic(HITS[Math.floor(Math.random() * HITS.length)], e.idx); slash(e.idx, e.amount >= 14 ? 2 : 1); impact(e.idx, e.amount >= 14); wind(false); burst(e.idx, ['✨', '💥', '⭐', '💖'], 7, 8); if (e.amount >= 14) { fieldShake(); softFlash(); } } float((e.kind === 'reflect' ? '↩' : '') + e.amount, e.idx, e.kind === 'reflect' ? 'st' : ''); shakeEnemy(e.idx); renderEnemies(); await sleep(150); break;
-        case 'arrest': heroSay('arrest', 0.8); enemySay(e.idx, 'arrested'); SFX.play('arrest'); burst(e.idx, ['⭐', '💖', '✨', '🎀', '💖'], 18, 14); fogPuff(e.idx, 5); impact(e.idx, true); float('체포!', e.idx, 'say'); await sleep(350); break;
+        case 'edmg': SFX.play(e.kind === 'reflect' ? 'stat' : 'hit'); if (e.kind !== 'reflect') { sticker(e.idx, rnd(['zzak', 'chalssak', 'kwang', 'peng', 'crash', 'bbong', 'chalchal']), e.amount >= 14 ? 1.45 : 1); pop(e.idx, e.amount >= 14 ? 2.4 : 1.2); slash(e.idx, e.amount >= 14 ? 2 : 1); impact(e.idx, e.amount >= 14); wind(false); burst(e.idx, ['✨', '💥', '⭐', '💖'], 7, 8); if (e.amount >= 14) { sticker(e.idx, 'flash', 1.6, 60); fieldShake(); softFlash(); } } float((e.kind === 'reflect' ? '↩' : '') + e.amount, e.idx, e.kind === 'reflect' ? 'st' : ''); shakeEnemy(e.idx); renderEnemies(); await sleep(150); break;
+        case 'arrest': heroSay('arrest', 0.8); enemySay(e.idx, 'arrested'); SFX.play('arrest'); burst(e.idx, ['⭐', '💖', '✨', '🎀', '💖'], 18, 14); fogPuff(e.idx, 5); impact(e.idx, true); sticker(e.idx, rnd(['kwang', 'flash', 'bang3']), 1.6); sticker(e.idx, 'spark', 1.3, 120); pop(e.idx, 3.2); float('체포!', e.idx, 'say'); await sleep(350); break;
         case 'block': heroSay('block', 0.25); SFX.play('block'); burst('heroCenter', ['🛡️', '✨'], 4, 6); impact('heroCenter'); float('🛡+' + e.amount, 'heroCenter', 'blk'); break;
-        case 'stat': if (e.stat === 'dopa' && S.p.dopa >= 70 && !dopaSaid && !S.p.orgActive) { dopaSaid = true; heroSay('dopa70'); } SFX.play(e.stat === 'dopa' ? 'dopa' : e.stat === 'tight' ? 'tight' : 'stat'); burst('heroCenter', e.stat === 'dopa' ? ['💗', '✨'] : e.stat === 'tight' ? ['💜', '✨'] : ['💧', '✨'], 5, 7); float((e.stat === 'dopa' ? '도파민' : e.stat === 'tight' ? '조임력' : '윤활도') + ' +' + e.amount, 'heroCenter', 'dopa'); break;
-        case 'heal': SFX.play('heal'); burst('heroCenter', ['💚', '✨'], 6, 8); float('+' + e.amount, 'heroCenter', 'heal'); break;
+        case 'stat': if (e.stat === 'dopa' && S.p.dopa >= 70 && !dopaSaid && !S.p.orgActive) { dopaSaid = true; heroSay('dopa70'); } SFX.play(e.stat === 'dopa' ? 'dopa' : e.stat === 'tight' ? 'tight' : 'stat'); burst('heroCenter', e.stat === 'dopa' ? ['💗', '✨'] : e.stat === 'tight' ? ['💜', '✨'] : ['💧', '✨'], 5, 7); if (e.stat === 'dopa') { sticker('heroCenter', 'throb', .9); pop('heroCenter', 1.1); } else if (e.stat === 'tight') sticker('heroCenter', 'bolt', .8); else pop('heroCenter', 1.4, true); float((e.stat === 'dopa' ? '도파민' : e.stat === 'tight' ? '조임력' : '윤활도') + ' +' + e.amount, 'heroCenter', 'dopa'); break;
+        case 'heal': SFX.play('heal'); sticker('heroCenter', 'spark', .9); burst('heroCenter', ['💚', '✨'], 6, 8); float('+' + e.amount, 'heroCenter', 'heal'); break;
         case 'status': float(e.what, e.idx, 'st'); break;
         case 'pdmg':
           if (e.self) { float('-' + e.amount, 'heroCenter'); break; }
           if (e.idx != null) { const img = $('heroImg'); const hp = e.amount >= 14 ? 'fly' : 'cry'; heroOverride = hp; $('heroImg').src = heroSrc(hp); img.classList.remove('hit'); void img.offsetWidth; img.classList.add('hit'); }
-          enemySay(e.idx, 'attack', 0.7); SFX.play('hurt'); if (!lowSaid && S.p.hp / S.p.maxHp <= 0.3) { lowSaid = true; setTimeout(() => { SFX.play('low'); heroSay('lowHp'); }, 700); } else if (Math.random() < 0.4) setTimeout(() => heroSay('hit'), 450); if (!e.blocked) { comic(HURT[Math.floor(Math.random() * HURT.length)], 'heroCenter'); } slash('heroCenter', 1, true); wind(true, 7); fieldShake(); float(e.blocked ? '-' + e.amount + ' (🛡' + e.blocked + ')' : '-' + e.amount, 'heroCenter'); await sleep(320); break;
-        case 'disgust': heroSay(Math.random() < 0.5 ? 'kicked' : 'disgust', 0.7); SFX.play('disgust'); burst(e.idx, ['💦', '😑'], 5, 7); float('질림… 공격 취소!', e.idx, 'st'); await sleep(350); break;
+          enemySay(e.idx, 'attack', 0.7); SFX.play('hurt'); if (!lowSaid && S.p.hp / S.p.maxHp <= 0.3) { lowSaid = true; setTimeout(() => { SFX.play('low'); heroSay('lowHp'); }, 700); } else if (Math.random() < 0.4) setTimeout(() => heroSay('hit'), 450); if (!e.blocked) { sticker('heroCenter', rnd(['ah', 'oh', 'gasp', 'startle', 'flinch', 'what']), 1); pop('heroCenter', 1.6, true); } slash('heroCenter', 1, true); wind(true, 7); fieldShake(); float(e.blocked ? '-' + e.amount + ' (🛡' + e.blocked + ')' : '-' + e.amount, 'heroCenter'); await sleep(320); break;
+        case 'disgust': heroSay(Math.random() < 0.5 ? 'kicked' : 'disgust', 0.7); SFX.play('disgust'); burst(e.idx, ['💦', '😑'], 5, 7); pop(e.idx, 1.6, true); float('질림… 공격 취소!', e.idx, 'st'); await sleep(350); break;
         case 'fleeFail': float('봉쇄! 못 도망쳐', e.idx, 'st'); await sleep(350); break;
         case 'flee': enemySay(e.idx, 'flee'); heroSay('fleeMissed', 0.8); SFX.play('flee'); float('도주!', e.idx, 'say'); await sleep(300); break;
-        case 'orgasm': heroSay('orgasm'); SFX.play('orgasm'); flash(); fogPuff('heroCenter', 9); heartRain(26); wind(false, 12); burst('heroCenter', ['💖', '💗', '✨', '⭐', '🎀'], 30, 24); banner('절정!!', true); await sleep(900); break;
+        case 'orgasm': heroSay('orgasm'); SFX.play('orgasm'); flash(); fogPuff('heroCenter', 9); heartRain(60); wind(false, 12); burst('heroCenter', ['💖', '💗', '✨', '⭐', '🎀'], 52, 26); sticker('heroCenter', 'heartB', 2.2); sticker('heroCenter', 'throb', 1.6, 200); sticker('heroCenter', 'spark', 1.8, 350); pop('heroCenter', 5, true); fountain(36); setTimeout(() => { pop('heroCenter', 4, true); fountain(30); }, 450); banner('절정!!', true); await sleep(900); break;
         case 'orgasmEnd': break;
         case 'token': SFX.play('stat'); float('절정 유도 카드 생성', 'heroCenter', 'st'); break;
         case 'turn': if (enemyPhase) { SFX.play('turn'); banner('TURN ' + e.turn); } break;

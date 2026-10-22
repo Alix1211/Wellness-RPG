@@ -48,6 +48,18 @@ MG='../assets/gaia-detective/minigame/squat_home/'
 for f in ('squat_front_sheet_1650x912.webp','squat_back_sheet_1650x912.webp','ball.webp','stand.png'):
     imgs['minigame/squat_home/'+f]=b64(MG+f,'image/webp' if f.endswith('.webp') else 'image/png')
 for f in ('ph','pp','fs','fo'): imgs['minigame/squat_home/fx/'+f+'.webp']=b64(MG+'fx/'+f+'.webp','image/webp')
+BT='../assets/gaia-detective/minigame/batting_police/'
+for f in sorted(os.listdir(BT)):
+    if f.endswith('.png'): imgs['minigame/batting_police/'+f]=b64(BT+f,'image/png')
+FXD='../assets/gaia-detective/ui/fx/'
+for f in (sorted(os.listdir(FXD)) if os.path.isdir(FXD) else []):
+    if f.endswith('.webp'): imgs['ui/fx/'+f]=b64(FXD+f,'image/webp')
+for k in ('police',):
+    for o in ('port','land'):
+        if os.path.exists(PLACE+k+'_'+o+'.webp'): imgs['place/'+k+'_'+o+'.webp']=b64(PLACE+k+'_'+o+'.webp','image/webp')
+import json as _json
+docs={'batting':open(BT+'game.html',encoding='utf-8').read()}
+docjs='window.GAIA_DOC='+_json.dumps(docs,ensure_ascii=False).replace('</','<\\/')+';\n'
 minid={os.path.splitext(f)[0]:b64(MG+'snd/'+f,'audio/ogg') for f in sorted(os.listdir(MG+'snd'))}
 PUNCH='../assets/audio/freesound_community-face-punch-91909.mp3'
 sfxd={os.path.splitext(f)[0]:b64(SFX+f,'audio/ogg' if f.endswith('.ogg') else 'audio/mpeg') for f in sorted(os.listdir(SFX)) if os.path.isfile(SFX+f)} if os.path.isdir(SFX) else {}
@@ -58,7 +70,7 @@ for sub in ('voice','results','bgm'):
         for f in sorted(os.listdir(STM+sub)):
             if f.endswith('.ogg'): stmd[sub+'/'+f[:-4]]=b64(STM+sub+'/'+f,'audio/ogg')
 snd='window.GAIA_SND={"punch":"%s","sfx":{%s},"mini":{%s},"stm":{%s}};\n'%(b64(PUNCH,'audio/mpeg') if os.path.exists(PUNCH) else '', ','.join('"%s":"%s"'%(k,v) for k,v in sfxd.items()), ','.join('"%s":"%s"'%(k,v) for k,v in minid.items()), ','.join('"%s":"%s"'%(k,v) for k,v in stmd.items()))
-pre=snd+'window.GAIA_IMG={'+','.join('"%s":"%s"'%(k,v) for k,v in sorted(imgs.items()))+'};\n'
+pre=snd+docjs+'window.GAIA_IMG={'+','.join('"%s":"%s"'%(k,v) for k,v in sorted(imgs.items()))+'};\n'
 for m in re.finditer(r'<script src="([^"]+)"></script>',html):
     s=open(m.group(1),encoding='utf-8').read()
     if m.group(1)=='data/config.js': s=pre+s
