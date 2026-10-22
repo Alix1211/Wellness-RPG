@@ -11,6 +11,7 @@
   const heroSrc = k => A.base + A.hero[k];
   const bgSrc = n => window.GAIA_IMG ? (window.GAIA_IMG['bg/' + n] || '') : A.bgBase + n;
   const cardFrame = () => window.GAIA_IMG ? (window.GAIA_IMG['ui/card/frame.webp'] || '') : '../assets/gaia-detective/ui/card/frame.webp';
+  const cardBack = () => window.GAIA_IMG ? (window.GAIA_IMG['ui/card/back.webp'] || '') : '../assets/gaia-detective/ui/card/back.webp';
   const cardImg = id => window.GAIA_IMG ? (window.GAIA_IMG['cards/' + id + '.webp'] || '') : A.cardArt + id + '.webp';
   const sprite = e => A.base + e.def.sprite + '.png';
 
@@ -54,6 +55,7 @@
     $('field').classList.toggle('orgmode', p.orgActive);
     renderEnemies();
     renderHand();
+    document.querySelectorAll('.pback').forEach(i => { if (!i.getAttribute('src')) i.src = cardBack(); });
     $('nDraw').textContent = S.drawPile.length; $('nDisc').textContent = S.discard.length;
     $('nExh').textContent = S.exhaust.length ? '소멸 ' + S.exhaust.length : '';
     hyd();
@@ -135,7 +137,7 @@
     el.innerHTML = '<div class="art" style="background:' + artColor(d) + '"><img alt="" draggable="false" onerror="this.remove()" src="' + cardImg(d.id) + '"><span>' + d.folder + '</span></div>' +
       '<img class="frame" alt="" draggable="false" src="' + cardFrame() + '">' +
       '<div class="cost' + (cost < d.cost ? ' dc' : '') + '">' + cost + '</div>' +
-      '<div class="cname n' + (nm > 9 ? 3 : nm > 6 ? 2 : 1) + '">' + d.name + '</div>' +
+      '<div class="cname n' + (nm > 10 ? 4 : nm > 8 ? 3 : nm > 6 ? 2 : 1) + '">' + d.name + '</div>' +
       '<div class="ctag">' + d.type + (d.exhaust ? ' · 소멸' : '') + '</div>' +
       '<div class="ctext t' + (tl > 30 ? 3 : tl > 18 ? 2 : 1) + '"><span>' + d.text + '</span></div>';
     return el;
