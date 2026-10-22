@@ -6,10 +6,10 @@
   const rnd = a => a[Math.floor(Math.random() * a.length)];
   let run = null;
 
-  function fresh() { return { v: 1, deck: C.starterDeck.slice(), hp: C.player.maxHp, gold: 0, items: [], wl: 0, lap: 1, step: 0, fi: 0, cleared: [] }; }
+  function fresh() { return { v: 1, deck: C.starterDeck.slice(), hp: C.player.maxHp, gold: 0, items: [], equip: [], wl: 0, lap: 1, step: 0, fi: 0, cleared: [] }; }
   function load() { try { const r = JSON.parse(localStorage.getItem(KEY)); if (r && r.v === 1 && Array.isArray(r.deck)) return r; } catch (e) {} return null; }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(run)); } catch (e) {} }
-  run = load() || fresh();
+  run = load() || fresh(); run.equip = run.equip || []; run.items = run.items || []; run.gold = run.gold || 0;
 
   const cur = () => F.steps[run.step];
   function spotInfo(id) {
@@ -43,7 +43,7 @@
   }
   function fight() {
     const c = cur(), enc = G.encounters.find(e => e.id === c.fights[run.fi]);
-    G.map.close(); G.ui.start(enc.id, { run: true, deck: run.deck, hp: run.hp, wl: run.wl });
+    G.map.close(); G.ui.start(enc.id, { run: true, deck: run.deck, hp: run.hp, wl: run.wl, relics: run.equip });
   }
   function encKind(S) { return S.enemies.some(e => e.kind === 'boss') ? 'boss' : S.enemies.some(e => e.kind === 'elite') ? 'elite' : 'normal'; }
 
@@ -66,19 +66,36 @@
 
   function onEnd(S) {
     run.hp = Math.max(1, S.p.hp);
+    if (S.result.win && S.rel && S.rel.healAfter) run.hp = Math.min(C.player.maxHp, run.hp + S.rel.healAfter);
     if (!S.result.win) {
       save();
       return panel({ title: '수사 실패…', msg: S.result.reason + ' — 경찰서로 후송됩니다.', buttons: [{ text: '경찰서로', fn: () => { closePanel(); defeat(); } }] });
     }
     save();
     if (!S.result.reward) return afterFight();
-    const kind = encKind(S), list = rewardCards(kind);
+    const kind = encKind(S), list = rewardCards(kind), loot = lootText(grantLoot(kind, S));
     const row = cardRow(list, kFor(list.length), d => {
       run.deck.push(d.id); save(); closePanel(); afterFight();
     });
-    panel({ title: '보상 카드 선택', msg: '한 장을 덱에 넣습니다 (덱 ' + run.deck.length + '장)', cardsEl: row,
+    panel({ title: '보상 카드 선택', msg: loot + '한 장을 덱에 넣습니다 (덱 ' + run.deck.length + '장)', cardsEl: row,
       buttons: [{ text: '넘기기', fn: () => { closePanel(); afterFight(); } }] });
   }
+  // ── 용돈·아이템 획득 (임시 수치) ──
+  const IT = () => G.items.list;
+  function pickItem(types, tiers) { const pool = IT().filter(d => types.indexOf(d.type) >= 0 && d.src.indexOf('drop') >= 0 && (!tiers || d.type !== 'relic' || tiers.indexOf(d.tier) >= 0)); return pool.length ? rnd(pool) : null; }
+  function grantLoot(kind, S) {
+    const base = { normal: 12, elite: 32, boss: 80 }[kind] * (1 + 0.1 * run.wl);
+    const bonus = 1 + ((S.rel && S.rel.goldPlus) || 0) / 100;
+    const gold = Math.round(base * (0.8 + Math.random() * 0.4) * bonus); run.gold += gold;
+    let it = null, r = Math.random();
+    if (kind === 'normal') { if (r < 0.35) it = pickItem(r < 0.1 ? ['cons'] : ['junk']); }
+    else if (kind === 'elite') it = pickItem(r < 0.4 ? ['cons'] : r < 0.8 ? ['relic'] : ['junk'], [1, 2]);
+    else it = pickItem(['relic'], [2, 3]);
+    let full = false;
+    if (it) { if (run.items.length < G.items.slots) run.items.push(it.id); else { full = true; } }
+    save(); return { gold: gold, item: it, full: full };
+  }
+  const lootText = g => '용돈 +' + g.gold + '원' + (g.item ? (g.full ? ' · ' + g.item.name + '(소지품이 가득 차 놓침)' : ' · 획득: ' + g.item.name) : '') + '\n';
   function afterFight() {
     const c = cur(); run.fi++;
     if (run.fi < c.fights.length) { save(); return fight(); }

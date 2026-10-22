@@ -59,7 +59,7 @@
   // 드래그 이동 / 탭 선택
   let dn = null;
   root.addEventListener('pointerdown', e => {
-    if (e.target.closest('#mapCard')) return;
+    if (e.target.closest('#mapCard') || e.target.closest('#mapBag')) return;
     dn = { x: e.clientX, y: e.clientY, ox: ox, oy: oy, moved: false, spot: (e.target.closest('.spot') || {}).dataset ? e.target.closest('.spot').dataset.id : null };
     try { root.setPointerCapture(e.pointerId); } catch (x) {}
   });
@@ -99,5 +99,5 @@
     const h = $('mapHint'); h.classList.remove('fade'); void h.offsetWidth; h.classList.add('fade');
   }
   window.addEventListener('resize', () => { if (!root.classList.contains('hidden')) { layout(); } });
-  G.map.open = open; G.map.close = () => root.classList.add('hidden');
+  G.map.refresh = refresh; G.map.open = open; G.map.close = () => root.classList.add('hidden');
 })();

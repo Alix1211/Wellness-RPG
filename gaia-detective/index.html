@@ -24,7 +24,7 @@
     <div class="hudbox stat"><div class="bar tight"><span class="trk"><i id="tightFill"></i></span><b id="tightTxt"></b></div></div>
     <div class="hudbox stat"><div class="bar lube"><span class="trk"><i id="lubeFill"></i></span><b id="lubeTxt"></b></div></div>
     <div class="hudbox" id="turnBox"><span class="ico ic" data-ic="turn">TURN</span><b id="turnNo">1</b></div>
-    <button id="muteBtn" title="소리">🔊</button><button id="devBtn" title="개발용"><span class="ic" data-ic="settings">⚙</span></button>
+    <button id="bagBtn" class="bagbtn">가방</button><button id="muteBtn" title="소리">🔊</button><button id="devBtn" title="개발용"><span class="ic" data-ic="settings">⚙</span></button>
   </div>
 
   <div class="pile" id="pileDraw"><span class="ic" data-ic="pile_draw">🂠</span><b id="nDraw">0</b><span class="pl">뽑을 카드</span></div>
@@ -36,6 +36,7 @@
   <div id="map" class="hidden">
     <div id="mapPan"></div>
     <div id="mapInfo"><span class="s1"></span><span class="s2"></span><span class="s3"></span></div>
+    <button id="mapBag" class="bagbtn">가방</button>
     <div id="mapHint">손가락으로 밀어서 지도를 움직이세요</div>
     <div id="mapCard" class="hidden"><b id="mcName"></b><span id="mcSub"></span><div class="row"><button id="mcClose">닫기</button><button id="mcGo">출동</button></div></div>
   </div>
@@ -48,6 +49,7 @@
     <button id="devStart">시작</button>
     <div class="row"><button data-dev="dopa30">도파민 +30</button><button data-dev="dopa100">도파민 100</button><button data-dev="tight10">조임력 +10</button><button data-dev="lube50">윤활도 +50</button></div>
     <button id="devReset">런 초기화(새로 시작)</button>
+    <button id="devItems">아이템 6개 받기(시험용)</button>
     <label>손패에 추가 <select id="devCard"></select></label>
     <button id="devAdd">추가</button>
   </div>
@@ -67,6 +69,7 @@
 <script src="js/sfx.js"></script>
 <script src="js/run.js"></script>
 <script src="js/map.js"></script>
+<script src="js/inv.js"></script>
 <script src="js/ui.js"></script>
 </body>
 </html>

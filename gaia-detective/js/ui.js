@@ -25,7 +25,7 @@
     opts = opts || {}; runMode = !!opts.run;
     encId = id || encId;
     const enc = G.encounters.find(x => x.id === encId);
-    S = G.newBattle({ enemies: enc.enemies, deck: opts.deck, hp: opts.hp, wl: opts.wl });
+    S = G.newBattle({ enemies: enc.enemies, deck: opts.deck, hp: opts.hp, wl: opts.wl, relics: opts.relics });
     selUid = null; busy = false; heroOverride = null; lowSaid = false; dopaSaid = false;
     $('overlay').classList.add('hidden');
     curBg = enc.bg || A.bg[(bgN++) % A.bg.length]; applyBg();
@@ -458,7 +458,14 @@
   const mb = $('muteBtn'); const setMb = () => { mb.innerHTML = SFX.isMuted() ? ic('sound_off', '🔇') : ic('sound_on', '🔊'); hyd(); }; setMb();
   mb.addEventListener('click', () => { SFX.toggle(); setMb(); SFX.play('click'); });
   document.addEventListener('pointerdown', () => SFX.unlock(), { once: true });
-  window.GAIA.ui = { start: start, cardEl: cardEl, state: () => S, render: () => render() };
+  // 소모품 사용: 엔진이 허락(내 턴·전투 중)하면 소지품에서 1개 빼고 화면을 갱신
+  function useItem(id) {
+    if (!S || busy || !G.useItem(S, id)) return false;
+    const r = G.run.get(), i = r.items.indexOf(id); if (i >= 0) r.items.splice(i, 1); G.run.save();
+    SFX.play('click'); float(G.items.byId[id].name, 'heroCenter', 'st'); render(); return true;
+  }
+  const bagB = $('bagBtn'); if (bagB) bagB.addEventListener('click', () => { SFX.play('click'); G.inv.open({ battle: !!(S && runMode && !S.result) }); });
+  window.GAIA.ui = { start: start, cardEl: cardEl, state: () => S, render: () => render(), useItem: useItem };
   const q = new URLSearchParams(location.search);
   $('ovMap').addEventListener('click', () => { $('overlay').classList.add('hidden'); G.map.open(); });
   if (q.get('enc')) start(q.get('enc')); else G.map.open();

@@ -292,3 +292,14 @@
 - 적용: gauge_hp/dopa/tight/lube(HUD 게이지, 채움은 `.trk i` 코드), btn_end(턴 종료), enemy_plate(적 이름·체력), intent_plate(공격 의도)·intent_claw(다단 공격), stamp(체포 도장, `.stamp.art`), popup(보상·결과 팝업)+plate_title(팝업 제목), btn_pink/btn_purple(팝업·지도 카드 버튼), popup_map(지도 건물 카드, `--w` 단위로 배치), tag_open/tag_lock(지도 이름표), info3(지도 Lv·체력·덱 3칸), hint(안내 말풍선: 지도·전투 힌트).
 - 미사용: btn_plus(용도 미정), btn_pink2, pile_draw(skin판; 기존 ui/icons의 파일 아이콘+카운트 배지 유지), 카드 뒷면.
 - 여전히 코드로 그린 것: 버프·도주 의도 판, 상태 칩, 배너 글자, 게이지 채움, '놓침…' 도장.
+
+
+### 인벤·스탯 창 + 아이템 (케인 제작 그림 적용)
+- 그림: `assets/gaia-detective/ui/items/{a,b,c}NN.webp` 64종(시트 3장을 오린 것), 창 틀 `ui/skin/inv_frame.webp`(캐릭터 그림 포함, 그대로 사용). 빌드가 `ui/items/`를 임베드.
+- 데이터: `data/items.js` — 유물(착용 최대 6, 패시브 23종) / 소모품(전투 중 사용 10종) / 잡템(효과 없음 31종). 이름·가격·효과는 Claude가 임시로 정함(케인 위임). `src` 필드에 얻는 곳(drop/mart/casino/slot) 표시. 파는 값은 사는 값의 절반.
+- 케인이 어제 정한 흐름: 몹 드롭·마트·카지노 상점(사고팔기)·슬롯 경품(잡템 위주). **마트·카지노·슬롯 화면은 아직 없음**(다음 단계).
+- 창: `js/inv.js` — `G.inv.open({battle})`. 지도 우상단 '가방', 전투 HUD '가방' 버튼. 전투 중에는 소모품 사용만 가능, 착용 변경·버리기는 회색. 지도에서는 체력 회복 소모품만 사용 가능. 버리기는 2번 눌러야 함.
+- 엔진: `newBattle({relics})`가 유물 효과 합산(S.rel: startBlock/startTight/startLube/startDopa/strPlus/drawPlus/energyPlus 즉시 반영, healAfter/goldPlus는 run.js 보상에서 사용). `G.useItem(S,id)`가 소모품 효과(heal/block/dopa/tight/lube/energy/draw/vulnAll) 적용.
+- 런 데이터: `run.items`(소지품 20칸), `run.equip`(착용), `run.gold`. 보상 때 용돈(일반 12/엘리트 32/보스 80, 월드레벨 +10%/바퀴) + 아이템 드롭(일반 35%, 엘리트 100%, 보스 유물 확정) — 임시 수치.
+- 개발 패널에 '아이템 6개 받기(시험용)' 추가.
+- 남은 것: 마트·카지노·슬롯 화면, 인벤 창 안 스탯 표시 확장, 효과 수치 밸런스.

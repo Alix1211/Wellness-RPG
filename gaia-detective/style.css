@@ -361,3 +361,28 @@ body.dragging{cursor:grabbing}
 #mapCard #mcClose{border-image:var(--sk-btn_purple) 0 60 fill / 0 calc(var(--w)*5.5) stretch}
 #mapCard span{width:100%;text-align:center;word-break:keep-all}
 #mapCard{padding:0 calc(var(--w)*9)}
+
+/* ===== 인벤·스탯 창 ===== */
+#panel p{white-space:pre-line}
+.bagbtn{border:solid transparent;border-width:0 1.8vh;border-image:var(--sk-btn_purple) 0 60 fill / 0 1.8vh stretch;background:none;height:4.4vh;padding:0;color:#fff;font-weight:900;font-size:1.9vh;text-shadow:0 .2vh .3vh rgba(110,70,170,.8);filter:drop-shadow(0 .3vh .4vh rgba(40,10,30,.5));white-space:nowrap}
+#bagBtn{order:3}
+#mapBag{position:absolute;top:1.6vh;right:1.6vh;z-index:3}
+#inv{position:absolute;inset:0;z-index:50;background:rgba(60,20,50,.62);display:flex;align-items:center;justify-content:center}
+.invwin{--iw:min(96vw,125vh);position:relative;width:var(--iw);aspect-ratio:1448/1086;background:var(--sk-inv_frame) center/100% 100% no-repeat;font-size:calc(var(--iw)/100);filter:drop-shadow(0 1vh 2vh rgba(20,5,20,.55))}
+.invtitle{position:absolute;left:25.2%;top:9.4%;width:57.6%;height:9.6%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:3.4em;color:var(--ink)}
+.invx{position:absolute;left:87.6%;top:7.6%;width:9%;height:12.5%;cursor:pointer}
+.isl{position:absolute;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:12%}
+.isl img{width:86%;height:86%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 .3em .3em rgba(110,50,80,.35))}
+.isl.on{box-shadow:0 0 0 .35em #ff4fa8,0 0 1.6em .3em rgba(255,79,168,.8);background:rgba(255,220,235,.55)}
+.istat{position:absolute;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:3.2em;color:#fff;text-shadow:0 .08em .12em rgba(120,40,80,.75),0 0 .2em rgba(120,40,80,.6);white-space:nowrap}
+.istat.s2{text-shadow:0 .08em .12em rgba(20,100,70,.75),0 0 .2em rgba(20,100,70,.6)}
+.istat.s3{color:#8a5a2a;text-shadow:none}
+.itip{position:absolute;z-index:3;width:36%;padding:1.6em 2.4em 2em 3em;display:flex;flex-direction:column;gap:.5em;text-align:center;background:none;border:solid transparent;border-width:2.6em 4.4em 2.8em 6em;border-image:var(--sk-hint) 45 80 45 130 fill / 2.6em 4.4em 2.8em 6em stretch;color:var(--ink);filter:drop-shadow(0 .4em .5em rgba(60,20,40,.4))}
+.itip{padding:0}
+.itip b{font-size:3em}.itip em{font-style:normal;font-size:2em;color:#a0587f}.itip span{font-size:2.3em;font-weight:700;line-height:1.25}
+.itip .row{display:flex;gap:1em;justify-content:center;margin-top:.8em}
+.itip button{border:solid transparent;border-width:0 2em;border-image:var(--sk-btn_pink) 0 60 fill / 0 2em stretch;background:none;height:4.6em;padding:0;color:#fff;font-weight:900;font-size:2.3em;text-shadow:0 .1em .15em rgba(150,30,80,.75);white-space:nowrap}
+.itip button.pu{border-image:var(--sk-btn_purple) 0 60 fill / 0 2em stretch}
+.itip button:disabled{filter:grayscale(1) opacity(.55)}
+@media (orientation:portrait){ .invwin{--iw:96vw} #bagBtn{order:4;margin-left:0} }
+#panel h2,#overlay h2{padding:1.4vh 0 0}

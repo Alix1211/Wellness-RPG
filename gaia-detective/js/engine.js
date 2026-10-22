@@ -23,6 +23,9 @@
            orgCd: false, orgActive: false, energy: 0, overclock: false, ocMade: 0, firstUsed: false },
       drawPile: [], hand: [], discard: [], exhaust: [], enemies: [], turn: 0, phase: 'player', events: [], result: null
     };
+    // 유물(착용품) 효과 합산 — 전투 시작 보정·매 턴 보정
+    const rel = {}; (opts.relics || []).forEach(id => { const d = G.items && G.items.byId[id]; if (d && d.type === 'relic') Object.keys(d.fx).forEach(k => { rel[k] = (rel[k] || 0) + d.fx[k]; }); });
+    S.rel = rel; S.p.str = rel.strPlus || 0; S.p.dopa = Math.min(C.dopamine.max, rel.startDopa || 0); S.p.tight = Math.min(C.tight.max, rel.startTight || 0); S.p.lube = Math.min(C.lube.max, rel.startLube || 0);
     (opts.deck || C.starterDeck).forEach(id => S.drawPile.push(mk(id)));
     shuffle(S.drawPile);
     (opts.enemies || ['barbari']).forEach(id => {
@@ -33,6 +36,7 @@
       setIntent(e);
     });
     startPlayerTurn(S);
+    if (rel.startBlock) S.p.block += rel.startBlock;
     return S;
   };
 
@@ -63,11 +67,26 @@
     p.orgActive = false;
     if (p.orgCd) { p.orgCd = false; }                           // 절정 직후 한 턴은 재발동 불가
     else if (p.dopa >= C.dopamine.max) { p.orgActive = true; p.orgCd = true; ev(S, { type: 'orgasm' }); }
-    p.energy = C.player.energy + (p.orgActive ? C.orgasm.energyBonus : 0);
+    p.energy = C.player.energy + (p.orgActive ? C.orgasm.energyBonus : 0) + (S.rel.energyPlus || 0);
     p.ocMade = 0; p.firstUsed = false;
-    drawCards(S, C.player.draw + (p.lube >= C.lube.drawThreshold ? 1 : 0));
+    drawCards(S, C.player.draw + (p.lube >= C.lube.drawThreshold ? 1 : 0) + (S.rel.drawPlus || 0));
     ev(S, { type: 'turn', turn: S.turn });
   }
+
+  // ── 소모품 사용 (전투 중, 내 턴에만) ──
+  G.useItem = function (S, id) {
+    const d = G.items.byId[id]; if (!d || d.type !== 'cons' || S.phase !== 'player' || S.result) return false;
+    const p = S.p, f = d.fx;
+    if (f.heal) p.hp = Math.min(p.maxHp, p.hp + f.heal);
+    if (f.block) p.block += f.block;
+    if (f.dopa) p.dopa = Math.min(C.dopamine.max, p.dopa + f.dopa);
+    if (f.tight) p.tight = Math.min(C.tight.max, p.tight + f.tight);
+    if (f.lube) p.lube = Math.min(C.lube.max, p.lube + f.lube);
+    if (f.energy) p.energy += f.energy;
+    if (f.draw) drawCards(S, f.draw);
+    if (f.vulnAll) alive(S).forEach(e => { e.vuln += f.vulnAll; });
+    return true;
+  };
 
   // ── 카드 사용 가능 여부·비용 ──
   G.cost = function (S, card) {
