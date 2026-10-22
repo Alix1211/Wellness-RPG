@@ -29,21 +29,22 @@
     if (!enabled || document.hidden) return false;
     pri = Math.max(0, Math.min(3, pri | 0)); const t = now();
     if (!force && t < holdUntil && pri <= holdPri) return false;
-    if (!force && pri === 0 && t - last < 90) return false;
+    if (!force && pri === 0 && t - last < 120) return false;
     if (!raw(p)) return false;
     last = t; holdPri = pri; holdUntil = t + dur; return true;
   }
   function stop() { holdUntil = 0; holdPri = -1; try { if (root.GaiaBridge) root.GaiaBridge.vibrate('0'); if (navigator.vibrate) navigator.vibrate(0); } catch (e) {} return true; }
   function set(v) { enabled = !!v; try { localStorage.setItem(KEY, enabled ? '1' : '0'); } catch (e) {} if (!enabled) stop(); return enabled; }
+  // 포코 모터는 짧고 약한 신호에 반응하지 않아 전부 길고 세게 준다(케인 확인: 센 진동만 울림).
   const fx = {
-    tick: () => request([9], 0),
-    hit: () => request([30], 1),
-    bigHit: () => request([45, 30, 70], 1),
-    hurt: () => request([55, 45, 55], 2),
-    heavyHurt: () => request([80, 40, 80, 40, 120], 2),
-    arrest: () => request([35, 40, 35, 40, 140], 2),
-    orgasm: () => request([90, 60, 90, 60, 160, 70, 420], 3),
-    victory: () => request([40, 50, 40, 50, 200], 2)
+    tick: () => request([35], 0),
+    hit: () => request([90], 1),
+    bigHit: () => request([120, 40, 180], 1),
+    hurt: () => request([170, 50, 170], 2),
+    heavyHurt: () => request([240, 60, 240, 60, 320], 2),
+    arrest: () => request([130, 50, 130, 50, 380], 2),
+    orgasm: () => request([220, 80, 220, 80, 360, 100, 900], 3),
+    victory: () => request([130, 60, 130, 60, 420], 2)
   };
   root.GAIA_HAPTICS = {
     request, stop, fx, get enabled() { return enabled; }, setEnabled: set,
