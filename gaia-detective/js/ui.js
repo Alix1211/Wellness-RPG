@@ -3,10 +3,11 @@
   const G = window.GAIA, C = G.config, A = G.assets;
   const $ = id => document.getElementById(id);
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-  let S = null, encId = 'e1', selUid = null, busy = false, bgN = 0, heroOverride = null;
+  let S = null, encId = 'e1', selUid = null, busy = false, bgN = 0, heroOverride = null, lowSaid = false;
 
   // ── 이미지 경로 ──
   const heroSrc = k => A.base + A.hero[k];
+  const bgSrc = n => window.GAIA_IMG ? (window.GAIA_IMG['bg/' + n] || '') : A.bgBase + n;
   const cardImg = id => window.GAIA_IMG ? (window.GAIA_IMG['cards/' + id + '.webp'] || '') : A.cardArt + id + '.webp';
   const sprite = e => A.base + e.def.sprite + '.png';
 
@@ -15,13 +16,13 @@
     encId = id || encId;
     const enc = G.encounters.find(x => x.id === encId);
     S = G.newBattle({ enemies: enc.enemies });
-    selUid = null; busy = false; heroOverride = null;
+    selUid = null; busy = false; heroOverride = null; lowSaid = false;
     $('overlay').classList.add('hidden');
-    $('bg').style.backgroundImage = 'url(' + A.base + A.bg[(bgN++) % A.bg.length] + ')';
+    $('bg').style.backgroundImage = 'url(' + bgSrc(enc.bg || A.bg[(bgN++) % A.bg.length]) + ')';
     buildEnemies();
     S.events = [];
     render();
-    banner('수사 개시!');
+    banner('수사 개시!'); SFX.play('start');
   }
 
   // ── 렌더 ──
@@ -100,21 +101,28 @@
   }
   function needsTargetNow() { const c = S.hand.find(h => h.uid === selUid); return c && G.cards[c.id].needsTarget; }
 
+  // 손패: 카드를 최대한 크게(--k), 펼쳐서 겹침 없이. 장수가 많아 자리가 모자랄 때만 줄이고 그래도 모자라면 겹친다.
   function renderHand() {
     const h = $('hand'); h.innerHTML = '';
-    const n = S.hand.length;
+    const n = S.hand.length, vh = innerHeight / 100, avail = Math.max(200, h.clientWidth - 1.5 * vh);
+    const need = k => n * 15.6 * k * vh + Math.max(0, n - 1) * 0.8 * k * vh;
+    let k = 1.2; while (k > 0.95 && need(k) > avail) k = Math.round((k - 0.05) * 100) / 100;
+    document.documentElement.style.setProperty('--k', k);
+    const cw = 15.6 * k * vh; let step = cw + 0.8 * k * vh;
+    if (n > 1 && need(k) > avail) step = (avail - cw) / (n - 1);
     S.hand.forEach((c, i) => {
       const d = G.cards[c.id], chk = G.canPlay(S, c.uid), cost = G.cost(S, c);
       const el = document.createElement('div');
       el.className = 'card t-' + d.type + ' g-' + d.grade + (chk.ok ? '' : ' dis') + (selUid === c.uid ? ' sel' : '');
       const reduced = cost < d.cost;
       el.innerHTML = '<div class="cost' + (reduced ? ' dc' : '') + '">' + cost + '</div><div class="cname">' + d.name + '</div>' +
-        '<div class="art" style="background:' + artColor(d) + '"><img alt="" onerror="this.remove()" src="' + cardImg(d.id) + '"><span>' + d.folder + '</span></div>' +
+        '<div class="art" style="background:' + artColor(d) + '"><img alt="" draggable="false" onerror="this.remove()" src="' + cardImg(d.id) + '"><span>' + d.folder + '</span></div>' +
         '<div class="ctext"><small>' + d.type + (d.exhaust ? ' · 소멸' : '') + '</small>' + d.text + '</div>';
-      if (n > 6) el.style.marginLeft = el.style.marginRight = (-0.9 - (n - 6) * 0.55) + 'vh';
-      const rot = (i - (n - 1) / 2) * 2.2; el.style.rotate = rot + 'deg';
+      el.style.marginLeft = i ? (step - cw) + 'px' : '0';
+      el.style.rotate = ((i - (n - 1) / 2) * 1.5) + 'deg';
       el.dataset.uid = c.uid; el.title = chk.ok ? '' : chk.reason;
-      el.addEventListener('click', () => onCard(c.uid));
+      el.addEventListener('dragstart', ev => ev.preventDefault());
+      el.addEventListener('pointerdown', ev => onCardDown(ev, c.uid, el));
       h.appendChild(el);
     });
   }
@@ -137,6 +145,83 @@
     if (selUid == null || busy) return;
     const e = S.enemies[i]; if (e.arrested || e.fled) return;
     const uid = selUid; selUid = null; play(uid, i);
+  }
+
+  // ── 드래그: 공격 카드는 끌면 조준선이 생기고 적 위에 놓으면 사용, 대상 없는 카드는 필드로 끌어다 놓으면 사용. 짧게 톡 누르면 기존처럼 선택. ──
+  let drag = null;
+  function liveIdx() { return S.enemies.map((e, i) => i).filter(i => !S.enemies[i].arrested && !S.enemies[i].fled); }
+  function enemyAt(x, y) {
+    for (const el of document.elementsFromPoint(x, y)) {
+      const en = el.closest && el.closest('.enemy'); if (!en) continue;
+      const i = +en.dataset.i, e = S.enemies[i]; if (e && !e.arrested && !e.fled) return i;
+    }
+    return -1;
+  }
+  function overField(y) { return y < $('bottom').getBoundingClientRect().top; }
+  function onCardDown(ev, uid, el) {
+    if (ev.button > 0 || busy || !S || S.phase !== 'player') return;
+    drag = { uid: uid, el: el, sx: ev.clientX, sy: ev.clientY, on: false };
+    window.addEventListener('pointermove', onDragMove);
+    window.addEventListener('pointerup', onDragEnd);
+    window.addEventListener('pointercancel', onDragCancel);
+  }
+  function dragStart() {
+    const d = G.cards[S.hand.find(h => h.uid === drag.uid).id];
+    drag.on = true; drag.need = !!d.needsTarget; drag.over = -1;
+    document.body.classList.add('dragging');
+    const r = drag.el.getBoundingClientRect();
+    if (drag.need) {
+      drag.el.classList.add('sel');
+      drag.ox = r.left + r.width / 2; drag.oy = r.top - 3 * innerHeight / 100;
+      const a = document.createElement('div'); a.id = 'aim'; a.innerHTML = '<i></i>'; document.body.appendChild(a); drag.aim = a;
+      [].forEach.call($('enemies').children, (el, i) => { const e = S.enemies[i]; if (e && !e.arrested && !e.fled) el.classList.add('targetable'); });
+      $('hintBar').textContent = '적에게 끌어다 놓으세요'; $('hintBar').classList.add('on');
+    } else {
+      const g = drag.el.cloneNode(true); g.classList.add('dragghost'); g.style.width = r.width + 'px'; g.style.height = r.height + 'px'; g.style.margin = '0';
+      document.body.appendChild(g); drag.ghost = g; drag.el.style.opacity = '.25';
+      $('hintBar').textContent = '위쪽 필드에 놓으면 사용'; $('hintBar').classList.add('on');
+    }
+  }
+  function onDragMove(ev) {
+    if (!drag) return;
+    if (!drag.on) {
+      if (Math.hypot(ev.clientX - drag.sx, ev.clientY - drag.sy) < 10) return;
+      if (!G.canPlay(S, drag.uid).ok) return;          // 쓸 수 없는 카드는 끌리지 않음(톡 누르면 이유 표시)
+      dragStart();
+    }
+    const x = ev.clientX, y = ev.clientY;
+    if (drag.need) {
+      const dx = x - drag.ox, dy = y - drag.oy, len = Math.hypot(dx, dy);
+      drag.aim.style.cssText = 'left:' + drag.ox + 'px;top:' + drag.oy + 'px;width:' + len + 'px;transform:rotate(' + Math.atan2(dy, dx) + 'rad)';
+      const idx = enemyAt(x, y); drag.over = idx; drag.aim.classList.toggle('hit', idx >= 0);
+      [].forEach.call($('enemies').children, (el, i) => el.classList.toggle('aimhit', i === idx));
+    } else {
+      const r = drag.ghost.getBoundingClientRect();
+      drag.ghost.style.left = (x - r.width / 2) + 'px'; drag.ghost.style.top = (y - r.height / 2) + 'px';
+      $('field').classList.toggle('dropok', overField(y));
+    }
+  }
+  function dragClean() {
+    window.removeEventListener('pointermove', onDragMove); window.removeEventListener('pointerup', onDragEnd); window.removeEventListener('pointercancel', onDragCancel);
+    if (drag) {
+      if (drag.aim) drag.aim.remove(); if (drag.ghost) drag.ghost.remove();
+      if (drag.el) { drag.el.style.opacity = ''; if (drag.on) drag.el.classList.remove('sel'); }
+    }
+    document.body.classList.remove('dragging'); $('field').classList.remove('dropok');
+    [].forEach.call($('enemies').children, el => el.classList.remove('aimhit'));
+  }
+  function onDragCancel() { dragClean(); if (drag && drag.on) { drag = null; render(); } else drag = null; }
+  function onDragEnd(ev) {
+    const dr = drag; if (!dr) return;
+    const x = ev.clientX, y = ev.clientY;
+    dragClean(); drag = null;
+    if (!dr.on) { onCard(dr.uid); return; }           // 톡 누름
+    if (dr.need) {
+      let t = enemyAt(x, y);
+      if (t < 0 && overField(y) && liveIdx().length === 1) t = liveIdx()[0];   // 적이 한 명이면 필드 아무 데나 놓아도 됨
+      if (t >= 0) { play(dr.uid, t); return; }
+    } else if (overField(y)) { play(dr.uid, null); return; }
+    render();                                         // 취소: 카드는 손패로 복귀
   }
 
   async function play(uid, tIdx) {
@@ -225,13 +310,13 @@
         case 'edmg': SFX.play(e.kind === 'reflect' ? 'stat' : 'hit'); if (e.kind !== 'reflect') { comic(HITS[Math.floor(Math.random() * HITS.length)], e.idx); burst(e.idx, ['✨', '💥', '⭐'], 6, 7); if (e.amount >= 14) fieldShake(); } float((e.kind === 'reflect' ? '↩' : '') + e.amount, e.idx, e.kind === 'reflect' ? 'st' : ''); shakeEnemy(e.idx); renderEnemies(); await sleep(150); break;
         case 'arrest': SFX.play('arrest'); burst(e.idx, ['⭐', '💖', '✨', '🎀'], 14, 12); float('체포!', e.idx, 'say'); await sleep(350); break;
         case 'block': SFX.play('block'); burst('heroCenter', ['🛡️', '✨'], 4, 6); float('🛡+' + e.amount, 'heroCenter', 'blk'); break;
-        case 'stat': SFX.play('stat'); burst('heroCenter', e.stat === 'dopa' ? ['💗', '✨'] : e.stat === 'tight' ? ['💜', '✨'] : ['💧', '✨'], 5, 7); float((e.stat === 'dopa' ? '도파민' : e.stat === 'tight' ? '조임력' : '윤활도') + ' +' + e.amount, 'heroCenter', 'dopa'); break;
+        case 'stat': SFX.play(e.stat === 'dopa' ? 'dopa' : e.stat === 'tight' ? 'tight' : 'stat'); burst('heroCenter', e.stat === 'dopa' ? ['💗', '✨'] : e.stat === 'tight' ? ['💜', '✨'] : ['💧', '✨'], 5, 7); float((e.stat === 'dopa' ? '도파민' : e.stat === 'tight' ? '조임력' : '윤활도') + ' +' + e.amount, 'heroCenter', 'dopa'); break;
         case 'heal': SFX.play('heal'); burst('heroCenter', ['💚', '✨'], 6, 8); float('+' + e.amount, 'heroCenter', 'heal'); break;
         case 'status': float(e.what, e.idx, 'st'); break;
         case 'pdmg':
           if (e.self) { float('-' + e.amount, 'heroCenter'); break; }
           if (e.idx != null) { const img = $('heroImg'); heroOverride = 'shy'; $('heroImg').src = heroSrc('shy'); img.classList.remove('hit'); void img.offsetWidth; img.classList.add('hit'); }
-          SFX.play('hurt'); if (!e.blocked) { comic(HURT[Math.floor(Math.random() * HURT.length)], 'heroCenter'); } fieldShake(); float(e.blocked ? '-' + e.amount + ' (🛡' + e.blocked + ')' : '-' + e.amount, 'heroCenter'); await sleep(320); break;
+          SFX.play('hurt'); if (!lowSaid && S.p.hp / S.p.maxHp <= 0.3) { lowSaid = true; setTimeout(() => SFX.play('low'), 600); } if (!e.blocked) { comic(HURT[Math.floor(Math.random() * HURT.length)], 'heroCenter'); } fieldShake(); float(e.blocked ? '-' + e.amount + ' (🛡' + e.blocked + ')' : '-' + e.amount, 'heroCenter'); await sleep(320); break;
         case 'disgust': SFX.play('disgust'); burst(e.idx, ['💦', '😑'], 5, 7); float('질림… 공격 취소!', e.idx, 'st'); await sleep(350); break;
         case 'fleeFail': float('봉쇄! 못 도망쳐', e.idx, 'st'); await sleep(350); break;
         case 'flee': SFX.play('flee'); float('도주!', e.idx, 'say'); await sleep(300); break;

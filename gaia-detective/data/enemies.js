@@ -15,17 +15,20 @@ window.GAIA = window.GAIA || {};
   GAIA.enemies = E;
   // 개발용 전투 목록
   GAIA.encounters = [
-    { id:'e1', name:'바바리맨 1명',            enemies:['barbari'] },
-    { id:'e2', name:'바운서 1명',              enemies:['bouncer'] },
-    { id:'e3', name:'양아치 + 레오파드 사장',   enemies:['mohawk','leopard'] },
-    { id:'e4', name:'바바리맨 + 양아치 + 바운서', enemies:['barbari','mohawk','bouncer'] },
-    { id:'e5', name:'엘리트 마초 강',          enemies:['macho'] },
-    { id:'e6', name:'보스 타이탄 박',          enemies:['titan'] }
+    // bg 는 개발용 임시 배정(스테이지 구조 확정 전)
+    { id:'e1', name:'바바리맨 1명',            enemies:['barbari'], bg:'bg_alley.jpg' },
+    { id:'e2', name:'바운서 1명',              enemies:['bouncer'], bg:'bg_club.jpg' },
+    { id:'e3', name:'양아치 + 레오파드 사장',   enemies:['mohawk','leopard'], bg:'bg_lounge2.jpg' },
+    { id:'e4', name:'바바리맨 + 양아치 + 바운서', enemies:['barbari','mohawk','bouncer'], bg:'bg_stage.jpg' },
+    { id:'e5', name:'엘리트 마초 강',          enemies:['macho'], bg:'bg_lobby2.jpg' },
+    { id:'e6', name:'보스 타이탄 박',          enemies:['titan'], bg:'bg_wedding.jpg' }
   ];
   GAIA.assets = {
     base: '../assets/gaia-detective/game/',
     hero: { idle:'hero_idle.png', shy:'hero_shy.png', cry:'hero_cry.png', serious:'hero_serious_guard.png', jab:'hero_serious_jab.png', kick:'hero_serious_kick.png', fly:'hero_flyback.png' },
-    bg: ['bg_lobby.jpg', 'bg_lounge.jpg'],
+    bgBase: '../assets/gaia-detective/bg/',
+    bg: ['bg_lobby2.jpg', 'bg_lounge2.jpg', 'bg_alley.jpg', 'bg_club.jpg', 'bg_stage.jpg', 'bg_wedding.jpg'],
+    sfxBase: '../assets/gaia-detective/sfx/',
     cardArt: '../assets/gaia-detective/cards/'
   };
 })();
