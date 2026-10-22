@@ -60,6 +60,7 @@
   }
   function paint() {
     if (mode === 'slot') return drawSlot();
+    if (mode === 'entry') return drawEntry();
     const r = run(), st = stockOf(kind);
     root.innerHTML = '<div class="shwin"><h2></h2><div class="shbody"><div class="clerk"></div><div class="shcol"><b>진열대</b><div class="shgrid" id="shStock"></div></div><div class="shcol"><b>내 소지품 <i></i></b><div class="shgrid" id="shMine"></div></div></div><div class="shinfo"><div class="shtxt"></div><div class="shbtns"></div></div></div>';
     const w = root.firstChild; w.querySelector('h2').textContent = KINDS[kind].name;
@@ -75,10 +76,28 @@
     mk(bt, sel && sel.side === 'sell' ? '팔기' : '사기', act, !sel || !c.ok, false);
     if (kind === 'casino') mk(bt, '슬롯머신', openSlot, false, true);
     const g = document.createElement('div'); g.className = 'shgold'; g.textContent = r.gold + '원'; bt.appendChild(g);
-    mk(bt, '나가기', close, false, true);
+    mk(bt, '나가기', toEntry, false, true);
   }
+  // ── 입장 화면: 장소 세로 배경 + 점원 + 대사 + 선택지 ──
+  const LN = () => (G.dialogue && G.dialogue.shop && G.dialogue.shop[kind]) || {};
+  const NAMES = { mart: '마트', casino: '카지노' };
+  function toEntry() { mode = 'entry'; sel = null; setBg(.05); paint(); }
+  function drawEntry(line) {
+    const L = LN(), q = (G.shop.quest || {})[kind];
+    root.innerHTML = '<div class="entry"><div class="enplace"></div><img class="enpc" alt="" draggable="false" src="' + clerkSrc(kind) + '"><div class="enbox"><b class="enname"></b><p class="entxt"></p><div class="enbtns"></div></div></div>';
+    root.querySelector('.enplace').textContent = NAMES[kind];
+    const pc0 = root.querySelector('.enpc'); pc0.onerror = () => pc0.remove();
+    root.querySelector('.enname').textContent = L.name || '';
+    root.querySelector('.entxt').textContent = line || rnd(L.enter || ['어서 오세요']);
+    const bt = root.querySelector('.enbtns');
+    mk(bt, kind === 'casino' ? '상점' : '물건 사기', () => { mode = 'shop'; setBg(.28); paint(); }, false, false);
+    if (kind === 'casino') mk(bt, '슬롯머신', openSlot, false, true);
+    const tk = mk(bt, '대화하기', () => drawEntry(rnd(L.talk || L.enter || ['…'])), false, true); if (q && tk) tk.classList.add('blink');
+    mk(bt, '나가기', () => { if (L.leave) { drawEntry(rnd(L.leave)); setTimeout(close, 900); } else close(); }, false, false);
+  }
+
   function fetchClerk(el, src) { if (!src) { el.classList.add('hidden'); return; } const im = new Image(); im.onload = () => { el.classList.remove('hidden'); el.innerHTML = ''; el.appendChild(im); }; im.onerror = () => el.classList.add('hidden'); el.classList.add('hidden'); im.src = src; }
-  function mk(parent, txt, fn, dis, purple) { const b = document.createElement('button'); b.textContent = txt; b.disabled = !!dis; if (purple) b.className = 'pu'; b.addEventListener('click', () => { if (G.sfx) G.sfx.play('click'); fn(); }); parent.appendChild(b); }
+  function mk(parent, txt, fn, dis, purple) { const b = document.createElement('button'); b.textContent = txt; b.disabled = !!dis; if (purple) b.className = 'pu'; b.addEventListener('click', () => { if (G.sfx) G.sfx.play('click'); fn(); }); parent.appendChild(b); return b; }
   // ── 슬롯머신 ──
   const symHTML = id => id === 'gold' ? '<i class="coin"></i>' : '<img alt="" draggable="false" src="' + art(id) + '">';
   const pc = (v, t) => (v / t * 100).toFixed(3) + '%';
@@ -105,7 +124,7 @@
     h += '<button class="sllev" id="slLev" aria-label="레버"></button>';
     m.innerHTML = h;
     for (let c = 0; c < 3; c++) showCol(c, [grid[0][c], grid[1][c], grid[2][c]]);
-    $('slExit').addEventListener('click', () => { if (spinning) return; if (G.sfx) G.sfx.play('click'); mode = 'shop'; setBg(.28); paint(); });
+    $('slExit').addEventListener('click', () => { if (spinning) return; if (G.sfx) G.sfx.play('click'); mode = 'entry'; setBg(.05); paint(); });
     $('slB0').addEventListener('click', () => { if (spinning || used().n >= SLOT.limit) return; nLines = (nLines + 1) % SLOT.lines.length; clk(); slotMsg = ''; hud(); });
     $('slB1').addEventListener('click', () => { if (spinning || used().n >= SLOT.limit) return; nBet = (nBet + 1) % SLOT.bets.length; clk(); slotMsg = ''; hud(); });
     $('slB2').addEventListener('click', spin); $('slLev').addEventListener('click', spin);
@@ -186,7 +205,7 @@
     setTimeout(() => { if (j) j.classList.add('hidden'); }, 2500);
   }
 
-  function open(k) { if (!root) build(); kind = k; sel = null; msg = ''; mode = 'shop'; spinning = false; last = { t: 0, key: '' }; if (k === 'casino') newSyms(); root.classList.remove('hidden'); setBg(.28); paint(); }
+  function open(k) { if (!root) build(); kind = k; sel = null; msg = ''; mode = 'entry'; spinning = false; last = { t: 0, key: '' }; if (k === 'casino') newSyms(); root.classList.remove('hidden'); setBg(.05); paint(); }
   function close() { if (spinning) return; root.classList.add('hidden'); if (G.map.refresh) G.map.refresh(); }
-  G.shop = { open: open, close: close, kinds: KINDS };
+  G.shop = { open: open, close: close, kinds: KINDS, quest: {} }; // quest[장소]=true 이면 '대화하기' 버튼이 깜빡임
 })();

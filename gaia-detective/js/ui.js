@@ -304,8 +304,8 @@
   function say(text) { if (!text) return; showBubble($('bubble'), text, 'pink'); }
   const rnd = a => a[Math.floor(Math.random() * a.length)];
   function heroSay(key, chance) {
-    const L = G.dialogue && G.dialogue.hero[key]; if (!L || (chance != null && Math.random() > chance)) return;
-    say(rnd(L));
+    const L = G.dialogue && G.dialogue.hero[key]; if (!L || (chance != null && Math.random() > chance)) return false;
+    say(rnd(L)); return true;
   }
   function enemySay(i, key, chance) {
     const e = S.enemies[i]; if (!e) return;
@@ -403,7 +403,7 @@
     const evs = S.events; S.events = [];
     for (const e of evs) {
       switch (e.type) {
-        case 'play': if (S.p.orgActive && Math.random() < 0.5) heroSay('orgAttack'); else say(e.line); await sleep(160); break;
+        case 'play': if (S.p.orgActive && Math.random() < 0.5) heroSay('orgAttack'); else if (!e.line || Math.random() < 0.3) { if (!heroSay('attack')) say(e.line); } else say(e.line); await sleep(160); break;
         case 'edmg': SFX.play(e.kind === 'reflect' ? 'stat' : 'hit'); if (e.kind !== 'reflect') { comic(HITS[Math.floor(Math.random() * HITS.length)], e.idx); slash(e.idx, e.amount >= 14 ? 2 : 1); impact(e.idx, e.amount >= 14); wind(false); burst(e.idx, ['✨', '💥', '⭐', '💖'], 7, 8); if (e.amount >= 14) { fieldShake(); softFlash(); } } float((e.kind === 'reflect' ? '↩' : '') + e.amount, e.idx, e.kind === 'reflect' ? 'st' : ''); shakeEnemy(e.idx); renderEnemies(); await sleep(150); break;
         case 'arrest': heroSay('arrest', 0.8); enemySay(e.idx, 'arrested'); SFX.play('arrest'); burst(e.idx, ['⭐', '💖', '✨', '🎀', '💖'], 18, 14); fogPuff(e.idx, 5); impact(e.idx, true); float('체포!', e.idx, 'say'); await sleep(350); break;
         case 'block': heroSay('block', 0.25); SFX.play('block'); burst('heroCenter', ['🛡️', '✨'], 4, 6); impact('heroCenter'); float('🛡+' + e.amount, 'heroCenter', 'blk'); break;
@@ -414,7 +414,7 @@
           if (e.self) { float('-' + e.amount, 'heroCenter'); break; }
           if (e.idx != null) { const img = $('heroImg'); const hp = e.amount >= 14 ? 'fly' : 'cry'; heroOverride = hp; $('heroImg').src = heroSrc(hp); img.classList.remove('hit'); void img.offsetWidth; img.classList.add('hit'); }
           enemySay(e.idx, 'attack', 0.7); SFX.play('hurt'); if (!lowSaid && S.p.hp / S.p.maxHp <= 0.3) { lowSaid = true; setTimeout(() => { SFX.play('low'); heroSay('lowHp'); }, 700); } else if (Math.random() < 0.4) setTimeout(() => heroSay('hit'), 450); if (!e.blocked) { comic(HURT[Math.floor(Math.random() * HURT.length)], 'heroCenter'); } slash('heroCenter', 1, true); wind(true, 7); fieldShake(); float(e.blocked ? '-' + e.amount + ' (🛡' + e.blocked + ')' : '-' + e.amount, 'heroCenter'); await sleep(320); break;
-        case 'disgust': heroSay('disgust', 0.7); SFX.play('disgust'); burst(e.idx, ['💦', '😑'], 5, 7); float('질림… 공격 취소!', e.idx, 'st'); await sleep(350); break;
+        case 'disgust': heroSay(Math.random() < 0.5 ? 'kicked' : 'disgust', 0.7); SFX.play('disgust'); burst(e.idx, ['💦', '😑'], 5, 7); float('질림… 공격 취소!', e.idx, 'st'); await sleep(350); break;
         case 'fleeFail': float('봉쇄! 못 도망쳐', e.idx, 'st'); await sleep(350); break;
         case 'flee': enemySay(e.idx, 'flee'); heroSay('fleeMissed', 0.8); SFX.play('flee'); float('도주!', e.idx, 'say'); await sleep(300); break;
         case 'orgasm': heroSay('orgasm'); SFX.play('orgasm'); flash(); fogPuff('heroCenter', 9); heartRain(26); wind(false, 12); burst('heroCenter', ['💖', '💗', '✨', '⭐', '🎀'], 30, 24); banner('절정!!', true); await sleep(900); break;

@@ -474,3 +474,17 @@ body.dragging{cursor:grabbing}
   #enemies{right:0;bottom:29vh}
   .estat{width:min(17vh,30vw)}
 }
+
+/* ===== 입장 화면(마트·카지노): 장소 세로 배경 + 점원 + 대사창 + 선택지 ===== */
+.entry{position:absolute;inset:0}
+.enplace{position:absolute;left:50%;top:2.2vh;transform:translateX(-50%);border:solid transparent;border-width:0 10vh;border-image:var(--sk-plate_title) 0 150 fill / 0 10vh stretch;height:8vh;padding-top:.8vh;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:2.9vh;font-weight:900;color:var(--pink-d);white-space:nowrap;z-index:2}
+.enpc{position:absolute;left:50%;bottom:27vh;transform:translateX(-50%);height:min(62vh,125vw);width:auto;max-width:96vw;object-fit:contain;pointer-events:none;transform-origin:50% 100%;animation:breathe 3.4s ease-in-out infinite;filter:drop-shadow(0 .8vh 1.4vh rgba(60,10,40,.45))}
+.enbox{position:absolute;left:3vw;right:3vw;bottom:2vh;padding:1.6vh 2.4vh 1.8vh;border-radius:2.2vh;background:rgba(255,244,249,.93);box-shadow:0 0 0 .5vh #ff9ac6 inset,0 1vh 2.4vh rgba(70,10,50,.5);z-index:2}
+.enname{display:block;font-size:2.1vh;color:#c33b82;margin-bottom:.5vh}
+.entxt{margin:0 0 1.2vh;min-height:8.6vh;font-size:2.1vh;line-height:1.38;font-weight:700;color:var(--ink);word-break:keep-all}
+.enbtns{display:grid;grid-template-columns:1fr 1fr;gap:.9vh 1.2vh}
+.enbtns button{border:solid transparent;border-width:0 2.4vh;border-image:var(--sk-btn_pink) 0 60 fill / 0 2.4vh stretch;background:none;height:6vh;padding:0;color:#fff;font-weight:900;font-size:2.3vh;text-shadow:0 .2vh .3vh rgba(150,30,80,.75);white-space:nowrap}
+.enbtns button.pu{border-image:var(--sk-btn_purple) 0 60 fill / 0 2.4vh stretch}
+.enbtns button:active{transform:translateY(.3vh)}
+.enbtns button.blink{animation:enblink .7s ease-in-out infinite alternate}
+@keyframes enblink{from{filter:brightness(1)}to{filter:brightness(1.35) drop-shadow(0 0 1.2vh #ffe36e)}}

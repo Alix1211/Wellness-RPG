@@ -41,7 +41,7 @@ SLOTD='../assets/gaia-detective/ui/slot/'
 for f in (os.listdir(SLOTD) if os.path.isdir(SLOTD) else []):
     if f.endswith('.webp'): imgs['ui/slot/'+f]=b64(SLOTD+f,'image/webp')
 PLACE='../assets/gaia-detective/place/'
-for k in ('mart','casino'):
+for k in ('mart','casino','police'):
     if os.path.exists(PLACE+k+'_port.webp'): imgs['place/'+k+'_port.webp']=b64(PLACE+k+'_port.webp','image/webp')
 PUNCH='../assets/audio/freesound_community-face-punch-91909.mp3'
 sfxd={os.path.splitext(f)[0]:b64(SFX+f,'audio/ogg' if f.endswith('.ogg') else 'audio/mpeg') for f in sorted(os.listdir(SFX))} if os.path.isdir(SFX) else {}

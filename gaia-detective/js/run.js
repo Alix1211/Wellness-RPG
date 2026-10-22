@@ -26,6 +26,8 @@
 
   // ── 패널(보상·휴식·안내) ──
   function panel(o) {
+    const pl = o.place ? (window.GAIA_IMG ? (window.GAIA_IMG['place/' + o.place + '_port.webp'] || '') : '../assets/gaia-detective/place/' + o.place + '_port.webp') : '';
+    $('panel').style.background = pl ? 'linear-gradient(rgba(80,30,60,.22),rgba(80,30,60,.22)),url(' + pl + ') center/cover no-repeat' : '';
     $('pnTitle').textContent = o.title || ''; $('pnMsg').textContent = o.msg || '';
     const box = $('pnCards'); box.innerHTML = ''; box.className = o.cardsClass || '';
     if (o.cardsEl) box.appendChild(o.cardsEl);
@@ -119,7 +121,7 @@
   }
   function rest() {
     const heal = Math.round(C.player.maxHp * F.rest.healRatio), full = run.hp >= C.player.maxHp;
-    panel({ title: F.steps[run.step].title, msg: '체력 ' + run.hp + ' / ' + C.player.maxHp + ' · 덱 ' + run.deck.length + '장', buttons: [
+    panel({ place: 'police', title: F.steps[run.step].title, msg: '체력 ' + run.hp + ' / ' + C.player.maxHp + ' · 덱 ' + run.deck.length + '장', buttons: [
       { text: '휴식 (체력 +' + heal + ')', disabled: full, fn: () => { run.hp = Math.min(C.player.maxHp, run.hp + heal); save(); closePanel(); stepDone(); } },
       { text: '카드 정비 (1장 제거)', disabled: run.deck.length <= F.rest.minDeck, fn: () => { closePanel(); trim(); } },
       { text: '그냥 나가기', fn: () => { closePanel(); stepDone(); } },

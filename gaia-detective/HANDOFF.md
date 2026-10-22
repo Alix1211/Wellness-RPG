@@ -345,3 +345,11 @@
 - 연결: 마트·카지노 상점 화면 배경(`shop.js` `setBg`), 슬롯 화면은 `casino_port`. 단일 빌드는 mart·casino 두 장만 임베드(`tools/build_single.py`). 나머지 6장은 2막 입장 이벤트 연결 때 사용.
 - 슬롯 프레임 교체: `ui/slot/frame.webp` 1225×1015(케인이 직접 다시 그림, 비율이 정사각에 가까워짐). 좌표는 `shop.js`의 `FW/FH/WX/WY`와 style.css(`.slm` 비율, `.rc`, `.slb`, `.sllev`) 한 묶음. 상태 문구판(`.slplate`)은 프레임 아래로 이동(프레임 윗판은 리본 때문에 좁음).
 - 아직 안 한 것: 대사집·2막 시나리오 코드 반영(`dialogue.js`, `flow.js`), 입장 이벤트(바니걸/마트 점원 대화하기).
+
+### 입장 화면 + 대사집 확정본 코드 반영 (2026-10-22 17:30)
+- **입장 화면(마트·카지노)** — `js/shop.js`의 `mode='entry'`가 기본. 장소 세로 배경(`place/<이름>_port.webp`) 위에 점원(`ui/clerk/*.webp`)이 서고, 아래 대사창+선택지(카지노: 상점·슬롯머신·대화하기·나가기 / 마트: 물건 사기·대화하기·나가기). 상점/슬롯의 '나가기'는 입장 화면으로 돌아오고, 입장 화면 '나가기'가 닫음. 스타일은 style.css 맨 아래 `.entry` 묶음.
+- **대화하기:** `G.dialogue.shop[kind].talk` 중 무작위. `G.shop.quest.<장소> = true`로 두면 '대화하기' 버튼이 깜빡임(퀘스트 시스템은 아직 없음, 훅만 있음).
+- **경찰서 휴식 패널:** `panel({place:'police'})`로 경찰서 세로 배경을 깐다(run.js).
+- **대사집 확정본 = `data/dialogue2.js`**(dialogue.js 뒤에 로드, 주인공 대사를 덮어씀). 구조: `hero`(start attack hit block dopa70 orgasm orgAttack arrest fleeMissed disgust kicked lowHp defeat victory) / `npc`(ma seo han yoon civ1~civ7: start attack hit low down arrested flee, 경찰·시민 11명) / `shop`(casino casinoMan mart studio) / `minigame` / `discipline`. 오탈자는 코드 쪽이 교정본이고 문서(대사집 doc)에는 일부 옛 표기가 남아 있음.
+- 전투 연결: 주인공 '공격' 대사(`attack`)는 카드 대사 대신 30% 확률로, 적이 질려 공격을 취소할 때(`disgust`) 50%는 '쫓겨날 때'(`kicked`) 대사를 씀(`ui.js`).
+- **아직 연결 안 한 것(결정 필요):** 경찰 4명·시민 7명은 대사 데이터만 있고 **전투 적으로는 미등록**(체력·공격 패턴·그림 연결 필요). 2막 시나리오 9단계의 `flow.js` 반영, 촬영소·공원·빌라·착유농장·클럽 입장 화면도 아직 없음(배경 파일은 있음). 당하는 미니게임 추가는 케인이 다른 AI(GPT)에게 맡김.
