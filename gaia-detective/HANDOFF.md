@@ -362,3 +362,9 @@
 - **경찰·시민 대사:** `dialogue2.js`가 npc 대사를 `G.dialogue.enemy[id]`(start/attack/arrested/flee)로도 자동 연결.
 - **빌드:** 단일 HTML이 약 30MB로 커짐(적 PNG 11장 + 장소 배경). 부담되면 적 PNG를 webp로 바꾸고 `ui.js` sprite 경로·`build_single.py` 치환을 같이 수정.
 - **아직:** 촬영소 감독 그림 없음, 당하는 미니게임(GPT 담당), 3막 이후 장소 섞기, 대화하기 퀘스트(깜빡임 훅만), 문서 속 대사 오타 교정.
+
+---
+
+## 미니게임 추가 작업 안내 (GPT용)
+
+미니게임은 `gaia-detective/MINIGAME_SPEC.md` 한 문서만 읽고 작업합니다. 금지 사항, 연결 지점, 검증 목록, 케인이 정해야 할 미정 목록이 모두 들어 있습니다.
