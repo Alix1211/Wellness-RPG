@@ -507,3 +507,17 @@ body.dragging{cursor:grabbing}
 .spk{position:absolute;width:.6vh;height:3vh;margin:-3vh 0 0 -.3vh;border-radius:1vh;background:linear-gradient(#fff,#ffe066 38%,#ff7a2f);box-shadow:0 0 1vh rgba(255,170,60,.95);transform-origin:50% 100%;pointer-events:none;z-index:9}
 .drp{position:absolute;width:1.5vh;height:2.1vh;margin:-1vh 0 0 -.75vh;border-radius:50% 50% 50% 50%/68% 68% 32% 32%;background:radial-gradient(circle at 35% 30%,#fff 0,#b6ecff 40%,#46aaff 100%);box-shadow:0 0 .6vh rgba(120,200,255,.8);pointer-events:none;z-index:9}
 .hpp{position:absolute;pointer-events:none;z-index:9}.hpp img{width:100%;height:100%;display:block}
+
+/* ── 초상화 대화 장면 ── */
+#story{position:absolute;inset:0;z-index:40;background:rgba(40,12,36,.55);cursor:pointer}
+#story img{position:absolute;bottom:20vh;height:56vh;width:auto;filter:drop-shadow(0 1vh 1.2vh rgba(60,20,50,.45));transition:filter .2s,transform .2s}
+#story img.dim{filter:brightness(.5) saturate(.7) drop-shadow(0 1vh 1.2vh rgba(60,20,50,.45));transform:scale(.97)}
+#stHero{left:1vw}#stNpc{right:1vw}
+#stBox{position:absolute;left:3vw;right:3vw;bottom:3vh;min-height:16vh;padding:3.4vh 3.2vw 2.4vh;border-radius:2vh;background:rgba(255,246,252,.96);border:.4vh solid #e86aa8;box-shadow:0 .8vh 2vh rgba(90,30,70,.4)}
+#stName{position:absolute;left:3vw;top:-2.6vh;padding:.5vh 2.6vh;border-radius:2vh;color:#fff;font-size:2.4vh;font-weight:900}
+#stName.hero{background:#ee5a9c}#stName.npc{background:#5a8a6a}
+#stText{margin:0;font-size:2.7vh;font-weight:800;color:#5a2a46;line-height:1.45;word-break:keep-all}
+#stMore{position:absolute;right:2.4vh;bottom:1.2vh;color:#e86aa8;font-style:normal;animation:stb .8s infinite alternate}
+@keyframes stb{to{transform:translateY(.8vh)}}
+#stSkip{position:absolute;right:2vw;top:2vh;padding:.8vh 2.2vh;border-radius:2vh;border:.3vh solid #fff;background:rgba(90,30,70,.6);color:#fff;font-weight:800;font-size:2.2vh}
+@media (orientation:portrait){#story img{height:min(44vh,70vw*1.9);bottom:25vh}#stBox{bottom:2.5vh;min-height:20vh}#stText{font-size:min(2.6vh,5vw)}}

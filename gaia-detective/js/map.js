@@ -110,6 +110,7 @@
     if (!built) { build(); built = true; }
     root.classList.remove('hidden'); closeCard(); refresh(); layout(); center(lastId || D.start); if (G.sfx) G.sfx.bgm('map');
     const h = $('mapHint'); h.classList.remove('fade'); void h.offsetWidth; h.classList.add('fade');
+    if (G.story && G.story.onMap) G.story.onMap();
   }
   window.addEventListener('resize', () => { if (!root.classList.contains('hidden')) { layout(); } });
   G.map.refresh = refresh; G.map.open = open; G.map.close = () => root.classList.add('hidden');

@@ -51,6 +51,7 @@ for f in ('ph','pp','fs','fo'): imgs['minigame/squat_home/fx/'+f+'.webp']=b64(MG
 BT='../assets/gaia-detective/minigame/batting_police/'
 for f in sorted(os.listdir(BT)):
     if f.endswith('.png'): imgs['minigame/batting_police/'+f]=b64(BT+f,'image/png')
+for f in ('police_2','police_4'): imgs['npc/police/'+f+'.webp']=b64('../assets/gaia-detective/npc/police/'+f+'.webp','image/webp')
 FXD='../assets/gaia-detective/ui/fx/'
 for f in (sorted(os.listdir(FXD)) if os.path.isdir(FXD) else []):
     if f.endswith('.webp'): imgs['ui/fx/'+f]=b64(FXD+f,'image/webp')
