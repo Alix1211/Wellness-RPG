@@ -1,7 +1,7 @@
 {
-  "build": "CASUAL-04",
-  "size": 87086720,
-  "sha256": "5e82c6c00b0e90722e27ffa1197a87e68d1fce1a3d014c46136b204b37f52b02",
+  "build": "CASUAL-05",
+  "size": 87107509,
+  "sha256": "cf2af069dbc0740f6f4b74d01a765c8e6b044e2636e84f24a7a86074af6fcc77",
   "baseline": "R61",
   "edition": "casual",
   "storageKey": "gaia-casual-save-v1"

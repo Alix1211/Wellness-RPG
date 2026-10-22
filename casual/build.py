@@ -17,13 +17,13 @@ s=s.replace("if(e.source!==$('#miniFrame').contentWindow||mode!=='game')","if(mo
 # Old parent mixer must not cut the new child mixers based on a hidden RPG layer.
 s=s.replace("if(!ml||ml.hidden){if(bed||bedPending||voices.length||effects.length)reset();}","if((!ml||ml.hidden)&&!window.GaiaCasual?.run){if(bed||bedPending||voices.length||effects.length)reset();}")
 # Register the already-embedded Korean font for the new shell.
-font_script='<script>window.CASUAL_CYLINDER_MEDIA='+json.dumps((here/'cylinder-media.js').read_text())+';</script><script>window.CASUAL_AUDIO_TOOLS='+json.dumps((here/'audio-tools.js').read_text())+';'+(here/'audio-tools.js').read_text()+'</script><script>document.head.insertAdjacentHTML("beforeend","<style>"+GAME_SKIN.match(/@font-face\\s*\\{[^}]*\\}/g).join("\\n")+"</style>");</script>'
+font_script='<script>window.CASUAL_MEDIA_CHILD='+json.dumps((here/'media-child.js').read_text())+';</script><script>window.CASUAL_CYLINDER_MEDIA='+json.dumps((here/'cylinder-media.js').read_text())+';</script><script>window.CASUAL_AUDIO_TOOLS='+json.dumps((here/'audio-tools.js').read_text())+';'+(here/'audio-tools.js').read_text()+'</script><script>document.head.insertAdjacentHTML("beforeend","<style>"+GAME_SKIN.match(/@font-face\\s*\\{[^}]*\\}/g).join("\\n")+"</style>");</script>'
 # Keep the old DOM for inert factory references, but avoid duplicate frame IDs.
 s=s.replace('id="miniFrame"','id="rpgMiniFrame"')
 pos=s.rfind('</body>');assert pos>0
-s=s[:pos]+font_script+(here/'shell.html').read_text()+'<script>\n'+(here/'app.js').read_text()+'\n</script>'+s[pos:]
+s=s[:pos]+font_script+(here/'shell.html').read_text()+'<script>'+(here/'media-editor.js').read_text()+'</script><script>\n'+(here/'app.js').read_text()+'\n</script>'+s[pos:]
 s=s.replace('<title>GAIA', '<title>GAIA CASUAL')
-output=root/'GAIA-CASUAL-04.html';output.write_text(s)
-data=output.read_bytes();manifest={'build':'CASUAL-04','size':len(data),'sha256':hashlib.sha256(data).hexdigest(),'baseline':'R61','edition':'casual','storageKey':'gaia-casual-save-v1'}
+output=root/'GAIA-CASUAL-05.html';output.write_text(s)
+data=output.read_bytes();manifest={'build':'CASUAL-05','size':len(data),'sha256':hashlib.sha256(data).hexdigest(),'baseline':'R61','edition':'casual','storageKey':'gaia-casual-save-v1'}
 (here/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');print(json.dumps(manifest))
 
