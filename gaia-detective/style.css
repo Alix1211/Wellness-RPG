@@ -412,3 +412,15 @@ body.dragging{cursor:grabbing}
 .shgold{font-weight:900;font-size:2vh;color:#8a5a2a;white-space:nowrap}
 @media (orientation:portrait){ .shwin{--t:min(15vw,7.6vh);border-width:4.4vh} .shbody{flex-direction:column;align-items:center} .shbtns{flex-wrap:wrap;justify-content:center} .shinfo{flex-direction:column} }
 @media (orientation:portrait){ .shwin{margin-top:6vh} }
+
+/* ===== 슬롯머신 ===== */
+.coin{display:block;width:100%;height:100%;background:var(--sk-coin) center/contain no-repeat}
+.shwin.slotwin{--r:min(22vh,26vw);align-items:center}
+.reels{display:flex;gap:1.6vh;justify-content:center}
+.rl{width:var(--r);height:var(--r);background:var(--sk-slot) center/100% 100% no-repeat;display:flex;align-items:center;justify-content:center;padding:1.2vh}
+.rl img{width:86%;height:86%;object-fit:contain}
+.rl.spin{filter:brightness(1.06) saturate(1.2)}.rl.spin>*{animation:rlshake .12s infinite alternate}
+@keyframes rlshake{from{transform:translateY(-.8vh) scale(.96)}to{transform:translateY(.8vh) scale(1.02)}}
+.legend{display:flex;align-items:center;gap:1vh;flex-wrap:wrap;justify-content:center}.legend>b{font-size:1.7vh;color:var(--ink)}
+.lgrid{display:flex;gap:.5vh}.ls{width:min(6.2vh,8vw);height:min(6.2vh,8vw);background:var(--sk-slot) center/100% 100% no-repeat;padding:.5vh;display:flex;align-items:center;justify-content:center}.ls img{width:90%;height:90%;object-fit:contain}
+.shwin.slotwin .shinfo{width:100%}
