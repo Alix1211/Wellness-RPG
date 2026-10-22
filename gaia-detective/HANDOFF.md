@@ -64,7 +64,7 @@
 - `cards/` C01~C12.webp (임시).
 - `enemies/` 위 §4 시트 4장.
 - `hero/costumes/` 의상 7벌 × 포즈 4(shy/cheer/cry/neutral), 투명 PNG(가장자리 잔광 정리 필요): white_swim_base, mask_black, lace_black_dress, jeans_leather_a, purple_sparkle, red_dress, police_uniform.
-  - 젖소(착유농장용): 위 흰 속옷 정색 포즈에 케인이 **얼룩무늬**를 그려서 줄 예정. 흰 수영복 4포즈는 별도로 보관만.
+  - **젖소 의상 도착(2026-10-22):** `hero/costumes/costume_cow_4poses_sheet.png`(1774×887, 4포즈 나란히 shy/cheer/cry/neutral 순, 소 무늬 비키니) + `hero/serious/gaia_serious_cow.png`(507×1024, 정색 팔짱). 둘 다 투명 배경, 시트는 가장자리 붉은 잔광 있음. **낱장 분리·잔광 정리 아직 안 함.** 흰 수영복 4포즈는 별도 보관.
   - **정색(절정) 포즈 시트 도착 (2026-10-22):** `hero/serious/` — `gaia_serious_poses_4_action.png`(1838×856, 4벌 나란히: 빨간 미니스커트+가죽재킷(청바지 가죽 대응 추정) / 경찰복(권총) / 보라 반짝이(수갑) / 마스크), `gaia_serious_poses_3_fashion.png`(1536×1024, 3벌: 빨간 드레스 / 검정 레이스 드레스 / 흰 속옷 팔짱). 모두 정색 표정, 투명 배경이지만 글로우 잔광 있음. **낱장 분리와 가장자리 정리는 아직 안 함.** **흰 속옷 팔짱 포즈 = 젖소 의상의 바탕.** 케인이 이 포즈 위에 얼룩무늬를 직접 그려서 줄 예정(2026-10-22 확인). 흰 수영복 시트는 기다리지 않아도 됨. 시트 잔광(글로우)은 정리 대상.
   - 의상별 정색 포즈는 이제 7벌분이 있음(위 시트). 다른 표정 4포즈 세트와의 연결 방식만 정하면 됨.
 - 소리: 구글 드라이브 "웰니스 RPG"(id `1Yn5FHoJRzzNUoLmDCw9Agzi8xKs4iOi0`) → "소리" 폴더(id `112M27Kw9mKiMoPXSodSdn3Mdhtwcagn8`). 일본어 음성 wav 폴더(miyano-tsumugi-sounds)는 요청 안 받았으므로 쓰지 말 것. Drive 다운로드는 base64라 비쌈 → **케인이 zip으로 올리기로 함.**
