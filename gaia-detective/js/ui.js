@@ -3,7 +3,7 @@
   const G = window.GAIA, C = G.config, A = G.assets;
   const $ = id => document.getElementById(id);
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-  let S = null, encId = 'e1', selUid = null, busy = false, bgN = 0, heroOverride = null, lowSaid = false;
+  let S = null, encId = 'e1', selUid = null, busy = false, bgN = 0, heroOverride = null, lowSaid = false, dopaSaid = false;
 
   // ── 이미지 경로 ──
   const heroSrc = k => A.base + A.hero[k];
@@ -16,13 +16,14 @@
     encId = id || encId;
     const enc = G.encounters.find(x => x.id === encId);
     S = G.newBattle({ enemies: enc.enemies });
-    selUid = null; busy = false; heroOverride = null; lowSaid = false;
+    selUid = null; busy = false; heroOverride = null; lowSaid = false; dopaSaid = false;
     $('overlay').classList.add('hidden');
     $('bg').style.backgroundImage = 'url(' + bgSrc(enc.bg || A.bg[(bgN++) % A.bg.length]) + ')';
     buildEnemies();
     S.events = [];
     render();
     banner('수사 개시!'); SFX.play('start');
+    setTimeout(() => { heroSay('start'); const live = liveIdx(); if (live.length) setTimeout(() => enemySay(live[0], 'start'), 900); }, 700);
   }
 
   // ── 렌더 ──
@@ -62,7 +63,7 @@
     S.enemies.forEach((e, i) => {
       const el = document.createElement('div'); el.className = 'enemy'; el.dataset.i = i;
       const hVh = 34 * (e.def.h || 1) / (S.enemies.length > 2 ? 1.12 : 1);
-      el.innerHTML = '<div class="intent"></div><img alt="" style="height:' + hVh + 'vh"><div class="estat"><div class="ename"></div><div class="bar"><i></i><b></b></div><div class="chips"></div></div>';
+      el.innerHTML = '<div class="intent"></div><img alt="" style="height:' + hVh + 'vh"><div class="estat"><div class="ename"></div><div class="bar"><i></i><b></b></div><div class="chips"></div></div><div class="sbub"><span></span></div>';
       el.querySelector('img').src = sprite(e);
       el.addEventListener('click', () => onEnemy(i));
       box.appendChild(el);
@@ -265,9 +266,25 @@
   function banner(t, org) {
     const b = $('banner'); b.textContent = t; b.className = org ? 'org' : ''; void b.offsetWidth; b.classList.add('on');
   }
-  function say(text) {
-    const b = $('bubble'); b.textContent = text; b.classList.add('on');
-    clearTimeout(say.t); say.t = setTimeout(() => b.classList.remove('on'), 1700);
+  const bubSrc = n => window.GAIA_IMG ? (window.GAIA_IMG['ui/bubbles/' + n + '.png'] || '') : '../assets/gaia-detective/ui/bubbles/' + n + '.png';
+  function showBubble(el, text, color) {
+    if (!el) return;
+    const small = text.length <= 9, sp = el.querySelector('span');
+    el.className = 'sbub ' + (small ? 'small' : 'large') + ' on';
+    el.style.setProperty('--bg', 'url(' + bubSrc(color + '_' + (small ? 'small' : 'large')) + ')');
+    sp.textContent = text; sp.style.fontSize = (small ? 1.8 : text.length > 30 ? 1.45 : 1.7) + 'vh';
+    clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 2100);
+  }
+  function say(text) { showBubble($('bubble'), text, 'pink'); }
+  const rnd = a => a[Math.floor(Math.random() * a.length)];
+  function heroSay(key, chance) {
+    const L = G.dialogue && G.dialogue.hero[key]; if (!L || (chance != null && Math.random() > chance)) return;
+    say(rnd(L));
+  }
+  function enemySay(i, key, chance) {
+    const e = S.enemies[i]; if (!e) return;
+    const D = G.dialogue && G.dialogue.enemy[e.def.id]; const L = D && D[key]; if (!L || (chance != null && Math.random() > chance)) return;
+    showBubble($('enemies').children[i] && $('enemies').children[i].querySelector('.sbub'), rnd(L), 'green');
   }
   function shakeEnemy(i) { const el = $('enemies').children[i]; if (!el) return; el.classList.remove('hurt'); void el.offsetWidth; el.classList.add('hurt'); }
 
@@ -306,21 +323,21 @@
     const evs = S.events; S.events = [];
     for (const e of evs) {
       switch (e.type) {
-        case 'play': say(e.line); await sleep(160); break;
+        case 'play': if (S.p.orgActive && Math.random() < 0.5) heroSay('orgAttack'); else say(e.line); await sleep(160); break;
         case 'edmg': SFX.play(e.kind === 'reflect' ? 'stat' : 'hit'); if (e.kind !== 'reflect') { comic(HITS[Math.floor(Math.random() * HITS.length)], e.idx); burst(e.idx, ['✨', '💥', '⭐'], 6, 7); if (e.amount >= 14) fieldShake(); } float((e.kind === 'reflect' ? '↩' : '') + e.amount, e.idx, e.kind === 'reflect' ? 'st' : ''); shakeEnemy(e.idx); renderEnemies(); await sleep(150); break;
-        case 'arrest': SFX.play('arrest'); burst(e.idx, ['⭐', '💖', '✨', '🎀'], 14, 12); float('체포!', e.idx, 'say'); await sleep(350); break;
-        case 'block': SFX.play('block'); burst('heroCenter', ['🛡️', '✨'], 4, 6); float('🛡+' + e.amount, 'heroCenter', 'blk'); break;
-        case 'stat': SFX.play(e.stat === 'dopa' ? 'dopa' : e.stat === 'tight' ? 'tight' : 'stat'); burst('heroCenter', e.stat === 'dopa' ? ['💗', '✨'] : e.stat === 'tight' ? ['💜', '✨'] : ['💧', '✨'], 5, 7); float((e.stat === 'dopa' ? '도파민' : e.stat === 'tight' ? '조임력' : '윤활도') + ' +' + e.amount, 'heroCenter', 'dopa'); break;
+        case 'arrest': heroSay('arrest', 0.8); enemySay(e.idx, 'arrested'); SFX.play('arrest'); burst(e.idx, ['⭐', '💖', '✨', '🎀'], 14, 12); float('체포!', e.idx, 'say'); await sleep(350); break;
+        case 'block': heroSay('block', 0.25); SFX.play('block'); burst('heroCenter', ['🛡️', '✨'], 4, 6); float('🛡+' + e.amount, 'heroCenter', 'blk'); break;
+        case 'stat': if (e.stat === 'dopa' && S.p.dopa >= 70 && !dopaSaid && !S.p.orgActive) { dopaSaid = true; heroSay('dopa70'); } SFX.play(e.stat === 'dopa' ? 'dopa' : e.stat === 'tight' ? 'tight' : 'stat'); burst('heroCenter', e.stat === 'dopa' ? ['💗', '✨'] : e.stat === 'tight' ? ['💜', '✨'] : ['💧', '✨'], 5, 7); float((e.stat === 'dopa' ? '도파민' : e.stat === 'tight' ? '조임력' : '윤활도') + ' +' + e.amount, 'heroCenter', 'dopa'); break;
         case 'heal': SFX.play('heal'); burst('heroCenter', ['💚', '✨'], 6, 8); float('+' + e.amount, 'heroCenter', 'heal'); break;
         case 'status': float(e.what, e.idx, 'st'); break;
         case 'pdmg':
           if (e.self) { float('-' + e.amount, 'heroCenter'); break; }
           if (e.idx != null) { const img = $('heroImg'); heroOverride = 'shy'; $('heroImg').src = heroSrc('shy'); img.classList.remove('hit'); void img.offsetWidth; img.classList.add('hit'); }
-          SFX.play('hurt'); if (!lowSaid && S.p.hp / S.p.maxHp <= 0.3) { lowSaid = true; setTimeout(() => SFX.play('low'), 600); } if (!e.blocked) { comic(HURT[Math.floor(Math.random() * HURT.length)], 'heroCenter'); } fieldShake(); float(e.blocked ? '-' + e.amount + ' (🛡' + e.blocked + ')' : '-' + e.amount, 'heroCenter'); await sleep(320); break;
-        case 'disgust': SFX.play('disgust'); burst(e.idx, ['💦', '😑'], 5, 7); float('질림… 공격 취소!', e.idx, 'st'); await sleep(350); break;
+          enemySay(e.idx, 'attack', 0.7); SFX.play('hurt'); if (!lowSaid && S.p.hp / S.p.maxHp <= 0.3) { lowSaid = true; setTimeout(() => { SFX.play('low'); heroSay('lowHp'); }, 700); } else if (Math.random() < 0.4) setTimeout(() => heroSay('hit'), 450); if (!e.blocked) { comic(HURT[Math.floor(Math.random() * HURT.length)], 'heroCenter'); } fieldShake(); float(e.blocked ? '-' + e.amount + ' (🛡' + e.blocked + ')' : '-' + e.amount, 'heroCenter'); await sleep(320); break;
+        case 'disgust': heroSay('disgust', 0.7); SFX.play('disgust'); burst(e.idx, ['💦', '😑'], 5, 7); float('질림… 공격 취소!', e.idx, 'st'); await sleep(350); break;
         case 'fleeFail': float('봉쇄! 못 도망쳐', e.idx, 'st'); await sleep(350); break;
-        case 'flee': SFX.play('flee'); float('도주!', e.idx, 'say'); await sleep(300); break;
-        case 'orgasm': SFX.play('orgasm'); flash(); burst('heroCenter', ['💖', '💗', '✨', '⭐', '🎀'], 26, 22); banner('절정!!', true); await sleep(900); break;
+        case 'flee': enemySay(e.idx, 'flee'); heroSay('fleeMissed', 0.8); SFX.play('flee'); float('도주!', e.idx, 'say'); await sleep(300); break;
+        case 'orgasm': heroSay('orgasm'); SFX.play('orgasm'); flash(); burst('heroCenter', ['💖', '💗', '✨', '⭐', '🎀'], 26, 22); banner('절정!!', true); await sleep(900); break;
         case 'orgasmEnd': break;
         case 'token': SFX.play('stat'); float('절정 유도 카드 생성', 'heroCenter', 'st'); break;
         case 'turn': if (enemyPhase) { SFX.play('turn'); banner('TURN ' + e.turn); } break;
@@ -332,7 +349,7 @@
   }
 
   function finish() {
-    const r = S.result, ov = $('overlay'); SFX.play(r.win ? 'win' : 'lose');
+    const r = S.result, ov = $('overlay'); SFX.play(r.win ? 'win' : 'lose'); heroSay(r.win ? 'victory' : 'defeat');
     $('ovTitle').textContent = r.win ? (r.reward ? '전원 체포!' : '체포 완료') : '수사 실패…';
     $('ovMsg').textContent = r.win ? (r.reward ? '보상 획득 (2단계에서 카드 선택 연결)' : '놓친 용의자가 있어 보상이 없습니다') : r.reason;
     setTimeout(() => ov.classList.remove('hidden'), 600);
