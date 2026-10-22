@@ -30,7 +30,7 @@
   }
   // 목소리(녹음 파일). 겹치면 시끄러우니 짧은 시간 안에는 하나만 재생한다.
   const VF = { surprise:'surprise.mp3', yelp:'yelp.mp3', scare1:'scare1.mp3', scare2:'scare2.mp3', strain:'strain.mp3', whine:'whine.mp3', pant:'pant.mp3',
-    joy:'joy.mp3', displeased:'displeased.mp3', sigh:'sigh.mp3', cry:'cry.mp3', homerun:'homerun.mp3', start:'game_start.ogg' };
+    joy:'joy.mp3', displeased:'displeased.mp3', sigh:'sigh.mp3', cry:'cry.mp3', homerun:'homerun.mp3', start:'game_start.ogg', ambient:'ambient_loop.mp3' };
   let vLast = 0, vAudio = null;
   function vsrc(n) {
     const key = VF[n].replace(/\.\w+$/, '');
@@ -44,8 +44,15 @@
     const c = ac(); if (!c || bufs[key]) return;
     const get = src.indexOf('data:') === 0 ? Promise.resolve(dataToBuf(src)) : fetch(src).then(r => r.arrayBuffer());
     get.then(ab => new Promise((res, rej) => { const p = c.decodeAudioData(ab, res, rej); if (p && p.then) p.then(res, rej); }))
-      .then(b => { bufs[key] = b; }).catch(() => {});
+      .then(b => { bufs[key] = b; if (key === 'ambient') ambOn(); }).catch(() => {});
   }
+  // 배경에 계속 깔리는 소리(짧은 루프). 첫 터치 후 시작, 음소거하면 멈춤.
+  let amb = null;
+  function ambOn() {
+    if (amb || muted || !bufs.ambient) return; const c = ac(); if (!c) return;
+    const s = c.createBufferSource(), g = c.createGain(); s.buffer = bufs.ambient; s.loop = true; g.gain.value = 0.45; s.connect(g).connect(c.destination); s.start(0); amb = s;
+  }
+  function ambOff() { if (amb) { try { amb.stop(); } catch (e) {} amb = null; } }
   function preload() {
     if (loading) return; loading = true;
     Object.keys(VF).forEach(n => loadBuf(n, vsrc(n)));
@@ -92,7 +99,7 @@
   G.sfx = {
     play: function (n) { if (muted || !S[n]) return; try { S[n](); } catch (e) {} },
     isMuted: () => muted,
-    toggle: function () { muted = !muted; try { localStorage.setItem('gaia_mute', muted ? '1' : '0'); } catch (e) {} return muted; },
+    toggle: function () { muted = !muted; try { localStorage.setItem('gaia_mute', muted ? '1' : '0'); } catch (e) {} if (muted) ambOff(); else ambOn(); return muted; },
     unlock: function () { const c = ac(); preload(); return c; }
   };
 })();
