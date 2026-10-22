@@ -58,6 +58,8 @@ window.GAIA = window.GAIA || {};
     civ7: { name: '신문 아저씨', start: ['요즘 보지들은 말이야, 예의가 없어. 암캐라고 부르면 인사부터 해야지.'], attack: ['내 젊을 땐 말이야, 이년아, 하루에 열 번 쌌어. 오늘도 시범을 보여 주마.', '사회가 이래서 문제야. 기본은 목구멍, 응용은 항문. 알겠나, 암캐?'], hit: ['어이쿠! 요즘 경찰은 노인 공경도 몰라!? …근데 이게 자극이 되네. 더 해라.'], arrested: ['…내 평생 이런 구속은 처음이야. 석방 사유는 네 보지에 써 놓겠다.'], flee: ['신문 배달 시간이야! 내일 조간에 네 얘기 크게 실을 테니 기대해라, 암캐!'] }
   };
 
+  Object.keys(D.npc).forEach(k => { const n = D.npc[k]; D.enemy[k] = { start: n.start, attack: n.attack, arrested: n.arrested || n.down, flee: n.flee }; });
+
   // 상점 담당: enter(진입) buy(구매) short(잔액 부족) leave(퇴장) extra(슬롯 등 추가)
   D.shop = {
     casino: { name: '바니걸', enter: ['어서 오세요, 로지 님! 오늘의 추천 상품은 제 보지 무료 체험권입니다! 아, 슬롯은 저쪽이에요, 감사합니다!'],

@@ -11,14 +11,17 @@
   function save() { try { localStorage.setItem(KEY, JSON.stringify(run)); } catch (e) {} }
   run = load() || fresh(); run.equip = run.equip || []; run.items = run.items || []; run.gold = run.gold || 0;
 
-  const cur = () => F.steps[run.step];
+  const STEPS = () => run.lap > 1 && F.steps2 ? F.steps2 : F.steps; // 1막(1바퀴) 뒤로는 2막 표를 반복
+  const cur = () => STEPS()[run.step];
   const SHOPS = { mart: '마트', casino: '카지노' };
+  const ENTRY = { police: 1, studio: 1, park: 1, villa: 1, club: 1, farm: 1 }; // 입장 화면(점원·선택지)이 있는 장소
+  const here = id => { const c = cur(); return c && c.spot === id ? c : null; };
   function spotInfo(id) {
-    if (SHOPS[id]) return { state: 'open', title: SHOPS[id], sub: '언제든 들를 수 있습니다 (사고 팔기)', go: '들어가기' };
-    const idxs = []; F.steps.forEach((s, i) => { if (s.spot === id) idxs.push(i); });
+    if (SHOPS[id]) { const h = here(id); return { state: 'open', title: h ? h.title : SHOPS[id], sub: h ? '전투 ' + (run.fi + 1) + ' / ' + h.fights.length + ' · 상점도 이용 가능' : '언제든 들를 수 있습니다 (사고 팔기)', go: '들어가기' }; }
+    const idxs = []; STEPS().forEach((s, i) => { if (s.spot === id) idxs.push(i); });
     if (!idxs.length) return { state: 'locked', sub: '아직 연결되지 않은 장소입니다', go: null };
     const c = cur();
-    if (c.spot === id) return { state: 'open', title: c.title, go: c.kind === 'rest' ? '들어가기' : '출동',
+    if (c.spot === id) return { state: 'open', title: c.title, go: ENTRY[id] || c.kind === 'rest' ? '들어가기' : '출동',
       sub: c.kind === 'rest' ? '체력 회복 · 카드 정비' : '전투 ' + (run.fi + 1) + ' / ' + c.fights.length };
     if (idxs.every(i => run.cleared.indexOf(i) >= 0)) return { state: 'clear', sub: '이번 바퀴에서는 끝났습니다', go: null };
     return { state: 'locked', sub: '아직 갈 차례가 아닙니다', go: null };
@@ -41,7 +44,11 @@
 
   // ── 흐름 ──
   function enter(spotId) {
-    if (SHOPS[spotId]) return G.shop.open(spotId);
+    if (SHOPS[spotId] || ENTRY[spotId]) return G.shop.open(spotId);
+    go(spotId);
+  }
+  // 현재 단계가 이 장소면 휴식/전투 시작(입장 화면의 '출동'·'들어가기'가 부름)
+  function go(spotId) {
     const c = cur(); if (!c || c.spot !== spotId) return;
     if (c.kind === 'rest') return rest();
     fight();
@@ -108,20 +115,20 @@
   }
   function stepDone() {
     run.cleared.push(run.step); run.step++; run.fi = 0;
-    if (run.step >= F.steps.length) {
+    if (run.step >= STEPS().length) {
       run.wl++; run.lap++; run.step = 0; run.cleared = []; save();
       return panel({ title: '한 바퀴 완료!', msg: '월드 레벨이 ' + run.wl + '이 되었습니다. 적이 더 강해집니다.', buttons: [{ text: '다음 바퀴', fn: () => { closePanel(); G.map.open(); } }] });
     }
     save(); G.map.open();
   }
   function defeat() {
-    let i = run.step; while (i > 0 && F.steps[i].kind !== 'rest') i--;
+    let i = run.step; while (i > 0 && STEPS()[i].kind !== 'rest') i--;
     run.step = i; run.fi = 0; run.cleared = run.cleared.filter(x => x < i);
     run.hp = Math.max(run.hp, Math.round(C.player.maxHp * F.defeatHpRatio)); save(); G.map.open();
   }
   function rest() {
     const heal = Math.round(C.player.maxHp * F.rest.healRatio), full = run.hp >= C.player.maxHp;
-    panel({ place: 'police', title: F.steps[run.step].title, msg: '체력 ' + run.hp + ' / ' + C.player.maxHp + ' · 덱 ' + run.deck.length + '장', buttons: [
+    panel({ place: 'police', title: cur().title, msg: '체력 ' + run.hp + ' / ' + C.player.maxHp + ' · 덱 ' + run.deck.length + '장', buttons: [
       { text: '휴식 (체력 +' + heal + ')', disabled: full, fn: () => { run.hp = Math.min(C.player.maxHp, run.hp + heal); save(); closePanel(); stepDone(); } },
       { text: '카드 정비 (1장 제거)', disabled: run.deck.length <= F.rest.minDeck, fn: () => { closePanel(); trim(); } },
       { text: '그냥 나가기', fn: () => { closePanel(); stepDone(); } },
@@ -141,7 +148,7 @@
     ] });
   }
 
-  G.run = { get: () => run, save: save, spotInfo: spotInfo, enter: enter, onEnd: onEnd,
+  G.run = { get: () => run, save: save, spotInfo: spotInfo, enter: enter, go: go, here: here, onEnd: onEnd,
     reset: () => { run = fresh(); save(); },
     stepTitle: () => cur().title };
 })();

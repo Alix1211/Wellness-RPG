@@ -11,6 +11,8 @@
   const heroSrc = k => A.base + A.hero[k];
   const isPort = () => innerHeight > innerWidth;
   const bgSrc = n => {
+    const pm = /^place_([a-z]+)$/.exec(n || '');
+    if (pm) { const o2 = isPort() ? 'port' : 'land'; return window.GAIA_IMG ? (window.GAIA_IMG['place/' + pm[1] + '_' + o2 + '.webp'] || '') : '../assets/gaia-detective/place/' + pm[1] + '_' + o2 + '.webp'; }
     const m = /^bg_([a-z]+)\d*\.jpg$/.exec(n || ''), b = m ? 'bg_' + m[1] : 'bg_alley', o = isPort() ? 'port' : 'land';
     return window.GAIA_IMG ? (window.GAIA_IMG['bg/v2/' + b + '_' + o + '.webp'] || '') : '../assets/gaia-detective/bg/v2/' + b + '_' + o + '.jpg';
   };

@@ -353,3 +353,12 @@
 - **대사집 확정본 = `data/dialogue2.js`**(dialogue.js 뒤에 로드, 주인공 대사를 덮어씀). 구조: `hero`(start attack hit block dopa70 orgasm orgAttack arrest fleeMissed disgust kicked lowHp defeat victory) / `npc`(ma seo han yoon civ1~civ7: start attack hit low down arrested flee, 경찰·시민 11명) / `shop`(casino casinoMan mart studio) / `minigame` / `discipline`. 오탈자는 코드 쪽이 교정본이고 문서(대사집 doc)에는 일부 옛 표기가 남아 있음.
 - 전투 연결: 주인공 '공격' 대사(`attack`)는 카드 대사 대신 30% 확률로, 적이 질려 공격을 취소할 때(`disgust`) 50%는 '쫓겨날 때'(`kicked`) 대사를 씀(`ui.js`).
 - **아직 연결 안 한 것(결정 필요):** 경찰 4명·시민 7명은 대사 데이터만 있고 **전투 적으로는 미등록**(체력·공격 패턴·그림 연결 필요). 2막 시나리오 9단계의 `flow.js` 반영, 촬영소·공원·빌라·착유농장·클럽 입장 화면도 아직 없음(배경 파일은 있음). 당하는 미니게임 추가는 케인이 다른 AI(GPT)에게 맡김.
+
+### 2막 적·흐름·입장 화면 구현 (2026-10-22 17:50)
+- **적 11명 등록(`data/enemies.js`):** han(신참)·seo(서 주임)·yoon(윤 순경, 엘리트)·ma(마 반장, 보스 240)·civ1 블랙 팀장(엘리트)·civ2 레드·civ3 중절모·civ4 민수·civ5 오 예비역(엘리트)·civ6 알바생·civ7 신문 아저씨. 그림은 `assets/gaia-detective/game/enemy_<id>.png`(npc 컷아웃 변환). 수치는 1막과 같은 눈금의 **임시값**(밸런스 시뮬 미실시 — `tests/run_sim.js`는 e1~e6만 돌림).
+- **전투 목록 e11~e16**: 마트(seo+민수)·카지노 단속(한동수+알바생)·촬영소(중절모+블랙 팀장 엘리트)·공원(신문+레드)·빌라(윤 순경 엘리트)·VIP룸 보스(알바생+마 반장+민수). 전투 배경 `bg:'place_<장소>'` → `place/<장소>_port|land.webp`(`ui.js` `bgSrc`).
+- **2막 흐름(`data/flow.js` `steps2`, 9단계):** 경찰서(월급날)→마트→카지노 단속→경찰서→촬영소→공원→빌라→경찰서→카지노 VIP 보스. `run.js`의 `STEPS()`가 **1바퀴=1막(`steps`), 2바퀴 이후=`steps2` 반복**(3막 이후 별도 구조는 없음). 한 바퀴 끝에 월드 레벨 +1은 기존 그대로.
+- **입장 화면 일반화(`shop.js` `KINDS`):** 마트·카지노(상점) + 경찰서(마 반장)·촬영소(그림 없음, 감독)·공원(civ7)·빌라(윤 순경)·클럽(civ1)·착유농장(civ5). 점원/인물 그림은 `ui/clerk/<장소>.webp`. 선택지: [상점·슬롯머신] + 현재 단계면 '출동'/'들어가기'(아니면 회색) + 대화하기 + 나가기. 호텔·뒷골목은 1막 그대로 바로 출동. 전투 시작은 `G.run.go(장소)`.
+- **경찰·시민 대사:** `dialogue2.js`가 npc 대사를 `G.dialogue.enemy[id]`(start/attack/arrested/flee)로도 자동 연결.
+- **빌드:** 단일 HTML이 약 30MB로 커짐(적 PNG 11장 + 장소 배경). 부담되면 적 PNG를 webp로 바꾸고 `ui.js` sprite 경로·`build_single.py` 치환을 같이 수정.
+- **아직:** 촬영소 감독 그림 없음, 당하는 미니게임(GPT 담당), 3막 이후 장소 섞기, 대화하기 퀘스트(깜빡임 훅만), 문서 속 대사 오타 교정.

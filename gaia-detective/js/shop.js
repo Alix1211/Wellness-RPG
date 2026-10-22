@@ -4,7 +4,7 @@
   const G = window.GAIA, $ = id => document.getElementById(id), IT = G.items;
   const art = k => window.GAIA_IMG ? (window.GAIA_IMG['ui/items/' + k + '.webp'] || '') : '../assets/gaia-detective/ui/items/' + k + '.webp';
   const clerkSrc = k => window.GAIA_IMG ? (window.GAIA_IMG['ui/clerk/' + k + '.webp'] || '') : '../assets/gaia-detective/ui/clerk/' + k + '.webp'; // 점원 초상화(없으면 숨김)
-  const KINDS = { mart: { name: '마트' }, casino: { name: '카지노' } };
+  const KINDS = { mart: { name: '마트', shop: true }, casino: { name: '카지노', shop: true }, police: { name: '경찰서', who: 'ma' }, studio: { name: '촬영소', who: 'studio' }, park: { name: '공원', who: 'civ7' }, villa: { name: '주인공 빌라', who: 'yoon' }, club: { name: '클럽', who: 'civ1' }, farm: { name: '착유농장', who: 'civ5' } };
   const rnd = a => a[Math.floor(Math.random() * a.length)];
   const pickN = (a, n) => { const b = a.slice(), o = []; while (o.length < n && b.length) o.push(b.splice(Math.floor(Math.random() * b.length), 1)[0]); return o; };
   // 슬롯머신 규칙(수치는 여기서만 조정): 3×3 릴, 심볼 8종(무작위 아이템 7종 + 골드). 줄 수(1·3·5)×줄당 판돈이 한 번 돌릴 때의 판돈.
@@ -79,19 +79,25 @@
     mk(bt, '나가기', toEntry, false, true);
   }
   // ── 입장 화면: 장소 세로 배경 + 점원 + 대사 + 선택지 ──
-  const LN = () => (G.dialogue && G.dialogue.shop && G.dialogue.shop[kind]) || {};
-  const NAMES = { mart: '마트', casino: '카지노' };
+  const LN = () => {
+    const D = G.dialogue || {}, K = KINDS[kind];
+    if (K.shop) return (D.shop && D.shop[kind]) || {};
+    if (K.who === 'studio') { const o = (D.shop && D.shop.studio) || {}; return { name: o.name, enter: o.enter, talk: o.enter, leave: o.leave }; }
+    const n = (D.npc && D.npc[K.who]) || {}; return { name: n.name, enter: n.start, talk: (n.start || []).concat(n.attack || []), leave: n.flee };
+  };
   function toEntry() { mode = 'entry'; sel = null; setBg(.05); paint(); }
   function drawEntry(line) {
     const L = LN(), q = (G.shop.quest || {})[kind];
     root.innerHTML = '<div class="entry"><div class="enplace"></div><img class="enpc" alt="" draggable="false" src="' + clerkSrc(kind) + '"><div class="enbox"><b class="enname"></b><p class="entxt"></p><div class="enbtns"></div></div></div>';
-    root.querySelector('.enplace').textContent = NAMES[kind];
+    root.querySelector('.enplace').textContent = KINDS[kind].name;
     const pc0 = root.querySelector('.enpc'); pc0.onerror = () => pc0.remove();
     root.querySelector('.enname').textContent = L.name || '';
     root.querySelector('.entxt').textContent = line || rnd(L.enter || ['어서 오세요']);
     const bt = root.querySelector('.enbtns');
-    mk(bt, kind === 'casino' ? '상점' : '물건 사기', () => { mode = 'shop'; setBg(.28); paint(); }, false, false);
+    const K = KINDS[kind], h = G.run.here(kind);
+    if (K.shop) mk(bt, kind === 'casino' ? '상점' : '물건 사기', () => { mode = 'shop'; setBg(.28); paint(); }, false, false);
     if (kind === 'casino') mk(bt, '슬롯머신', openSlot, false, true);
+    mk(bt, h && h.kind === 'rest' ? '들어가기' : '출동', () => { if (!h) return; root.classList.add('hidden'); G.run.go(kind); }, !h, false);
     const tk = mk(bt, '대화하기', () => drawEntry(rnd(L.talk || L.enter || ['…'])), false, true); if (q && tk) tk.classList.add('blink');
     mk(bt, '나가기', () => { if (L.leave) { drawEntry(rnd(L.leave)); setTimeout(close, 900); } else close(); }, false, false);
   }
