@@ -29,8 +29,8 @@
     return '../assets/audio/freesound_community-face-punch-91909.mp3';
   }
   // 목소리(녹음 파일). 겹치면 시끄러우니 짧은 시간 안에는 하나만 재생한다.
-  const VF = { surprise:'surprise.mp3', yelp:'yelp.mp3', scare1:'scare1.mp3', scare2:'scare2.mp3', strain:'strain.mp3', whine:'whine.mp3', pant:'pant.mp3',
-    joy:'joy.mp3', displeased:'displeased.mp3', sigh:'sigh.mp3', cry:'cry.mp3', homerun:'homerun.mp3', start:'game_start.ogg', ambient:'ambient_loop.mp3' };
+  const VF = { surprise:'surprise.mp3', yelp:'yelp.mp3', scare1:'scare1.mp3', scare2:'scare2.mp3', strain:'strain.mp3', pant:'pant.mp3',
+    displeased:'displeased.mp3', sigh:'sigh.mp3', cry:'cry.mp3', homerun:'homerun.mp3', start:'game_start.ogg', ambient:'ambient_loop.mp3' };
   let vLast = 0, vAudio = null;
   function vsrc(n) {
     const key = VF[n].replace(/\.\w+$/, '');
@@ -82,13 +82,13 @@
     hurt: () => { tone('sine', 220, 70, 0.22, 0.7); noise(0.1, 0.4, 900, 300); tone('triangle', 900, 500, 0.18, 0.25, 0.05); if (Math.random() < 0.85) voice(pick(['surprise', 'yelp', 'scare1', 'scare2'])); },
     block: () => { tone('square', 1100, 900, 0.12, 0.18); tone('sine', 1650, 1300, 0.2, 0.2, 0.02); if (Math.random() < 0.5) voice('strain'); },
     stat: () => { tone('sine', 700, 1100, 0.12, 0.25); tone('sine', 1100, 1650, 0.14, 0.2, 0.07); },
-    dopa: () => { S.stat(); voice(pick(['whine', 'whine', 'pant'])); },
+    dopa: () => { S.stat(); if (Math.random() < 0.5) voice('pant'); },
     tight: () => { S.stat(); if (Math.random() < 0.6) voice('strain'); },
     heal: () => { tone('sine', 523, 523, 0.18, 0.3); tone('sine', 784, 784, 0.25, 0.3, 0.1); },
     arrest: () => { noise(0.04, 0.6, 3000, 3000); noise(0.04, 0.6, 3500, 3500, 0.1); tone('sine', 1320, 1320, 0.4, 0.3, 0.2); tone('sine', 1760, 1760, 0.5, 0.25, 0.28); voice('homerun', true); },
     flee: () => { noise(0.35, 0.5, 400, 3000); },
     disgust: () => { tone('sawtooth', 420, 160, 0.4, 0.25); voice('displeased'); },
-    orgasm: () => { [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => tone('sine', f, f, 0.45, 0.28, i * 0.07)); noise(0.7, 0.35, 3000, 9000, 0.35); tone('triangle', 1568, 2093, 0.6, 0.2, 0.4); voice('joy', true); },
+    orgasm: () => { [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => tone('sine', f, f, 0.45, 0.28, i * 0.07)); noise(0.7, 0.35, 3000, 9000, 0.35); tone('triangle', 1568, 2093, 0.6, 0.2, 0.4); },
     turn: () => { tone('sine', 880, 880, 0.3, 0.25); tone('sine', 1175, 1175, 0.4, 0.2, 0.12); },
     win: () => { [523, 659, 784, 1047].forEach((f, i) => tone('triangle', f, f, 0.3, 0.3, i * 0.12)); },
     lose: () => { [392, 349, 311, 262].forEach((f, i) => tone('triangle', f, f, 0.35, 0.3, i * 0.18)); voice('cry', true); },
