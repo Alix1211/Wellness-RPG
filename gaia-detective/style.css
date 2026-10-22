@@ -232,3 +232,46 @@ body.dragging{cursor:grabbing}
   .enemy .sbub{right:auto;left:4%;transform-origin:bottom left}
   .enemy .sbub::before{transform:none}
 }
+
+/* ── 대기 숨쉬기 (격한 운동 중이라 크게) ── */
+#hero{transform-origin:50% 100%;animation:breathe 1.05s ease-in-out infinite alternate}
+@keyframes breathe{from{transform:scale(1,1) rotate(-.7deg)}to{transform:scale(.97,1.04) translateY(-.5vh) rotate(.7deg)}}
+#field.orgmode #hero{animation-duration:.5s}
+.enemy img{transform-origin:50% 100%;animation:breatheE 1.35s ease-in-out infinite alternate}
+.enemy:nth-child(2) img{animation-delay:-.45s}.enemy:nth-child(3) img{animation-delay:-.9s}
+@keyframes breatheE{from{scale:1 1}to{scale:.98 1.03}}
+.enemy.hurt img{animation:shake .3s,breatheE 1.35s ease-in-out infinite alternate}
+.enemy.arrested img,.enemy.fled img{animation:none}
+
+/* ── 전투 연출 ── */
+.sl{position:absolute;width:26vh;height:3.4vh;transform-origin:50% 50%;pointer-events:none;z-index:9;opacity:0;
+  background:linear-gradient(90deg,rgba(255,255,255,0),#fff 30%,#ffd0e6 60%,rgba(255,79,168,0));
+  clip-path:polygon(0 50%,38% 6%,100% 50%,38% 94%);filter:drop-shadow(0 0 1vh #ff7fb8);animation:slash .42s ease-out forwards}
+.sl.foe{background:linear-gradient(90deg,rgba(255,255,255,0),#fff 30%,#d9c6ff 60%,rgba(143,116,230,0));filter:drop-shadow(0 0 1vh #8f74e6)}
+@keyframes slash{0%{opacity:0;transform:translate(-50%,-50%) rotate(var(--r)) scaleX(.1)}25%{opacity:1;transform:translate(-50%,-50%) rotate(var(--r)) scaleX(1)}100%{opacity:0;transform:translate(-50%,-50%) rotate(var(--r)) scaleX(1.3)}}
+.ifl{position:absolute;width:16vh;height:16vh;margin:-8vh 0 0 -8vh;border-radius:50%;pointer-events:none;z-index:9;background:radial-gradient(circle,#fff 0%,rgba(255,200,228,.9) 35%,rgba(255,79,168,0) 70%);animation:ifl .36s ease-out forwards}
+.ifl.big{width:26vh;height:26vh;margin:-13vh 0 0 -13vh}
+@keyframes ifl{0%{opacity:1;transform:scale(.2)}100%{opacity:0;transform:scale(1.5)}}
+.ring{position:absolute;width:10vh;height:10vh;margin:-5vh 0 0 -5vh;border-radius:50%;border:.7vh solid #fff;box-shadow:0 0 1.4vh #ff7fb8,inset 0 0 1vh #ffb3d6;pointer-events:none;z-index:9;animation:ring .5s ease-out forwards}
+.ring.big{width:16vh;height:16vh;margin:-8vh 0 0 -8vh;border-width:1vh}
+@keyframes ring{0%{opacity:1;transform:scale(.3)}100%{opacity:0;transform:scale(2)}}
+.wl{position:absolute;height:.45vh;border-radius:1vh;pointer-events:none;z-index:8;opacity:0;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.95),rgba(255,255,255,0));animation:wl .4s ease-out forwards}
+.wl.rev{background:linear-gradient(270deg,rgba(255,255,255,0),rgba(255,255,255,.95),rgba(255,255,255,0));animation-name:wlr}
+@keyframes wl{0%{opacity:0;transform:translateX(-12vh) scaleX(.4)}30%{opacity:1}100%{opacity:0;transform:translateX(46vh) scaleX(1.2)}}
+@keyframes wlr{0%{opacity:0;transform:translateX(12vh) scaleX(.4)}30%{opacity:1}100%{opacity:0;transform:translateX(-46vh) scaleX(1.2)}}
+.puff{position:absolute;margin:0;border-radius:50%;pointer-events:none;z-index:8;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,170,214,.85) 0%,rgba(255,150,205,.45) 45%,rgba(255,150,205,0) 72%);animation:puff 1.4s ease-out forwards}
+@keyframes puff{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}25%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.5)}}
+.hr{position:absolute;pointer-events:none;z-index:8;opacity:0;animation:hr 1.5s ease-out forwards;filter:drop-shadow(0 0 .6vh #fff)}
+.hr img{width:100%;height:100%}
+@keyframes hr{0%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.1) rotate(var(--rot))}}
+.pt.hp{font-size:0;width:3.6vh;height:3.6vh}.pt.hp img{width:100%;height:100%}
+#flash.soft.on{animation:flashS .28s forwards}
+@keyframes flashS{0%{opacity:0}20%{opacity:.6}100%{opacity:0}}
+/* 핑크 안개: 도파민 70 이상은 은은하게, 절정 중에는 짙게 일렁임 */
+#fog{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity .8s}
+#field.warm #fog{opacity:.45}#field.orgmode #fog{opacity:1}
+#fog i{position:absolute;width:70vh;height:46vh;border-radius:50%;background:radial-gradient(ellipse,rgba(255,236,246,.85) 0%,rgba(255,160,210,.5) 42%,rgba(255,170,215,0) 72%);animation:fogdrift 7s ease-in-out infinite alternate}
+#fog i:nth-child(1){left:-12%;bottom:-6%}#fog i:nth-child(2){left:22%;bottom:-14%;animation-delay:-2s;animation-duration:8.5s}
+#fog i:nth-child(3){right:-10%;bottom:-4%;animation-delay:-4s}#fog i:nth-child(4){left:40%;top:18%;animation-delay:-1s;animation-duration:9s;opacity:.7}#fog i:nth-child(5){left:-8%;top:30%;animation-delay:-5s;animation-duration:10s;opacity:.6}
+@keyframes fogdrift{from{transform:translate(-4%,2%) scale(1)}to{transform:translate(8%,-5%) scale(1.18)}}
+@media (prefers-reduced-motion:reduce){#hero,.enemy img{animation:none!important}}

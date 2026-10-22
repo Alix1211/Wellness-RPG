@@ -13,5 +13,5 @@
       if (cache[k] === true && !el.querySelector('img')) { el.innerHTML = '<img alt="" draggable="false" src="' + src(k) + '">'; el.classList.add('has'); }
     });
   }
-  G.icons = { hydrate: hydrate, html: (k, fb) => '<span class="ic" data-ic="' + k + '">' + fb + '</span>' };
+  G.icons = { src: src, hydrate: hydrate, html: (k, fb) => '<span class="ic" data-ic="' + k + '">' + fb + '</span>' };
 })();

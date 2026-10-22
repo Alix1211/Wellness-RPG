@@ -58,6 +58,7 @@
     $('blockTag').innerHTML = p.block > 0 ? ic('block', '🛡') + ' ' + p.block : '';
     $('heroImg').src = heroSrc(heroPose());
     $('field').classList.toggle('orgmode', p.orgActive);
+    $('field').classList.toggle('warm', !p.orgActive && p.dopa >= 70);
     renderEnemies();
     renderHand();
     $('nDraw').textContent = S.drawPile.length; $('nDisc').textContent = S.discard.length;
@@ -318,7 +319,8 @@
   function burst(where, list, n, spread) {
     const p = pos(where);
     for (let i = 0; i < n; i++) {
-      const el = document.createElement('div'); el.className = 'pt'; el.textContent = list[i % list.length];
+      const el = document.createElement('div'); el.className = 'pt'; const it = list[i % list.length];
+      if ((it === '💖' || it === '💗' || it === '💘') && G.icons && G.icons.src('heart')) { el.className = 'pt hp'; el.innerHTML = '<img alt="" src="' + G.icons.src('heart') + '">'; } else el.textContent = it;
       const a = Math.random() * Math.PI * 2, r = (spread || 9) * (0.5 + Math.random()) * innerHeight / 100;
       el.style.left = p.x + 'px'; el.style.top = p.y + 'px';
       el.style.setProperty('--dx', Math.cos(a) * r + 'px'); el.style.setProperty('--dy', (Math.sin(a) * r - 3 * innerHeight / 100) + 'px'); el.style.setProperty('--rot', (Math.random() * 90 - 45) + 'deg');
@@ -330,6 +332,59 @@
     el.style.left = p.x + 'px'; el.style.top = (p.y - 2 * innerHeight / 100) + 'px'; el.style.setProperty('--r', (Math.random() * 20 - 10) + 'deg');
     $('fx').appendChild(el); setTimeout(() => el.remove(), 800);
   }
+  // ── 화려한 연출: 베기·충격·바람·안개·하트비 ──
+  const vh = () => innerHeight / 100;
+  function fxAdd(el, ms) { $('fx').appendChild(el); setTimeout(() => el.remove(), ms); return el; }
+  function slash(where, n, foe) {
+    const p = pos(where);
+    for (let i = 0; i < n; i++) {
+      const el = document.createElement('div'); el.className = 'sl' + (foe ? ' foe' : '');
+      const base = foe ? 160 : -28; el.style.setProperty('--r', (base + (n > 1 ? (i ? 56 : 0) : 0) + (Math.random() * 14 - 7)) + 'deg');
+      el.style.left = p.x + 'px'; el.style.top = (p.y - 1 * vh()) + 'px'; el.style.animationDelay = (i * 70) + 'ms';
+      fxAdd(el, 700);
+    }
+  }
+  function impact(where, big) {
+    const p = pos(where);
+    const f = document.createElement('div'); f.className = 'ifl' + (big ? ' big' : ''); f.style.left = p.x + 'px'; f.style.top = p.y + 'px'; fxAdd(f, 500);
+    const r = document.createElement('div'); r.className = 'ring' + (big ? ' big' : ''); r.style.left = p.x + 'px'; r.style.top = p.y + 'px'; fxAdd(r, 600);
+  }
+  let windT = 0;
+  function wind(fromRight, n) {
+    if (Date.now() - windT < 350) return; windT = Date.now();
+    const W = $('field').clientWidth, H = $('field').clientHeight;
+    for (let i = 0; i < (n || 9); i++) {
+      const el = document.createElement('div'); el.className = 'wl' + (fromRight ? ' rev' : '');
+      const w = (16 + Math.random() * 26) * vh();
+      el.style.width = w + 'px'; el.style.top = (H * (0.22 + Math.random() * 0.5)) + 'px'; el.style.left = (fromRight ? W * 0.55 + Math.random() * W * 0.45 : Math.random() * W * 0.45) + 'px';
+      el.style.animationDelay = (Math.random() * 120) + 'ms'; el.style.animationDuration = (0.28 + Math.random() * 0.2) + 's';
+      fxAdd(el, 800);
+    }
+  }
+  function fogPuff(where, n) {
+    const p = pos(where);
+    for (let i = 0; i < (n || 6); i++) {
+      const el = document.createElement('div'); el.className = 'puff';
+      const a = Math.random() * Math.PI * 2, r = (6 + Math.random() * 12) * vh(), sz = (14 + Math.random() * 16) * vh();
+      el.style.width = el.style.height = sz + 'px'; el.style.left = p.x + 'px'; el.style.top = p.y + 'px';
+      el.style.setProperty('--dx', Math.cos(a) * r + 'px'); el.style.setProperty('--dy', Math.sin(a) * r * 0.6 + 'px');
+      fxAdd(el, 1500);
+    }
+  }
+  function heartRain(n) {
+    const src = G.icons && G.icons.src('heart'); const W = $('field').clientWidth, H = $('field').clientHeight;
+    for (let i = 0; i < (n || 22); i++) {
+      const el = document.createElement('div'); el.className = 'hr';
+      const sz = (2.4 + Math.random() * 3.6) * vh();
+      el.style.width = el.style.height = sz + 'px'; el.style.left = (Math.random() * W) + 'px'; el.style.top = (H * (0.6 + Math.random() * 0.4)) + 'px';
+      el.style.setProperty('--dy', -(H * (0.35 + Math.random() * 0.5)) + 'px'); el.style.setProperty('--dx', (Math.random() * 12 - 6) * vh() + 'px'); el.style.setProperty('--rot', (Math.random() * 60 - 30) + 'deg');
+      el.style.animationDelay = (Math.random() * 450) + 'ms';
+      el.innerHTML = src ? '<img alt="" src="' + src + '">' : '💖';
+      fxAdd(el, 2000);
+    }
+  }
+  function softFlash() { const f = $('flash'); f.classList.remove('on', 'soft'); void f.offsetWidth; f.classList.add('soft', 'on'); setTimeout(() => f.classList.remove('soft'), 400); }
+  (function () { const f = document.createElement('div'); f.id = 'fog'; f.innerHTML = '<i></i><i></i><i></i><i></i><i></i>'; $('field').insertBefore(f, $('hintBar')); })();
   function fieldShake() { const f = $('field'); f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake'); }
   function flash() { const f = $('flash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); }
   // 카드가 손패에서 목표로 날아가는 모션
@@ -349,20 +404,20 @@
     for (const e of evs) {
       switch (e.type) {
         case 'play': if (S.p.orgActive && Math.random() < 0.5) heroSay('orgAttack'); else say(e.line); await sleep(160); break;
-        case 'edmg': SFX.play(e.kind === 'reflect' ? 'stat' : 'hit'); if (e.kind !== 'reflect') { comic(HITS[Math.floor(Math.random() * HITS.length)], e.idx); burst(e.idx, ['✨', '💥', '⭐'], 6, 7); if (e.amount >= 14) fieldShake(); } float((e.kind === 'reflect' ? '↩' : '') + e.amount, e.idx, e.kind === 'reflect' ? 'st' : ''); shakeEnemy(e.idx); renderEnemies(); await sleep(150); break;
-        case 'arrest': heroSay('arrest', 0.8); enemySay(e.idx, 'arrested'); SFX.play('arrest'); burst(e.idx, ['⭐', '💖', '✨', '🎀'], 14, 12); float('체포!', e.idx, 'say'); await sleep(350); break;
-        case 'block': heroSay('block', 0.25); SFX.play('block'); burst('heroCenter', ['🛡️', '✨'], 4, 6); float('🛡+' + e.amount, 'heroCenter', 'blk'); break;
+        case 'edmg': SFX.play(e.kind === 'reflect' ? 'stat' : 'hit'); if (e.kind !== 'reflect') { comic(HITS[Math.floor(Math.random() * HITS.length)], e.idx); slash(e.idx, e.amount >= 14 ? 2 : 1); impact(e.idx, e.amount >= 14); wind(false); burst(e.idx, ['✨', '💥', '⭐', '💖'], 7, 8); if (e.amount >= 14) { fieldShake(); softFlash(); } } float((e.kind === 'reflect' ? '↩' : '') + e.amount, e.idx, e.kind === 'reflect' ? 'st' : ''); shakeEnemy(e.idx); renderEnemies(); await sleep(150); break;
+        case 'arrest': heroSay('arrest', 0.8); enemySay(e.idx, 'arrested'); SFX.play('arrest'); burst(e.idx, ['⭐', '💖', '✨', '🎀', '💖'], 18, 14); fogPuff(e.idx, 5); impact(e.idx, true); float('체포!', e.idx, 'say'); await sleep(350); break;
+        case 'block': heroSay('block', 0.25); SFX.play('block'); burst('heroCenter', ['🛡️', '✨'], 4, 6); impact('heroCenter'); float('🛡+' + e.amount, 'heroCenter', 'blk'); break;
         case 'stat': if (e.stat === 'dopa' && S.p.dopa >= 70 && !dopaSaid && !S.p.orgActive) { dopaSaid = true; heroSay('dopa70'); } SFX.play(e.stat === 'dopa' ? 'dopa' : e.stat === 'tight' ? 'tight' : 'stat'); burst('heroCenter', e.stat === 'dopa' ? ['💗', '✨'] : e.stat === 'tight' ? ['💜', '✨'] : ['💧', '✨'], 5, 7); float((e.stat === 'dopa' ? '도파민' : e.stat === 'tight' ? '조임력' : '윤활도') + ' +' + e.amount, 'heroCenter', 'dopa'); break;
         case 'heal': SFX.play('heal'); burst('heroCenter', ['💚', '✨'], 6, 8); float('+' + e.amount, 'heroCenter', 'heal'); break;
         case 'status': float(e.what, e.idx, 'st'); break;
         case 'pdmg':
           if (e.self) { float('-' + e.amount, 'heroCenter'); break; }
           if (e.idx != null) { const img = $('heroImg'); heroOverride = 'shy'; $('heroImg').src = heroSrc('shy'); img.classList.remove('hit'); void img.offsetWidth; img.classList.add('hit'); }
-          enemySay(e.idx, 'attack', 0.7); SFX.play('hurt'); if (!lowSaid && S.p.hp / S.p.maxHp <= 0.3) { lowSaid = true; setTimeout(() => { SFX.play('low'); heroSay('lowHp'); }, 700); } else if (Math.random() < 0.4) setTimeout(() => heroSay('hit'), 450); if (!e.blocked) { comic(HURT[Math.floor(Math.random() * HURT.length)], 'heroCenter'); } fieldShake(); float(e.blocked ? '-' + e.amount + ' (🛡' + e.blocked + ')' : '-' + e.amount, 'heroCenter'); await sleep(320); break;
+          enemySay(e.idx, 'attack', 0.7); SFX.play('hurt'); if (!lowSaid && S.p.hp / S.p.maxHp <= 0.3) { lowSaid = true; setTimeout(() => { SFX.play('low'); heroSay('lowHp'); }, 700); } else if (Math.random() < 0.4) setTimeout(() => heroSay('hit'), 450); if (!e.blocked) { comic(HURT[Math.floor(Math.random() * HURT.length)], 'heroCenter'); } slash('heroCenter', 1, true); wind(true, 7); fieldShake(); float(e.blocked ? '-' + e.amount + ' (🛡' + e.blocked + ')' : '-' + e.amount, 'heroCenter'); await sleep(320); break;
         case 'disgust': heroSay('disgust', 0.7); SFX.play('disgust'); burst(e.idx, ['💦', '😑'], 5, 7); float('질림… 공격 취소!', e.idx, 'st'); await sleep(350); break;
         case 'fleeFail': float('봉쇄! 못 도망쳐', e.idx, 'st'); await sleep(350); break;
         case 'flee': enemySay(e.idx, 'flee'); heroSay('fleeMissed', 0.8); SFX.play('flee'); float('도주!', e.idx, 'say'); await sleep(300); break;
-        case 'orgasm': heroSay('orgasm'); SFX.play('orgasm'); flash(); burst('heroCenter', ['💖', '💗', '✨', '⭐', '🎀'], 26, 22); banner('절정!!', true); await sleep(900); break;
+        case 'orgasm': heroSay('orgasm'); SFX.play('orgasm'); flash(); fogPuff('heroCenter', 9); heartRain(26); wind(false, 12); burst('heroCenter', ['💖', '💗', '✨', '⭐', '🎀'], 30, 24); banner('절정!!', true); await sleep(900); break;
         case 'orgasmEnd': break;
         case 'token': SFX.play('stat'); float('절정 유도 카드 생성', 'heroCenter', 'st'); break;
         case 'turn': if (enemyPhase) { SFX.play('turn'); banner('TURN ' + e.turn); } break;
