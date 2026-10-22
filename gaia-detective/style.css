@@ -153,3 +153,27 @@ body.dragging{cursor:grabbing}
 #bubble{left:48%;bottom:92%;transform-origin:bottom left}
 .enemy .sbub{right:52%;top:1vh;transform-origin:bottom right}
 .enemy .sbub::before{transform:scaleX(-1)}
+
+/* 스테이지 지도 */
+#map{position:absolute;inset:0;z-index:35;background:linear-gradient(180deg,#ffe3f0,#f2e6ff);overflow:hidden;touch-action:none;cursor:grab}
+#map.panning{cursor:grabbing}
+#mapPan{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+#mapPan .sheet{position:absolute;width:1672px;height:941px}
+#mapPan img{position:absolute;left:0;top:0;display:block;pointer-events:none;-webkit-user-drag:none}
+#mapPan .spot{position:absolute;pointer-events:auto}
+#mapPan .spot img{width:100%;height:100%}
+#mapPan .spot.locked img{filter:grayscale(.85) brightness(.78)}
+#mapPan .spot.open img{filter:drop-shadow(0 0 10px #ffd36b) drop-shadow(0 0 3px #fff);animation:spotglow 1.3s infinite alternate}
+#mapPan .spot.sel img{filter:drop-shadow(0 0 18px #ff4fa8) drop-shadow(0 0 5px #fff) brightness(1.08)}
+@keyframes spotglow{from{filter:drop-shadow(0 0 4px #ffd36b) drop-shadow(0 0 2px #fff)}to{filter:drop-shadow(0 0 20px #ffd36b) drop-shadow(0 0 5px #fff)}}
+#mapPan .tag{position:absolute;left:50%;top:6px;transform:translateX(-50%);white-space:nowrap;padding:5px 22px;border-radius:40px;background:#fff;border:5px solid var(--pink);color:var(--pink-d);font-weight:900;font-size:40px;box-shadow:0 4px 10px rgba(0,0,0,.25);pointer-events:none}
+#mapPan .spot.locked .tag{border-color:#b8b0b8;color:#8a7f8a;background:#f3eef3}
+#mapHint{position:absolute;top:1.6vh;left:50%;transform:translateX(-50%);white-space:nowrap;padding:.8vh 2vh;border-radius:3vh;background:rgba(255,255,255,.92);border:2px solid var(--pink);font-size:1.9vh;font-weight:800;color:var(--pink-d);pointer-events:none;opacity:0}
+#mapHint.fade{animation:hintf 4.5s forwards}
+@keyframes hintf{0%{opacity:0}10%{opacity:1}75%{opacity:1}100%{opacity:0}}
+#mapCard{position:absolute;left:50%;bottom:2.4vh;transform:translateX(-50%);min-width:34vh;max-width:92vw;padding:1.8vh 2.6vh;border-radius:2.4vh;background:#fff;border:.6vh solid var(--pink);text-align:center;display:flex;flex-direction:column;gap:.8vh;box-shadow:0 .8vh 2.4vh rgba(0,0,0,.3);z-index:2}
+#mapCard b{font-size:3vh;color:var(--pink-d)}
+#mapCard span{font-size:1.7vh;font-weight:700}
+#mapCard .row{display:flex;gap:1.2vh;justify-content:center;margin-top:.6vh}
+#mapCard button{padding:1.1vh 2.6vh;border-radius:3vh;font-weight:900;font-size:2vh;background:var(--lav);color:#fff}
+#mapCard #mcGo{background:var(--pink-d)}

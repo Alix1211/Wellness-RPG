@@ -377,5 +377,6 @@
   document.addEventListener('pointerdown', () => SFX.unlock(), { once: true });
   window.GAIA.ui = { start: start };
   const q = new URLSearchParams(location.search);
-  start(q.get('enc') || 'e1');
+  $('ovMap').addEventListener('click', () => { $('overlay').classList.add('hidden'); G.map.open(); });
+  if (q.get('enc')) start(q.get('enc')); else G.map.open();
 })();

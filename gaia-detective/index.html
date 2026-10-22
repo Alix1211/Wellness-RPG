@@ -34,6 +34,12 @@
     <button id="endTurn">턴 종료</button>
   </div>
 
+  <div id="map" class="hidden">
+    <div id="mapPan"></div>
+    <div id="mapHint">손가락으로 밀어서 지도를 움직이세요</div>
+    <div id="mapCard" class="hidden"><b id="mcName"></b><span id="mcSub"></span><div class="row"><button id="mcClose">닫기</button><button id="mcGo">출동</button></div></div>
+  </div>
+
   <div id="dev" class="hidden">
     <h4>개발용 패널</h4>
     <label>전투 <select id="devEnc"></select></label>
@@ -43,15 +49,17 @@
     <button id="devAdd">추가</button>
   </div>
 
-  <div id="overlay" class="hidden"><div class="box"><h2 id="ovTitle"></h2><p id="ovMsg"></p><div class="row"><button id="ovAgain">같은 전투 다시</button><button id="ovDev">전투 고르기</button></div></div></div>
+  <div id="overlay" class="hidden"><div class="box"><h2 id="ovTitle"></h2><p id="ovMsg"></p><div class="row"><button id="ovMap">지도로</button><button id="ovAgain">같은 전투 다시</button><button id="ovDev">전투 고르기</button></div></div></div>
 </div>
 
 <script src="data/config.js"></script>
 <script src="data/cards.js"></script>
 <script src="data/enemies.js"></script>
 <script src="data/dialogue.js"></script>
+<script src="data/map.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/sfx.js"></script>
+<script src="js/map.js"></script>
 <script src="js/ui.js"></script>
 </body>
 </html>

@@ -14,6 +14,9 @@ for f in os.listdir(BG):
     if f.endswith('.jpg'): imgs['bg/'+f]=b64(BG+f,'image/jpeg')
 for f in (os.listdir(BUB) if os.path.isdir(BUB) else []):
     if f.endswith('.png'): imgs['ui/bubbles/'+f]=b64(BUB+f,'image/png')
+MAP='../assets/gaia-detective/map/layers/'
+for f in (os.listdir(MAP) if os.path.isdir(MAP) else []):
+    if f.endswith('.webp'): imgs['map/'+f]=b64(MAP+f,'image/webp')
 PUNCH='../assets/audio/freesound_community-face-punch-91909.mp3'
 sfxd={os.path.splitext(f)[0]:b64(SFX+f,'audio/ogg' if f.endswith('.ogg') else 'audio/mpeg') for f in sorted(os.listdir(SFX))} if os.path.isdir(SFX) else {}
 snd='window.GAIA_SND={"punch":"%s","sfx":{%s}};\n'%(b64(PUNCH,'audio/mpeg') if os.path.exists(PUNCH) else '', ','.join('"%s":"%s"'%(k,v) for k,v in sfxd.items()))
