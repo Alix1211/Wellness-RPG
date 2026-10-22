@@ -88,7 +88,7 @@
       const it = el.querySelector('.intent');
       if (!live) it.innerHTML = '';
       else it.innerHTML = G.intentInfo(S, e).map(a => {
-        if (a.kind === 'atk') return '<span class="atk">' + (e.disgust > 0 ? ic('intent_disgust', '🚫') : ic('intent_atk', '⚔')) + a.n + (a.hits > 1 ? '×' + a.hits : '') + '</span>';
+        if (a.kind === 'atk') return '<span class="atk">' + (e.disgust > 0 ? ic('intent_disgust', '🚫') : (a.hits > 1 ? ic('intent_multi', '⚔') : ic('intent_atk', '⚔'))) + a.n + (a.hits > 1 ? '×' + a.hits : '') + '</span>';
         if (a.kind === 'buff') return '<span class="buff">' + ic('intent_buff', '💪') + '+' + a.n + '</span>';
         return '<span class="flee">' + ic('intent_flee', '💨') + ' 도주!</span>';
       }).join('');

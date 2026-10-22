@@ -1,25 +1,30 @@
-# 아이콘 폴더 (케인이 만든 아이콘을 여기에 넣는다)
+# 아이콘 폴더 (케인이 만든 아이콘 시트 3장을 낱장으로 자른 것, 2026-10-22)
 
-파일 이름 = 아래 키 + `.png` (투명 배경 PNG, 128×128 권장). 파일이 있으면 게임이 자동으로 그 그림을 쓰고, 없으면 지금의 이모지/글자를 쓴다.
-코드에 연결된 키는 ✔ 표시. 나머지는 아이콘이 오면 같은 방식으로 연결한다.
+파일 이름 = 키 + `.png` (투명 배경, 긴 변 160px). 게임이 키 이름으로 자동 사용하고, 파일이 없으면 이모지/글자로 대체한다.
+**연결됨(✔)** = 지금 화면에 쓰임 / **파일만 있음** = 전투 화면 배치 정리 때 연결 예정.
+*시트의 그림 순서로 키를 배정했고, ?가 붙은 것은 Claude의 추측이라 케인 확인 필요.*
 
-| 키 | 용도 | 현재 대체 | 연결 |
-|---|---|---|---|
-| heart | 체력 | ♥ | ✔ |
-| sound_on / sound_off | 소리 켜기/끄기 | 🔊 🔇 | ✔ |
-| intent_atk | 적 공격 예고 | ⚔ | ✔ |
-| intent_disgust | 질림(공격 취소) | 🚫 | ✔ |
-| intent_buff | 적 강화 | 💪 | ✔ |
-| intent_flee | 적 도주 | 💨 | ✔ |
-| block | 방어도 | 🛡 | ✔ |
-| energy_on / energy_off | 기력 구슬 | CSS 구슬 | |
-| dopa / tight / lube | 도파민·조임력·윤활도 | 글자 | |
-| turn | 턴 | 글자 | |
-| settings | 설정 | ⚙ | |
-| pile_draw / pile_discard / pile_exhaust | 카드 더미 | 글자 | |
-| end_turn | 턴 종료 버튼 | 글자 | |
-| st_weak / st_vuln / st_bind / st_disgust | 적 상태 | 글자 칩 | |
-| cost | 카드 비용 구슬 | CSS 구슬 | |
-| type_atk / type_skill / type_power | 카드 종류 | 글자 | |
-| grade_basic / grade_normal / grade_special / grade_rare | 카드 등급 | 테두리 색 | |
-| map_lock / map_clear / map_here | 지도 건물 상태 | 🔒 ✔ ▶ | |
+| 키 | 그림 | 연결 |
+|---|---|---|
+| heart | 하트 | ✔ 체력 |
+| sound_on / sound_off | 스피커 / 음소거 | ✔ |
+| intent_atk / intent_multi | 칼 / 칼 세 자루 | ✔ 적 공격 예고(다단 공격은 multi) |
+| intent_buff / intent_flee | 팔뚝+위 화살표 / 날개 신발 | ✔ |
+| intent_disgust | 졸린 눈(=st_disgust와 같은 그림) | ✔ 공격 취소 |
+| block | 하트 방패 | ✔ 방어도 |
+| energy_on / energy_off | 금빛 구슬 / 회색 구슬 | 파일만 있음 |
+| dopa | 웃는 핑크 구름 | 파일만 있음 |
+| tight | 스프링+화살표 | 파일만 있음 |
+| lube | 물방울 | 파일만 있음 |
+| turn | 시계 화살표 | 파일만 있음 |
+| settings | 톱니바퀴 | 파일만 있음 |
+| pile_draw / pile_discard / pile_exhaust | 카드 더미 / 카드 넘기기 / 사라지는 카드 | 파일만 있음 |
+| end_turn | 화살표+체크 | 파일만 있음 |
+| st_weak / st_vuln / st_bind / st_disgust | 팔뚝+아래 화살표 / 깨진 하트 / 자물쇠+X / 졸린 눈 | 파일만 있음 (약화/취약/봉쇄/질림) |
+| gold | 금화 | 파일만 있음 |
+| type_atk / type_skill? / type_power? | 교차 칼 / 흰 장갑 / 왕관 별 | 파일만 있음 (스킬·파워 배정은 추측) |
+| grade_basic / grade_normal / grade_special / grade_rare | 동 / 은 다이아 / 별 훈장 / 보라 왕관 | 파일만 있음 |
+| map_lock / map_clear / map_here | 자물쇠 / 체크 도장 / 하트 위치핀 | 파일만 있음 |
+
+## 아직 그림이 없어 코드로 그려진 것(아이콘이 아닌 화면 바탕 요소)
+체력·도파민·조임력·윤활도 막대, 카드 틀(테두리·바탕), 카드 비용 구슬, 버튼(턴 종료 등) 모양, 팝업 창(보상·휴식·지도 카드), 건물 이름표, 상태 칩, 체포!/놓침 도장, 배너 글씨, 터지는 이모지 이펙트(✨💥💖), 타격 의성어.
