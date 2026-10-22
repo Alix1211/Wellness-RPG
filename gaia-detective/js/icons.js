@@ -14,7 +14,7 @@
     });
   }
   // 화면 틀(게이지·판·버튼·팝업 등) — ui/skin/*.webp 를 CSS 변수(--sk-이름)로 걸어 style.css 에서 9-slice 로 쓴다
-  const SK = ['stamp','plate_title','btn_pink','btn_pink2','btn_purple','popup','popup_map','gauge_hp','gauge_dopa','gauge_tight','gauge_lube','btn_end','enemy_plate','intent_claw','intent_plate','hint','info3','tag_open','tag_lock','inv_frame'];
+  const SK = ['stamp','plate_title','btn_pink','btn_pink2','btn_purple','popup','popup_map','gauge_hp','gauge_dopa','gauge_tight','gauge_lube','btn_end','enemy_plate','intent_claw','intent_plate','hint','info3','tag_open','tag_lock','inv_frame','slot'];
   SK.forEach(k => { const s = window.GAIA_IMG ? window.GAIA_IMG['ui/skin/' + k + '.webp'] : '../assets/gaia-detective/ui/skin/' + k + '.webp'; if (s) document.documentElement.style.setProperty('--sk-' + k, 'url("' + s + '")'); });
   G.icons = { src: src, hydrate: hydrate, html: (k, fb) => '<span class="ic" data-ic="' + k + '">' + fb + '</span>' };
 })();

@@ -12,7 +12,9 @@
   run = load() || fresh(); run.equip = run.equip || []; run.items = run.items || []; run.gold = run.gold || 0;
 
   const cur = () => F.steps[run.step];
+  const SHOPS = { mart: '마트', casino: '카지노' };
   function spotInfo(id) {
+    if (SHOPS[id]) return { state: 'open', title: SHOPS[id], sub: '언제든 들를 수 있습니다 (사고 팔기)', go: '들어가기' };
     const idxs = []; F.steps.forEach((s, i) => { if (s.spot === id) idxs.push(i); });
     if (!idxs.length) return { state: 'locked', sub: '아직 연결되지 않은 장소입니다', go: null };
     const c = cur();
@@ -37,6 +39,7 @@
 
   // ── 흐름 ──
   function enter(spotId) {
+    if (SHOPS[spotId]) return G.shop.open(spotId);
     const c = cur(); if (!c || c.spot !== spotId) return;
     if (c.kind === 'rest') return rest();
     fight();

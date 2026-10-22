@@ -34,6 +34,9 @@ for f in (os.listdir(SKIN) if os.path.isdir(SKIN) else []):
 ITEMS='../assets/gaia-detective/ui/items/'
 for f in (os.listdir(ITEMS) if os.path.isdir(ITEMS) else []):
     if f.endswith('.webp'): imgs['ui/items/'+f]=b64(ITEMS+f,'image/webp')
+CLERK='../assets/gaia-detective/ui/clerk/'
+for f in (os.listdir(CLERK) if os.path.isdir(CLERK) else []):
+    if f.endswith('.webp'): imgs['ui/clerk/'+f]=b64(CLERK+f,'image/webp')
 PUNCH='../assets/audio/freesound_community-face-punch-91909.mp3'
 sfxd={os.path.splitext(f)[0]:b64(SFX+f,'audio/ogg' if f.endswith('.ogg') else 'audio/mpeg') for f in sorted(os.listdir(SFX))} if os.path.isdir(SFX) else {}
 snd='window.GAIA_SND={"punch":"%s","sfx":{%s}};\n'%(b64(PUNCH,'audio/mpeg') if os.path.exists(PUNCH) else '', ','.join('"%s":"%s"'%(k,v) for k,v in sfxd.items()))

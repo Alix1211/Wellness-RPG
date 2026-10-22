@@ -390,3 +390,25 @@ body.dragging{cursor:grabbing}
 #fsBtn{order:3}
 @media (orientation:portrait){ #fsBtn{order:4} #bagBtn{order:5} #mapFs{right:11vh} }
 @media (orientation:portrait){ #mapInfo{width:min(40vh,58vw)} #mapFs{right:1.6vh;top:7vh} #mapHint{top:12.5vh} }
+
+/* ===== 마트·카지노 상점 ===== */
+#shop{position:absolute;inset:0;z-index:47;background:rgba(60,20,50,.62);display:flex;align-items:center;justify-content:center}
+.shwin{--t:min(13.4vh,6.6vw);position:relative;display:flex;flex-direction:column;gap:.6vh;max-width:98vw;max-height:98vh;padding:0;border:solid transparent;border-width:5vh;border-image:var(--sk-popup) 75 fill / 5vh stretch;filter:drop-shadow(0 1vh 2vh rgba(40,10,30,.55))}
+.shwin h2{align-self:center;border:solid transparent;border-width:0 10vh;border-image:var(--sk-plate_title) 0 150 fill / 0 10vh stretch;height:9vh;margin:-9vh 0 0;padding:1.2vh 0 0;display:flex;align-items:center;justify-content:center;font-size:3vh;color:var(--pink-d)}
+.shbody{display:flex;gap:1.4vh;align-items:flex-start;justify-content:center}
+.shcol{display:flex;flex-direction:column;align-items:center;gap:.4vh}
+.shcol>b{font-size:1.9vh;color:var(--ink)}.shcol>b i{font-style:normal;font-size:1.5vh;color:#a0587f}
+.shgrid{display:grid;grid-template-columns:repeat(5,var(--t));gap:.5vh}
+.stl{width:var(--t);height:var(--t);background:var(--sk-slot) center/100% 100% no-repeat;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.stl img{width:78%;height:78%;object-fit:contain;pointer-events:none}
+.stl.on{box-shadow:0 0 0 .35vh #ff4fa8,0 0 1.2vh .2vh rgba(255,79,168,.8);border-radius:1vh}
+.clerk{width:calc(var(--t)*2.2);align-self:stretch;display:flex;align-items:flex-end}.clerk img{width:100%;height:auto;object-fit:contain}
+.shinfo{display:flex;gap:1.2vh;align-items:center;justify-content:space-between;min-height:7vh}
+.shtxt{display:flex;flex-direction:column;flex:1;min-width:0;font-size:1.7vh;color:var(--ink);font-weight:700}.shtxt b{font-size:2vh}
+.shbtns{display:flex;gap:.8vh;align-items:center}
+.shbtns button{border:solid transparent;border-width:0 2.4vh;border-image:var(--sk-btn_pink) 0 60 fill / 0 2.4vh stretch;background:none;height:5.4vh;padding:0;color:#fff;font-weight:900;font-size:2vh;text-shadow:0 .2vh .3vh rgba(150,30,80,.75);white-space:nowrap}
+.shbtns button.pu{border-image:var(--sk-btn_purple) 0 60 fill / 0 2.4vh stretch}
+.shbtns button:disabled{filter:grayscale(1) opacity(.55)}
+.shgold{font-weight:900;font-size:2vh;color:#8a5a2a;white-space:nowrap}
+@media (orientation:portrait){ .shwin{--t:min(15vw,7.6vh);border-width:4.4vh} .shbody{flex-direction:column;align-items:center} .shbtns{flex-wrap:wrap;justify-content:center} .shinfo{flex-direction:column} }
+@media (orientation:portrait){ .shwin{margin-top:6vh} }
