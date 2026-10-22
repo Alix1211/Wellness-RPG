@@ -464,6 +464,12 @@
     const r = G.run.get(), i = r.items.indexOf(id); if (i >= 0) r.items.splice(i, 1); G.run.save();
     SFX.play('click'); float(G.items.byId[id].name, 'heroCenter', 'st'); render(); return true;
   }
+  // 전체화면 버튼 (지원하지 않는 브라우저에서는 숨김)
+  const fsOk = !!(document.documentElement.requestFullscreen && document.fullscreenEnabled !== false);
+  const fsBtns = [].slice.call(document.querySelectorAll('.fsbtn'));
+  const fsLabel = () => fsBtns.forEach(b => { b.textContent = document.fullscreenElement ? '전체화면 끄기' : '전체화면'; });
+  fsBtns.forEach(b => { if (!fsOk) { b.classList.add('hidden'); return; } b.addEventListener('click', () => { SFX.play('click'); try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen(); } catch (e) {} }); });
+  document.addEventListener('fullscreenchange', () => { fsLabel(); setTimeout(() => { applyBg(); if (S) render(); }, 200); });
   const bagB = $('bagBtn'); if (bagB) bagB.addEventListener('click', () => { SFX.play('click'); G.inv.open({ battle: !!(S && runMode && !S.result) }); });
   window.GAIA.ui = { start: start, cardEl: cardEl, state: () => S, render: () => render(), useItem: useItem };
   const q = new URLSearchParams(location.search);

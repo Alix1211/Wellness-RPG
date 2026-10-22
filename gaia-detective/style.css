@@ -386,3 +386,7 @@ body.dragging{cursor:grabbing}
 .itip button:disabled{filter:grayscale(1) opacity(.55)}
 @media (orientation:portrait){ .invwin{--iw:96vw} #bagBtn{order:4;margin-left:0} }
 #panel h2,#overlay h2{padding:1.4vh 0 0}
+#mapFs{position:absolute;top:1.6vh;right:11vh;z-index:3}
+#fsBtn{order:3}
+@media (orientation:portrait){ #fsBtn{order:4} #bagBtn{order:5} #mapFs{right:11vh} }
+@media (orientation:portrait){ #mapInfo{width:min(40vh,58vw)} #mapFs{right:1.6vh;top:7vh} #mapHint{top:12.5vh} }

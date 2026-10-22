@@ -59,7 +59,7 @@
   // 드래그 이동 / 탭 선택
   let dn = null;
   root.addEventListener('pointerdown', e => {
-    if (e.target.closest('#mapCard') || e.target.closest('#mapBag')) return;
+    if (e.target.closest('#mapCard') || e.target.closest('#mapBag') || e.target.closest('#mapFs')) return;
     dn = { x: e.clientX, y: e.clientY, ox: ox, oy: oy, moved: false, spot: (e.target.closest('.spot') || {}).dataset ? e.target.closest('.spot').dataset.id : null };
     try { root.setPointerCapture(e.pointerId); } catch (x) {}
   });
