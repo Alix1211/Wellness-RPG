@@ -79,8 +79,8 @@
     const box = $('enemies'); box.innerHTML = '';
     S.enemies.forEach((e, i) => {
       const el = document.createElement('div'); el.className = 'enemy'; el.dataset.i = i;
-      el.innerHTML = '<div class="intent"></div><img alt="" style="height:' + enemyH(e) + 'vh"><div class="estat"><div class="ename"></div><div class="bar"><span class="trk"><i></i></span><b></b></div><div class="chips"></div></div><div class="sbub"><span></span></div>';
-      el.querySelector('img').src = sprite(e);
+      el.innerHTML = '<div class="intent"></div><img class="spr" alt="" style="height:' + enemyH(e) + 'vh"><div class="estat"><div class="ename"></div><div class="bar"><span class="trk"><i></i></span><b></b></div><div class="chips"></div></div><div class="sbub"><span></span></div>';
+      el.querySelector('img.spr').src = sprite(e);
       el.addEventListener('click', () => onEnemy(i));
       box.appendChild(el);
     });
@@ -90,7 +90,7 @@
     S.enemies.forEach((e, i) => {
       const el = els[i]; if (!el) return;
       const live = !e.arrested && !e.fled;
-      el.querySelector('img').style.height = enemyH(e) + 'vh';
+      el.querySelector('img.spr').style.height = enemyH(e) + 'vh';
       el.classList.toggle('arrested', e.arrested);
       el.classList.toggle('fled', e.fled);
       el.classList.toggle('disgust', e.disgust > 0 && live);
