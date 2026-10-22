@@ -132,7 +132,7 @@
     start: () => voice('start', true)
   };
   // 모든 버튼에 가벼운 틱(눌림 확인용). 비활성 버튼은 소리 없음 → 눌러도 안 되는 버튼을 구분할 수 있음
-  document.addEventListener('pointerdown', e => { const b = e.target && e.target.closest && e.target.closest('button'); if (!b || b.disabled || muted) return; tickT = Date.now(); try { S.tick(); } catch (x) {} }, true);
+  document.addEventListener('pointerdown', e => { const b = e.target && e.target.closest && e.target.closest('button'); if (!b || b.disabled) return; try { if (window.GAIA_HAPTICS) window.GAIA_HAPTICS.fx.tick(); } catch (x) {} if (muted) return; tickT = Date.now(); try { S.tick(); } catch (x) {} }, true);
   function synthHit() { tone('sine', 180, 50, 0.16, 0.8); noise(0.08, 0.6, 1500, 400); }
   G.sfx = {
     play: function (n) { if (muted || !S[n]) return; try { S[n](); } catch (e) {} },

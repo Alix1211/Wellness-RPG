@@ -1,0 +1,42 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.gaia.detective'
+    compileSdk 37
+    defaultConfig {
+        applicationId 'com.gaia.detective'
+        minSdk 26
+        targetSdk 35
+        // 같은 서명으로 덮어 설치하는 APK의 versionCode는 빌드 시각(분)으로 올린다.
+        versionCode ((int) (System.currentTimeMillis() / 60000L - 29000000L))
+        versionName '1.0'
+    }
+    // 서명 키를 저장소에 고정해 둔다(개인용 테스트 앱). 키가 바뀌면 덮어 설치가 안 되므로 절대 바꾸지 않는다.
+    signingConfigs {
+        stable {
+            storeFile file('../gaia-detective.keystore')
+            storePassword 'gaiadetective'
+            keyAlias 'gaia'
+            keyPassword 'gaiadetective'
+        }
+    }
+    buildTypes { debug { signingConfig signingConfigs.stable } }
+    // 게임 파일은 tools/build_android_web.py 가 android/web 에 만든다(저장소에는 올리지 않음).
+    sourceSets.main.assets.srcDir(file('../web'))
+}
+dependencies {
+    implementation 'androidx.webkit:webkit:1.12.1'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.json:json:20240303'
+}
+tasks.configureEach {
+    if (name.startsWith('merge') && name.endsWith('Assets')) doFirst {
+        if (!rootProject.file('web/index.html').isFile()) throw new GradleException('먼저 python3 tools/build_android_web.py 를 실행하세요')
+    }
+}
+tasks.configureEach { task ->
+    if (task.name == 'assembleDebug') task.doLast {
+        def dir = layout.buildDirectory.dir('outputs/apk/debug').get().asFile
+        java.nio.file.Files.copy(new File(dir, 'app-debug.apk').toPath(), new File(dir, 'gaia-detective.apk').toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+}

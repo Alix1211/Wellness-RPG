@@ -321,6 +321,7 @@
   }
   function shakeEnemy(i) { const el = $('enemies').children[i]; if (!el) return; el.classList.remove('hurt'); void el.offsetWidth; el.classList.add('hurt'); }
 
+  const vib = k => { try { if (window.GAIA_HAPTICS) window.GAIA_HAPTICS.fx[k](); } catch (x) {} }; // 진동(앱·브라우저 공통, 꺼짐 설정 존중)
   const SFX = G.sfx || { play: function () {}, toggle: function () {}, isMuted: function () { return false; }, unlock: function () {} };
   const HITS = ['퍽!', '짜악!', '철썩!', '탁!', '뿅!'], HURT = ['앗!', '흐앙!', '꺄악!'];
   function burst(where, list, n, spread) {
@@ -453,20 +454,21 @@
     for (const e of evs) {
       switch (e.type) {
         case 'play': if (S.p.orgActive && Math.random() < 0.5) heroSay('orgAttack'); else if (!e.line || Math.random() < 0.3) { if (!heroSay('attack')) say(e.line); } else say(e.line); await sleep(160); break;
-        case 'edmg': SFX.play(e.kind === 'reflect' ? 'stat' : 'hit'); if (e.kind !== 'reflect') { sticker(e.idx, rnd(['zzak', 'chalssak', 'kwang', 'peng', 'crash', 'bbong']), e.amount >= 14 ? 1.45 : 1); pop(e.idx, e.amount >= 14 ? 2.4 : 1.2); slash(e.idx, e.amount >= 14 ? 2 : 1); impact(e.idx, e.amount >= 14); wind(false); burst(e.idx, ['✨', '💥', '⭐', '💖'], 7, 8); if (e.amount >= 14) { sticker(e.idx, 'flash', 1.6, 60); fieldShake(); softFlash(); } } float((e.kind === 'reflect' ? '↩' : '') + e.amount, e.idx, e.kind === 'reflect' ? 'st' : ''); shakeEnemy(e.idx); renderEnemies(); await sleep(150); break;
-        case 'arrest': heroSay('arrest', 0.8); enemySay(e.idx, 'arrested'); SFX.play('arrest'); burst(e.idx, ['⭐', '💖', '✨', '🎀', '💖'], 18, 14); fogPuff(e.idx, 5); impact(e.idx, true); sticker(e.idx, rnd(['kwang2', 'flash', 'bang3']), 1.6); sticker(e.idx, 'spark', 1.3, 120); pop(e.idx, 3.2); float('체포!', e.idx, 'say'); await sleep(350); break;
+        case 'edmg': SFX.play(e.kind === 'reflect' ? 'stat' : 'hit'); if (e.kind !== 'reflect') vib(e.amount >= 14 ? 'bigHit' : 'hit'); if (e.kind !== 'reflect') { sticker(e.idx, rnd(['zzak', 'chalssak', 'kwang', 'peng', 'crash', 'bbong']), e.amount >= 14 ? 1.45 : 1); pop(e.idx, e.amount >= 14 ? 2.4 : 1.2); slash(e.idx, e.amount >= 14 ? 2 : 1); impact(e.idx, e.amount >= 14); wind(false); burst(e.idx, ['✨', '💥', '⭐', '💖'], 7, 8); if (e.amount >= 14) { sticker(e.idx, 'flash', 1.6, 60); fieldShake(); softFlash(); } } float((e.kind === 'reflect' ? '↩' : '') + e.amount, e.idx, e.kind === 'reflect' ? 'st' : ''); shakeEnemy(e.idx); renderEnemies(); await sleep(150); break;
+        case 'arrest': heroSay('arrest', 0.8); enemySay(e.idx, 'arrested'); SFX.play('arrest'); vib('arrest'); burst(e.idx, ['⭐', '💖', '✨', '🎀', '💖'], 18, 14); fogPuff(e.idx, 5); impact(e.idx, true); sticker(e.idx, rnd(['kwang2', 'flash', 'bang3']), 1.6); sticker(e.idx, 'spark', 1.3, 120); pop(e.idx, 3.2); float('체포!', e.idx, 'say'); await sleep(350); break;
         case 'block': heroSay('block', 0.25); SFX.play('block'); burst('heroCenter', ['🛡️', '✨'], 4, 6); impact('heroCenter'); float('🛡+' + e.amount, 'heroCenter', 'blk'); break;
         case 'stat': if (e.stat === 'dopa' && S.p.dopa >= 70 && !dopaSaid && !S.p.orgActive) { dopaSaid = true; heroSay('dopa70'); } SFX.play(e.stat === 'dopa' ? 'dopa' : e.stat === 'tight' ? 'tight' : 'stat'); burst('heroCenter', e.stat === 'dopa' ? ['💗', '✨'] : e.stat === 'tight' ? ['💜', '✨'] : ['💧', '✨'], 5, 7); if (e.stat === 'dopa') { sticker('heroCenter', 'throb', .9); pop('heroCenter', 1.1); } else if (e.stat === 'tight') sticker('heroCenter', 'bolt', .8); else pop('heroCenter', 1.4, true); float((e.stat === 'dopa' ? '도파민' : e.stat === 'tight' ? '조임력' : '윤활도') + ' +' + e.amount, 'heroCenter', 'dopa'); break;
         case 'heal': SFX.play('heal'); sticker('heroCenter', 'spark', .9); burst('heroCenter', ['💚', '✨'], 6, 8); float('+' + e.amount, 'heroCenter', 'heal'); break;
         case 'status': float(e.what, e.idx, 'st'); break;
         case 'pdmg':
           if (e.self) { float('-' + e.amount, 'heroCenter'); break; }
+          vib(e.amount >= 14 ? 'heavyHurt' : 'hurt');
           if (e.idx != null) { const img = $('heroImg'); const hp = e.amount >= 14 ? 'fly' : 'cry'; heroOverride = hp; $('heroImg').src = heroSrc(hp); img.classList.remove('hit'); void img.offsetWidth; img.classList.add('hit'); }
           enemySay(e.idx, 'attack', 0.7); SFX.play('hurt'); if (!lowSaid && S.p.hp / S.p.maxHp <= 0.3) { lowSaid = true; setTimeout(() => { SFX.play('low'); heroSay('lowHp'); }, 700); } else if (Math.random() < 0.4) setTimeout(() => heroSay('hit'), 450); if (!e.blocked) { sticker('heroCenter', rnd(['ah', 'oh', 'gasp', 'startle', 'flinch', 'what']), 1); pop('heroCenter', 1.6, true); } slash('heroCenter', 1, true); wind(true, 7); fieldShake(); float(e.blocked ? '-' + e.amount + ' (🛡' + e.blocked + ')' : '-' + e.amount, 'heroCenter'); await sleep(320); break;
         case 'disgust': heroSay(Math.random() < 0.5 ? 'kicked' : 'disgust', 0.7); SFX.play('disgust'); burst(e.idx, ['💦', '😑'], 5, 7); pop(e.idx, 1.6, true); float('질림… 공격 취소!', e.idx, 'st'); await sleep(350); break;
         case 'fleeFail': float('봉쇄! 못 도망쳐', e.idx, 'st'); await sleep(350); break;
         case 'flee': enemySay(e.idx, 'flee'); heroSay('fleeMissed', 0.8); SFX.play('flee'); float('도주!', e.idx, 'say'); await sleep(300); break;
-        case 'orgasm': heroSay('orgasm'); SFX.play('orgasm'); flash(); fogPuff('heroCenter', 9); heartRain(60); wind(false, 12); burst('heroCenter', ['💖', '💗', '✨', '⭐', '🎀'], 52, 26); sticker('heroCenter', 'heartB', 2.2); sticker('heroCenter', 'throb', 1.6, 200); sticker('heroCenter', 'spark', 1.8, 350); pop('heroCenter', 5, true); fountain(36); setTimeout(() => { pop('heroCenter', 4, true); fountain(30); }, 450); banner('절정!!', true); await sleep(900); break;
+        case 'orgasm': heroSay('orgasm'); SFX.play('orgasm'); vib('orgasm'); flash(); fogPuff('heroCenter', 9); heartRain(60); wind(false, 12); burst('heroCenter', ['💖', '💗', '✨', '⭐', '🎀'], 52, 26); sticker('heroCenter', 'heartB', 2.2); sticker('heroCenter', 'throb', 1.6, 200); sticker('heroCenter', 'spark', 1.8, 350); pop('heroCenter', 5, true); fountain(36); setTimeout(() => { pop('heroCenter', 4, true); fountain(30); }, 450); banner('절정!!', true); await sleep(900); break;
         case 'orgasmEnd': break;
         case 'token': SFX.play('stat'); float('절정 유도 카드 생성', 'heroCenter', 'st'); break;
         case 'turn': if (enemyPhase) { SFX.play('turn'); banner('TURN ' + e.turn); } break;
@@ -478,7 +480,7 @@
   }
 
   function finish() {
-    const r = S.result, ov = $('overlay'); SFX.play(r.win ? 'win' : 'lose'); heroSay(r.win ? 'victory' : 'defeat');
+    const r = S.result, ov = $('overlay'); SFX.play(r.win ? 'win' : 'lose'); if (r.win) vib('victory'); heroSay(r.win ? 'victory' : 'defeat');
     if (runMode) { setTimeout(() => G.run.onEnd(S), 1300); return; }
     $('ovTitle').textContent = r.win ? (r.reward ? '전원 체포!' : '체포 완료') : '수사 실패…';
     $('ovMsg').textContent = r.win ? (r.reward ? '보상 획득 (개발용 전투에서는 보상이 없습니다)' : '놓친 용의자가 있어 보상이 없습니다') : r.reason;

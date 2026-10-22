@@ -1,0 +1,23 @@
+name: GAIA DETECTIVE Web Update
+on:
+  push:
+    branches: [main, gaia-detective-assets]
+    paths: ['gaia-detective/**', 'assets/gaia-detective/**', 'assets/audio/**', '.github/workflows/detective-web.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: {group: gaia-detective-web, cancel-in-progress: true}
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 gaia-detective/tools/build_android_web.py
+      - run: for f in gaia-detective/js/*.js gaia-detective/data/*.js; do node --check "$f"; done
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: detective-web-latest
+          name: GAIA CITY DETECTIVE 게임 자동 업데이트
+          body: 게임 내용 자동 업데이트 묶음입니다. 앱을 켤 때 앱이 직접 내려받습니다.
+          make_latest: false
+          files: detective-web.zip
