@@ -9,7 +9,7 @@
 <body>
 <div id="app">
   <div id="hud">
-    <div class="hudbox" id="hpBox"><span class="ico">♥</span><div class="bar hp"><i id="hpFill"></i><b id="hpTxt"></b></div></div>
+    <div class="hudbox" id="hpBox"><span class="ico ic" data-ic="heart">♥</span><div class="bar hp"><i id="hpFill"></i><b id="hpTxt"></b></div></div>
     <div class="hudbox" id="energyBox"><div id="energy"></div></div>
     <div class="hudbox stat"><span class="lab">도파민</span><div class="bar dopa" id="dopaBar"><i id="dopaFill"></i><b id="dopaTxt"></b></div></div>
     <div class="hudbox stat"><span class="lab">조임력</span><div class="bar tight"><i id="tightFill"></i><b id="tightTxt"></b></div></div>
@@ -36,15 +36,19 @@
 
   <div id="map" class="hidden">
     <div id="mapPan"></div>
+    <div id="mapInfo"></div>
     <div id="mapHint">손가락으로 밀어서 지도를 움직이세요</div>
     <div id="mapCard" class="hidden"><b id="mcName"></b><span id="mcSub"></span><div class="row"><button id="mcClose">닫기</button><button id="mcGo">출동</button></div></div>
   </div>
+
+  <div id="panel" class="hidden"><div class="box"><h2 id="pnTitle"></h2><p id="pnMsg"></p><div id="pnCards"></div><div class="row" id="pnBtns"></div></div></div>
 
   <div id="dev" class="hidden">
     <h4>개발용 패널</h4>
     <label>전투 <select id="devEnc"></select></label>
     <button id="devStart">시작</button>
     <div class="row"><button data-dev="dopa30">도파민 +30</button><button data-dev="dopa100">도파민 100</button><button data-dev="tight10">조임력 +10</button><button data-dev="lube50">윤활도 +50</button></div>
+    <button id="devReset">런 초기화(새로 시작)</button>
     <label>손패에 추가 <select id="devCard"></select></label>
     <button id="devAdd">추가</button>
   </div>
@@ -57,8 +61,12 @@
 <script src="data/enemies.js"></script>
 <script src="data/dialogue.js"></script>
 <script src="data/map.js"></script>
+<script src="data/flow.js"></script>
+<script src="data/items.js"></script>
 <script src="js/engine.js"></script>
+<script src="js/icons.js"></script>
 <script src="js/sfx.js"></script>
+<script src="js/run.js"></script>
 <script src="js/map.js"></script>
 <script src="js/ui.js"></script>
 </body>

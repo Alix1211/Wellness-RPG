@@ -5,9 +5,9 @@ window.GAIA = window.GAIA || {};
   const A = (n, hits) => ({ t: 'atk', n: n, hits: hits || 1 });
   const B = (s) => ({ t: 'buff', str: s });
   const E = {
-    barbari: { id:'barbari', name:'바바리맨',          kind:'normal', hp:38,  sprite:'enemy_barbari', h:1.00, cycle:[[A(5)],[A(6)],[A(7)],[A(5,2)]] },
-    bouncer: { id:'bouncer', name:'클럽 바운서',        kind:'normal', hp:46,  sprite:'enemy_bouncer', h:1.08, cycle:[[A(7)],[B(1)],[A(9)],[A(6,2)]] },
-    mohawk:  { id:'mohawk',  name:'모히칸 양아치',      kind:'normal', hp:36,  sprite:'enemy_mohawk',  h:1.00, cycle:[[A(4,2)],[A(6)],[A(3,3)],[B(1)]] },     // 임시 이름
+    barbari: { id:'barbari', name:'바바리맨',          kind:'normal', hp:42,  sprite:'enemy_barbari', h:1.00, cycle:[[A(6)],[A(7)],[A(8)],[A(6,2)]] },
+    bouncer: { id:'bouncer', name:'클럽 바운서',        kind:'normal', hp:50,  sprite:'enemy_bouncer', h:1.08, cycle:[[A(8)],[B(1)],[A(10)],[A(7,2)]] },
+    mohawk:  { id:'mohawk',  name:'모히칸 양아치',      kind:'normal', hp:38,  sprite:'enemy_mohawk',  h:1.00, cycle:[[A(5,2)],[A(7)],[A(4,3)],[B(1)]] },     // 임시 이름
     leopard: { id:'leopard', name:'레오파드 사장',      kind:'normal', hp:50,  sprite:'enemy_leopard', h:1.00, cycle:[[A(6)],[B(1)],[A(8)],[A(4,2)]] },     // 임시 이름
     macho:   { id:'macho',   name:'마초 강',           kind:'elite',  hp:105, sprite:'enemy_leopard', h:1.30, cycle:[[A(12)],[B(2)],[A(8,2)],[A(14)]] },    // 임시 그림
     titan:   { id:'titan',   name:'타이탄 박',         kind:'boss',   hp:220, sprite:'enemy_bouncer', h:1.70, cycle:[[A(12)],[A(7,2)],[B(2),A(8)],[A(20)]] } // 임시 그림

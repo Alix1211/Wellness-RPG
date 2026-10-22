@@ -177,3 +177,26 @@ body.dragging{cursor:grabbing}
 #mapCard .row{display:flex;gap:1.2vh;justify-content:center;margin-top:.6vh}
 #mapCard button{padding:1.1vh 2.6vh;border-radius:3vh;font-weight:900;font-size:2vh;background:var(--lav);color:#fff}
 #mapCard #mcGo{background:var(--pink-d)}
+
+#mapPan .spot.clear img{filter:saturate(.75) brightness(.97)}
+#mapPan .spot.clear .tag{border-color:var(--mint);color:#2f8a5a}
+#mapInfo{position:absolute;top:1.6vh;left:1.6vh;padding:.7vh 1.6vh;border-radius:3vh;background:rgba(255,255,255,.94);border:2px solid var(--lav-d);font-size:1.7vh;font-weight:800;color:var(--ink);pointer-events:none;z-index:2}
+#mapHint{top:6.4vh}
+/* 보상·휴식·안내 패널 */
+#panel{position:absolute;inset:0;background:rgba(80,30,60,.6);display:flex;align-items:center;justify-content:center;z-index:45}
+#panel .box{background:#fff;border:.6vh solid var(--pink);border-radius:2.4vh;padding:2.4vh 2.4vh;text-align:center;max-width:96vw;max-height:94vh;display:flex;flex-direction:column;gap:1vh}
+#panel h2{margin:0;font-size:3.4vh;color:var(--pink-d)}
+#panel p{margin:0;font-size:1.9vh;font-weight:700}
+#panel .row{display:flex;gap:1.2vh;justify-content:center;flex-wrap:wrap}
+#panel button{background:var(--pink-d);color:#fff;border-radius:3vh;padding:1.1vh 2.4vh;font-weight:900;font-size:2vh}
+#pnCards.scroll{overflow:auto;max-height:56vh;-webkit-overflow-scrolling:touch}
+#pnCards .cardrow{display:flex;gap:1.2vh;justify-content:center;padding:1.2vh .4vh}
+#pnCards .cardrow.wrap{flex-wrap:wrap}
+#pnCards .card{cursor:pointer}
+#pnCards .card:hover{transform:translateY(-.6vh)}
+#pnCards .card.chosen{box-shadow:0 0 0 .5vh var(--pink-d),0 1vh 2vh rgba(224,86,143,.6);transform:translateY(-1vh)}
+
+/* 아이콘 슬롯 */
+.ic.has img{height:1.15em;width:auto;vertical-align:-.18em;pointer-events:none}
+.hudbox .ico.ic.has img{height:2.8vh}
+#muteBtn .ic.has img{height:2.4vh}

@@ -13,15 +13,26 @@
       const el = document.createElement('div'); el.className = 'sheet'; el.dataset.si = si;
       const g = document.createElement('img'); g.src = src(sh.ground); g.draggable = false; el.appendChild(g);
       sh.spots.forEach(sp => {
-        const d = document.createElement('div'); d.className = 'spot ' + (sp.enc ? 'open' : 'locked') + (sp.layer ? '' : ' nolayer');
+        const d = document.createElement('div'); d.className = 'spot locked' + (sp.layer ? '' : ' nolayer');
         d.style.cssText = 'left:' + sp.x + 'px;top:' + sp.y + 'px;width:' + sp.w + 'px;height:' + sp.h + 'px';
         d.dataset.id = sp.id;
         if (sp.layer) { const im = document.createElement('img'); im.src = src(sp.layer); im.draggable = false; d.appendChild(im); }
-        const t = document.createElement('div'); t.className = 'tag'; t.textContent = (sp.enc ? '' : '🔒 ') + sp.name; d.appendChild(t);
+        const t = document.createElement('div'); t.className = 'tag'; d.appendChild(t);
         el.appendChild(d); spots[sp.id] = { sp: sp, el: d, sheet: si };
       });
       pan.appendChild(el);
     });
+  }
+
+  // 런 상태에 맞춰 건물 상태(열림/완료/잠김)와 이름표를 다시 그린다
+  function refresh() {
+    Object.keys(spots).forEach(id => {
+      const o = spots[id], inf = G.run.spotInfo(id);
+      o.el.classList.remove('open', 'locked', 'clear'); o.el.classList.add(inf.state);
+      o.el.querySelector('.tag').textContent = (inf.state === 'locked' ? '🔒 ' : inf.state === 'clear' ? '✔ ' : '▶ ') + o.sp.name;
+    });
+    const r = G.run.get();
+    $('mapInfo').textContent = '월드 Lv.' + r.wl + ' · 체력 ' + r.hp + '/' + G.config.player.maxHp + ' · 덱 ' + r.deck.length + '장';
   }
 
   function layout() {
@@ -67,27 +78,26 @@
   function pick(id) {
     const o = spots[id]; if (!o) return; curId = id;
     Object.values(spots).forEach(x => x.el.classList.toggle('sel', x === o));
-    const enc = o.sp.enc ? G.encounters.find(e => e.id === o.sp.enc) : null;
+    const inf = G.run.spotInfo(id);
     $('mcName').textContent = o.sp.name;
-    $('mcSub').textContent = enc ? '임시 연결 전투: ' + enc.name : '아직 연결되지 않은 장소입니다';
-    const go = $('mcGo'); go.disabled = !enc; go.textContent = enc ? '출동' : '준비 중';
+    $('mcSub').textContent = (inf.title ? inf.title + ' · ' : '') + inf.sub;
+    const go = $('mcGo'); go.disabled = !inf.go; go.textContent = inf.go || (inf.state === 'clear' ? '완료' : '갈 수 없음');
     card.classList.remove('hidden');
     if (G.sfx) G.sfx.play('click');
   }
   function closeCard() { curId = null; card.classList.add('hidden'); Object.values(spots).forEach(x => x.el.classList.remove('sel')); }
   $('mcClose').addEventListener('click', closeCard);
   $('mcGo').addEventListener('click', () => {
-    const o = spots[curId]; if (!o || !o.sp.enc) return;
-    const id = curId; lastId = id; closeCard(); root.classList.add('hidden');
-    G.ui.start(o.sp.enc);
+    const id = curId; if (!id || !G.run.spotInfo(id).go) return;
+    lastId = id; closeCard(); G.run.enter(id);
   });
 
   let lastId = null, built = false;
   function open() {
     if (!built) { build(); built = true; }
-    root.classList.remove('hidden'); closeCard(); layout(); center(lastId || D.start);
+    root.classList.remove('hidden'); closeCard(); refresh(); layout(); center(lastId || D.start);
     const h = $('mapHint'); h.classList.remove('fade'); void h.offsetWidth; h.classList.add('fade');
   }
   window.addEventListener('resize', () => { if (!root.classList.contains('hidden')) { layout(); } });
-  G.map.open = open;
+  G.map.open = open; G.map.close = () => root.classList.add('hidden');
 })();

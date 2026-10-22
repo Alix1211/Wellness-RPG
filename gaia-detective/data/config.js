@@ -9,6 +9,7 @@ GAIA.config = {
   lube: { max: 100, drawThreshold: 30, discountThreshold: 70, decayPerTurn: 10 },
   weakMult: 0.75, vulnMult: 1.5,
   // ── 임시 규칙 (미확정) ──
+  world: { hpPerLevel: 0.15, atkPerLevel: 0.07 },  // 임시: 한 바퀴 돌 때마다 적 기력 +15%, 공격력 +7%
   disgustEliteImmuneTurns: 2,     // 임시: 엘리트는 질림이 발동한 뒤 2턴 면역, 보스는 첫 공격 행동 1개만 취소
   lubeShortage: 'cannotPlay',     // 임시: 윤활도 소모가 모자라면 카드를 낼 수 없음
   fleeRatio: { normal: 0.2, elite: 0.15, boss: 0.1 }, // 임시: 기력이 이 비율 이하가 되면 도주 시도

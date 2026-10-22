@@ -3,7 +3,9 @@
   const G = window.GAIA, C = G.config, A = G.assets;
   const $ = id => document.getElementById(id);
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-  let S = null, encId = 'e1', selUid = null, busy = false, bgN = 0, heroOverride = null, lowSaid = false, dopaSaid = false;
+  const ic = (k, fb) => G.icons ? G.icons.html(k, fb) : fb;
+  const hyd = () => { if (G.icons) G.icons.hydrate(document); };
+  let S = null, runMode = false, encId = 'e1', selUid = null, busy = false, bgN = 0, heroOverride = null, lowSaid = false, dopaSaid = false;
 
   // ── 이미지 경로 ──
   const heroSrc = k => A.base + A.hero[k];
@@ -12,10 +14,11 @@
   const sprite = e => A.base + e.def.sprite + '.png';
 
   // ── 시작 ──
-  function start(id) {
+  function start(id, opts) {
+    opts = opts || {}; runMode = !!opts.run;
     encId = id || encId;
     const enc = G.encounters.find(x => x.id === encId);
-    S = G.newBattle({ enemies: enc.enemies });
+    S = G.newBattle({ enemies: enc.enemies, deck: opts.deck, hp: opts.hp, wl: opts.wl });
     selUid = null; busy = false; heroOverride = null; lowSaid = false; dopaSaid = false;
     $('overlay').classList.add('hidden');
     $('bg').style.backgroundImage = 'url(' + bgSrc(enc.bg || A.bg[(bgN++) % A.bg.length]) + ')';
@@ -45,13 +48,14 @@
     const en = $('energy'); en.innerHTML = '';
     const total = Math.max(C.player.energy + (p.orgActive ? C.orgasm.energyBonus : 0), p.energy);
     for (let i = 0; i < total; i++) { const o = document.createElement('div'); o.className = 'orb' + (i < p.energy ? '' : ' off'); en.appendChild(o); }
-    $('blockTag').textContent = p.block > 0 ? '🛡 ' + p.block : '';
+    $('blockTag').innerHTML = p.block > 0 ? ic('block', '🛡') + ' ' + p.block : '';
     $('heroImg').src = heroSrc(heroPose());
     $('field').classList.toggle('orgmode', p.orgActive);
     renderEnemies();
     renderHand();
     $('nDraw').textContent = S.drawPile.length; $('nDisc').textContent = S.discard.length;
     $('nExh').textContent = S.exhaust.length ? '소멸 ' + S.exhaust.length : '';
+    hyd();
     $('endTurn').disabled = busy || S.phase !== 'player';
     const needT = selUid != null;
     $('hintBar').classList.toggle('on', needT);
@@ -84,9 +88,9 @@
       const it = el.querySelector('.intent');
       if (!live) it.innerHTML = '';
       else it.innerHTML = G.intentInfo(S, e).map(a => {
-        if (a.kind === 'atk') return '<span class="atk">' + (e.disgust > 0 ? '🚫' : '⚔') + a.n + (a.hits > 1 ? '×' + a.hits : '') + '</span>';
-        if (a.kind === 'buff') return '<span class="buff">💪+' + a.n + '</span>';
-        return '<span class="flee">💨 도주!</span>';
+        if (a.kind === 'atk') return '<span class="atk">' + (e.disgust > 0 ? ic('intent_disgust', '🚫') : ic('intent_atk', '⚔')) + a.n + (a.hits > 1 ? '×' + a.hits : '') + '</span>';
+        if (a.kind === 'buff') return '<span class="buff">' + ic('intent_buff', '💪') + '+' + a.n + '</span>';
+        return '<span class="flee">' + ic('intent_flee', '💨') + ' 도주!</span>';
       }).join('');
       const chips = [];
       if (e.str) chips.push('힘 ' + (e.str > 0 ? '+' : '') + e.str);
@@ -113,12 +117,8 @@
     if (n > 1 && need(k) > avail) step = (avail - cw) / (n - 1);
     S.hand.forEach((c, i) => {
       const d = G.cards[c.id], chk = G.canPlay(S, c.uid), cost = G.cost(S, c);
-      const el = document.createElement('div');
-      el.className = 'card t-' + d.type + ' g-' + d.grade + (chk.ok ? '' : ' dis') + (selUid === c.uid ? ' sel' : '');
-      const reduced = cost < d.cost;
-      el.innerHTML = '<div class="cost' + (reduced ? ' dc' : '') + '">' + cost + '</div><div class="cname">' + d.name + '</div>' +
-        '<div class="art" style="background:' + artColor(d) + '"><img alt="" draggable="false" onerror="this.remove()" src="' + cardImg(d.id) + '"><span>' + d.folder + '</span></div>' +
-        '<div class="ctext"><small>' + d.type + (d.exhaust ? ' · 소멸' : '') + '</small>' + d.text + '</div>';
+      const el = cardEl(d.id, cost);
+      el.className += (chk.ok ? '' : ' dis') + (selUid === c.uid ? ' sel' : '');
       el.style.marginLeft = i ? (step - cw) + 'px' : '0';
       el.style.rotate = ((i - (n - 1) / 2) * 1.5) + 'deg';
       el.dataset.uid = c.uid; el.title = chk.ok ? '' : chk.reason;
@@ -126,6 +126,14 @@
       el.addEventListener('pointerdown', ev => onCardDown(ev, c.uid, el));
       h.appendChild(el);
     });
+  }
+  function cardEl(id, cost) {
+    const d = G.cards[id], el = document.createElement('div'); if (cost == null) cost = d.cost;
+    el.className = 'card t-' + d.type + ' g-' + d.grade;
+    el.innerHTML = '<div class="cost' + (cost < d.cost ? ' dc' : '') + '">' + cost + '</div><div class="cname">' + d.name + '</div>' +
+      '<div class="art" style="background:' + artColor(d) + '"><img alt="" draggable="false" onerror="this.remove()" src="' + cardImg(d.id) + '"><span>' + d.folder + '</span></div>' +
+      '<div class="ctext"><small>' + d.type + (d.exhaust ? ' · 소멸' : '') + '</small>' + d.text + '</div>';
+    return el;
   }
   function artColor(d) { return d.type === '공격' ? 'linear-gradient(135deg,#ff8fb8,#c46bd6)' : d.type === '스킬' ? 'linear-gradient(135deg,#7ec8ff,#8f74e6)' : 'linear-gradient(135deg,#ffd36b,#ff8fb8)'; }
 
@@ -275,7 +283,7 @@
     sp.textContent = text; sp.style.fontSize = (small ? 1.8 : text.length > 30 ? 1.45 : 1.7) + 'vh';
     clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 2100);
   }
-  function say(text) { showBubble($('bubble'), text, 'pink'); }
+  function say(text) { if (!text) return; showBubble($('bubble'), text, 'pink'); }
   const rnd = a => a[Math.floor(Math.random() * a.length)];
   function heroSay(key, chance) {
     const L = G.dialogue && G.dialogue.hero[key]; if (!L || (chance != null && Math.random() > chance)) return;
@@ -350,14 +358,15 @@
 
   function finish() {
     const r = S.result, ov = $('overlay'); SFX.play(r.win ? 'win' : 'lose'); heroSay(r.win ? 'victory' : 'defeat');
+    if (runMode) { setTimeout(() => G.run.onEnd(S), 1300); return; }
     $('ovTitle').textContent = r.win ? (r.reward ? '전원 체포!' : '체포 완료') : '수사 실패…';
-    $('ovMsg').textContent = r.win ? (r.reward ? '보상 획득 (2단계에서 카드 선택 연결)' : '놓친 용의자가 있어 보상이 없습니다') : r.reason;
+    $('ovMsg').textContent = r.win ? (r.reward ? '보상 획득 (개발용 전투에서는 보상이 없습니다)' : '놓친 용의자가 있어 보상이 없습니다') : r.reason;
     setTimeout(() => ov.classList.remove('hidden'), 600);
   }
 
   // ── 개발용 패널 ──
   const sel = $('devEnc'); G.encounters.forEach(e => { const o = document.createElement('option'); o.value = e.id; o.textContent = e.name; sel.appendChild(o); });
-  const cs = $('devCard'); G.cardList.concat([G.cards.T01]).forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = (c.no ? c.no + '. ' : '') + c.name; cs.appendChild(o); });
+  const cs = $('devCard'); G.cardListAll.concat([G.cards.T01]).forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = (c.no ? c.no + '. ' : '') + c.name + (c.draft ? ' (초안)' : ''); cs.appendChild(o); });
   $('devBtn').addEventListener('click', () => $('dev').classList.toggle('hidden'));
   $('devStart').addEventListener('click', () => { start(sel.value); $('dev').classList.add('hidden'); });
   $('devAdd').addEventListener('click', () => { if (!S || S.hand.length >= C.player.handLimit) return; S.hand.push({ uid: 9000 + Math.floor(Math.random() * 90000), id: cs.value }); render(); });
@@ -369,13 +378,14 @@
     if (k === 'lube50') p.lube = Math.min(C.lube.max, p.lube + 50);
     render();
   }));
+  $('devReset').addEventListener('click', () => { G.run.reset(); $('dev').classList.add('hidden'); $('overlay').classList.add('hidden'); G.map.open(); });
   $('ovAgain').addEventListener('click', () => start(encId));
   $('ovDev').addEventListener('click', () => { $('overlay').classList.add('hidden'); $('dev').classList.remove('hidden'); });
 
-  const mb = $('muteBtn'); const setMb = () => { mb.textContent = SFX.isMuted() ? '🔇' : '🔊'; }; setMb();
+  const mb = $('muteBtn'); const setMb = () => { mb.innerHTML = SFX.isMuted() ? ic('sound_off', '🔇') : ic('sound_on', '🔊'); hyd(); }; setMb();
   mb.addEventListener('click', () => { SFX.toggle(); setMb(); SFX.play('click'); });
   document.addEventListener('pointerdown', () => SFX.unlock(), { once: true });
-  window.GAIA.ui = { start: start };
+  window.GAIA.ui = { start: start, cardEl: cardEl, state: () => S, render: () => render() };
   const q = new URLSearchParams(location.search);
   $('ovMap').addEventListener('click', () => { $('overlay').classList.add('hidden'); G.map.open(); });
   if (q.get('enc')) start(q.get('enc')); else G.map.open();

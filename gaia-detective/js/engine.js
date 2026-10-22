@@ -27,7 +27,8 @@
     shuffle(S.drawPile);
     (opts.enemies || ['barbari']).forEach(id => {
       const d = G.enemies[id];
-      const e = { id: id, def: d, name: d.name, kind: d.kind, hp: d.hp, maxHp: d.hp, str: 0, weak: 0, vuln: 0, bound: 0, disgust: 0, immune: 0, idx: 0, intent: [], fled: false, arrested: false };
+      const wl = opts.wl || 0, hp0 = Math.round(d.hp * (1 + C.world.hpPerLevel * wl));
+      const e = { id: id, def: d, name: d.name, kind: d.kind, wl: wl, hp: hp0, maxHp: hp0, str: 0, weak: 0, vuln: 0, bound: 0, disgust: 0, immune: 0, idx: 0, intent: [], fled: false, arrested: false };
       S.enemies.push(e);
       setIntent(e);
     });
@@ -39,7 +40,7 @@
     const fr = C.fleeRatio[e.kind];
     if (e.hp / e.maxHp <= fr) { e.intent = [{ t: 'flee' }]; return; }
     const cyc = e.def.cycle;
-    e.intent = cyc[e.idx % cyc.length].map(a => Object.assign({}, a));
+    e.intent = cyc[e.idx % cyc.length].map(a => { const o = Object.assign({}, a); if (o.t === 'atk' && e.wl) o.n = Math.round(o.n * (1 + C.world.atkPerLevel * e.wl)); return o; });
     e.idx++;
   }
 

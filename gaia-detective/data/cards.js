@@ -28,6 +28,32 @@ window.GAIA = window.GAIA || {};
     { id:'C23', no:23, name:'도파민 오버클럭',    grade:'희귀', cost:3, type:'파워', folder:'스트립 댄서', ops:[{op:'overclock'}], text:'피격될 때마다 [절정 유도]를 손패에 1장 생성 (턴당 최대 2장).', line:'아무리 쑤시고 패셔도 저는 죽지 않습니다. 더 황홀할 뿐이죠!' },
     { id:'C24', no:24, name:'무적의 형사 수갑',   grade:'희귀', cost:2, type:'스킬', folder:'경찰관', ops:[{op:'bind'},{op:'enemyStrDown',n:2}], exhaust:true, text:'봉쇄. 적의 힘 -2. 소멸.', line:'제 몸을 마음껏 유린하셨으니, 이제 얌전히 수갑을 차시겠습니까?' },
     { id:'C25', no:25, name:'구속영장 청구 타격', grade:'희귀', cost:2, type:'공격', folder:'경찰관', ops:[{op:'dmg',n:14,ratioMult:{ratio:0.3,mult:2}}], text:'적에게 14 피해. 적 기력 30% 이하면 피해 2배.', line:'체포 영장이 발부되었으니 남은 기력을 모조리 뽑아내 드리겠습니다!' },
+    // ── C26~C50: 초안(케인 승인 대기). draft:true 는 개발 패널에서만 쓰고 보상 풀·덱에는 섞이지 않는다. 대사(line)는 아직 없음 ──
+    { id:'C26', no:26, name:'불심검문',              grade:'일반', cost:1, type:'공격', folder:'경찰관', draft:true, ops:[{op:'dmg',n:8},{op:'dopa',n:3}], text:'적에게 8 피해. 도파민 +3.', line:'' },
+    { id:'C27', no:27, name:'순찰 중 허벅지 훑기',    grade:'일반', cost:1, type:'스킬', folder:'경찰관', draft:true, ops:[{op:'block',n:5},{op:'draw',n:1}], text:'방어도 5. 카드 1장 드로우.', line:'' },
+    { id:'C28', no:28, name:'현장 증거 압수',         grade:'일반', cost:1, type:'공격', folder:'경찰관', draft:true, ops:[{op:'dmg',n:7},{op:'vuln',n:1}], text:'적에게 7 피해. 취약 1.', line:'' },
+    { id:'C29', no:29, name:'무전기 비명',            grade:'특별', cost:1, type:'스킬', folder:'경찰관', draft:true, ops:[{op:'weak',n:1,all:true},{op:'dopa',n:10}], text:'적 전체에게 약화 1. 도파민 +10.', line:'' },
+    { id:'C30', no:30, name:'체포 직전 몸수색',       grade:'특별', cost:1, type:'공격', folder:'경찰관', draft:true, ops:[{op:'dmg',n:6,all:true},{op:'weak',n:1,all:true}], text:'적 전체에게 6 피해. 약화 1.', line:'' },
+    { id:'C31', no:31, name:'순직 각오 돌격',         grade:'희귀', cost:2, type:'공격', folder:'경찰관', draft:true, ops:[{op:'dmg',n:18},{op:'hpLoss',n:5}], text:'적에게 18 피해. 체력 5 손실.', line:'' },
+    { id:'C32', no:32, name:'골목 구석 웅크리기',     grade:'일반', cost:1, type:'스킬', folder:'뒷골목', draft:true, ops:[{op:'block',n:7},{op:'lube',n:10}], text:'방어도 7. 윤활도 +10.', line:'' },
+    { id:'C33', no:33, name:'쓰레기통 뒤 숨 고르기',  grade:'일반', cost:0, type:'스킬', folder:'뒷골목', draft:true, exhaust:true, ops:[{op:'dopa',n:15},{op:'lube',n:10}], text:'도파민 +15. 윤활도 +10. 소멸.', line:'' },
+    { id:'C34', no:34, name:'길바닥 포박 풀기',       grade:'특별', cost:1, type:'스킬', folder:'뒷골목', draft:true, exhaust:true, ops:[{op:'block',n:8},{op:'disgust'}], text:'방어도 8. 질림. 소멸.', line:'' },
+    { id:'C35', no:35, name:'구겨진 지폐 한 장',      grade:'희귀', cost:0, type:'스킬', folder:'뒷골목', draft:true, exhaust:true, ops:[{op:'heal',n:6},{op:'draw',n:2}], text:'체력 6 회복. 카드 2장 드로우. 소멸.', line:'' },
+    { id:'C36', no:36, name:'미러볼 아래 허리 돌리기', grade:'일반', cost:1, type:'공격', folder:'클럽', draft:true, ops:[{op:'dmg',n:9},{op:'lube',n:10}], text:'적에게 9 피해. 윤활도 +10.', line:'' },
+    { id:'C37', no:37, name:'VIP 룸 입장권',          grade:'특별', cost:1, type:'스킬', folder:'클럽', draft:true, ops:[{op:'dopa',n:15},{op:'vuln',n:1}], text:'도파민 +15. 취약 1.', line:'' },
+    { id:'C38', no:38, name:'샴페인 샤워',            grade:'특별', cost:1, type:'공격', folder:'클럽', draft:true, lubeCost:20, ops:[{op:'dmg',n:10,all:true}], text:'윤활도 20 소모. 적 전체에게 10 피해.', line:'' },
+    { id:'C39', no:39, name:'클럽 DJ 믹스',           grade:'희귀', cost:2, type:'스킬', folder:'클럽', draft:true, ops:[{op:'draw',n:3},{op:'dopa',n:15}], text:'카드 3장 드로우. 도파민 +15.', line:'' },
+    { id:'C40', no:40, name:'스쿼트 100개',           grade:'일반', cost:1, type:'스킬', folder:'트레이닝', draft:true, ops:[{op:'block',n:5},{op:'tight',n:4}], text:'방어도 5. 조임력 +4.', line:'' },
+    { id:'C41', no:41, name:'케겔 인터벌',            grade:'특별', cost:0, type:'스킬', folder:'트레이닝', draft:true, exhaust:true, ops:[{op:'tight',n:5},{op:'draw',n:1}], text:'조임력 +5. 카드 1장 드로우. 소멸.', line:'' },
+    { id:'C42', no:42, name:'근육통 전부 쏟기',       grade:'희귀', cost:2, type:'공격', folder:'트레이닝', draft:true, ops:[{op:'dmg',n:12,addTightHalf:true}], text:'적에게 12 + (조임력의 절반) 피해.', line:'' },
+    { id:'C43', no:43, name:'레이스 끈 풀기',         grade:'일반', cost:1, type:'스킬', folder:'란제리', draft:true, ops:[{op:'block',n:6},{op:'weak',n:1}], text:'방어도 6. 약화 1.', line:'' },
+    { id:'C44', no:44, name:'스타킹 올 나가기',       grade:'일반', cost:0, type:'스킬', folder:'란제리', draft:true, ops:[{op:'lube',n:25},{op:'hpLoss',n:2}], text:'윤활도 +25. 체력 2 손실.', line:'' },
+    { id:'C45', no:45, name:'가터벨트 잡아당기기',    grade:'특별', cost:1, type:'공격', folder:'란제리', draft:true, ops:[{op:'dmg',n:8},{op:'vuln',n:1}], text:'적에게 8 피해. 취약 1.', line:'' },
+    { id:'C46', no:46, name:'속옷 차림 수색 영장',    grade:'희귀', cost:1, type:'스킬', folder:'란제리', draft:true, exhaust:true, ops:[{op:'block',n:10},{op:'disgust'}], text:'방어도 10. 질림. 소멸.', line:'' },
+    { id:'C47', no:47, name:'봉 돌기',                grade:'일반', cost:1, type:'공격', folder:'스트립 댄서', draft:true, ops:[{op:'dmg',n:5,all:true},{op:'dopa',n:10}], text:'적 전체에게 5 피해. 도파민 +10.', line:'' },
+    { id:'C48', no:48, name:'팁 박스 던지기',         grade:'특별', cost:1, type:'스킬', folder:'스트립 댄서', draft:true, ops:[{op:'vuln',n:2,all:true},{op:'dopa',n:10}], text:'적 전체에게 취약 2. 도파민 +10.', line:'' },
+    { id:'C49', no:49, name:'앙코르 요청',            grade:'특별', cost:1, type:'스킬', folder:'스트립 댄서', draft:true, ops:[{op:'draw',n:2},{op:'dopa',n:10}], text:'카드 2장 드로우. 도파민 +10.', line:'' },
+    { id:'C50', no:50, name:'피날레 쇼',              grade:'희귀', cost:3, type:'공격', folder:'스트립 댄서', draft:true, exhaust:true, ops:[{op:'dmg',n:18,all:true,orgBonus:8}], text:'적 전체에게 18 피해. [절정] 중이면 추가 8 피해. 소멸.', line:'' },
     // 토큰 (덱에 들어가지 않음)
     { id:'T01', no:0, name:'절정 유도', grade:'토큰', cost:0, type:'스킬', folder:'-', token:true, ops:[{op:'dopa',n:20}], exhaust:true, text:'도파민 +20. 소멸.', line:'앗, 이 느낌…… 조금만 더요!' }
   ];
@@ -35,5 +61,6 @@ window.GAIA = window.GAIA || {};
   const SINGLE = ['dmg','weak','vuln','bind','disgust','enemyStrDown'];
   L.forEach(c => { c.needsTarget = c.ops.some(o => SINGLE.indexOf(o.op) >= 0 && !o.all); dict[c.id] = c; });
   GAIA.cards = dict;
-  GAIA.cardList = L.filter(c => !c.token);
+  GAIA.cardList = L.filter(c => !c.token && !c.draft);       // 덱·보상에 쓰는 확정 카드
+  GAIA.cardListAll = L.filter(c => !c.token);                  // 개발 패널용(초안 포함)
 })();
