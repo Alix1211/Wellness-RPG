@@ -142,4 +142,11 @@
     bgmGet: () => bwant,
     unlock: function () { const c = ac(); preload(); sPreload(); if (bwant && !bnode) { bplay = null; bgmGo(); } return c; }
   };
+  // 앱을 나가거나 화면이 꺼지면 모든 소리를 멈추고, 돌아오면 이어 켠다(안드로이드 WebView 는 백그라운드에서도 소리가 나서 필요)
+  document.addEventListener('visibilitychange', () => {
+    try {
+      if (document.hidden) { if (ctx) ctx.suspend(); if (bctx) bctx.suspend(); if (vAudio) vAudio.pause(); }
+      else { if (ctx && ctx.state === 'suspended') ctx.resume(); if (bctx && bctx.state === 'suspended') bctx.resume(); }
+    } catch (e) {}
+  });
 })();

@@ -218,6 +218,7 @@ function finish(){reported=true;state='result';stopAll();
  let canR=true;try{parent.GAIA.minigame.onResult({score:Math.round(pts),ratio,success:ok,counts,strays,best,tier:TIER});canR=parent.GAIA.minigame.canRetry();}catch{}
  const c=$('#card');c.innerHTML='<h1>'+(ok?'성공!':'아쉬워요')+'</h1><div class="stats"><span>완벽 '+counts.perfect+'</span><span>좋아요 '+counts.good+'</span><span>놓침 '+counts.miss+'</span></div><p>'+Math.round(pts)+'점 · 최고 '+best+' 콤보</p><div class="row"><button class="btn alt" id="again'+(canR?'':'" disabled="')+'">다시</button><button class="btn" id="close">닫기</button></div>';
  $('#veil').hidden=false;$('#again').onclick=()=>{try{parent.postMessage({type:'game-retry'},'*');}catch{}};$('#close').onclick=()=>{try{parent.postMessage({type:'wellness-close'},'*');}catch{}};}
+document.addEventListener('visibilitychange',()=>{try{if(ac){document.hidden?ac.suspend():ac.resume();}}catch(e){}});
 window.LifeMini={get started(){return state==='play';},get paused(){return paused;},sound:{enabled:true},pause(v){paused=!!v;try{if(ac){if(v)ac.suspend();else ac.resume();}}catch{}}};
 window.SquatGame={get events(){return events;},gt,tap,get state(){return state;},get counts(){return counts;},rule:RULE};
 showReady();
