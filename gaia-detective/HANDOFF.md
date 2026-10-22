@@ -389,3 +389,8 @@
 - **전투 이펙트(`ui.js`):** 케인 스티커 24종을 `assets/gaia-detective/ui/fx/fx-01~24.webp`로 꺼내 씀(원래 배팅 게임에 들어 있던 그림). 적 피격=짝/찰싹/꽝/펑/와장창/뽕, 주인공 피격=앗/으앗/헉/움찔/깜짝/?!, 체포=꽝/번쩍/!!!+반짝, 절정=하트 폭발·두근두근·반짝+하트·물방울 분수. 불꽃 줄기·하트·물방울이 포물선으로 튀고 바닥에서 한 번 튕김(`pop`, `fountain`, `shoot`). 세기 수치는 각 호출의 숫자(임시).
 - **빌드:** 단일 빌드 약 50MB(+배팅 게임 문서·그림, 스티커). 헤드리스 검증: 경찰서 훈련 시작→플레이→결과→횟수 차감(3→2), 이펙트(절정 시 노드 약 290개) 오류 없음. 귀·손가락 확인은 케인 기기에서.
 - **제안만 하고 안 한 것(병맛 추가):** 적이 맞고 별이 뱅글뱅글 도는 기절 연출, 날아간 적이 화면 끝에서 반짝이며 사라지는 연출, 체포 때 '철컥' 수갑 소리 등. 케인이 고르면 반영.
+
+### 전투 스티커 교체 (2026-10-22 20:30)
+- 케인이 만든 `gaia_comic_vfx_sheets.zip`(4장, 알파 있음)로 교체: `assets/gaia-detective/ui/fx/<이름>.webp` 22종 + 원본 시트 `ui/fx/_src/`. 이름: 적 피격 zzak·chalssak·kwang·peng·crash·bbong / 주인공 피격 ah·oh·gasp·flinch·startle·what / 체포·절정 kwang2·flash·bang3·heartB·throb·spark / 번개·속도 bolt·bolt2·whoosh·lines. 코드는 `ui.js sticker(where, 이름, 크기)`로 이름만 지정(`fxSrc`). 이전 스티커(fx-01~24)는 삭제(배팅 게임 문서 안에는 원래 것이 그대로 있음).
+- whoosh·lines·bolt2는 아직 호출하는 곳이 없음(기절·날아가기 연출 등 병맛 추가 때 사용 예정). 단일 빌드 약 52MB.
+- **빌드 때 할 일:** 진동. 스팀랩소디 `game/haptics.js` + 안드로이드 `GWBridge.vibrate`(MainActivity.java, VIBRATE 권한)를 가져와 게임 쪽 연결·설정 스위치·앱(com.gaia.life) 통로를 함께 만든다(앱 재빌드 필요, 케인 결정 2026-10-22).

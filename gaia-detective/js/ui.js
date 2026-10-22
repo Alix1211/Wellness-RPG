@@ -388,8 +388,8 @@
     }
   }
   // ── 오버스러운 연출: 케인 스티커 그림(ui/fx) + 불꽃·하트·물방울이 튕기며 터짐 ──
-  const FXN = { zzak: '02', chalssak: '01', kwang: '03', peng: '04', flash: '05', crash: '06', flinch: '07', startle: '08', throb: '09', bbong: '10', clatter: '11', whoosh: '12', ah: '13', oh: '14', gasp: '15', what: '16', bang3: '17', chalchal: '18', burstR: '19', burstW: '20', bolt: '21', spark: '22', heartB: '23', lines: '24' };
-  const fxSrc = k => window.GAIA_IMG ? (window.GAIA_IMG['ui/fx/fx-' + FXN[k] + '.webp'] || '') : '../assets/gaia-detective/ui/fx/fx-' + FXN[k] + '.webp';
+  // 새 스티커 세트(케인 제작 gaia_comic_vfx_sheets): assets/gaia-detective/ui/fx/<이름>.webp
+  const fxSrc = k => window.GAIA_IMG ? (window.GAIA_IMG['ui/fx/' + k + '.webp'] || '') : '../assets/gaia-detective/ui/fx/' + k + '.webp';
   function sticker(where, key, scale, delay) {
     const p = pos(where), el = document.createElement('img'); el.className = 'stk'; el.alt = ''; el.src = fxSrc(key);
     el.style.width = ((13 + Math.random() * 4) * (scale || 1) * vh()) + 'px'; el.style.left = (p.x + (Math.random() * 7 - 3.5) * vh()) + 'px'; el.style.top = (p.y - (2 + Math.random() * 4) * vh()) + 'px';
@@ -450,8 +450,8 @@
     for (const e of evs) {
       switch (e.type) {
         case 'play': if (S.p.orgActive && Math.random() < 0.5) heroSay('orgAttack'); else if (!e.line || Math.random() < 0.3) { if (!heroSay('attack')) say(e.line); } else say(e.line); await sleep(160); break;
-        case 'edmg': SFX.play(e.kind === 'reflect' ? 'stat' : 'hit'); if (e.kind !== 'reflect') { sticker(e.idx, rnd(['zzak', 'chalssak', 'kwang', 'peng', 'crash', 'bbong', 'chalchal']), e.amount >= 14 ? 1.45 : 1); pop(e.idx, e.amount >= 14 ? 2.4 : 1.2); slash(e.idx, e.amount >= 14 ? 2 : 1); impact(e.idx, e.amount >= 14); wind(false); burst(e.idx, ['✨', '💥', '⭐', '💖'], 7, 8); if (e.amount >= 14) { sticker(e.idx, 'flash', 1.6, 60); fieldShake(); softFlash(); } } float((e.kind === 'reflect' ? '↩' : '') + e.amount, e.idx, e.kind === 'reflect' ? 'st' : ''); shakeEnemy(e.idx); renderEnemies(); await sleep(150); break;
-        case 'arrest': heroSay('arrest', 0.8); enemySay(e.idx, 'arrested'); SFX.play('arrest'); burst(e.idx, ['⭐', '💖', '✨', '🎀', '💖'], 18, 14); fogPuff(e.idx, 5); impact(e.idx, true); sticker(e.idx, rnd(['kwang', 'flash', 'bang3']), 1.6); sticker(e.idx, 'spark', 1.3, 120); pop(e.idx, 3.2); float('체포!', e.idx, 'say'); await sleep(350); break;
+        case 'edmg': SFX.play(e.kind === 'reflect' ? 'stat' : 'hit'); if (e.kind !== 'reflect') { sticker(e.idx, rnd(['zzak', 'chalssak', 'kwang', 'peng', 'crash', 'bbong']), e.amount >= 14 ? 1.45 : 1); pop(e.idx, e.amount >= 14 ? 2.4 : 1.2); slash(e.idx, e.amount >= 14 ? 2 : 1); impact(e.idx, e.amount >= 14); wind(false); burst(e.idx, ['✨', '💥', '⭐', '💖'], 7, 8); if (e.amount >= 14) { sticker(e.idx, 'flash', 1.6, 60); fieldShake(); softFlash(); } } float((e.kind === 'reflect' ? '↩' : '') + e.amount, e.idx, e.kind === 'reflect' ? 'st' : ''); shakeEnemy(e.idx); renderEnemies(); await sleep(150); break;
+        case 'arrest': heroSay('arrest', 0.8); enemySay(e.idx, 'arrested'); SFX.play('arrest'); burst(e.idx, ['⭐', '💖', '✨', '🎀', '💖'], 18, 14); fogPuff(e.idx, 5); impact(e.idx, true); sticker(e.idx, rnd(['kwang2', 'flash', 'bang3']), 1.6); sticker(e.idx, 'spark', 1.3, 120); pop(e.idx, 3.2); float('체포!', e.idx, 'say'); await sleep(350); break;
         case 'block': heroSay('block', 0.25); SFX.play('block'); burst('heroCenter', ['🛡️', '✨'], 4, 6); impact('heroCenter'); float('🛡+' + e.amount, 'heroCenter', 'blk'); break;
         case 'stat': if (e.stat === 'dopa' && S.p.dopa >= 70 && !dopaSaid && !S.p.orgActive) { dopaSaid = true; heroSay('dopa70'); } SFX.play(e.stat === 'dopa' ? 'dopa' : e.stat === 'tight' ? 'tight' : 'stat'); burst('heroCenter', e.stat === 'dopa' ? ['💗', '✨'] : e.stat === 'tight' ? ['💜', '✨'] : ['💧', '✨'], 5, 7); if (e.stat === 'dopa') { sticker('heroCenter', 'throb', .9); pop('heroCenter', 1.1); } else if (e.stat === 'tight') sticker('heroCenter', 'bolt', .8); else pop('heroCenter', 1.4, true); float((e.stat === 'dopa' ? '도파민' : e.stat === 'tight' ? '조임력' : '윤활도') + ' +' + e.amount, 'heroCenter', 'dopa'); break;
         case 'heal': SFX.play('heal'); sticker('heroCenter', 'spark', .9); burst('heroCenter', ['💚', '✨'], 6, 8); float('+' + e.amount, 'heroCenter', 'heal'); break;
