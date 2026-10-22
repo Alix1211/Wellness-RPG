@@ -11,3 +11,13 @@
 - APK com.gaia.casual versionCode 6 / 1.5-CASUAL-06, 기존 개인 서명 그대로. 삭제 없이 업데이트 설치. 서명/zipalign/내장 HTML 해시 검사. 실제 Android 스피커/기기 동작 미검증.
 - 작업공간 정리 후 전달했던 GAIA-CASUAL-05.html을 복구해 build-from-05.py로 해시를 검증한 뒤 재생성. 정상 R61 재빌드용 build.py에도 같은 bgm_gate.patch_html을 적용. 05 원본 SHA cf2af069dbc0740f6f4b74d01a765c8e6b044e2636e84f24a7a86074af6fcc77.
 - main 보존. codex/gaia-casual-01 작업분기. 서명 키/비밀번호를 저장소나 게임 배포 파일에 넣지 않음.
+
+
+## CASUAL-07 Android updater (2026-10-22)
+- Same CASUAL-06 HTML and all 11 games/assets/save keys; APK wrapper versionCode 7, versionName 1.6-CASUAL-07, same signing key.
+- First 07 launch configures official update URL automatically, including upgrade from empty/placeholder settings. One-time official_update_v1 marker; later user changes remain respected.
+- Official endpoint: https://gaia-casual-updates.sagebean9.chatgpt.site/update.json
+- Sites project: appgprj_6ad9f2ecfcf88191ad8b6bda5378d906. Source checkout /workspace/sites/gaia-casual-updates, remote source separate from private GitHub repo. Update-only files publicly downloadable; GitHub repository stays private.
+- Current hosted content CASUAL-06, hash e3c79a7fcd0349aeb0aa2b6306779f27dcdc35ead4af1200e6ce98af4c1397d3, size 87107680. gzip split 4 parts each <=16 MiB.
+- Future game updates: publish gzip parts first, then atomically publish update.json with uncompressed HTML SHA256 and size. Never publish signing keys, saves, private repo metadata.
+- App checks on launch, asks Apply after verified download. Native changes still require APK installation.
