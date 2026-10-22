@@ -394,3 +394,8 @@
 - 케인이 만든 `gaia_comic_vfx_sheets.zip`(4장, 알파 있음)로 교체: `assets/gaia-detective/ui/fx/<이름>.webp` 22종 + 원본 시트 `ui/fx/_src/`. 이름: 적 피격 zzak·chalssak·kwang·peng·crash·bbong / 주인공 피격 ah·oh·gasp·flinch·startle·what / 체포·절정 kwang2·flash·bang3·heartB·throb·spark / 번개·속도 bolt·bolt2·whoosh·lines. 코드는 `ui.js sticker(where, 이름, 크기)`로 이름만 지정(`fxSrc`). 이전 스티커(fx-01~24)는 삭제(배팅 게임 문서 안에는 원래 것이 그대로 있음).
 - whoosh·lines·bolt2는 아직 호출하는 곳이 없음(기절·날아가기 연출 등 병맛 추가 때 사용 예정). 단일 빌드 약 52MB.
 - **빌드 때 할 일:** 진동. 스팀랩소디 `game/haptics.js` + 안드로이드 `GWBridge.vibrate`(MainActivity.java, VIBRATE 권한)를 가져와 게임 쪽 연결·설정 스위치·앱(com.gaia.life) 통로를 함께 만든다(앱 재빌드 필요, 케인 결정 2026-10-22).
+
+## 말풍선·효과 위치 재조정 (케인 캡처 피드백 반영)
+- 적 말풍선: 적 요소 바로 위(bottom:100%)에 고정, 세로모드는 화면 오른쪽 밖으로 안 나가게 right:2%. 주인공 말풍선: 머리 위(bottom:108%). (임시 값)
+- 스티커: 얼굴 중앙이 아니라 머리 옆 위쪽 모서리(`posSide`), 크기 9~12vh. 불꽃·물방울(`pop`)은 가슴께(`posChest`)에서 시작.
+- TURN 배너: 화면 위쪽(padding-top 9vh), 글자 7vh→5vh.

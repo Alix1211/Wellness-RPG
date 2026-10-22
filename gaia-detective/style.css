@@ -67,9 +67,9 @@ button:disabled{filter:grayscale(1) opacity(.55);cursor:not-allowed}
 .fl{position:absolute;font-weight:900;font-size:3.2vh;color:#e0245e;text-shadow:0 0 4px #fff,0 0 4px #fff,0 2px 2px #fff;animation:rise 1s forwards;white-space:nowrap}
 .fl.heal{color:#2fae6a}.fl.blk{color:#2f7fc0}.fl.st{color:#a06bd6;font-size:2.2vh}.fl.dopa{color:#ff3f9a;font-size:2.2vh}.fl.say{font-size:2.6vh;color:#e0245e}
 @keyframes rise{0%{transform:translateY(0) scale(.7);opacity:0}15%{opacity:1;transform:translateY(-1vh) scale(1.15)}100%{transform:translateY(-8vh) scale(1);opacity:0}}
-#banner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:9;font-weight:900;font-size:7vh;color:#fff;text-shadow:0 0 14px #ff3f9a,0 0 4px #ff3f9a,0 3px 0 #e0245e;opacity:0;white-space:nowrap}
+#banner{position:absolute;inset:0;display:flex;align-items:flex-start;padding-top:9vh;justify-content:center;pointer-events:none;z-index:9;font-weight:900;font-size:5vh;color:#fff;text-shadow:0 0 14px #ff3f9a,0 0 4px #ff3f9a,0 3px 0 #e0245e;opacity:0;white-space:nowrap}
 #banner.on{animation:ban 1.2s forwards}
-#banner.org{font-size:8.5vh}
+#banner.org{font-size:6vh}
 @keyframes ban{0%{opacity:0;transform:scale(.4)}20%{opacity:1;transform:scale(1.15)}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.1)}}
 #field.orgmode::before{content:"";position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,0) 40%,rgba(120,120,160,.55));z-index:1;pointer-events:none}
 
@@ -155,8 +155,8 @@ body.dragging{cursor:grabbing}
 .sbub span{position:absolute;left:9%;right:9%;top:15%;bottom:27%;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;color:#5a2a46;line-height:1.2;word-break:keep-all}
 .sbub.large{width:30vh;aspect-ratio:879/416}
 .sbub.small{width:15vh;aspect-ratio:455/324}
-#bubble{left:48%;bottom:92%;transform-origin:bottom left}
-.enemy .sbub{right:52%;top:1vh;transform-origin:bottom right}
+#bubble{left:30%;bottom:108%;transform-origin:bottom left}
+.enemy .sbub{right:40%;top:auto;bottom:100%;margin-bottom:1.5vh;transform-origin:bottom right}
 .enemy .sbub::before{transform:scaleX(-1)}
 
 /* 스테이지 지도 */
@@ -229,7 +229,7 @@ body.dragging{cursor:grabbing}
   #hintBar{top:14vh}
   .sbub.large{width:min(22vh,52vw)}
   .sbub.small{width:min(15vh,34vw)}
-  .enemy .sbub{right:auto;left:4%;transform-origin:bottom left}
+  .enemy .sbub{right:2%;left:auto;top:auto;bottom:100%;margin-bottom:1.5vh;transform-origin:bottom right}
   .enemy .sbub::before{transform:none}
 }
 

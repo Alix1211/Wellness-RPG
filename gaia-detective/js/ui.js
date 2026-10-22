@@ -285,6 +285,10 @@
     const r = el.getBoundingClientRect(), f = $('field').getBoundingClientRect();
     return { x: r.left - f.left + r.width / 2, y: r.top - f.top + r.height * 0.35 };
   }
+  // 효과가 얼굴을 가리지 않도록: 스티커는 머리 옆 위쪽 모서리, 불꽃·물방울은 가슴께에서 시작(임시)
+  function rectOf(where) { const el = where === 'heroCenter' ? $('hero') : $('enemies').children[where]; if (!el) return null; return { r: el.getBoundingClientRect(), f: $('field').getBoundingClientRect() }; }
+  function posSide(where) { const o = rectOf(where); if (!o) return { x: 100, y: 100 }; const sg = Math.random() < .5 ? -1 : 1; return { x: o.r.left - o.f.left + o.r.width / 2 + sg * o.r.width * (.5 + Math.random() * .12), y: o.r.top - o.f.top + o.r.height * (.02 + Math.random() * .16) }; }
+  function posChest(where) { const o = rectOf(where); if (!o) return { x: 100, y: 100 }; return { x: o.r.left - o.f.left + o.r.width / 2, y: o.r.top - o.f.top + o.r.height * .66 }; }
   function float(txt, where, cls) {
     const p = pos(where), el = document.createElement('div');
     el.className = 'fl ' + (cls || ''); el.textContent = txt;
@@ -313,7 +317,6 @@
     const e = S.enemies[i]; if (!e) return;
     const D = G.dialogue && G.dialogue.enemy[e.def.id]; const L = D && D[key]; if (!L || (chance != null && Math.random() > chance)) return;
     const ee = $('enemies').children[i], bb = ee && ee.querySelector('.sbub'), im = ee && ee.querySelector('img.spr');
-    if (bb && im) bb.style.top = 'calc(1vh - ' + (parseFloat(im.style.height) * 0.16).toFixed(2) + 'vh)'; // 머리 하나 크기만큼 위로(임시: 적 그림 높이의 16%)
     showBubble(bb, rnd(L), 'green');
   }
   function shakeEnemy(i) { const el = $('enemies').children[i]; if (!el) return; el.classList.remove('hurt'); void el.offsetWidth; el.classList.add('hurt'); }
@@ -391,8 +394,8 @@
   // 새 스티커 세트(케인 제작 gaia_comic_vfx_sheets): assets/gaia-detective/ui/fx/<이름>.webp
   const fxSrc = k => window.GAIA_IMG ? (window.GAIA_IMG['ui/fx/' + k + '.webp'] || '') : '../assets/gaia-detective/ui/fx/' + k + '.webp';
   function sticker(where, key, scale, delay) {
-    const p = pos(where), el = document.createElement('img'); el.className = 'stk'; el.alt = ''; el.src = fxSrc(key);
-    el.style.width = ((13 + Math.random() * 4) * (scale || 1) * vh()) + 'px'; el.style.left = (p.x + (Math.random() * 7 - 3.5) * vh()) + 'px'; el.style.top = (p.y - (2 + Math.random() * 4) * vh()) + 'px';
+    const p = posSide(where), el = document.createElement('img'); el.className = 'stk'; el.alt = ''; el.src = fxSrc(key);
+    const w = (9 + Math.random() * 3) * (scale || 1) * vh(); el.style.width = w + 'px'; el.style.left = (p.x - w / 2) + 'px'; el.style.top = (p.y - w / 2) + 'px';
     el.style.setProperty('--r', (Math.random() * 30 - 15) + 'deg'); if (delay) el.style.animationDelay = delay + 'ms'; fxAdd(el, 1000 + (delay || 0));
   }
   // 포물선(중력)으로 날아가다 바닥에서 한 번 튕김
@@ -402,7 +405,7 @@
     el.animate(kf, { duration: dur, easing: 'linear', fill: 'forwards' });
   }
   function pop(where, power, drops) {
-    const p = pos(where), u = vh(), f = $('fx'), pw = power || 1;
+    const p = posChest(where), u = vh(), f = $('fx'), pw = power || 1;
     for (let i = 0; i < Math.round(8 + 6 * pw); i++) { // 불꽃: 사방으로 뻗는 줄기
       const el = document.createElement('i'); el.className = 'spk'; el.style.left = p.x + 'px'; el.style.top = p.y + 'px';
       const a = Math.random() * 360, r = (7 + Math.random() * 12) * u * (0.7 + pw * 0.18), kf = [];
