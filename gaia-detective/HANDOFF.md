@@ -336,3 +336,6 @@
 - 시트 3장(경찰 4 + 일반인 4 + 일반인 3·마트 점원 1)을 낱장 누끼로 저장: `assets/gaia-detective/npc/police/`(4), `npc/civilians/`(7), 목록·설명은 `npc/README.md`.
 - **마트 점원 = `ui/clerk/mart.webp`**로 저장 → 다음 빌드부터 마트 상점 왼쪽에 자동 표시.
 - 적으로 쓸지·이름·능력치·등장 시점은 케인 확정 전이라 **전투에는 연결하지 않음.**
+
+### 장소 배경 8장 도착 (2026-10-22 16:22, 가로 버전만)
+- `assets/gaia-detective/place/<이름>_land.webp` 8장(studio, villa, farm, club, mart, casino, police, park). 이름은 그림 내용으로 내가 붙임 → 케인 확인 필요. 세로 버전 대기 중. 아직 연결 안 함(입장 화면 구조는 위 "입장 흐름" 참고).
