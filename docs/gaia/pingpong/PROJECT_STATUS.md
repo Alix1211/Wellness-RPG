@@ -68,6 +68,7 @@ GitHub 기준: `Alix1211/Wellness-RPG`, 작업 브랜치 `codex/gaia-pingpong-v5
 - **v5 코드 및 자동 검사 완료:** 동네 12 / 국내 16 / 세계 20, 스탯 균등 분배, v4 기존 28개 훈련의 게임·단계 보존. 경기·분기·상점·대회·이벤트 노드 종류와 경로가 바뀌지 않았음을 모델 검사. 노드 표시·자동 게임 호출·보상·저장은 자바스크립트 UI 모의 환경에서 검사.
 - **v5 검증 한계:** 자동 모델/UI 검사는 통과했으나 실제 Chrome, Android의 HTML 두 파일 간 iframe 실행·터치·음향·화면 배치는 실기기 확인 전입니다. 새 미니게임을 개발한 것은 아니며 GAIA CASUAL 기존 8종을 그대로 연결합니다.
 - **v5 ZIP 생성·무결성 검사 통과:** `GAIA-Pingpong-v5.zip` 약 93MB. 내부 `gaia-pong-v5/release/GAIA-Pingpong-v5.html`과 `GAIA-Pingpong-v3-Casual.html`은 반드시 같은 폴더에 둡니다. `source/`는 빌드·모델·자동 검사 파일, 프로젝트 MD 2종을 포함합니다.
+- **v5 실행 ZIP 영구 보관:** ChatGPT Library 파일 ID `libfile_e63c862003b48191a9bbdad5b6e0e7ee`, 파일명 `GAIA-Pingpong-v5.zip`. 새 채팅에서 이 이름/ID로 찾을 수 있습니다. ZIP 내부 문서는 최초 패키징 당시의 기록이므로 최신 작업 상태는 **GitHub의 이 MD와 WORKLOG.md를 우선**합니다.
 - GitHub `docs/gaia/pingpong/source/`에는 변경된 소규모 연결 코드와 검사 파일을 올렸습니다. 이 폴더에는 25MB 원본 탁구 HTML 및 84MB CASUAL 원본이 포함되지 않으므로, GitHub 파일만 복제해서 바로 실행되지는 않습니다. 완전 실행본과 원본 에셋은 별도 ZIP으로 전달합니다.
 - **추후 사용자 결정 사항:** 선수 이름·대사·난이도/고유 AI, 최종 화면 아트와 게임별 미니게임 수정. 확정 없이 임의 변경하지 않음.
 
