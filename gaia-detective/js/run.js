@@ -84,7 +84,7 @@
 
   function onEnd(S) {
     run.hp = Math.max(1, S.p.hp);
-    if (S.result.win && S.rel && S.rel.healAfter) run.hp = Math.min(C.player.maxHp, run.hp + S.rel.healAfter);
+    if (S.result.win) run.hp = Math.min(C.player.maxHp, run.hp + Math.round(C.player.maxHp * (F.winHealRatio || 0)) + ((S.rel && S.rel.healAfter) || 0));
     if (!S.result.win) {
       const up = run.grit < GRIT_MAX; if (up) { run.grit++; applyGrit(); }
       save();
