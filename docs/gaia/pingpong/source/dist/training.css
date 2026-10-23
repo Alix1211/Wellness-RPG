@@ -1,0 +1,9 @@
+.node.training-node{width:78px;height:78px;border-radius:24px;border:3px solid #fffdf5;color:#78485e;background:linear-gradient(150deg,#fff7f9,#f7ccd9);box-shadow:0 5px 15px #6637533d,inset 0 -4px 0 #be759a35;font-size:12px;text-align:center;font-weight:900;line-height:1.18;letter-spacing:-.04em}
+.node.training-node .node-game-title{display:block;width:100%;padding:0 2px;text-shadow:0 1px 0 #fff}
+.node.training-node small{display:none}
+.node.training-node::after{content:attr(data-stat-label);position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);white-space:nowrap;padding:3px 7px;border-radius:11px;background:#fffdf3e6;color:#925f71;font-size:10px;line-height:1;box-shadow:0 2px 7px #6a52631f}
+.node.training-node[data-main="power"]{background:linear-gradient(145deg,#fff6e7,#f6d3b5);color:#8f5b49}
+.node.training-node[data-main="defense"]{background:linear-gradient(145deg,#f7fff8,#b9e5da);color:#396c65}
+.node.training-node[data-main="spin"]{background:linear-gradient(145deg,#f8f7ff,#ddd1f5);color:#625188}
+.node.training-node.reachable{border-color:#ffe19e;animation:pulse 1.5s infinite}
+@media(max-width:700px) and (orientation:portrait){.node.training-node{width:66px;height:66px;border-radius:21px;font-size:10.5px}.node.training-node::after{font-size:9px;padding:2px 6px}}
