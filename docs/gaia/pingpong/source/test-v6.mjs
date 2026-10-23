@@ -1,0 +1,24 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import vm from 'node:vm';
+import {fileURLToPath} from 'node:url';
+import assert from 'node:assert/strict';
+
+const base=path.dirname(fileURLToPath(import.meta.url));
+const html=fs.readFileSync(path.join(base,'../release/GAIA-Pingpong-v6.html'),'utf8');
+const previous=fs.readFileSync(path.join(base,'../release/GAIA-Pingpong-v5.html'),'utf8');
+const companion=fs.statSync(path.join(base,'../release/GAIA-Pingpong-v3-Casual.html'));
+assert.match(html,/<title>GAIA · 핑퐁 챔피언 v6<\/title>/);
+assert.ok(html.includes('const gaiaOldGoto=goto;'), 'Unapproved sports drama must not play');
+assert.ok(html.includes('gaia-tab-medal'), 'Existing medals in arcade tabs');
+assert.ok(html.includes('gaia-node-medal'), 'Existing medals in world tour');
+assert.ok(html.includes('gaia-panel-square'), 'Original rosegold frames present');
+assert.ok(!html.includes('__GAIA_PANEL_')&&!html.includes('__PINK_ICONS__'));
+assert.ok(html.includes('GAME_NODE_LABELS'), 'Mini-game names preserved');
+assert.ok(html.includes('gaia-pingpong-champion-v2'), 'Save key preserved');
+assert.ok(html.includes('GAIA-Pingpong-v3-Casual.html'), 'Original games linked');
+assert.ok(companion.size>80e6&&previous.length>15e6, 'Previous games and version preserved');
+const tag='<script type="module">',a=html.indexOf(tag)+tag.length,b=html.lastIndexOf('</script>');
+assert.ok(a>tag.length&&b>a);
+new vm.Script(html.slice(a,b),{filename:'GAIA-Pingpong-v6 inline module'});
+console.log('v6 UI checks passed: original art, mini-games, save, JS syntax');

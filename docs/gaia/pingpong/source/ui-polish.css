@@ -1,0 +1,134 @@
+/* GAIA PINGPONG: artwork-first, intentionally kitschy UI.
+   These values are replaced with original user-supplied PNG sheets at build time. */
+:root{--gaia-pink-icons:url("__PINK_ICONS__");--gaia-panel-square:url("__GAIA_PANEL_SQUARE__");--gaia-panel-portrait:url("__GAIA_PANEL_PORTRAIT__");--gaia-panel-wide:url("__GAIA_PANEL_WIDE__");--gaia-rose:#ff328c;--gaia-gold:#ffcf75;--gaia-mint:#5bead1;--gaia-ink:#753252}
+
+/* Title: separate portrait/landscape art direction requested by the user. */
+.title .brand{top:16%;left:50%;width:min(43vw,590px);transform:translateX(-50%);filter:drop-shadow(0 6px 9px #fef0f4a8)}
+.title .title-actions{left:50%;right:auto;width:min(67vw,790px);bottom:10%;transform:translateX(-50%);gap:1.2%;justify-content:center}
+.title .title-actions button{width:30%;flex:0 1 30%;filter:drop-shadow(0 8px 8px #6d24395c)}
+.title .title-note{display:none}
+
+/* No pastel-white curtain over artwork. */
+.lobby .backdrop,.board .backdrop,.dialogue .backdrop{filter:none;transform:none}
+.lobby .veil{background:linear-gradient(90deg,#63284912 0%,transparent 34%,#4a10381f 100%)}
+.board .veil{background:linear-gradient(90deg,#48142c18,transparent 19%,transparent 81%,#48142c1c)}
+.dialogue .veil{background:linear-gradient(0deg,#34152a38,transparent 60%)}
+
+/* Arcade: characters and the user's pink badges are the interface. */
+.lobby-heading,.lobby-caption{display:none!important}
+.lobby-hero{left:1.5%;bottom:-2%;height:93%;width:39%;filter:drop-shadow(4px 8px 12px #56203873)}
+.opponent-panel{top:8%;bottom:4%;right:2.8%;width:60.5%;gap:9px}
+.tabs{border:0;background:none;box-shadow:none;backdrop-filter:none;border-radius:0;padding:0;gap:9px}
+.tabs button{position:relative;min-width:0;min-height:67px;border:0;border-radius:0;background:var(--gaia-panel-wide) center/100% 100% no-repeat;filter:drop-shadow(0 3px 3px #8624528b);box-shadow:none;color:#923358;text-shadow:0 1px #fff8;font-size:16px;display:flex;align-items:center;justify-content:center;gap:7px}
+.tabs button.active{background:var(--gaia-panel-wide) center/100% 100% no-repeat;color:#e32c7d;text-shadow:0 1px #fff;filter:drop-shadow(0 0 7px #ffd4c8) drop-shadow(0 4px 3px #8624529f);box-shadow:none}
+.tabs button small{font-size:12px;opacity:.92}
+.gaia-tab-medal{flex:0 0 auto;display:inline-block;width:47px;height:47px;background-image:var(--gaia-pink-icons);background-repeat:no-repeat;background-size:300% 400%;filter:drop-shadow(0 2px 3px #922c5e44)}
+.gaia-tab-medal[data-region="0"]{background-position:0% 33.333%}
+.gaia-tab-medal[data-region="1"]{background-position:50% 33.333%}
+.gaia-tab-medal[data-region="2"]{background-position:100% 33.333%}
+.opponent-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:4px 5px 9px}
+.opponent{min-height:0;aspect-ratio:.84;border:0;border-radius:0;background:var(--gaia-panel-portrait) center/100% 100% no-repeat;filter:drop-shadow(0 4px 3px #982d639a);box-shadow:none;transition:transform .15s,filter .15s;overflow:hidden}
+.opponent:hover:not(.locked){transform:translateY(-3px);filter:drop-shadow(0 7px 7px #982d63aa)}
+.opponent::before{content:'♥';position:absolute;top:-2px;left:50%;z-index:2;transform:translateX(-50%);color:#ff277d;text-shadow:0 2px 0 #fff,0 0 7px #fff;font-size:22px;pointer-events:none}
+.opponent img{height:81%;width:88%;margin:7% 6% 0;filter:drop-shadow(0 2px 3px #4d283544)}
+.opponent strong{padding:6px 2px 10px;background:none;color:#e32b83;text-shadow:0 1px #fff,0 0 4px #ffe8f9;font-size:14px;backdrop-filter:none;border:0;bottom:5%}
+.opponent.locked img{filter:saturate(.36) brightness(.8);opacity:.73}
+.opponent.locked strong{background:none;color:#95546d}
+.lock-symbol{color:#fbe9bd!important;text-shadow:0 2px 4px #9c5474!important;font-size:28px!important}
+.top-back,.glass{border:2px solid #ffe5ae;border-radius:22px;background:linear-gradient(135deg,#ff91bce8,#ffd1c3e9 50%,#fa7baedc);box-shadow:0 4px 0 #a84c75,0 5px 15px #53243e45;backdrop-filter:none;color:#86385b}
+
+/* World Tour: real supplied medals replace generic circles; training retains game name. */
+.board .map-region{font-size:clamp(14px,1.7vw,21px);font-weight:1000;color:#b52868;text-shadow:0 1px #fff7;letter-spacing:.02em;background:var(--gaia-panel-wide) center/100% 100% no-repeat;padding:15px 34px}
+.map-lines path{stroke:#ffdfaa;stroke-width:10;opacity:.88;filter:drop-shadow(0 2px 3px #78304a70)}
+.map-lines path.edge-front{stroke:#ed5696;stroke-width:4;stroke-dasharray:5 9}
+.node:not(.training-node){width:82px;height:82px;background:none;border:0;border-radius:0;box-shadow:none;padding:0;overflow:visible;color:transparent;font-size:0}
+.node .gaia-node-medal{position:absolute;inset:0;background-image:var(--gaia-pink-icons);background-repeat:no-repeat;background-size:300% 400%;filter:drop-shadow(0 4px 4px #6f204c88);transition:filter .18s}
+.node:not(.training-node) small{display:none}
+.node:not(.training-node).current{box-shadow:none}
+.node:not(.training-node).current .gaia-node-medal{filter:drop-shadow(0 0 9px #fff4ac) drop-shadow(0 3px 4px #6f204c88)}
+.node:not(.training-node).reachable{background:none;animation:pulse 1.5s infinite}
+.node:not(.training-node).reachable .gaia-node-medal{filter:drop-shadow(0 0 10px #fff2af) drop-shadow(0 0 13px #ff3b92)}
+.node.boss:not(.training-node){width:94px;height:94px}
+.node.training-node{width:88px;height:88px;border:4px solid #ffdc86;border-radius:23px;background:radial-gradient(circle at 40% 20%,#fff1b7,#ff89b1 65%,#f32d8b);box-shadow:0 4px 0 #a93c70,0 6px 14px #611d4b72,inset 0 2px 4px #fff7;color:#7c1e50;font-size:14px;line-height:1.25;text-shadow:0 1px 1px #ffe4e7}
+.node.training-node::before{content:'♥';position:absolute;top:-14px;left:50%;transform:translateX(-50%);color:#ff1682;font-size:25px;text-shadow:0 2px #fff6,0 1px 5px #7f3154}
+.node.training-node::after{border:2px solid #ffd48c;background:linear-gradient(105deg,#f53182,#fa7db0);font-weight:900;font-size:11px;color:#fffbea;border-radius:12px;text-shadow:0 1px 1px #9a295c;box-shadow:0 2px 4px #68234777}
+.node.training-node[data-main="power"],.node.training-node[data-main="defense"],.node.training-node[data-main="spin"]{background:radial-gradient(circle at 40% 20%,#fff0a9,#fd9ac0 65%,#f32b87);color:#781f50}
+.node.training-node.reachable{border-color:#fff5b8;animation:pulse 1.5s infinite}
+.map-avatar{z-index:4;filter:drop-shadow(0 0 5px #fff9) drop-shadow(0 3px 4px #843d6575)}
+
+/* Cards and HUD should resemble a toy/game prop, not a SaaS dashboard. */
+.board-hud{gap:10px}
+.health{border:3px solid #ffce7d;border-radius:19px;background:#ffb4d5e6;box-shadow:0 3px 0 #bd4c88,0 5px 15px #7b31546e}
+.health-fill{background:linear-gradient(90deg,#fa218c,#ff83c2 55%,#5bedce);box-shadow:inset 0 2px 4px #fff9}
+.health span{color:#fffbe7;text-shadow:0 2px 2px #8f3363;font-size:15px}
+.turns{background:linear-gradient(135deg,#ff86b9,#fed4aa);border:2px solid #ffe3a5;border-radius:15px;padding:7px 10px;color:#8c2454;font-size:14px;font-weight:900;box-shadow:0 3px 0 #af4c78}
+.hand-tray{background:linear-gradient(transparent,#7d245c3b 65%,#f76ead70);padding:10px 12px max(13px,env(safe-area-inset-bottom))}
+.hand-hint{display:none}
+.cards{gap:12px}
+.move-card,.move-card:nth-child(even){width:73px;height:98px;border:3px solid #ffce72;border-radius:14px;background:linear-gradient(145deg,#fff2c9,#ff81b5 58%,#ed2e8a);color:#fff9d8;text-shadow:0 3px 3px #ac3f70;box-shadow:0 4px 0 #ab4876,0 5px 13px #6c245162,inset 0 3px 0 #fff8;font-family:Georgia,serif;font-weight:900;font-size:48px}
+.move-card:nth-child(even){background:linear-gradient(145deg,#d7fff3,#70ead4 40%,#f96cb0)}
+.move-card::before{content:'♥';position:absolute;top:-13px;left:50%;transform:translateX(-50%);font-size:16px;color:#ff287d;text-shadow:0 1px #fff}
+.move-card::after{content:none}
+.move-card.selected{outline:3px solid #fff5c0;transform:translateY(-15px);filter:drop-shadow(0 0 9px #ffd2eb)}
+.ticket-row button,.selection-cancel{border:2px solid #ffd37a;border-radius:15px;background:linear-gradient(135deg,#ff7faf,#ffd3b3);color:#8e2c56;font-weight:900}
+
+/* Dialogue / dialogs: decorative, compact, never a page of instructions. */
+.speech,.modal,.board-complete{border:4px solid #ffca80;border-radius:25px;background:linear-gradient(145deg,#fff5e9f7,#ffc5dff9 62%,#f99ec1f9);box-shadow:0 5px 0 #a64871,0 14px 35px #65234877,inset 0 0 0 3px #fff7}
+.speech{min-height:0;padding:24px 32px 17px}
+.speech-name{background:linear-gradient(135deg,#ee328c,#ff8bb8);border:2px solid #ffe1a2;color:#fff5e8;box-shadow:0 3px 0 #a34270}
+.speech-hint{display:none}
+.modal{position:relative;width:min(470px,92vw);padding:58px 57px 55px;background:var(--gaia-panel-square) center/100% 100% no-repeat;border:0;border-radius:0;box-shadow:none}
+.modal::before{content:none}
+.modal h2{color:#96315e;font-weight:1000;text-shadow:0 2px #fff9}
+.modal .feature{width:min(160px,48%);height:190px;filter:drop-shadow(0 4px 8px #903a6180)}
+.modal .notice{color:#974569;font-weight:700}
+.modal .actions button,.modal .shop-items button{border:2px solid #ffce7d;border-radius:18px;background:linear-gradient(130deg,#ff6aa6,#ffbed1 55%,#ff8ba8);color:#7b264f;font-weight:1000;text-shadow:0 1px #fff9;box-shadow:0 3px 0 #ae4475,inset 0 2px 2px #fff5}
+.modal .actions button.primary,.modal .actions button:first-child{background:linear-gradient(130deg,#ee2b89,#ff7cae 52%,#ffbd6f);color:#fff9ec;text-shadow:0 2px #a74277}
+.modal .actions button:disabled{filter:grayscale(.5);opacity:.6}
+.gaia-arcade-record{display:flex;justify-content:center;gap:20px;margin:8px 0;color:#963359;font-size:16px;font-weight:900}
+.modal .eyebrow{font-weight:1000;color:#e53985}
+.board-complete{background:linear-gradient(130deg,#ffe6ed,#ffa6c2);color:#8d2b58}
+
+@media(max-width:700px) and (orientation:portrait){
+ .title .brand{width:76%;left:50%;top:2%}
+ .title .title-actions{left:50%;right:auto;width:43%;bottom:10%;flex-direction:column;gap:2px}
+ .title .title-actions button{width:100%;flex:0 0 auto}
+ .lobby-hero{left:-6%;top:1%;bottom:auto;width:62%;height:42%}
+ .opponent-panel{left:3%;right:3%;width:auto;top:40%;bottom:3%;gap:8px}
+ .tabs{gap:4px}
+ .tabs button{min-height:58px;font-size:14px;padding:3px;gap:1px;border-radius:12px}
+ .gaia-tab-medal{width:38px;height:38px}
+ .tabs button small{font-size:10px;margin-left:2px}
+ .opponent-grid{gap:6px;padding:4px 2px 6px}
+ .opponent{border-width:2px;border-radius:13px;aspect-ratio:.7}
+ .opponent::before{font-size:15px}
+ .opponent strong{font-size:11px;padding:5px 1px}
+ .board .map-region{top:65px;right:12px;font-size:15px}
+ .node:not(.training-node){width:65px;height:65px}
+ .node.boss:not(.training-node){width:77px;height:77px}
+ .node.training-node{width:65px;height:65px;border-width:3px;border-radius:17px;font-size:11px}
+ .node.training-node::before{font-size:17px;top:-12px}
+ .node.training-node::after{font-size:9px;padding:3px 6px}
+ .board-hud{gap:5px}
+ .health{height:32px;border-width:2px}
+ .turns{font-size:11px;padding:5px}
+ .hand-tray{padding-top:8px}
+ .move-card,.move-card:nth-child(even){width:59px;height:79px;font-size:38px}
+ .modal{padding:46px 35px 47px}
+ .modal .feature{height:155px}
+ .speech{left:4%;right:4%;padding:21px 18px 13px}
+}
+@media(max-height:560px) and (orientation:landscape){
+ .title .brand{top:12%;width:38%}
+ .title .title-actions{bottom:6%;width:59%}
+ .lobby-hero{height:97%}
+ .opponent-panel{top:5%;bottom:2%;gap:5px}
+ .tabs button{min-height:47px;padding:2px}
+ .gaia-tab-medal{width:35px;height:35px}
+ .opponent-grid{gap:6px}
+ .opponent strong{font-size:12px;padding:4px}
+ .node:not(.training-node){width:71px;height:71px}
+ .node.training-node{width:73px;height:73px;font-size:12px}
+ .move-card,.move-card:nth-child(even){width:52px;height:73px;font-size:34px}
+ .modal{padding:42px 50px 45px;max-height:91dvh}
+}
