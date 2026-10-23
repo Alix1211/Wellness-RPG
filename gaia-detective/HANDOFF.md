@@ -418,3 +418,6 @@
 ## 토큰 카드 이미지 + 미니게임 진동
 - `cards/T01.webp`: 케인님이 준 그림을 500×700으로 잘라 교체(임시 생성 그림 폐기). 토큰 카드는 폴더 라벨 "-" 숨김(ui.js cardEl).
 - 배팅(`minigame/batting_police/game.html`)·스쿼트(`js/minigame_squat.js`)에서 `parent.GAIA_HAPTICS.fx.miniPerfect/Good/Bad/Miss` 호출. 패턴은 haptics.js(임시값, 포코는 길고 강해야 느껴짐).
+
+## 지도 확대·축소 깜빡임
+- 이동·확대·축소 중에는 건물 빛 효과(번짐·반복 애니메이션)를 멈춘다(style.css, map.js의 zooming 클래스). 기기 확인은 케인님 몫.

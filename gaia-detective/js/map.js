@@ -85,7 +85,8 @@
   }
   root.addEventListener('pointerup', up);
   root.addEventListener('pointercancel', e => { delete pts[e.pointerId]; if (Object.keys(pts).length < 2) pinch = null; dn = null; root.classList.remove('panning'); });
-  root.addEventListener('wheel', e => { e.preventDefault(); const rc = root.getBoundingClientRect(), cx = e.clientX - rc.left, cy = e.clientY - rc.top; zoomAt(z * (e.deltaY < 0 ? 1.12 : 1 / 1.12), cx, cy, (cx - ox) / s, (cy - oy) / s); }, { passive: false });
+  let zt = 0;
+  root.addEventListener('wheel', e => { e.preventDefault(); root.classList.add('zooming'); clearTimeout(zt); zt = setTimeout(() => root.classList.remove('zooming'), 180); const rc = root.getBoundingClientRect(), cx = e.clientX - rc.left, cy = e.clientY - rc.top; zoomAt(z * (e.deltaY < 0 ? 1.12 : 1 / 1.12), cx, cy, (cx - ox) / s, (cy - oy) / s); }, { passive: false });
 
   // 건물 카드
   function pick(id) {
