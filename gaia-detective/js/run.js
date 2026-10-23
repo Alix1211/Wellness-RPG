@@ -6,10 +6,14 @@
   const rnd = a => a[Math.floor(Math.random() * a.length)];
   let run = null;
 
-  function fresh() { return { v: 1, deck: C.starterDeck.slice(), hp: C.player.maxHp, gold: 0, items: [], equip: [], wl: 0, lap: 1, step: 0, fi: 0, cleared: [] }; }
+  function fresh() { return { v: 1, deck: C.starterDeck.slice(), hp: C.player.maxHp, gold: 0, items: [], equip: [], wl: 0, lap: 1, step: 0, fi: 0, cleared: [], grit: 0 }; }
   function load() { try { const r = JSON.parse(localStorage.getItem(KEY)); if (r && r.v === 1 && Array.isArray(r.deck)) return r; } catch (e) {} return null; }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(run)); } catch (e) {} }
-  run = load() || fresh(); run.equip = run.equip || []; run.items = run.items || []; run.gold = run.gold || 0;
+  // 마조 성장(임시): 질 때마다 '단련'이 1씩 올라 최대 체력 +6, 3단계마다 공격력 +1 (최대 12단계)
+  const GRIT_MAX = 12, GRIT_HP = 6;
+  const BASE_HP = C.player.maxHp;
+  function applyGrit() { C.player.maxHp = BASE_HP + GRIT_HP * (run.grit || 0); }
+  run = load() || fresh(); run.grit = run.grit || 0; applyGrit(); run.equip = run.equip || []; run.items = run.items || []; run.gold = run.gold || 0;
 
   const STEPS = () => run.lap > 1 && F.steps2 ? F.steps2 : F.steps; // 1막(1바퀴) 뒤로는 2막 표를 반복
   const cur = () => STEPS()[run.step];
@@ -57,7 +61,7 @@
   }
   function fight() {
     const c = cur(), enc = G.encounters.find(e => e.id === c.fights[run.fi]);
-    G.map.close(); G.ui.start(enc.id, { run: true, deck: run.deck, hp: run.hp, wl: run.wl, relics: run.equip });
+    G.map.close(); G.ui.start(enc.id, { run: true, deck: run.deck, hp: run.hp, wl: run.wl, relics: run.equip, grit: run.grit });
   }
   function encKind(S) { return S.enemies.some(e => e.kind === 'boss') ? 'boss' : S.enemies.some(e => e.kind === 'elite') ? 'elite' : 'normal'; }
 
@@ -82,8 +86,9 @@
     run.hp = Math.max(1, S.p.hp);
     if (S.result.win && S.rel && S.rel.healAfter) run.hp = Math.min(C.player.maxHp, run.hp + S.rel.healAfter);
     if (!S.result.win) {
+      const up = run.grit < GRIT_MAX; if (up) { run.grit++; applyGrit(); }
       save();
-      return panel({ title: '수사 실패…', msg: S.result.reason + ' — 경찰서로 후송됩니다.', buttons: [{ text: '경찰서로', fn: () => { closePanel(); defeat(); } }] });
+      return panel({ title: '수사 실패…', msg: S.result.reason + ' — 경찰서로 후송됩니다.' + (up ? '\n단련 Lv.' + run.grit + ' ↑ 최대 체력 ' + C.player.maxHp + (run.grit % 3 === 0 ? ' · 공격력 +1' : '') : '\n단련 최대치(Lv.' + GRIT_MAX + ')'), buttons: [{ text: '경찰서로', fn: () => { closePanel(); defeat(); } }] });
     }
     save();
     if (!S.result.reward) return afterFight();
@@ -130,7 +135,7 @@
   }
   function rest() {
     const heal = Math.round(C.player.maxHp * F.rest.healRatio), full = run.hp >= C.player.maxHp;
-    panel({ place: 'police', title: cur().title, msg: '체력 ' + run.hp + ' / ' + C.player.maxHp + ' · 덱 ' + run.deck.length + '장', buttons: [
+    panel({ place: 'police', title: cur().title, msg: '체력 ' + run.hp + ' / ' + C.player.maxHp + ' · 단련 Lv.' + run.grit + ' · 덱 ' + run.deck.length + '장', buttons: [
       { text: '휴식 (체력 +' + heal + ')', disabled: full, fn: () => { run.hp = Math.min(C.player.maxHp, run.hp + heal); save(); closePanel(); stepDone(); } },
       { text: '카드 정비 (1장 제거)', disabled: run.deck.length <= F.rest.minDeck, fn: () => { closePanel(); trim(); } },
       { text: '그냥 나가기', fn: () => { closePanel(); stepDone(); } },
@@ -151,6 +156,6 @@
   }
 
   G.run = { get: () => run, save: save, spotInfo: spotInfo, enter: enter, go: go, here: here, onEnd: onEnd,
-    reset: () => { run = fresh(); save(); },
+    reset: () => { run = fresh(); applyGrit(); save(); },
     stepTitle: () => cur().title };
 })();

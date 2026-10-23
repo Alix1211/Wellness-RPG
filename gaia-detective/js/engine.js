@@ -25,7 +25,7 @@
     };
     // 유물(착용품) 효과 합산 — 전투 시작 보정·매 턴 보정
     const rel = {}; (opts.relics || []).forEach(id => { const d = G.items && G.items.byId[id]; if (d && d.type === 'relic') Object.keys(d.fx).forEach(k => { rel[k] = (rel[k] || 0) + d.fx[k]; }); });
-    S.rel = rel; S.p.str = rel.strPlus || 0; S.p.dopa = Math.min(C.dopamine.max, rel.startDopa || 0); S.p.tight = Math.min(C.tight.max, rel.startTight || 0); S.p.lube = Math.min(C.lube.max, rel.startLube || 0);
+    S.rel = rel; S.p.str = (rel.strPlus || 0) + Math.floor((opts.grit || 0) / 3); S.p.dopa = Math.min(C.dopamine.max, rel.startDopa || 0); S.p.tight = Math.min(C.tight.max, rel.startTight || 0); S.p.lube = Math.min(C.lube.max, rel.startLube || 0);
     (opts.deck || C.starterDeck).forEach(id => S.drawPile.push(mk(id)));
     shuffle(S.drawPile);
     (opts.enemies || ['barbari']).forEach(id => {

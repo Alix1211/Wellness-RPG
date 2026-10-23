@@ -27,7 +27,7 @@
     opts = opts || {}; runMode = !!opts.run;
     encId = id || encId;
     const enc = G.encounters.find(x => x.id === encId);
-    S = G.newBattle({ enemies: enc.enemies, deck: opts.deck, hp: opts.hp, wl: opts.wl, relics: opts.relics });
+    S = G.newBattle({ enemies: enc.enemies, deck: opts.deck, hp: opts.hp, wl: opts.wl, relics: opts.relics, grit: opts.grit });
     selUid = null; busy = false; heroOverride = null; lowSaid = false; dopaSaid = false;
     $('overlay').classList.add('hidden');
     curBg = enc.bg || A.bg[(bgN++) % A.bg.length]; applyBg();
