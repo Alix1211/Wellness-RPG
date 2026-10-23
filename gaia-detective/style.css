@@ -170,7 +170,6 @@ body.dragging{cursor:grabbing}
 #mapPan .spot.locked img{filter:grayscale(.85) brightness(.78)}
 #mapPan .spot.open img{filter:drop-shadow(0 0 10px #ffd36b) drop-shadow(0 0 3px #fff);animation:spotglow 1.3s infinite alternate}
 #mapPan .spot.sel img{filter:drop-shadow(0 0 18px #ff4fa8) drop-shadow(0 0 5px #fff) brightness(1.08)}
-#map.panning #mapPan .spot img,#map.zooming #mapPan .spot img{animation:none!important;filter:none!important} /* 이동·확대 중 번짐 효과를 멈춰 깜빡임 방지 */
 @keyframes spotglow{from{filter:drop-shadow(0 0 4px #ffd36b) drop-shadow(0 0 2px #fff)}to{filter:drop-shadow(0 0 20px #ffd36b) drop-shadow(0 0 5px #fff)}}
 #mapPan .tag{position:absolute;left:50%;top:6px;transform:translateX(-50%);white-space:nowrap;padding:5px 22px;border-radius:40px;background:#fff;border:5px solid var(--pink);color:var(--pink-d);font-weight:900;font-size:40px;box-shadow:0 4px 10px rgba(0,0,0,.25);pointer-events:none}
 #mapPan .spot.locked .tag{border-color:#b8b0b8;color:#8a7f8a;background:#f3eef3}
