@@ -1,0 +1,97 @@
+/* v7 correction layer: exact art, legible game controls, visible table tennis. */
+#app,.modal,button{font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+
+/* The background remains the designer's illustration. A faint tint separates the path. */
+.board .veil{background:linear-gradient(180deg,#fff0f52e,#f9dfe841 55%,#ffe4ee33)}
+.board .node-scroll{top:78px;bottom:121px;scroll-padding-top:55px}
+.board .map-content{padding-bottom:45px}
+.board .map-region{top:67px;right:12px;z-index:11}
+
+/* The supplied PNG is inserted as a real img. No background-position guessing. */
+.board .node.gaia-tour-node:not(.training-node){display:flex;align-items:center;justify-content:center;width:85px;height:85px;background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;color:inherit;font-size:inherit;overflow:visible;isolation:isolate}
+.board .node.gaia-tour-node .gaia-tour-art{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 4px 5px #7a2a5366)}
+.board .node.gaia-tour-node.reachable .gaia-tour-art{filter:drop-shadow(0 0 8px #fff6ba) drop-shadow(0 0 9px #ff3b8a)}
+.board .node.gaia-tour-node.current .gaia-tour-art{filter:drop-shadow(0 0 8px white) drop-shadow(0 3px 4px #b72e6f)}
+.board .node.gaia-tour-match{width:94px!important;height:94px!important}
+.board .node.gaia-tour-node .gaia-tour-label{position:absolute;left:50%;top:83%;transform:translateX(-50%);display:block;white-space:nowrap;padding:3px 7px;border-radius:12px;background:#fff1f5ec;border:1px solid #ffe2a7;box-shadow:0 2px 3px #71364d32;color:#ac225f;font-weight:900;font-size:12px;text-shadow:0 1px white;z-index:2;pointer-events:none}
+.board .node.gaia-tour-blank:not(.training-node){width:35px;height:35px;border:3px solid #f6c3d5;border-radius:50%;background:#fff5f2cc;box-shadow:0 2px 5px #75354d48,inset 0 0 0 3px #ffffffb9}
+.board .node.gaia-tour-blank.reachable{border-color:#ffcd5e;background:#fff8cb;box-shadow:0 0 0 5px #fff1a366,0 3px 8px #9d376d6b}
+.board .node.gaia-tour-blank.current{border-color:#fc8bb9}
+.board .node.training-node{width:75px;height:75px;line-height:1.22;font-size:12px}
+.board .node.training-node .node-game-title{padding:0 3px}
+.board .node.training-node::after{font-size:10px}
+
+/* Always-available real 3-D table-tennis practice, without a stat reward. */
+.gaia-quick-table{position:absolute;left:10px;top:209px;z-index:12;display:flex;flex-direction:column;align-items:center;gap:1px;border:0;background:transparent;padding:0;color:#9a2357;filter:drop-shadow(0 3px 4px #75174777)}
+.gaia-quick-table img{display:block;width:68px;height:68px;object-fit:contain}
+.gaia-quick-table span{font-size:12px;font-weight:1000;background:#fff4eacb;border:2px solid #ffe1a6;padding:3px 8px;border-radius:14px;text-shadow:0 1px white;white-space:nowrap}
+
+/* Use the designer's numbered shoe cards. Never print a font glyph over them. */
+.board .move-card.v7-art-card,.board .move-card.v7-art-card:nth-child(even){background:none;border:0;border-radius:0;box-shadow:none;filter:drop-shadow(0 5px 4px #8f39689c);font:inherit;color:transparent;width:78px;height:98px;padding:0;overflow:visible}
+.board .move-card.v7-art-card img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.board .move-card.v7-art-card::before,.board .move-card.v7-art-card::after{display:none;content:none}
+.board .move-card.v7-art-card.selected{outline:0;transform:translateY(-12px);filter:drop-shadow(0 0 9px #ffe0a9)}
+.board .move-card.v7-art-card:disabled{opacity:.7}
+.board .hand-tray{padding:7px 10px max(8px,env(safe-area-inset-bottom));background:linear-gradient(transparent,#ff98bb30 45%,#ffadcc88)}
+.board .ticket-row button.v7-ticket-art{width:48px;height:57px;padding:0;border:0;background:transparent;border-radius:0;box-shadow:none}
+.board .ticket-row button.v7-ticket-art img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}
+
+/* The ornamental frame has a crown and thick borders. Text stays INSIDE its opening. */
+#overlay{background:#46223586;backdrop-filter:blur(3px)}
+#overlay .modal{display:flex;flex-direction:column;justify-content:center;align-items:stretch;box-sizing:border-box;width:min(660px,91vw);aspect-ratio:801/641;max-height:91dvh;min-height:0;overflow:auto;gap:7px;padding:clamp(96px,11vw,126px) clamp(69px,8vw,93px) clamp(77px,8vw,94px);text-align:center;background:var(--gaia-panel-square) center /100% 100% no-repeat;border:0;box-shadow:none;border-radius:0}
+#overlay .modal h2{font-size:clamp(19px,2.5vw,26px);line-height:1.25;font-weight:900;margin:0 0 5px;color:#8e285b}
+#overlay .modal .eyebrow{font-size:11px;letter-spacing:.09em;color:#ab5881;margin:0}
+#overlay .modal p{font-size:13px;line-height:1.45;margin:4px 0}
+#overlay .modal .feature{display:block;max-width:100%;height:clamp(100px,14vh,150px);width:100%;object-fit:contain;object-position:center center;flex:0 1 auto;margin:0 auto}
+#overlay .modal .actions{display:flex;gap:9px;justify-content:center;align-items:center;flex-wrap:wrap;margin:8px 0 0}
+#overlay .modal .actions button{font-size:14px;min-height:40px;padding:8px 17px}
+#overlay .modal .settings-row{border:0;border-bottom:1px solid #edbbcb88;padding:8px 0;margin:0 6px;text-align:left;font-size:14px;gap:12px}
+#overlay .modal .settings-row button{font-size:12px;white-space:nowrap}
+#overlay .modal .shop-items{max-height:26vh;overflow:auto;margin:2px 0 0;gap:4px}
+#overlay .modal .shop-items button{padding:8px 12px;font-size:12px}
+#overlay .modal .round-portraits{gap:6px;margin:0}
+#overlay .modal .round-portraits figure{background:transparent;max-width:27%;padding:2px}
+#overlay .modal .round-portraits img{height:95px}
+
+/* Character image and caption are constrained independently INSIDE the frame. */
+.lobby .opponent-grid{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:auto;align-content:start;gap:7px;padding:4px 5px 10px}
+.lobby .opponent{position:relative;border:0;border-radius:0;background:var(--gaia-panel-portrait) center /100% 100% no-repeat;aspect-ratio:387/646;overflow:visible;box-shadow:none;padding:0}
+.lobby .opponent::before{display:none;content:none}
+.lobby .opponent img{position:absolute;top:10%;left:13%;width:74%;height:68%;margin:0;padding:0;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 1px 2px #7d436340)}
+.lobby .opponent strong{position:absolute;bottom:10%;left:7%;right:7%;width:auto;padding:0;margin:0;font-weight:900;font-size:clamp(11px,1.5vw,15px);line-height:1.2;background:transparent;backdrop-filter:none;color:#b62b69;text-shadow:0 1px #fff5}
+.lobby .opponent.locked img{filter:grayscale(.8) brightness(.88);opacity:.65}
+
+/* Loading is deliberately minimal; the frame can take time to unpack on Android. */
+#gaia-mini-loading{position:absolute;inset:0;z-index:7;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:11px;background:#f7c8d6f2;color:#8b2658;font-size:18px;font-weight:900}
+#gaia-mini-loading[hidden]{display:none!important}
+#gaia-mini-loading button{padding:10px 16px;background:#f44e9a;color:white;border-radius:17px;font-size:13px}
+
+@media(max-width:700px) and (orientation:portrait){
+ .board .node-scroll{top:67px;bottom:113px}
+ .board .map-region{top:58px;right:7px;font-size:13px;padding:12px 25px}
+ .board .node.gaia-tour-node:not(.training-node){width:64px;height:64px}
+ .board .node.gaia-tour-match{width:76px!important;height:76px!important}
+ .board .node.gaia-tour-blank:not(.training-node){width:29px;height:29px}
+ .board .node.gaia-tour-node .gaia-tour-label{font-size:10px;top:86%;padding:2px 5px}
+ .board .node.training-node{width:66px;height:66px;font-size:10.5px}
+ .gaia-quick-table{top:205px;left:7px}
+ .gaia-quick-table img{width:54px;height:54px}
+ .gaia-quick-table span{font-size:10px;padding:2px 5px}
+ .board .move-card.v7-art-card,.board .move-card.v7-art-card:nth-child(even){width:65px;height:84px}
+ #overlay .modal{width:min(430px,94vw);height:min(670px,88dvh);max-height:88dvh;aspect-ratio:auto;background:var(--gaia-panel-portrait) center /100% 100% no-repeat;padding:clamp(92px,15vh,118px) clamp(49px,12vw,69px) clamp(80px,13vh,100px);gap:5px}
+ #overlay .modal .feature{height:clamp(95px,13vh,142px)}
+ #overlay .modal h2{font-size:20px}
+ #overlay .modal .actions button{min-height:39px;padding:7px 13px}
+ .lobby .opponent-grid{gap:4px}
+ .lobby .opponent strong{font-size:11px}
+}
+@media(max-height:620px) and (orientation:landscape){
+ .board .node-scroll{top:49px;bottom:82px}
+ .gaia-quick-table{top:203px;left:6px}
+ .gaia-quick-table img{width:45px;height:45px}
+ .gaia-quick-table span{font-size:10px}
+ .board .move-card.v7-art-card,.board .move-card.v7-art-card:nth-child(even){width:54px;height:72px}
+ #overlay .modal{width:min(620px,84vw);aspect-ratio:auto;max-height:95dvh;min-height:0;padding:64px 68px 60px;gap:3px}
+ #overlay .modal .feature{height:105px}
+ #overlay .modal .actions button{min-height:35px;padding:5px 11px}
+}
