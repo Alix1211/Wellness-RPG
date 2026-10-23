@@ -418,3 +418,7 @@
 ## 토큰 카드 이미지 + 미니게임 진동
 - `cards/T01.webp`: 케인님이 준 그림을 500×700으로 잘라 교체(임시 생성 그림 폐기). 토큰 카드는 폴더 라벨 "-" 숨김(ui.js cardEl).
 - 배팅(`minigame/batting_police/game.html`)·스쿼트(`js/minigame_squat.js`)에서 `parent.GAIA_HAPTICS.fx.miniPerfect/Good/Bad/Miss` 호출. 패턴은 haptics.js(임시값, 포코는 길고 강해야 느껴짐).
+
+## 지도 확대·축소 깜빡임 수정 (임시)
+- 원인: 지도 바깥 잔디를 11000×8000px 거대 타일 층(`#mapPan::before`)으로 그려서, 확대·이동 때마다 큰 이미지를 다시 처리함.
+- 수정: 잔디를 `#map` 배경(화면 크기만)으로 옮기고 `apply()`에서 크기·위치만 갱신. 기기 실측은 아직 안 됨.

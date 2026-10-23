@@ -8,7 +8,7 @@
   const spots = {}, PAD = 140; // PAD: 지도 둘레에 더 보이는 잔디 여백(지도 픽셀, 임시)
 
   function build() {
-    pan.innerHTML = ''; pan.style.setProperty('--map-grass', 'url(' + src('grass_tile') + ')'); // 지도 바깥 잔디(케인 그림, 이음새 제거 타일)
+    pan.innerHTML = ''; root.style.setProperty('--map-grass', 'url(' + src('grass_tile') + ')'); // 지도 바깥 잔디(케인 그림, 이음새 제거 타일)
     D.sheets.forEach((sh, si) => {
       const el = document.createElement('div'); el.className = 'sheet'; el.dataset.si = si;
       const g = document.createElement('img'); g.src = src(sh.ground); g.draggable = false; el.appendChild(g);
@@ -50,7 +50,7 @@
     ox = cw + 2 * p <= vw ? (vw - cw) / 2 : Math.min(p, Math.max(vw - cw - p, ox));
     oy = ch + 2 * p <= vh ? (vh - ch) / 2 : Math.min(p, Math.max(vh - ch - p, oy));
   }
-  function apply() { clamp(); pan.style.transform = 'translate(' + ox + 'px,' + oy + 'px) scale(' + s + ')'; }
+  function apply() { clamp(); pan.style.transform = 'translate(' + ox + 'px,' + oy + 'px) scale(' + s + ')'; root.style.backgroundSize = (836 * s) + 'px ' + (836 * s) + 'px'; root.style.backgroundPosition = ox + 'px ' + oy + 'px'; }
   function center(id) {
     const o = spots[id]; if (!o) return;
     const bx = (land ? o.sheet * D.w : 0) + o.sp.x + o.sp.w / 2, by = (land ? 0 : o.sheet * D.h) + o.sp.y + o.sp.h / 2;

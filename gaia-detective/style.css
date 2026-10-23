@@ -460,7 +460,7 @@ body.dragging{cursor:grabbing}
 }
 
 /* 지도 바깥 잔디 — 지도와 함께 움직이는 큰 판에 타일을 깖(지도 그림 속 잔디 색에서 뽑아 만든 타일) */
-#mapPan::before{content:"";position:absolute;left:-4000px;top:-3000px;width:11000px;height:8000px;background:var(--map-grass,var(--sk-grass)) 0 0/836px 836px repeat;pointer-events:none}
+#map{background-image:var(--map-grass,var(--sk-grass));background-repeat:repeat} /* 지도 바깥 잔디: 화면 크기만 그린다(예전엔 11000×8000 거대 층이라 확대 때 깜빡임) */
 /* 세로 전투 배치: 턴 종료는 작게 상단 가운데, 카드 더미는 작게, 적은 줄이고 위로, 주인공이 더 크게 */
 @media (orientation:portrait){
   #endTurn{left:50%;right:auto;transform:translateX(-50%);top:16.5vh;bottom:auto;border-width:0 1.9vh;border-image:var(--sk-btn_end) 0 70 fill / 0 1.9vh stretch;height:4.6vh;min-width:12vh;padding:0;font-size:1.8vh;white-space:nowrap}
