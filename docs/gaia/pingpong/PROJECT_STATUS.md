@@ -56,7 +56,7 @@ GitHub 기준: `Alix1211/Wellness-RPG`, 작업 브랜치 `codex/gaia-pingpong-v5
 
 - 원본 GAIA CASUAL 8종: `Wellness-RPG`의 `codex/gaia-casual-01` 브랜치 `casual/` 및 `GAIA-CASUAL-06.html` 실행본. CASUAL-07 APK 게임 본체는 CASUAL-06과 동일한 HTML 사용.
 - 탁구 기준: `GAIA-Pingpong-v2.html`, 그로부터 만든 v3/v4. `gaia-pingpong-design.md`는 사용자 첨부 기획·보상표의 근거.
-- 최신 검증 ZIP(v4): ChatGPT Library `libfile_1f24c19b58e48191802feb99284ad7b6`, 약 93MB. v4는 동네 12/국내 8/세계 8이라 **노드 수 수정이 필요**.
+- 이전 검증 ZIP(v4): ChatGPT Library `libfile_1f24c19b58e48191802feb99284ad7b6`, 약 93MB. v4는 동네 12/국내 8/세계 8이었습니다.
 - 실행은 **탁구 메인 HTML + 원본 CASUAL 보조 HTML을 같은 폴더**에 두는 구성. 보조 파일은 87MB급이며 제거하거나 가짜 미니게임으로 대체하지 않음.
 - 세이브 키: `gaia-pingpong-champion-v2` (v2/v3/v4 간 성장·승리/해금 기록 유지).
 - 큰 통합 실행본과 이미지·음원은 이 MD가 업로드됐다는 사실만으로 GitHub에 자동 포함되지 않습니다. 소스/빌드 배포 위치를 별도로 명시합니다.
@@ -65,7 +65,10 @@ GitHub 기준: `Alix1211/Wellness-RPG`, 작업 브랜치 `codex/gaia-pingpong-v5
 
 - **v4 완료:** 미니게임 8종 연결, 훈련 도착 시 자동 실행, 게임명 노드 표시, 게임별 성장 보상. Node 자동 테스트 및 ZIP 무결성 통과. Android `file://` 플레이 검증 미완료.
 - **v4 문제:** 국내·세계의 훈련 노드가 각각 8개에 그쳐 지역 규모에 맞지 않음.
-- **v5 목표:** 동네 12 / 국내 16 / 세계 20, 스탯 균등 분배, 기존 특수 노드 보존, v4 세이브 호환, 자동 테스트, ZIP 제공.
+- **v5 코드 및 자동 검사 완료:** 동네 12 / 국내 16 / 세계 20, 스탯 균등 분배, v4 기존 28개 훈련의 게임·단계 보존. 경기·분기·상점·대회·이벤트 노드 종류와 경로가 바뀌지 않았음을 모델 검사. 노드 표시·자동 게임 호출·보상·저장은 자바스크립트 UI 모의 환경에서 검사.
+- **v5 검증 한계:** 자동 모델/UI 검사는 통과했으나 실제 Chrome, Android의 HTML 두 파일 간 iframe 실행·터치·음향·화면 배치는 실기기 확인 전입니다. 새 미니게임을 개발한 것은 아니며 GAIA CASUAL 기존 8종을 그대로 연결합니다.
+- **v5 ZIP 생성·무결성 검사 통과:** `GAIA-Pingpong-v5.zip` 약 93MB. 내부 `gaia-pong-v5/release/GAIA-Pingpong-v5.html`과 `GAIA-Pingpong-v3-Casual.html`은 반드시 같은 폴더에 둡니다. `source/`는 빌드·모델·자동 검사 파일, 프로젝트 MD 2종을 포함합니다.
+- GitHub `docs/gaia/pingpong/source/`에는 변경된 소규모 연결 코드와 검사 파일을 올렸습니다. 이 폴더에는 25MB 원본 탁구 HTML 및 84MB CASUAL 원본이 포함되지 않으므로, GitHub 파일만 복제해서 바로 실행되지는 않습니다. 완전 실행본과 원본 에셋은 별도 ZIP으로 전달합니다.
 - **추후 사용자 결정 사항:** 선수 이름·대사·난이도/고유 AI, 최종 화면 아트와 게임별 미니게임 수정. 확정 없이 임의 변경하지 않음.
 
 ## 6. 후속 AI가 할 일
