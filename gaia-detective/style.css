@@ -168,7 +168,7 @@ body.dragging{cursor:grabbing}
 #mapPan .spot{position:absolute;pointer-events:auto}
 #mapPan .spot img{width:100%;height:100%}
 #mapPan .spot.locked img{filter:grayscale(.85) brightness(.78)}
-#mapPan .spot.open img{filter:drop-shadow(0 0 10px #ffd36b) drop-shadow(0 0 3px #fff);animation:spotglow 1.3s infinite alternate}
+#mapPan .spot.open img{filter:drop-shadow(0 0 10px #ffd36b) drop-shadow(0 0 3px #fff)} /* 임시: 계속 깜빡이는 빛(애니메이션)은 매 프레임 건물 그림을 다시 그려 확대 때 늦게 나타나는 원인이라 고정 빛으로 */
 #mapPan .spot.sel img{filter:drop-shadow(0 0 18px #ff4fa8) drop-shadow(0 0 5px #fff) brightness(1.08)}
 @keyframes spotglow{from{filter:drop-shadow(0 0 4px #ffd36b) drop-shadow(0 0 2px #fff)}to{filter:drop-shadow(0 0 20px #ffd36b) drop-shadow(0 0 5px #fff)}}
 #mapPan .tag{position:absolute;left:50%;top:6px;transform:translateX(-50%);white-space:nowrap;padding:5px 22px;border-radius:40px;background:#fff;border:5px solid var(--pink);color:var(--pink-d);font-weight:900;font-size:40px;box-shadow:0 4px 10px rgba(0,0,0,.25);pointer-events:none}

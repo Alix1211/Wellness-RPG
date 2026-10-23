@@ -22,6 +22,8 @@
       });
       pan.appendChild(el);
     });
+    // 모든 그림을 미리 풀어 둔다(확대·이동 때 처음 풀리며 늦게 나타나는 것 방지)
+    pan.querySelectorAll('img').forEach(im => { im.decoding = 'sync'; if (im.decode) im.decode().catch(() => {}); });
   }
 
   // 런 상태에 맞춰 건물 상태(열림/완료/잠김)와 이름표를 다시 그린다
