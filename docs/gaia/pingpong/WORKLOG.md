@@ -13,6 +13,7 @@
 - `build-v5.mjs`, `test-v5.mjs`, `test-ui.mjs` 수정. 원본 CASUAL 보조 실행본과 3D 탁구 본체는 변경하지 않음.
 - 2026-10-23 Node 모델 검사 통과, UI 모의 검사 통과. 모바일 브라우저 실기기 점검은 아직 하지 않음.
 - `GAIA-Pingpong-v5.zip` 약 93MB 생성 완료. `unzip -t` 전 파일 정상. GitHub에 작은 연결 소스 7개 및 MD 두 개 반영.
+- 완성 ZIP을 Library `libfile_e63c862003b48191a9bbdad5b6e0e7ee`에 보관 완료. 앞으로는 GitHub MD를 단일 최신 작업 기록으로 갱신.
 
 ## 보존 상태 (이미 확인된 v4)
 
