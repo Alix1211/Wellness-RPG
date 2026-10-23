@@ -11,6 +11,8 @@
 - 기존 범용 스포츠 드라마 오프닝 대사는 출력하지 않고 월드투어 맵으로 바로 진입. 경기·성장·세이브·8종 미니게임 연결 유지.
 - 새 파일: `source/build-v6.mjs`, `ui-polish.css`, `ui-polish-addon.js`, `ui-art/` 원본과 분리 컷, `test-v6.mjs`. 이전 v5 수정 없음.
 - 자동 검증 통과, **Chrome/Android 실화면과 터치는 미검증**(현 환경에 Chromium 실행 파일 없음).
+- 두 HTML을 같은 폴더 구조로 ZIP 패키징, `unzip -t` 통과. `GAIA-Pingpong-v6-UI.zip` Library 보관 완료 (`libfile_d4ae215ae04881918003e390df50180c`).
+- GitHub `codex/gaia-pingpong-v6-ui` 브랜치 생성 및 원본 PNG/분리 에셋/수정 소스/MD 기록 커밋. 이전 v5 브랜치 보존.
 
 ## 2026-10-23 — 시나리오 v0.1 사용자 반려
 
