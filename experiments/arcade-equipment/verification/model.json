@@ -1,0 +1,49 @@
+{
+  "draws": 20000,
+  "gradeCounts": [
+    13010,
+    5625,
+    1365
+  ],
+  "champions": [
+    {
+      "region": 0,
+      "drops": [
+        0,
+        2413,
+        587
+      ]
+    },
+    {
+      "region": 1,
+      "drops": [
+        0,
+        2084,
+        916
+      ]
+    },
+    {
+      "region": 2,
+      "drops": [
+        0,
+        1823,
+        1177
+      ]
+    }
+  ],
+  "expectedGamesFirstBox": 5.307250813,
+  "coinsPerGame": 16.4,
+  "steadyGamesPerBox": 4.878048780487806,
+  "checks": [
+    "insufficient coins",
+    "purchase",
+    "deduplicated reward",
+    "no quit reward",
+    "loss coins",
+    "positive distinct options",
+    "champion drops",
+    "discard no refund",
+    "cap 10 percent",
+    "JSON persistence"
+  ]
+}

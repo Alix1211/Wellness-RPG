@@ -1,0 +1,101 @@
+[
+  {
+    "newSaveNamespace": true,
+    "oldStorageUntouched": true,
+    "purchaseAndDiscard": true,
+    "noRefund": true,
+    "champions": [
+      "r0-7",
+      "r1-7",
+      "r2-9"
+    ],
+    "noArcadeGrowth": true,
+    "noDuplicateReward": true,
+    "noQuitReward": true,
+    "lossCoins": 8,
+    "persistence": true,
+    "mobileLayout": true,
+    "matchStats": [
+      {
+        "arcade": true,
+        "stats": {
+          "speed": 60,
+          "power": 66,
+          "defense": 60,
+          "spin": 64.80000000000001,
+          "accuracy": 63.6
+        },
+        "base": {
+          "speed": 60,
+          "power": 60,
+          "spin": 60,
+          "accuracy": 60
+        },
+        "bonus": {
+          "power": 10,
+          "spin": 8,
+          "speed": 0,
+          "control": 6
+        },
+        "color": "69d8c7",
+        "opponent": {
+          "id": "gaia-neighbor",
+          "name": "서윤",
+          "nick": "동네 선수",
+          "flag": "🏓",
+          "power": 70,
+          "spin": 66,
+          "accuracy": 70,
+          "speed": 70,
+          "defense": 70,
+          "style": "counter",
+          "specialSpin": "top",
+          "forehandBias": 0.45
+        },
+        "racketMaterials": 3,
+        "opponentMaterialArray": false,
+        "rewardCoins": 20
+      },
+      {
+        "arcade": false,
+        "stats": {
+          "speed": 60,
+          "power": 66,
+          "defense": 60,
+          "spin": 64.80000000000001,
+          "accuracy": 63.6
+        },
+        "base": {
+          "speed": 60,
+          "power": 60,
+          "spin": 60,
+          "accuracy": 60
+        },
+        "bonus": {
+          "power": 10,
+          "spin": 8,
+          "speed": 0,
+          "control": 6
+        },
+        "color": "69d8c7",
+        "opponent": {
+          "id": "gaia-neighbor",
+          "name": "서윤",
+          "nick": "동네 선수",
+          "flag": "🏓",
+          "power": 70,
+          "spin": 66,
+          "accuracy": 70,
+          "speed": 70,
+          "defense": 70,
+          "style": "counter",
+          "specialSpin": "top",
+          "forehandBias": 0.45
+        },
+        "racketMaterials": 3,
+        "opponentMaterialArray": false,
+        "rewardCoins": 0
+      }
+    ]
+  }
+]
