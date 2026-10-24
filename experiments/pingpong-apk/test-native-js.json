@@ -1,0 +1,10 @@
+{
+  "syncTimestampIgnoresIdle": true,
+  "progressChangesTimestamp": true,
+  "savingBlockedDuringSync": true,
+  "queuedSaveRetained": true,
+  "vibrationToggle": true,
+  "restorePreservesTimestamp": true,
+  "actualInlineSyntax": true,
+  "rootScripts": 3
+}

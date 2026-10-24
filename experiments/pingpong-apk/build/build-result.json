@@ -1,0 +1,11 @@
+{
+  "apk": "GAIA-Pingpong-v12.12.1.apk",
+  "bytes": 70717642,
+  "sha256": "f829c8686c4611930f9148e2634125e006720158a3d7753ac82f7b85cefada9a",
+  "package": "com.gaia.pingpong",
+  "versionCode": 2026102501,
+  "versionName": "12.12.1",
+  "signature_verified": true,
+  "zipalign_verified": true,
+  "assets_verified": true
+}

@@ -1,0 +1,12 @@
+private/
+sdk/
+sdk-downloads/
+input/
+game/
+paddle-skins/
+helpers/
+build/
+android/app/src/main/assets/
+*.apk
+*.p12
+*.jks
