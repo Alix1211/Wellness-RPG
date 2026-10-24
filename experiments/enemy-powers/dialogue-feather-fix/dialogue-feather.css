@@ -1,0 +1,9 @@
+/* Let the portrait end under the speech panel; feather only its bottom edge. */
+.screen.dialogue .dialogue-people{bottom:var(--gaia-dialogue-bottom,18%)!important;z-index:1!important;overflow:hidden!important}
+.screen.dialogue .dialogue-person{
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 78%,transparent 100%);
+ mask-image:linear-gradient(to bottom,#000 0%,#000 78%,transparent 100%);
+ -webkit-mask-size:100% 100%;mask-size:100% 100%;
+ -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+}
+.screen.dialogue .speech{z-index:3!important}
