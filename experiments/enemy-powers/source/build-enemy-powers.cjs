@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('fs'),path=require('path'),vm=require('vm'),crypto=require('crypto');
 const base=path.resolve(process.argv[2]||'enemy-powers/base/GAIA-Pingpong-v12.11.html');
-const output=path.resolve(process.argv[3]||'enemy-powers/release/GAIA-Pingpong-v12.11.html');
+const output=path.resolve(process.argv[3]||'enemy-cutin/release/GAIA-Pingpong-v12.11.html');
 let html=fs.readFileSync(base,'utf8');const prefix='const EMBEDDED_MATCH=',start=html.indexOf(prefix),end=html.indexOf('\n',start);
 if(start<0||end<0)throw Error('Embedded match not found');
 let match=JSON.parse(html.slice(start+prefix.length,end).trim().replace(/;$/,''));const originalMatch=match;
@@ -12,8 +12,13 @@ once('const WINNING_SCORE = 5;',`const WINNING_SCORE = ({final:11,cup:7})[new UR
 once('return 0.48 + Math.max(0, playerStats.speed - 60) * 0.0025;','return (0.48 + Math.max(0, playerStats.speed - 60) * 0.0025) * enemyPlayerScale();');
 once("const reach = side === 'player' ? getPlayerReachRadius() : 0.46+(window._activeChamp?.defense ?? 60)*0.0015;", "if (side === 'player' && !enemyCanContact()) continue;\n        const reach = side === 'player' ? getPlayerReachRadius() : (0.46+(window._activeChamp?.defense ?? 60)*0.0015)*enemyOppScale();");
 once('const f = racketContactFraction(p,end,r0,r1,reach,Math.min(0.4,reach*0.72),BALL_R+0.07);',"const racketScale=side==='player'?enemyPlayerScale():enemyOppScale();\n        const f = racketContactFraction(p,end,r0,r1,reach,Math.min(0.4,reach/racketScale*0.72)*racketScale,BALL_R+0.07*racketScale);");
+once('  const realDt = Math.min((now - lastTime) / 1000, 0.05);','  const presentationDt=Math.max(0,(now-lastTime)/1000);\n  const realDt = Math.min((now - lastTime) / 1000, 0.05);');
+once('  const dt = realDt * gameTimeScale; // slow-mo scaling', '  if(enemyPresentationTick(presentationDt)){renderer.render(scene,camera);return;}\n  const dt = realDt * gameTimeScale; // slow-mo scaling');
 once('function followRacketInput(realDt) {','function followRacketInput(realDt) {\n  if(enemyInput(realDt))return;');
 once('  followRacketInput(menuOpen || gameTimeScale === 0 ? 0 : realDt);','  enemyBeforeInput();\n  followRacketInput(menuOpen || gameTimeScale === 0 ? 0 : realDt);\n  enemyAfterInput(menuOpen || gameTimeScale === 0 ? 0 : realDt);');
+once("while (elapsed < dt - 1e-10 && gameState === 'play' && gameTimeScale!==0) {", "while (elapsed < dt - 1e-10 && gameState === 'play' && gameTimeScale!==0 && !enemyState.presenting) {");
+once('      if(gameTimeScale===0){remaining=0;break;}', '      if(gameTimeScale===0||enemyState.presenting){remaining=0;break;}');
+once('  updateBall(dt);','  updateBall(dt);\n  if(enemyState.presenting){renderer.render(scene,camera);return;}');
 once('    playerSideBounces++;','    playerSideBounces++;\n    enemyState.bounceAge=0;');
 once("const special = side === 'player' ? consumeActiveSpecialShot() : null;", "if(side==='opponent')enemyOnAttack();\n  const special = side === 'player' ? consumeActiveSpecialShot() : null;");
 const attackStart=match.indexOf('function oppHit() {'),attackEnd=match.indexOf('// Predict a legal interception',attackStart);
