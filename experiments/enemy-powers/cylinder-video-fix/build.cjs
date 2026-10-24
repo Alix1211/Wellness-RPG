@@ -1,0 +1,11 @@
+const fs=require('fs'),path=require('path');
+const base=process.argv[2]||'mini-audio-editor-fix/release/GAIA-Pingpong-v12.11.html';
+const out=process.argv[3]||'cylinder-video-fix/release/GAIA-Pingpong-v12.11.html';
+let html=fs.readFileSync(base,'utf8');
+const source=fs.readFileSync(path.join(__dirname,'cylinder-video.js'),'utf8');
+const anchor='const DirectMinigames=(()=>{';if(html.split(anchor).length!==2)throw Error('Unexpected base');
+html=html.replace(anchor,source+'\n'+anchor);
+const old="let doc=gaiaMiniAudioEditorFix(expand(MINI_DOCS[d.game+'-'+d.stage]),d.game);";
+if(!html.includes(old))throw Error('Mini audio editor fix missing');
+html=html.replace(old,"let doc=gaiaCylinderVideoFix(gaiaMiniAudioEditorFix(expand(MINI_DOCS[d.game+'-'+d.stage]),d.game),d.game);");
+fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,html);console.log(out);
