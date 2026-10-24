@@ -13,7 +13,8 @@
     hero: 'assets/hero.png', barbari: 'assets/barbari.png',
     bouncer: 'assets/bouncer.png', mohawk: 'assets/mohawk.png',
     paddle: 'assets/paddle.webp',
-    attackPrep: 'assets/rozie_attack_prep.png', attackHit: 'assets/rozie_attack_hit.png'
+    lowerPrep: 'assets/rozie_lower_prep.png', lowerHit: 'assets/rozie_lower_hit.png',
+    upperPrep: 'assets/rozie_upper_prep.png', upperHit: 'assets/rozie_upper_hit.png'
   };
   const CARD_LIST = [
     {id:'C15',name:'미란다 원칙 복창',price:20,description:'28 피해, 체력 절반 이하 2배. 쿨타임 6초.',symbol:'⚖',kind:'miranda',cooldown:6},
@@ -393,16 +394,17 @@
     ctx.fillStyle='#6047634d';ctx.beginPath();ctx.ellipse(0,-2,w*.38,11,0,0,Math.PI*2);ctx.fill();
     ctx.scale(unit.face,1);ctx.filter=hero?'none':unit.colorShift?`hue-rotate(${unit.colorShift}deg)`: 'none';
     const walkBob=hero&&Math.hypot(...moveVector())>.2?Math.abs(Math.sin(game.elapsed*12))*3:0;
-    const sheet=hero&&unit.attack?images[unit.attack.age/moves[unit.attack.kind].dur<.42?'attackPrep':'attackHit']:null;
-    if(sheet&&sheet.complete&&sheet.naturalWidth){
-      const frameW=Math.floor(sheet.naturalWidth/2),frameX=unit.attack.kind==='punch'?frameW:0;
-      const poseH=h,poseW=poseH*frameW/sheet.naturalHeight;
-      // The attack art faces left. Flip its direction without touching source PNG.
-      ctx.save();ctx.scale(-1,1);ctx.drawImage(sheet,frameX,0,frameW,sheet.naturalHeight,-poseW*.5,-poseH,poseW,poseH);ctx.restore();
+    const attackSpriteKey=hero&&unit.attack?
+      `${unit.attack.kind==='punch'?'upper':'lower'}${unit.attack.age/moves[unit.attack.kind].dur<.42?'Prep':'Hit'}`:null;
+    const attackSprite=attackSpriteKey?images[attackSpriteKey]:null;
+    if(attackSprite&&attackSprite.complete&&attackSprite.naturalWidth){
+      const poseH=h,poseW=poseH*attackSprite.naturalWidth/attackSprite.naturalHeight;
+      // Each frame is its own transparent PNG; red ball layers were removed pixel-by-pixel.
+      ctx.save();ctx.scale(-1,1);ctx.drawImage(attackSprite,-poseW*.5,-poseH,poseW,poseH);ctx.restore();
     } else ctx.drawImage(img,-w*.5,-h-walkBob,w,h);
     ctx.filter='none';
     const anim=hero?unit.attack:unit.swing>0?{kind:'punch',age:.14}:null;
-    if(anim&&(!hero||!sheet?.complete||!sheet.naturalWidth)){
+    if(anim&&(!hero||!attackSprite?.complete||!attackSprite.naturalWidth)){
       const prog=hero?anim.age/moves[anim.kind].dur:.6;
       const thrust=Math.sin(Math.PI*clamp(prog,0,1));
       ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=hero?'#f1b8a4':'#e7bda6';ctx.lineWidth=hero?13:12;
