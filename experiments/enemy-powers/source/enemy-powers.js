@@ -37,7 +37,7 @@ const enemySkill=ENEMY_SKILLS.find(s=>s.id===enemyProfile.skill);
 const enemyFinal=careerQuery.get('enemyMatchKind')==='final';
 const enemyLimit=enemyFinal?3:1;
 const enemyState={active:null,remaining:0,bomb:0,used:0,step:0,bounceAge:99,shield:0,
-  vx:0,vz:0,wobbleX:0,wobbleZ:0,age:0,lastTarget:null,utterance:null,pending:null,presenting:0};
+  vx:0,vz:0,wobbleX:0,wobbleZ:0,age:0,lastTarget:null,utterance:null,pending:null,presenting:0,resumeTouch:undefined,forwardTouchId:null};
 const enemyRadius=BALL_R,enemyOriginalColor=ballMat.color.getHex(),enemyOriginalGlow=ballMat.emissive.getHex();
 const enemyFuse=new THREE.Group();
 const enemyWick=new THREE.Mesh(new THREE.CylinderGeometry(.011,.015,.14,7),new THREE.MeshBasicMaterial({color:0x4e344d}));
@@ -77,6 +77,7 @@ function enemyActivate(id=enemySkill.id,force=false){
  if(!force&&(enemyState.used>=enemyLimit||trainingActive||menuOpen||enemyState.active||enemyState.pending||enemyState.shield||gameState!=='play'))return false;
  const skill=ENEMY_SKILLS.find(s=>s.id===id);if(!skill)return false;
  enemyResetPoint();enemyState.used++;enemyState.pending=id;enemyState.presenting=1.8;
+ enemyState.resumeTouch=activeRacketTouchId!==null&&isTouching?{id:activeRacketTouchId,x:lastTouchX,y:lastTouchY,forward:enemyState.forwardTouchId===activeRacketTouchId}:undefined;
  enemyShout(skill);return true;
 }
 function enemyApplyPending(){
@@ -96,8 +97,49 @@ function enemyPresentationTick(dt){
  const panel=document.querySelector('#enemy-cutin .enemy-presentation');panel.style.animationPlayState=(menuOpen||careerPaused||document.hidden)?'paused':'running';
  if(menuOpen||careerPaused||document.hidden)return true;
  enemyState.presenting=Math.max(0,enemyState.presenting-dt);
- if(enemyState.presenting<=0){const el=document.getElementById('enemy-cutin');el.classList.remove('shout');el.hidden=true;enemyApplyPending();}
+ if(enemyState.presenting<=0){const el=document.getElementById('enemy-cutin');el.classList.remove('shout');el.hidden=true;enemyRestoreTouch();enemyApplyPending();}
  return true;
+}
+function enemyRestoreTouch(){
+ const t=enemyState.resumeTouch;
+ if(t!==undefined){
+  activeRacketTouchId=null;enemyState.forwardTouchId=null;isTouching=false;touchVelX=touchVelZ=0;
+  if(t){
+   activeRacketTouchId=t.id;enemyState.forwardTouchId=t.forward?t.id:null;isTouching=true;mouseActive=false;
+   lastTouchX=t.x;lastTouchY=t.y;touchStartTime=performance.now();
+   const pos=mapTouchTo3D(t.x,t.y);racketInputTarget.x=pos.x;racketInputTarget.z=pos.z;
+   // Follow the held finger smoothly, without a teleported racket or buffered smash.
+   racketVelX=racketVelY=racketVelZ=racketSpeed=racketInstantSpeed=0;
+   prevRacketX=racketPos.x;prevRacketY=racketPos.y;prevRacketZ=racketPos.z;
+   previousPhysicsRacket={...racketPos};motionHistory=[];recordMotionSample(racketPos.x,0,racketPos.z);
+  }
+ }
+ enemyState.resumeTouch=undefined;
+}
+function enemyCaptureCutinInput(event,type){
+ if(!enemyState.presenting){
+  // A touch that began on the cutin keeps that DOM target after it is hidden.
+  // Continue that one live gesture until release; ordinary canvas input is untouched.
+  if(enemyState.forwardTouchId!==null&&type.startsWith('touch')&&event.target!==canvas){
+   const t=Array.from(event.touches||[]).find(t=>t.identifier===enemyState.forwardTouchId);
+   if(!t){activeRacketTouchId=null;enemyState.forwardTouchId=null;isTouching=false;touchVelX=touchVelZ=0;}
+   else if(type==='touchmove'&&!menuOpen&&!smashAiming){
+    const now=performance.now(),elapsed=Math.max(1,now-touchStartTime);
+    touchVelX=(t.clientX-lastTouchX)/elapsed*16;touchVelZ=(t.clientY-lastTouchY)/elapsed*16;
+    lastTouchX=t.clientX;lastTouchY=t.clientY;touchStartTime=now;
+    const pos=mapTouchTo3D(t.clientX,t.clientY);racketInputTarget.x=pos.x;racketInputTarget.z=pos.z;recordMotionSample(pos.x,0,pos.z);
+   }
+   if(event.cancelable)event.preventDefault();event.stopImmediatePropagation();
+  }
+  return;
+ }
+ if(type.startsWith('touch')){
+  const touches=Array.from(event.touches||[]);
+  const t=touches.find(t=>t.identifier===(enemyState.resumeTouch?.id??activeRacketTouchId))||touches[0];
+  enemyState.resumeTouch=t?{id:t.identifier,x:t.clientX,y:t.clientY,forward:event.target!==canvas}:null;
+  if(!t){activeRacketTouchId=null;enemyState.forwardTouchId=null;isTouching=false;touchVelX=touchVelZ=0;releaseHeldSpin();}
+ }else if(type==='mouseup'){isTouching=false;mouseActive=false;touchVelX=touchVelZ=0;releaseHeldSpin();}
+ if(event.cancelable)event.preventDefault();event.stopImmediatePropagation();
 }
 function enemyOnAttack(){
  const threshold=enemyFinal?[1,8,14][enemyState.used]:1;
@@ -189,7 +231,7 @@ function enemyInstallUI(){
  for(const id of ['enemy-screen-fx','enemy-effect-hint','enemy-bomb-timer']){const e=document.createElement('div');e.id=id;if(id!=='enemy-screen-fx')e.hidden=true;ui.append(e);}
  const sheet=new Image();sheet.src='assets/enemy-powers/skill-bubbles.png';
  // No hidden racket movement or buffered shots while the skill is being announced.
- for(const type of ['pointerdown','pointerup','pointermove','mousedown','mouseup','mousemove','touchstart','touchend','touchmove','click','keydown'])addEventListener(type,event=>{if(!enemyState.presenting)return;if(['pointerup','mouseup','touchend'].includes(type)){isTouching=false;mouseActive=false;releaseHeldSpin();}if(event.cancelable)event.preventDefault();event.stopImmediatePropagation();},{capture:true,passive:false});
+ for(const type of ['pointerdown','pointerup','pointermove','mousedown','mouseup','mousemove','touchstart','touchend','touchmove','touchcancel','click','keydown'])addEventListener(type,event=>enemyCaptureCutinInput(event,type),{capture:true,passive:false});
 }
 function enemyPlaceCutin(){}
 enemyInstallUI();

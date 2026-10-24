@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('fs'),path=require('path'),vm=require('vm'),crypto=require('crypto');
 const base=path.resolve(process.argv[2]||'enemy-powers/base/GAIA-Pingpong-v12.11.html');
-const output=path.resolve(process.argv[3]||'enemy-cutin/release/GAIA-Pingpong-v12.11.html');
+const output=path.resolve(process.argv[3]||'enemy-input/release/GAIA-Pingpong-v12.11.html');
 let html=fs.readFileSync(base,'utf8');const prefix='const EMBEDDED_MATCH=',start=html.indexOf(prefix),end=html.indexOf('\n',start);
 if(start<0||end<0)throw Error('Embedded match not found');
 let match=JSON.parse(html.slice(start+prefix.length,end).trim().replace(/;$/,''));const originalMatch=match;
