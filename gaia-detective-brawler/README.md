@@ -31,7 +31,7 @@
 - 인물 자산: `assets/gaia-detective/game`의 `hero_shy`, `enemy_barbari`, `enemy_bouncer`, `enemy_mohawk` 동일 Git blob을 별도 게임 경로에도 참조.
 - 소품: `assets/props/squat-fx/paddle-heart.webp`.
 - 생성 타일 아틀라스: `assets/gaia_tiles.webp` (원본 고해상도 PNG는 제작 산출물로 별도 보관).
-- `rozie_attack_prep.png` / `rozie_attack_hit.png`: 사용자 제공 원본의 보존용 복사본. 실제 MVP는 공을 제거한 `rozie_upper_prep.png`, `rozie_upper_hit.png`, `rozie_lower_prep.png`, `rozie_lower_hit.png`를 사용한다. `rozie_attack_*_clean.png`는 공을 제거한 전체 원본 시트.
+- `rozie_attack_prep.png` / `rozie_attack_hit.png`: **기존 파일명도 공 제거본으로 교체**했다. 업로드 원본은 GitHub 과거 커밋에서 복구 가능하다. 실제 MVP는 분리된 `rozie_upper_prep.png`, `rozie_upper_hit.png`, `rozie_lower_prep.png`, `rozie_lower_hit.png`를 사용한다. `rozie_attack_*_clean.png` 역시 공을 제거한 전체 시트다.
 - 골든퀘스트 참조: `Alix1211/ARPG` `src/town/town.js`의 무기 타격 범위/타이밍, `src/town/field_dungeon.js`의 경직·넉백, `src/town/dungeon.js`의 방 배치/통로 생성 개념. 원본 엔진을 통째로 붙인 것이 아니라 Canvas 벨트스크롤에 맞게 **새로 구현**함.
 
 ## 알려진 제한
