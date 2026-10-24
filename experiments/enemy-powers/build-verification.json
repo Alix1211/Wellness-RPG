@@ -1,0 +1,9 @@
+{
+  "base": "/workspace/scratch/461560ac8532/enemy-powers/base/GAIA-Pingpong-v12.11.html",
+  "baseSHA256": "2d07a25764c92c9233570599e3235722e3c4174149c2a8fd028ee98200fdabdf",
+  "outputSHA256": "c56f444986c33cb5a0c90a30d3c905542b99bd54cd2ceadad5afd615efa8ae05",
+  "defensiveAIIdentical": true,
+  "skills": 15,
+  "players": 26,
+  "syntax": "PASS"
+}

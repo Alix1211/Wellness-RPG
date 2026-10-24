@@ -1,0 +1,46 @@
+'use strict';
+const fs=require('fs'),path=require('path'),vm=require('vm'),crypto=require('crypto');
+const base=path.resolve(process.argv[2]||'enemy-powers/base/GAIA-Pingpong-v12.11.html');
+const output=path.resolve(process.argv[3]||'enemy-powers/release/GAIA-Pingpong-v12.11.html');
+let html=fs.readFileSync(base,'utf8');const prefix='const EMBEDDED_MATCH=',start=html.indexOf(prefix),end=html.indexOf('\n',start);
+if(start<0||end<0)throw Error('Embedded match not found');
+let match=JSON.parse(html.slice(start+prefix.length,end).trim().replace(/;$/,''));const originalMatch=match;
+if(match.includes('arcadePower')||match.includes('const ENEMY_SKILLS='))throw Error('Use the clean stable camera/gloss base, not an already patched experiment');
+function once(from,to){const i=match.indexOf(from);if(i<0||match.indexOf(from,i+from.length)>=0)throw Error('Expected one engine anchor: '+from.slice(0,90));match=match.slice(0,i)+to+match.slice(i+from.length);}
+once('const NET_H = 0.3, BALL_R = 0.08;','const NET_H = 0.3; let BALL_R = 0.08;');
+once('const WINNING_SCORE = 5;',`const WINNING_SCORE = ({final:11,cup:7})[new URLSearchParams(window.GAIA_BOOT||location.search).get('enemyMatchKind')]||5;`);
+once('return 0.48 + Math.max(0, playerStats.speed - 60) * 0.0025;','return (0.48 + Math.max(0, playerStats.speed - 60) * 0.0025) * enemyPlayerScale();');
+once("const reach = side === 'player' ? getPlayerReachRadius() : 0.46+(window._activeChamp?.defense ?? 60)*0.0015;", "if (side === 'player' && !enemyCanContact()) continue;\n        const reach = side === 'player' ? getPlayerReachRadius() : (0.46+(window._activeChamp?.defense ?? 60)*0.0015)*enemyOppScale();");
+once('const f = racketContactFraction(p,end,r0,r1,reach,Math.min(0.4,reach*0.72),BALL_R+0.07);',"const racketScale=side==='player'?enemyPlayerScale():enemyOppScale();\n        const f = racketContactFraction(p,end,r0,r1,reach,Math.min(0.4,reach/racketScale*0.72)*racketScale,BALL_R+0.07*racketScale);");
+once('function followRacketInput(realDt) {','function followRacketInput(realDt) {\n  if(enemyInput(realDt))return;');
+once('  followRacketInput(menuOpen || gameTimeScale === 0 ? 0 : realDt);','  enemyBeforeInput();\n  followRacketInput(menuOpen || gameTimeScale === 0 ? 0 : realDt);\n  enemyAfterInput(menuOpen || gameTimeScale === 0 ? 0 : realDt);');
+once('    playerSideBounces++;','    playerSideBounces++;\n    enemyState.bounceAge=0;');
+once("const special = side === 'player' ? consumeActiveSpecialShot() : null;", "if(side==='opponent')enemyOnAttack();\n  const special = side === 'player' ? consumeActiveSpecialShot() : null;");
+const attackStart=match.indexOf('function oppHit() {'),attackEnd=match.indexOf('// Predict a legal interception',attackStart);
+let attack=match.slice(attackStart,attackEnd);
+const old='  const champ = window._activeChamp;';if(!attack.includes(old))throw Error('Opponent attack anchor missing');attack=attack.replace(old,old+'\n  enemyOnAttack();');
+const targetStart=attack.indexOf('  const targetX = Math.max(-TABLE_W / 2 + 0.18'),targetEnd=attack.indexOf('  isServeReturn = false;',targetStart);if(targetStart<0||targetEnd<0)throw Error('Attack target anchor missing');
+attack=attack.slice(0,targetStart)+'  const attackTarget=enemyAttackTarget(power,effectiveAcc,returnTime);\n  aimLiveShot({x:attackTarget.x,z:attackTarget.z},attackTarget.time);\n  if(document.getElementById("enemy-cutin")?.classList.contains("shout"))enemyPlaceCutin();\n'+attack.slice(targetEnd);
+match=match.slice(0,attackStart)+attack+match.slice(attackEnd);
+once('const dt = realDt * gameTimeScale; // slow-mo scaling','const dt = realDt * gameTimeScale; // slow-mo scaling\n  enemyTick(realDt);');
+once('function careerSend(won){if(careerReported)return;','function careerSend(won){if(careerReported)return;enemyState.shield=0;enemyResetPoint();');
+let addon=fs.readFileSync(path.join(__dirname,'enemy-powers.js'),'utf8');
+// Reuse the already shipped Korean font subsets; do not add new image/font assets.
+const poolStart=html.indexOf('const MINI_POOL=')+'const MINI_POOL='.length,poolEnd=html.indexOf(',MINI_DOCS=',poolStart);
+const pool=JSON.parse(html.slice(poolStart,poolEnd)),docStart=poolEnd+',MINI_DOCS='.length,docEnd=html.indexOf(',MINI_BACKGROUNDS=',docStart),docs=JSON.parse(html.slice(docStart,docEnd));
+let fontDoc=docs['wiggle-1'];while(/@@GAIA9_\d+@@/.test(fontDoc))fontDoc=fontDoc.replace(/@@GAIA9_(\d+)@@/g,(_,n)=>pool[Number(n)]);
+const characters=new Set(Array.from(addon+'서윤민지지아혜숙하린수진은영미정지수나래유진채원다은세린가영윤서엘리나케빈메이리아카밀라아키라란소피아클로이마르코').map(c=>c.codePointAt(0)));
+const fonts=(fontDoc.match(/@font-face\s*\{[^}]*\}/g)||[]).filter(css=>{const range=/unicode-range:([^;]+)/.exec(css);if(!range)return true;return range[1].split(',').some(s=>{const q=s.trim().replace(/^U\+/i,'');let low,high;if(q.includes('?')){low=parseInt(q.replace(/\?/g,'0'),16);high=parseInt(q.replace(/\?/g,'F'),16);}else{const r=q.split('-');low=parseInt(r[0],16);high=parseInt(r[1]||r[0],16);}return [...characters].some(n=>n>=low&&n<=high);});}).map(css=>css.replace(/font-family:\s*Gaia\b/g,'font-family:EnemyGaia')).join('\n');
+addon='const ENEMY_FONT_CSS='+JSON.stringify(fonts)+';\n'+addon;
+once('// ─── START ───\ninitBackspinHold();',addon+'\n// ─── START ───\ninitBackspinHold();');
+function defensiveFunctions(s){const a=s.indexOf('function predictOpponentIntercept()'),b=s.indexOf('// ─── VISUAL UPDATES',a);return s.slice(a,b);}
+if(defensiveFunctions(originalMatch)!==defensiveFunctions(match))throw Error('Defensive AI changed');
+const last=match.lastIndexOf('<script>');new vm.Script(match.slice(last+8,match.indexOf('</script>',last)),{filename:'enemy-match.js'});
+html=html.slice(0,start)+prefix+JSON.stringify(match).replaceAll('<','\\u003c')+';'+html.slice(end);
+const boot=' const began=performance.now();window.GAIA_MATCH_DATA=';
+if(html.split(boot).length!==2)throw Error('Main match boot anchor count');
+html=html.replace(boot," params.set('enemyMatchKind',arcade?'arcade':state.pending?.kind==='final'?(state.pending.round===2?'final':'cup'):state.pending?.kind==='cup'?'cup':'match');\n"+boot);
+const appStart=html.indexOf('<script type="module">')+'<script type="module">'.length;new vm.Script(html.slice(appStart,html.lastIndexOf('</script>')),{filename:'enemy-main.js'});
+fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,html);
+fs.writeFileSync(path.join(path.dirname(output),'build-verification.json'),JSON.stringify({base,baseSHA256:crypto.createHash('sha256').update(fs.readFileSync(base)).digest('hex'),outputSHA256:crypto.createHash('sha256').update(html).digest('hex'),defensiveAIIdentical:true,skills:15,players:26,syntax:'PASS'},null,2));
+console.log(JSON.stringify({output,bytes:Buffer.byteLength(html),defensiveAIIdentical:true}));
