@@ -9,7 +9,7 @@
  };
  window.GaiaNativeFlush=()=>{save();if(!window.GAIA_NATIVE_GATE)try{B.put(SAVE_KEY+'-settings',JSON.stringify(settings))}catch{}};
  let lastHit=0;
- window.GaiaNativeHit=type=>{if(settings.vibration===false)return;const now=performance.now();if(now-lastHit<80)return;let pattern=type==='racketHit'?'18':type==='pointLost'?'65':type==='fanfare'?'25,30,25':null;if(!pattern)return;lastHit=now;try{B.vibrate(pattern)}catch{}};
+ window.GaiaNativeHit=type=>{if(settings.vibration===false)return;const now=performance.now();if(now-lastHit<80)return;let pattern=type==='playerHit'?'35':type==='serve'?'25':type==='pointLost'?'65':type==='fanfare'?'25,30,25':null;if(!pattern)return;lastHit=now;try{B.vibrate(pattern)}catch{}};
  function pauseForNative(){if(activeGame&&$('#overlay').hidden){autoPaused=activeGame.token;pauseGame()}}
  function resumeNative(){if(autoPaused&&activeGame?.token===autoPaused){resumeGame()}autoPaused=null;}
  function gate(value){window.GAIA_NATIVE_GATE=value;

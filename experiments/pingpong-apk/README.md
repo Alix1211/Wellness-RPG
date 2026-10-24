@@ -1,7 +1,9 @@
-# GAIA Pingpong Android
+# GAIA Pingpong Android · 12.12.2
 
 개인 설치 테스트용 APK. Android 8 이상, 가로/세로 회전 지원.
-APK 설치 후 타이틀 설정 또는 Android 뒤로 메뉴의 설정에서 진동과 저장 연결을 사용합니다.
+기존 앱을 지우지 않고 업데이트 APK를 덮어설치하세요. 모든 화면 우상단 설정에서 배경음/효과음 음량, 진동과 저장 연결을 사용합니다.
+
+최신 변경·검증은 UPDATE-12.12.2.md를 확인하세요.
 
 ## 드라이브 저장
 첫 기기: 설정 → 드라이브 파일 연결 → 새 파일 만들기.
@@ -23,4 +25,4 @@ python3 build_apk.py
 
 최초 앱만 --first-build로 새 키 생성. 기존 앱 업데이트 시 새 키 생성 금지.
 키/비밀번호/개인 세이브를 GitHub에 올리지 마세요.
-APK 결과는 build/GAIA-Pingpong-v12.12.1.apk. 세부 검증 및 미확인 사항은 APK-HANDOFF.md.
+APK 결과는 build/GAIA-Pingpong-v12.12.2.apk. 세부 검증 및 미확인 사항은 APK-HANDOFF.md.

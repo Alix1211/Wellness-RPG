@@ -1,0 +1,59 @@
+{
+  "layouts": [
+    {
+      "width": 480,
+      "height": 820,
+      "setting": {
+        "x": 420,
+        "y": 12,
+        "width": 48,
+        "height": 48
+      },
+      "camera": {
+        "x": 420,
+        "y": 72,
+        "width": 48,
+        "height": 48
+      }
+    },
+    {
+      "width": 960,
+      "height": 540,
+      "setting": {
+        "x": 900,
+        "y": 12,
+        "width": 48,
+        "height": 48
+      },
+      "camera": {
+        "x": 900,
+        "y": 72,
+        "width": 48,
+        "height": 48
+      }
+    }
+  ],
+  "independentWebAudioMix": true,
+  "liveGainChange": true,
+  "normalHitHapticWithSoundMuted": true,
+  "skillCameraNoChase": true,
+  "camera": {
+    "base": 4.4117999999999995,
+    "chase": 1.5
+  },
+  "after": {
+    "z": 4.4117999999999995,
+    "special": true
+  },
+  "squat": {
+    "music": "squat90_bgm",
+    "bed": "squat90_bed",
+    "liveChannels": true
+  },
+  "globalSettingsOnTitleMatchMinigame": true,
+  "settingsPersisted": true,
+  "cylinderRandomSelections": [
+    1,
+    0
+  ]
+}

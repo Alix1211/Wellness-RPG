@@ -14,7 +14,7 @@ assert.equal(ctx.GAIA_NATIVE_GATE,false);assert(native[key]);const stamp=ctx.sta
 ctx.state.career.seconds=100;ctx.save();assert.equal(ctx.state.t,stamp,'idle playtime must not advance sync timestamp');
 ctx.state.gear.coins=20;ctx.save();assert(ctx.state.t>stamp);assert.equal(JSON.parse(native[key]).gear.coins,20);
 ctx.onGaiaSyncStart();const kept=native[key];ctx.state.gear.coins=40;ctx.save();assert.equal(native[key],kept,'sync must block saving');ctx.onGaiaSyncDone();assert.equal(JSON.parse(native[key]).gear.coins,40,'queued change must flush');
-ctx.settings.vibration=false;ctx.GaiaNativeHit('racketHit');assert(!calls.some(x=>x[0]==='vibrate'));ctx.settings.vibration=true;ctx.GaiaNativeHit('racketHit');assert(calls.some(x=>x[0]==='vibrate'&&x[1]==='18'));
+ctx.settings.vibration=false;ctx.GaiaNativeHit('playerHit');assert(!calls.some(x=>x[0]==='vibrate'));ctx.settings.vibration=true;ctx.GaiaNativeHit('playerHit');assert(calls.some(x=>x[0]==='vibrate'&&x[1]==='35'));
 const remote=structuredClone(sample);remote.t=991;remote.gear.coins=777;ctx.onGaiaBackupApplied(JSON.stringify({[key]:JSON.stringify(remote)}));assert.equal(JSON.parse(storage.getItem(key)).t,991);assert.equal(JSON.parse(storage.getItem(key)).gear.coins,777);assert(calls.some(x=>x[0]==='reload'));
 // Compile every actual inline script and the embedded match, without evaluating game state.
 const html=fs.readFileSync('apk-work/android/app/src/main/assets/game/index.html','utf8');let scripts=0;for(const m of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)){new vm.Script(m[1]);scripts++}
