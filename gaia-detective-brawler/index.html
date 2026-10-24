@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#ffbad0">
+  <title>GAIA CITY · 로지의 뒷골목 수사</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="game-shell">
+    <canvas id="scene" width="960" height="540" aria-label="로지의 벨트스크롤 액션 게임"></canvas>
+    <div class="hud">
+      <div class="identity"><span class="badge">GAIA CITY</span><strong>ROZIE · DETECTIVE</strong><small id="stageLabel">1구역 / 뒷골목</small></div>
+      <div class="gauges"><div class="hp-line"><span>♥</span><div class="hp-track"><div id="hpFill"></div></div><b id="hpText">160/160</b></div><div class="money-row"><span>✦ <b id="coins">80</b> G</span><span>체포 <b id="arrests">0</b></span><span>연속 <b id="combo">0</b></span></div></div>
+      <div class="header-actions"><button id="shopOpen" class="small-button" type="button">경찰서 카드 상점</button><button id="fullScreen" class="small-button icon-button" type="button" title="전체 화면">⛶</button><button id="pause" class="small-button icon-button" type="button" title="일시 정지">Ⅱ</button></div>
+    </div>
+    <div id="toast" class="toast" aria-live="polite"></div>
+    <div class="touch-ui">
+      <div id="joystick" class="joystick" aria-label="이동 조이스틱"><span class="joystick-cross">✦</span><div id="stick"></div></div>
+      <div class="action-group"><button id="punch" class="action punch" type="button"><b>👊</b><small>주먹</small></button><button id="kick" class="action kick" type="button"><b>✦</b><small>킥</small></button><button id="skill" class="action skill" type="button"><b>★</b><small id="skillLabel">카드 없음</small></button></div>
+    </div>
+    <div id="modal" class="modal">
+      <section class="panel intro" id="introPanel">
+        <span class="overline">GAIA CITY · ACT 1</span>
+        <h1>로지의 뒷골목 수사</h1>
+        <p>서로 때리고 체포하는 명랑한 가이아 시티!<br>베어너클 감성의 종이인형 벨트스크롤 액션.</p>
+        <div class="chips"><span>기존 카드게임 세계관</span><span>자동생성 타일 구역</span><span>원본 캐릭터 재활용</span></div>
+        <button id="start" class="primary" type="button">뒷골목 출동 ▶</button>
+        <button id="introShop" class="secondary" type="button">경찰서에서 스킬카드 사기</button>
+        <p class="hint">이동 WASD / 방향키 · 주먹 J · 킥 K · 카드 L<br>왼쪽 조이스틱 + 오른쪽 버튼으로 터치 조작</p>
+      </section>
+      <section class="panel shop-panel hidden" id="shopPanel">
+        <span class="overline">GAIA POLICE STATION</span>
+        <h2>경찰서 스킬카드 매점</h2>
+        <p>스킬카드는 <strong>경찰서에서 돈을 주고 구매</strong>합니다. 쓰면 한 장 소모됩니다.</p>
+        <div id="shopCards" class="shop-cards"></div>
+        <div class="shop-footer"><span>보유 자금 <b id="shopMoney">80 G</b></span><button id="shopClose" class="secondary" type="button">돌아가기</button></div>
+      </section>
+      <section class="panel result-panel hidden" id="resultPanel">
+        <span class="overline" id="resultKicker">MISSION COMPLETE</span>
+        <h2 id="resultTitle">뒷골목 수사 완료!</h2>
+        <p id="resultDesc">범죄자 체포 완료.</p>
+        <button id="restart" class="primary" type="button">새 배치의 뒷골목 재출동 ↻</button>
+        <button id="resultShop" class="secondary" type="button">경찰서 카드 상점</button>
+      </section>
+    </div>
+    <div id="error" class="error hidden"></div>
+  </main>
+  <script src="game.js" defer></script>
+</body>
+</html>
