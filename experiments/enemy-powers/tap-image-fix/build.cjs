@@ -1,0 +1,12 @@
+const fs=require('fs'),path=require('path');
+const base=process.argv[2]||'dialogue-feather-fix/release/GAIA-Pingpong-v12.11.html',out=process.argv[3]||'tap-image-fix/release/GAIA-Pingpong-v12.11.html';
+let html=fs.readFileSync(base,'utf8');
+const source=fs.readFileSync(path.join(__dirname,'tap-images.js'),'utf8');
+if(html.includes('function gaiaTapImagesFix'))throw Error('Already patched');
+html=html.replace('const DirectMinigames=(()=>{',source+'\nconst DirectMinigames=(()=>{');
+const anchor="let doc=gaiaCylinderVideoFix(gaiaMiniAudioEditorFix(expand(MINI_DOCS[d.game+'-'+d.stage]),d.game),d.game);";
+if(!html.includes(anchor))throw Error('Unexpected base');
+html=html.replace(anchor,"let doc=gaiaTapImagesFix(gaiaCylinderVideoFix(gaiaMiniAudioEditorFix(expand(MINI_DOCS[d.game+'-'+d.stage]),d.game),d.game),d.game);");
+fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,html);
+const assets=path.join(path.dirname(out),'assets/minigames');fs.mkdirSync(assets,{recursive:true});
+for(const [src,name]of [['upload/01-1000099273.png','miju-tap-1.png'],['upload/02-1000099274.png','miju-tap-2.png'],['upload/03-1000099271.png','miju-tap-3.png']])fs.copyFileSync(src,path.join(assets,name));
