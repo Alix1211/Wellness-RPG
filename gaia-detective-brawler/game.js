@@ -15,9 +15,9 @@
     paddle: 'assets/paddle.webp'
   };
   const CARD_LIST = [
-    {id:'C15',name:'미란다 원칙 복창',price:20,description:'가까운 적에게 28 피해. 기력이 절반 이하면 2배.',symbol:'⚖',kind:'miranda'},
-    {id:'C24',name:'무적의 형사 수갑',price:40,description:'근처 적들을 3초간 봉쇄, 공격력 감소.',symbol:'⌁',kind:'cuffs'},
-    {id:'C25',name:'구속영장 청구 타격',price:55,description:'근접 강타 42 피해. 적 기력 30% 이하면 2배.',symbol:'✦',kind:'warrant'}
+    {id:'C15',name:'미란다 원칙 복창',price:20,description:'28 피해, 체력 절반 이하 2배. 쿨타임 6초.',symbol:'⚖',kind:'miranda',cooldown:6},
+    {id:'C24',name:'무적의 형사 수갑',price:40,description:'근처 적 3초 봉쇄, 공격 약화. 쿨타임 12초.',symbol:'⌁',kind:'cuffs',cooldown:12},
+    {id:'C25',name:'구속영장 청구 타격',price:55,description:'42 피해, 체력 30% 이하 2배. 쿨타임 9초.',symbol:'✦',kind:'warrant',cooldown:9}
   ];
   const WAVES = [
     ['barbari','barbari'],
@@ -26,20 +26,23 @@
     ['bouncer','bouncer','mohawk']
   ];
   const TYPES = {
-    barbari:{name:'바바리맨',hp:42,attack:6,speed:75,drawH:139,reach:68},
-    bouncer:{name:'클럽 바운서',hp:50,attack:8,speed:62,drawH:148,reach:73},
-    mohawk:{name:'모히칸 양아치',hp:38,attack:5,speed:92,drawH:142,reach:66}
+    barbari:{name:'바바리맨',hp:42,attack:6,speed:98,drawH:139,reach:68},
+    bouncer:{name:'클럽 바운서',hp:50,attack:8,speed:89,drawH:148,reach:73},
+    mohawk:{name:'모히칸 양아치',hp:38,attack:5,speed:111,drawH:142,reach:66}
   };
   const savedKey = 'gaia_detective_brawler_mvp_v1';
-  let wallet = {gold:80,stock:[],lifetime:0};
-  try { const raw = JSON.parse(localStorage.getItem(savedKey)); if(raw&&Number.isFinite(raw.gold)&&Array.isArray(raw.stock)) wallet={gold:Math.max(0,raw.gold),stock:raw.stock.filter(id=>CARD_LIST.some(c=>c.id===id)).slice(0,30),lifetime:raw.lifetime||0}; } catch (_) {}
+  let wallet = {gold:80,owned:[],equipped:null,lifetime:0};
+  try { const raw = JSON.parse(localStorage.getItem(savedKey)); if(raw&&Number.isFinite(raw.gold)){
+    const owned=(raw.owned||raw.stock||[]).filter(id=>CARD_LIST.some(c=>c.id===id));
+    wallet={gold:Math.max(0,raw.gold),owned:[...new Set(owned)],equipped:owned.includes(raw.equipped)?raw.equipped:(owned[0]||null),lifetime:raw.lifetime||0};
+  }} catch (_) {}
   const save = () => { try {localStorage.setItem(savedKey,JSON.stringify(wallet));} catch (_) {} };
   const images = {};
   for(const [key,src] of Object.entries(ASSET)){
     const img = new Image(); img.src = src; images[key] = img;
     img.onerror = () => { console.warn('Asset unavailable:',src); };
   }
-  const player = {x:148,y:428,face:1,hp:160,maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,anim:0,stun:0,combo:0,comboTime:0};
+  const player = {x:148,y:428,face:1,hp:160,maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,anim:0,stun:0,combo:0,comboTime:0};
   const game = {mode:'menu',oldMode:'menu',zone:0,waveLive:false,arrests:0,seed:Date.now(),camera:0,elapsed:0,particles:[],props:[],shake:0,freeze:0,tip:'',tipTime:0,enemies:[]};
   let toastTimer=0, audioCtx=null;
   const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
@@ -68,8 +71,8 @@
     $('arrests').textContent=game.arrests;
     $('combo').textContent=player.combo;
     $('stageLabel').textContent=`${Math.min(4,game.zone+1)}구역 / 뒷골목`;
-    const card=CARD_LIST.find(c=>c.id===wallet.stock[0]);
-    $('skillLabel').textContent=card?`${card.name.slice(0,5)} ×${wallet.stock.filter(id=>id===card.id).length}`:'카드 없음';
+    const card=CARD_LIST.find(c=>c.id===wallet.equipped);
+    $('skillLabel').textContent=card?(player.skillCooldown>0?`대기 ${Math.ceil(player.skillCooldown)}초`:card.name.slice(0,7)):'카드 없음';
     $('shopMoney').textContent=`${wallet.gold} G`;
   }
   function renderShop(){
@@ -77,8 +80,10 @@
     for(const c of CARD_LIST){
       const box=document.createElement('div');box.className='shop-card';
       box.innerHTML=`<span class="overline">${c.id} · 원본 카드</span><div style="font-size:26px">${c.symbol}</div><strong>${c.name}</strong><small>${c.description}</small>`;
-      const btn=document.createElement('button');btn.textContent=`${c.price} G · 구매`;btn.disabled=wallet.gold<c.price||wallet.stock.length>=30;
-      btn.onclick=()=>{if(wallet.gold<c.price)return;wallet.gold-=c.price;wallet.stock.push(c.id);save();renderShop();refreshHud();toast(`${c.name} 1장 구매!`);sound('card');};
+      const owned=wallet.owned.includes(c.id);
+      const btn=document.createElement('button');btn.textContent=owned?(wallet.equipped===c.id?'장착 중 ✓':'장착하기'):`${c.price} G · 해금`;
+      btn.disabled=(!owned&&wallet.gold<c.price)||wallet.equipped===c.id;
+      btn.onclick=()=>{if(!wallet.owned.includes(c.id)){if(wallet.gold<c.price)return;wallet.gold-=c.price;wallet.owned.push(c.id);toast(`${c.name} 스킬 해금!`);}wallet.equipped=c.id;player.skillCooldown=0;save();renderShop();refreshHud();sound('card');};
       box.appendChild(btn);$('shopCards').appendChild(box);
     }
     refreshHud();
@@ -114,7 +119,7 @@
   function reset(newSeed=true){
     if(newSeed)game.seed=(Math.random()*0x7fffffff)|0;
     game.zone=0;game.waveLive=false;game.arrests=0;game.camera=0;game.elapsed=0;game.enemies=[];game.particles=[];game.shake=0;game.freeze=0;
-    Object.assign(player,{x:145,y:435,face:1,hp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,stun:0,combo:0,comboTime:0});
+    Object.assign(player,{x:145,y:435,face:1,hp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,stun:0,combo:0,comboTime:0});
     makeProps();game.mode='playing';hidePanels();
     spawnWave(0);toast('뒷골목 수사 시작! 범죄자들을 체포하세요.',2.7);refreshHud();
   }
@@ -124,7 +129,7 @@
     const rng=randFactory((game.seed+zone*13337)|0);
     WAVES[zone].forEach((kind,i)=>{
       const def=TYPES[kind];const hue=[0,0,35,-30,18][i%5];
-      game.enemies.push({kind,name:def.name,x:game.zones[zone].start+290+i*95+rng()*35,y:370+rng()*108,face:-1,hp:def.hp,maxHp:def.hp,invuln:0,hurt:0,stun:0,windup:0,attackCd:.8+rng()*.5,swing:0,colorShift:hue,id:zone*10+i,powerDown:0,bind:0});
+      game.enemies.push({kind,name:def.name,x:game.zones[zone].start+290+i*95+rng()*35,y:370+rng()*108,face:-1,hp:def.hp,maxHp:def.hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,attackCd:.8+rng()*.5,swing:0,colorShift:hue,id:zone*10+i,powerDown:0,bind:0});
     });
     $('stageLabel').textContent=`${zone+1}구역 / 뒷골목`;
     toast(zone===0?'바바리맨 출현!':`${zone+1}구역 출현! 옷 색이 다른 녀석들입니다.`,2.2);
@@ -132,14 +137,16 @@
   function particle(x,y,label,color='#fff6bd',size=21){game.particles.push({x,y,label,color,size,age:0,life:.83,vx:(Math.random()-.5)*38,vy:-76-Math.random()*26});}
   // Adapted from Gold Quest Saga's sword/gauntlet: forward projection + side-width,
   // sorted by range, hit resolved on the animation's 45% frame.
-  const moves={punch:{dur:.27,reach:83,width:57,damage:15,stagger:.23,kb:18},kick:{dur:.52,reach:106,width:65,damage:22,stagger:.41,kb:35}};
+  const moves={punch:{dur:.27,reach:83,width:57,damage:13,stagger:.16,kb:9},kick:{dur:.52,reach:106,width:65,damage:22,stagger:.41,kb:35}};
   function attack(kind){
     if(game.mode!=='playing'||player.stun>0||player.attackCooldown>0||player.hp<=0)return;
     const cfg=moves[kind];player.attack={kind,age:0,hit:false};player.attackCooldown=cfg.dur*.86;player.anim=.22;sound(kind);
   }
   function hitEnemy(e,amount,kb,stagger,sourceX,crit=false){
     if(e.hp<=0||e.invuln>0)return false;
-    e.hp=Math.max(0,e.hp-amount);e.hurt=.21;e.stun=stagger;e.invuln=.12;
+    e.hp=Math.max(0,e.hp-amount);e.hurt=.21;
+    if(e.staggerResist<=0){e.stun=stagger;e.staggerResist=.92;}
+    e.invuln=.12;
     e.x=clamp(e.x+Math.sign(e.x-sourceX||player.face)*kb,50,WORLD_W-50);
     particle(e.x,e.y-118,`${crit?'✦ ':''}-${amount}`,crit?'#ffee70':'#ffffff',crit?26:21);
     game.shake=Math.max(game.shake,crit?7:3);game.freeze=.032;player.combo++;player.comboTime=2.1;
@@ -178,11 +185,12 @@
   }
   function useCard(){
     if(game.mode!=='playing'||player.stun>0)return;
-    const id=wallet.stock[0];const card=CARD_LIST.find(c=>c.id===id);
+    const card=CARD_LIST.find(c=>c.id===wallet.equipped);
     if(!card){toast('스킬카드를 경찰서 매점에서 구매하세요.');return;}
+    if(player.skillCooldown>0)return;
     const targets=game.enemies.filter(e=>e.hp>0&&Math.hypot(e.x-player.x,(e.y-player.y)*1.3)<205);
     if(targets.length===0){toast('카드를 사용할 범죄자가 근처에 없습니다.');return;}
-    wallet.stock.shift();save();particle(player.x,player.y-186,card.name,'#fff5a4',20);game.shake=6;sound('card');
+    player.skillCooldown=card.cooldown;particle(player.x,player.y-186,card.name,'#fff5a4',20);game.shake=6;sound('card');
     if(card.kind==='miranda'||card.kind==='warrant'){
       const target=nearestEnemy(205);
       if(target){let damage=card.kind==='miranda'?28:42;const ratio=card.kind==='miranda'?.5:.3;
@@ -213,6 +221,8 @@
     if(game.mode!=='playing')return;
     game.elapsed+=dt;player.invuln=Math.max(0,player.invuln-dt);player.hurt=Math.max(0,player.hurt-dt);
     player.stun=Math.max(0,player.stun-dt);player.attackCooldown=Math.max(0,player.attackCooldown-dt);
+    const oldSkillSec=Math.ceil(player.skillCooldown);player.skillCooldown=Math.max(0,player.skillCooldown-dt);
+    if(Math.ceil(player.skillCooldown)!==oldSkillSec)refreshHud();
     player.comboTime=Math.max(0,player.comboTime-dt);if(player.comboTime===0&&player.combo!==0){player.combo=0;refreshHud();}
     game.shake=Math.max(0,game.shake-dt*21);game.freeze=Math.max(0,game.freeze-dt);
     if(input.punch){attack('punch');}if(input.kick){attack('kick');}if(input.skill){input.skill=false;useCard();}
@@ -224,7 +234,7 @@
     }
     for(const e of game.enemies){
       if(e.hp<=0)continue;
-      e.invuln=Math.max(0,e.invuln-dt);e.hurt=Math.max(0,e.hurt-dt);e.stun=Math.max(0,e.stun-dt);e.bind=Math.max(0,e.bind-dt);e.powerDown=Math.max(0,e.powerDown-dt);
+      e.invuln=Math.max(0,e.invuln-dt);e.hurt=Math.max(0,e.hurt-dt);e.stun=Math.max(0,e.stun-dt);e.staggerResist=Math.max(0,e.staggerResist-dt);e.bind=Math.max(0,e.bind-dt);e.powerDown=Math.max(0,e.powerDown-dt);
       e.attackCd=Math.max(0,e.attackCd-dt);e.swing=Math.max(0,e.swing-dt);
       if(e.bind>0||e.stun>0)continue;
       const deltaX=player.x-e.x,deltaY=player.y-e.y,dist=Math.hypot(deltaX,deltaY*1.35);
@@ -391,6 +401,6 @@
   window.addEventListener('keyup',e=>{held.delete(e.code);if(e.code==='KeyJ')input.punch=false;if(e.code==='KeyK')input.kick=false;});
   window.addEventListener('blur',()=>{held.clear();input.punch=false;input.kick=false;input.skill=false;joystick.x=joystick.y=0;});
   // Debug state is read-only: useful to verify collision, waves and shops in browser tests.
-  window.__gaiaBrawlerDebug=()=>({mode:game.mode,zone:game.zone,enemies:game.enemies.map(e=>({hp:e.hp,x:e.x,y:e.y,kind:e.kind})),player:{x:player.x,y:player.y,hp:player.hp},gold:wallet.gold,stock:[...wallet.stock],arrests:game.arrests});
+  window.__gaiaBrawlerDebug=()=>({mode:game.mode,zone:game.zone,enemies:game.enemies.map(e=>({hp:e.hp,x:e.x,y:e.y,kind:e.kind})),player:{x:player.x,y:player.y,hp:player.hp},gold:wallet.gold,owned:[...wallet.owned],equipped:wallet.equipped,arrests:game.arrests});
   makeProps();refreshHud();
 })();
