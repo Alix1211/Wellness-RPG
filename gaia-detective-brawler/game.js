@@ -12,7 +12,8 @@
     tiles: 'assets/gaia_tiles.webp',
     hero: 'assets/hero.png', barbari: 'assets/barbari.png',
     bouncer: 'assets/bouncer.png', mohawk: 'assets/mohawk.png',
-    paddle: 'assets/paddle.webp'
+    paddle: 'assets/paddle.webp',
+    attackPrep: 'assets/rozie_attack_prep.png', attackHit: 'assets/rozie_attack_hit.png'
   };
   const CARD_LIST = [
     {id:'C15',name:'미란다 원칙 복창',price:20,description:'28 피해, 체력 절반 이하 2배. 쿨타임 6초.',symbol:'⚖',kind:'miranda',cooldown:6},
@@ -42,8 +43,11 @@
     const img = new Image(); img.src = src; images[key] = img;
     img.onerror = () => { console.warn('Asset unavailable:',src); };
   }
+  // Artwork is selected by the player and stays on their device; it is not shipped
+  // in the public GitHub repository or persisted in any game save.
+  let artwork=null, artEnabled=false, tileSurface=null, tileBrush=null;
   const player = {x:148,y:428,face:1,hp:160,maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,anim:0,stun:0,combo:0,comboTime:0};
-  const game = {mode:'menu',oldMode:'menu',zone:0,waveLive:false,arrests:0,seed:Date.now(),camera:0,elapsed:0,particles:[],props:[],shake:0,freeze:0,tip:'',tipTime:0,enemies:[]};
+  const game = {mode:'menu',oldMode:'menu',zone:0,waveLive:false,arrests:0,seed:Date.now(),camera:0,elapsed:0,particles:[],props:[],cracks:[],shake:0,freeze:0,tip:'',tipTime:0,enemies:[]};
   let toastTimer=0, audioCtx=null;
   const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
   const randFactory = s => () => {s^=s<<13;s^=s>>>17;s^=s<<5;return (s>>>0)/4294967296;};
@@ -115,6 +119,57 @@
         game.props.push({x,y:roll>.57?302:roll>.2?325:487,kind:roll>.57?'paddle':roll>.25?'mannequin':'planter',hue:z%2});
       }
     }
+    buildTileSurface();
+  }
+  function buildTileSurface(){
+    const atlas=images.tiles;
+    if(!atlas.complete||!atlas.naturalWidth)return;
+    const surface=document.createElement('canvas');surface.width=Math.ceil(WORLD_W);surface.height=H;
+    const brush=surface.getContext('2d');
+    brush.fillStyle='#f8c3cb';brush.fillRect(0,0,WORLD_W,H);
+    const halfW=Math.floor(atlas.naturalWidth/2),halfH=Math.floor(atlas.naturalHeight/2);
+    for(let x=0;x<WORLD_W;x+=415){
+      const zone=game.zones?.find(z=>x>=z.start&&x<z.end)||game.zones?.[0];
+      for(let row=0;row<2;row++){
+        brush.drawImage(atlas,(row===0?zone?.wall:zone?.floor||0)*halfW+1,row*halfH+1,halfW-2,halfH-2,x,row===0?-33:284,416,row===0?335:256);
+      }
+    }
+    brush.fillStyle='#d68eae';brush.fillRect(0,284,WORLD_W,10);
+    brush.fillStyle='#ffe6b7';brush.fillRect(0,288,WORLD_W,4);
+    tileSurface=surface;tileBrush=brush;
+    game.cracks=[];
+  }
+  function damageTile(worldX,worldY,power=1){
+    if(!tileBrush)return;
+    const rng=randFactory(((worldX*17+worldY*37+game.seed)|0));
+    const radius=power>1?72+power*26:37+rng()*25;
+    const x=clamp(worldX+(rng()-.5)*150,0,WORLD_W),y=clamp(worldY+(rng()-.5)*140,20,H-22);
+    const points=[];
+    for(let k=0;k<11;k++){
+      const angle=k*Math.PI*2/11,r=radius*(.65+rng()*.6);
+      points.push([x+Math.cos(angle)*r,y+Math.sin(angle)*r]);
+    }
+    tileBrush.save();tileBrush.globalCompositeOperation='destination-out';tileBrush.beginPath();
+    points.forEach(([px,py],i)=>i?tileBrush.lineTo(px,py):tileBrush.moveTo(px,py));
+    tileBrush.closePath();tileBrush.fill();tileBrush.restore();
+    game.cracks.push({x,y,age:0,life:.6,r:radius});
+    for(let j=0;j<3;j++)particle(x+(rng()-.5)*radius,y+(rng()-.5)*radius,'✦',j===0?'#fff2b7':'#ffa1c5',12);
+  }
+  function showSelectedArt(){
+    if(!artEnabled||!artwork)return false;
+    // All adult pictures are private to the device. The eye strip is drawn on
+    // an in-memory canvas before the artwork is ever shown behind the tiles.
+    const ratio=Math.max(W/artwork.width,H/artwork.height);
+    const w=artwork.width*ratio,h=artwork.height*ratio;
+    ctx.drawImage(artwork,(W-w)/2,(H-h)/2,w,h);return true;
+  }
+  function maskEyes(raw){
+    const c=document.createElement('canvas');c.width=raw.naturalWidth;c.height=raw.naturalHeight;
+    const p=c.getContext('2d');p.drawImage(raw,0,0);
+    // Default mask position is calibrated for the attached 1536×1097 illustration.
+    const sx=c.width/1536,sy=c.height/1097;
+    p.fillStyle='#242032';p.beginPath();p.roundRect(168*sx,345*sy,320*sx,98*sy,25*sx);p.fill();
+    return c;
   }
   function reset(newSeed=true){
     if(newSeed)game.seed=(Math.random()*0x7fffffff)|0;
@@ -150,10 +205,12 @@
     e.x=clamp(e.x+Math.sign(e.x-sourceX||player.face)*kb,50,WORLD_W-50);
     particle(e.x,e.y-118,`${crit?'✦ ':''}-${amount}`,crit?'#ffee70':'#ffffff',crit?26:21);
     game.shake=Math.max(game.shake,crit?7:3);game.freeze=.032;player.combo++;player.comboTime=2.1;
+    damageTile(e.x,e.y-105,crit?2.2:1);
     if(e.hp<=0){
       game.arrests++;wallet.lifetime++;const reward=10+(e.kind==='bouncer'?10:0)+(e.colorShift?2:0);
       wallet.gold+=reward;save();particle(e.x,e.y-156,'체포! +'+reward+'G','#baffdb',26);
       game.shake=7;sound('card');
+      damageTile(e.x,e.y-160,3.5);damageTile(e.x+85,e.y-280,2.3);
     }
     refreshHud();return true;
   }
@@ -176,6 +233,7 @@
     player.hp=Math.max(0,player.hp-d);player.invuln=.72;player.hurt=.25;player.stun=.18;
     player.x=clamp(player.x+Math.sign(player.x-e.x||-e.face)*23,45,WORLD_W-60);
     player.combo=0;particle(player.x,player.y-151,`-${d}`,'#ff6a87',26);game.shake=8;game.freeze=.06;sound('hurt');refreshHud();
+    damageTile(player.x,player.y-100,1.3);
     if(player.hp===0)finish(false);
   }
   function nearestEnemy(range=Infinity){
@@ -275,18 +333,19 @@
   }
   function backdrop(){
     const camera=game.camera;
-    ctx.fillStyle='#ffc8d1';ctx.fillRect(0,0,W,H);
-    const tileW=415;
-    const lo=Math.floor(camera/tileW)-1,hi=Math.ceil((camera+W)/tileW)+1;
-    for(let i=lo;i<=hi;i++){
-      const screenX=i*tileW-camera;
-      const section=game.zones?.find(z=>i*tileW>=z.start&&i*tileW<z.end)||game.zones?.[0];
-      paintTile(section?.wall||0,0,screenX,-33,tileW+1,335);
-      paintTile(section?.floor||0,1,screenX,284,tileW+1,256);
+    if(!showSelectedArt()){
+      const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#f5b5c9');g.addColorStop(.55,'#e5cedf');g.addColorStop(1,'#a6e4d2');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
     }
-    ctx.fillStyle='#d68eae';ctx.fillRect(0,284,W,10);
-    ctx.fillStyle='#ffe6b7';ctx.fillRect(0,288,W,4);
-    ctx.fillStyle='#5d416632';ctx.fillRect(0,509,W,31);
+    if(tileSurface){ctx.drawImage(tileSurface,camera,0,Math.min(W,WORLD_W-camera),H,0,0,W,H);}
+    else{
+      const tileW=415,lo=Math.floor(camera/tileW)-1,hi=Math.ceil((camera+W)/tileW)+1;
+      for(let i=lo;i<=hi;i++){
+        const screenX=i*tileW-camera;
+        const section=game.zones?.find(z=>i*tileW>=z.start&&i*tileW<z.end)||game.zones?.[0];
+        paintTile(section?.wall||0,0,screenX,-33,tileW+1,335);
+        paintTile(section?.floor||0,1,screenX,284,tileW+1,256);
+      }
+    }
     // Guided perspective lines emphasize the belt-scroll walking plane.
     ctx.strokeStyle='#ffe5da55';ctx.lineWidth=2;
     for(let x=Math.floor(camera/160)*160;x<camera+W+160;x+=160){let sx=x-camera;ctx.beginPath();ctx.moveTo(sx,296);ctx.lineTo(sx-31,540);ctx.stroke();}
@@ -334,9 +393,16 @@
     ctx.fillStyle='#6047634d';ctx.beginPath();ctx.ellipse(0,-2,w*.38,11,0,0,Math.PI*2);ctx.fill();
     ctx.scale(unit.face,1);ctx.filter=hero?'none':unit.colorShift?`hue-rotate(${unit.colorShift}deg)`: 'none';
     const walkBob=hero&&Math.hypot(...moveVector())>.2?Math.abs(Math.sin(game.elapsed*12))*3:0;
-    ctx.drawImage(img,-w*.5,-h-walkBob,w,h);ctx.filter='none';
+    const sheet=hero&&unit.attack?images[unit.attack.age/moves[unit.attack.kind].dur<.42?'attackPrep':'attackHit']:null;
+    if(sheet&&sheet.complete&&sheet.naturalWidth){
+      const frameW=Math.floor(sheet.naturalWidth/2),frameX=unit.attack.kind==='punch'?frameW:0;
+      const poseH=h,poseW=poseH*frameW/sheet.naturalHeight;
+      // The attack art faces left. Flip its direction without touching source PNG.
+      ctx.save();ctx.scale(-1,1);ctx.drawImage(sheet,frameX,0,frameW,sheet.naturalHeight,-poseW*.5,-poseH,poseW,poseH);ctx.restore();
+    } else ctx.drawImage(img,-w*.5,-h-walkBob,w,h);
+    ctx.filter='none';
     const anim=hero?unit.attack:unit.swing>0?{kind:'punch',age:.14}:null;
-    if(anim){
+    if(anim&&(!hero||!sheet?.complete||!sheet.naturalWidth)){
       const prog=hero?anim.age/moves[anim.kind].dur:.6;
       const thrust=Math.sin(Math.PI*clamp(prog,0,1));
       ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=hero?'#f1b8a4':'#e7bda6';ctx.lineWidth=hero?13:12;
@@ -374,6 +440,20 @@
   $('shopClose').addEventListener('click',closeShop);
   $('pause').addEventListener('click',()=>{if(game.mode==='playing'){game.mode='paused';showPanel($intro);$('start').textContent='수사 계속하기 ▶';}else if(game.mode==='paused'){game.mode='playing';hidePanels();$('start').textContent='뒷골목 출동 ▶';}});
   $('fullScreen').addEventListener('click',async()=>{try{if(!document.fullscreenElement)await $('game-shell').requestFullscreen();else await document.exitFullscreen();if(screen.orientation?.lock&&document.fullscreenElement)await screen.orientation.lock('landscape').catch(()=>{});}catch(_){toast('기기에서 전체화면을 지원하지 않습니다.');}});
+  $('artPick').addEventListener('click',()=>$('artFile').click());
+  $('artToggle').addEventListener('click',()=>{
+    if(!artwork){toast('먼저 기기에 저장된 배경 이미지를 선택하세요.');return;}
+    artEnabled=!artEnabled;$('artToggle').textContent=artEnabled?'일러스트 ON':'일러스트 OFF';
+    toast(artEnabled?'배경 일러스트 표시':'기본 가이아 배경 표시',1.6);
+  });
+  $('artFile').addEventListener('change',e=>{
+    const file=e.target.files?.[0];if(!file||!file.type.startsWith('image/'))return;
+    const url=URL.createObjectURL(file),img=new Image();
+    img.onload=()=>{artwork=maskEyes(img);URL.revokeObjectURL(url);artEnabled=true;
+      $('artToggle').textContent='일러스트 ON';toast('이미지 불러옴 · 눈 가리개 적용 · 기기에만 보관',3);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);toast('선택한 이미지를 읽지 못했습니다.');};img.src=url;
+  });
   // Touch buttons hold for repeat attacks, J/K repeat while held on keyboard too.
   for(const key of ['punch','kick','skill']){
     const el=$(key);const release=()=>{input[key]=false;el.classList.remove('pressed');};
@@ -401,6 +481,7 @@
   window.addEventListener('keyup',e=>{held.delete(e.code);if(e.code==='KeyJ')input.punch=false;if(e.code==='KeyK')input.kick=false;});
   window.addEventListener('blur',()=>{held.clear();input.punch=false;input.kick=false;input.skill=false;joystick.x=joystick.y=0;});
   // Debug state is read-only: useful to verify collision, waves and shops in browser tests.
-  window.__gaiaBrawlerDebug=()=>({mode:game.mode,zone:game.zone,enemies:game.enemies.map(e=>({hp:e.hp,x:e.x,y:e.y,kind:e.kind})),player:{x:player.x,y:player.y,hp:player.hp},gold:wallet.gold,owned:[...wallet.owned],equipped:wallet.equipped,arrests:game.arrests});
+  window.__gaiaBrawlerDebug=()=>({mode:game.mode,zone:game.zone,enemies:game.enemies.map(e=>({hp:e.hp,x:e.x,y:e.y,kind:e.kind})),player:{x:player.x,y:player.y,hp:player.hp},gold:wallet.gold,owned:[...wallet.owned],equipped:wallet.equipped,arrests:game.arrests,holes:game.cracks.length,artEnabled});
+  images.tiles.onload=buildTileSurface;
   makeProps();refreshHud();
 })();
