@@ -39,6 +39,9 @@ shutil.copytree(source.parent/'assets',assets/'assets',dirs_exist_ok=True)
 (assets/'assets/paddles').mkdir(exist_ok=True)
 for f in (p/'paddle-skins').glob('*.png'):shutil.copyfile(f,assets/'assets/paddles'/f.name)
 (assets/'index.html').write_text(s)
+import subprocess,sys
+subprocess.run([sys.executable,str(p/'patch-pause-fetch.py'),str(assets/'index.html'),str(assets/'index.html')],check=True)
+s=(assets/'index.html').read_text()
 checks={'source':source.name,'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'bundled_sha256':hashlib.sha256(s.encode()).hexdigest(),'native_changes':['early native local mirror','save sync gate and meaningful-change timestamp','vibration option','Drive file connection/status/conflict choices','racket/point haptic notification'],'assets_files':sum(f.is_file() for f in (assets/'assets').rglob('*'))}
 (p/'game-preparation.json').write_text(json.dumps(checks,indent=2))
 print(json.dumps(checks))
