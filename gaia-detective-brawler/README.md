@@ -1,5 +1,7 @@
 # GAIA CITY — 로지의 뒷골목 수사 (벨트스크롤 MVP)
 
+> **필독 — 창작·대사·연출 최우선 기준:** [GAIA_COMEDY_BIBLE.md](GAIA_COMEDY_BIBLE.md). 기존 MVP 구현 설명과 해석이 충돌하면 이 기준을 먼저 확인하고 사용자와 상의할 것.
+
 > **독립 실험 브랜치:** `gaia-detective-brawler`  
 > **원본:** `gaia-detective-assets` 브랜치의 `gaia-detective` 카드게임  
 > **실행:** `index.html` (HTML5 Canvas, 모바일 가로 우선)
