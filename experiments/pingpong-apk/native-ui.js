@@ -9,7 +9,7 @@
  };
  window.GaiaNativeFlush=()=>{save();if(!window.GAIA_NATIVE_GATE)try{B.put(SAVE_KEY+'-settings',JSON.stringify(settings))}catch{}};
  let lastHit=0;
- window.GaiaNativeHit=type=>{if(settings.vibration===false)return;const now=performance.now();if(now-lastHit<80)return;let pattern=type==='playerHit'?'35':type==='serve'?'25':type==='pointLost'?'65':type==='fanfare'?'25,30,25':null;if(!pattern)return;lastHit=now;try{B.vibrate(pattern)}catch{}};
+ window.GaiaNativeHit=type=>{if(settings.vibration===false)return;const now=performance.now();if(now-lastHit<80)return;let pattern=type==='playerHit'?'100':type==='serve'?'80':type==='pointLost'?'65':type==='fanfare'?'25,30,25':null;if(!pattern)return;lastHit=now;try{B.vibrate(pattern)}catch{}};
  function pauseForNative(){if(activeGame&&$('#overlay').hidden){autoPaused=activeGame.token;pauseGame()}}
  function resumeNative(){if(autoPaused&&activeGame?.token===autoPaused){resumeGame()}autoPaused=null;}
  function gate(value){window.GAIA_NATIVE_GATE=value;
@@ -39,7 +39,7 @@
  window.GaiaNativeBack=()=>{if(conflict||window.GAIA_NATIVE_GATE)return true;if(!$('#overlay').hidden){if(activeGame)resumeGame();else closeModal();nativeSettings=false;autoPaused=null;return true;}if(activeGame){pauseGame();return true}return false};
  window.GaiaNativeLifecycle=value=>{if(value){pauseForNative();GaiaNativeFlush()}else if(!window.GAIA_NATIVE_GATE&&!nativeSettings)resumeNative()};
  document.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!b)return;const a=b.dataset.action;
-  if(a==='native-vibration'){e.preventDefault();e.stopImmediatePropagation();settings.vibration=settings.vibration===false;try{localStorage.setItem(SAVE_KEY+'-settings',JSON.stringify(settings));if(settings.vibration)B.vibrate('30');else B.vibrate('0')}catch{}settingsModal();}
+  if(a==='native-vibration'){e.preventDefault();e.stopImmediatePropagation();settings.vibration=settings.vibration===false;try{localStorage.setItem(SAVE_KEY+'-settings',JSON.stringify(settings));if(settings.vibration)B.vibrate('100');else B.vibrate('0')}catch{}settingsModal();}
   else if(a==='native-link'){e.preventDefault();e.stopImmediatePropagation();GaiaNativeFlush();B.pickBackup()}
   else if(a==='native-update'){e.preventDefault();e.stopImmediatePropagation();B.checkGameUpdate();refreshGameUpdate()}
   else if(a==='native-sync'){e.preventDefault();e.stopImmediatePropagation();GaiaNativeFlush();B.syncBackup()}
@@ -47,3 +47,4 @@
  },true);
  window.GAIA_NATIVE_GATE=true;window.GAIA_NATIVE_DIRTY=true;window.onGaiaSyncStart();try{B.webReady()}catch{window.onGaiaSyncDone()}
 })();
+
