@@ -9,7 +9,7 @@
   let WORLD_W = 3160;
   const Y_MIN = 340, Y_MAX = 493;
   const ASSET = {
-    tiles: 'assets/gaia_tiles.webp',
+    alley: 'assets/bg_alley_land.jpg',
     hero: 'assets/hero.png', barbari: 'assets/barbari.png',
     bouncer: 'assets/bouncer.png', mohawk: 'assets/mohawk.png',
     paddle: 'assets/paddle.webp',
@@ -44,11 +44,8 @@
     const img = new Image(); img.src = src; images[key] = img;
     img.onerror = () => { console.warn('Asset unavailable:',src); };
   }
-  // Artwork is selected by the player and stays on their device; it is not shipped
-  // in the public GitHub repository or persisted in any game save.
-  let artwork=null, artEnabled=false, tileSurface=null, tileBrush=null;
   const player = {x:148,y:428,face:1,hp:160,maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,anim:0,stun:0,combo:0,comboTime:0};
-  const game = {mode:'menu',oldMode:'menu',zone:0,waveLive:false,arrests:0,seed:Date.now(),camera:0,elapsed:0,particles:[],props:[],cracks:[],shake:0,freeze:0,tip:'',tipTime:0,enemies:[]};
+  const game = {mode:'menu',oldMode:'menu',zone:0,waveLive:false,arrests:0,seed:Date.now(),camera:0,elapsed:0,particles:[],props:[],shake:0,freeze:0,tip:'',tipTime:0,enemies:[],lastAttack:null};
   let toastTimer=0, audioCtx=null;
   const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
   const randFactory = s => () => {s^=s<<13;s^=s>>>17;s^=s<<5;return (s>>>0)/4294967296;};
@@ -104,7 +101,7 @@
     for(let i=0;i<WAVES.length;i++){
       const corridor=75+Math.floor(rng()*75);
       const length=660+Math.floor(rng()*220);
-      const zone={start:cursor,end:cursor+length,corridor,wall:(rng()>.44?1:0),floor:(rng()>.44?1:0)};
+      const zone={start:cursor,end:cursor+length,corridor};
       zones.push(zone);cursor+=length;
     }
     game.zones=zones;WORLD_W=cursor;
@@ -120,61 +117,10 @@
         game.props.push({x,y:roll>.57?302:roll>.2?325:487,kind:roll>.57?'paddle':roll>.25?'mannequin':'planter',hue:z%2});
       }
     }
-    buildTileSurface();
-  }
-  function buildTileSurface(){
-    const atlas=images.tiles;
-    if(!atlas.complete||!atlas.naturalWidth)return;
-    const surface=document.createElement('canvas');surface.width=Math.ceil(WORLD_W);surface.height=H;
-    const brush=surface.getContext('2d');
-    brush.fillStyle='#f8c3cb';brush.fillRect(0,0,WORLD_W,H);
-    const halfW=Math.floor(atlas.naturalWidth/2),halfH=Math.floor(atlas.naturalHeight/2);
-    for(let x=0;x<WORLD_W;x+=415){
-      const zone=game.zones?.find(z=>x>=z.start&&x<z.end)||game.zones?.[0];
-      for(let row=0;row<2;row++){
-        brush.drawImage(atlas,(row===0?zone?.wall:zone?.floor||0)*halfW+1,row*halfH+1,halfW-2,halfH-2,x,row===0?-33:284,416,row===0?335:256);
-      }
-    }
-    brush.fillStyle='#d68eae';brush.fillRect(0,284,WORLD_W,10);
-    brush.fillStyle='#ffe6b7';brush.fillRect(0,288,WORLD_W,4);
-    tileSurface=surface;tileBrush=brush;
-    game.cracks=[];
-  }
-  function damageTile(worldX,worldY,power=1){
-    if(!tileBrush)return;
-    const rng=randFactory(((worldX*17+worldY*37+game.seed)|0));
-    const radius=power>1?72+power*26:37+rng()*25;
-    const x=clamp(worldX+(rng()-.5)*150,0,WORLD_W),y=clamp(worldY+(rng()-.5)*140,20,H-22);
-    const points=[];
-    for(let k=0;k<11;k++){
-      const angle=k*Math.PI*2/11,r=radius*(.65+rng()*.6);
-      points.push([x+Math.cos(angle)*r,y+Math.sin(angle)*r]);
-    }
-    tileBrush.save();tileBrush.globalCompositeOperation='destination-out';tileBrush.beginPath();
-    points.forEach(([px,py],i)=>i?tileBrush.lineTo(px,py):tileBrush.moveTo(px,py));
-    tileBrush.closePath();tileBrush.fill();tileBrush.restore();
-    game.cracks.push({x,y,age:0,life:.6,r:radius});
-    for(let j=0;j<3;j++)particle(x+(rng()-.5)*radius,y+(rng()-.5)*radius,'✦',j===0?'#fff2b7':'#ffa1c5',12);
-  }
-  function showSelectedArt(){
-    if(!artEnabled||!artwork)return false;
-    // All adult pictures are private to the device. The eye strip is drawn on
-    // an in-memory canvas before the artwork is ever shown behind the tiles.
-    const ratio=Math.max(W/artwork.width,H/artwork.height);
-    const w=artwork.width*ratio,h=artwork.height*ratio;
-    ctx.drawImage(artwork,(W-w)/2,(H-h)/2,w,h);return true;
-  }
-  function maskEyes(raw){
-    const c=document.createElement('canvas');c.width=raw.naturalWidth;c.height=raw.naturalHeight;
-    const p=c.getContext('2d');p.drawImage(raw,0,0);
-    // Default mask position is calibrated for the attached 1536×1097 illustration.
-    const sx=c.width/1536,sy=c.height/1097;
-    p.fillStyle='#242032';p.beginPath();p.roundRect(168*sx,345*sy,320*sx,98*sy,25*sx);p.fill();
-    return c;
   }
   function reset(newSeed=true){
     if(newSeed)game.seed=(Math.random()*0x7fffffff)|0;
-    game.zone=0;game.waveLive=false;game.arrests=0;game.camera=0;game.elapsed=0;game.enemies=[];game.particles=[];game.shake=0;game.freeze=0;
+    game.zone=0;game.waveLive=false;game.arrests=0;game.camera=0;game.elapsed=0;game.enemies=[];game.particles=[];game.shake=0;game.freeze=0;game.lastAttack=null;
     Object.assign(player,{x:145,y:435,face:1,hp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,stun:0,combo:0,comboTime:0});
     makeProps();game.mode='playing';hidePanels();
     spawnWave(0);toast('뒷골목 수사 시작! 범죄자들을 체포하세요.',2.7);refreshHud();
@@ -191,27 +137,29 @@
     toast(zone===0?'바바리맨 출현!':`${zone+1}구역 출현! 옷 색이 다른 녀석들입니다.`,2.2);
   }
   function particle(x,y,label,color='#fff6bd',size=21){game.particles.push({x,y,label,color,size,age:0,life:.83,vx:(Math.random()-.5)*38,vy:-76-Math.random()*26});}
-  // Adapted from Gold Quest Saga's sword/gauntlet: forward projection + side-width,
-  // sorted by range, hit resolved on the animation's 45% frame.
-  const moves={punch:{dur:.27,reach:83,width:57,damage:13,stagger:.16,kb:9},kick:{dur:.52,reach:106,width:65,damage:22,stagger:.41,kb:35}};
+  // Gold Quest-style sword crescent and spear lane: visual effects and damage
+  // both use the same directional reach/side-width parameters.
+  const moves={
+    punch:{dur:.28,impact:.43,near:20,reach:153,width:62,damage:13,stagger:.17,kb:13,maxHits:1},
+    kick:{dur:.72,impact:.62,near:28,reach:225,width:44,damage:30,stagger:.73,kb:104,maxHits:Infinity}
+  };
   function attack(kind){
     if(game.mode!=='playing'||player.stun>0||player.attackCooldown>0||player.hp<=0)return;
-    const cfg=moves[kind];player.attack={kind,age:0,hit:false};player.attackCooldown=cfg.dur*.86;player.anim=.22;sound(kind);
+    const cfg=moves[kind];player.attack={kind,age:0,hit:false,dir:player.face};
+    player.attackCooldown=cfg.dur*1.12;player.anim=.22;sound(kind);
   }
-  function hitEnemy(e,amount,kb,stagger,sourceX,crit=false){
+  function hitEnemy(e,amount,kb,stagger,sourceX,crit=false,forceDir=0,strong=false){
     if(e.hp<=0||e.invuln>0)return false;
     e.hp=Math.max(0,e.hp-amount);e.hurt=.21;
-    if(e.staggerResist<=0){e.stun=stagger;e.staggerResist=.92;}
+    if(e.staggerResist<=0||strong){e.stun=Math.max(e.stun,stagger);e.staggerResist=.92;}
     e.invuln=.12;
-    e.x=clamp(e.x+Math.sign(e.x-sourceX||player.face)*kb,50,WORLD_W-50);
+    e.x=clamp(e.x+(forceDir||Math.sign(e.x-sourceX||player.face))*kb,50,WORLD_W-50);
     particle(e.x,e.y-118,`${crit?'✦ ':''}-${amount}`,crit?'#ffee70':'#ffffff',crit?26:21);
     game.shake=Math.max(game.shake,crit?7:3);game.freeze=.032;player.combo++;player.comboTime=2.1;
-    damageTile(e.x,e.y-105,crit?2.2:1);
     if(e.hp<=0){
       game.arrests++;wallet.lifetime++;const reward=10+(e.kind==='bouncer'?10:0)+(e.colorShift?2:0);
       wallet.gold+=reward;save();particle(e.x,e.y-156,'체포! +'+reward+'G','#baffdb',26);
       game.shake=7;sound('card');
-      damageTile(e.x,e.y-160,3.5);damageTile(e.x+85,e.y-280,2.3);
     }
     refreshHud();return true;
   }
@@ -220,13 +168,18 @@
     for(const e of game.enemies){
       if(e.hp<=0)continue;
       const dx=e.x-player.x,dy=(e.y-player.y)*1.12;
-      const along=dx*player.face,side=Math.abs(dy),dist=Math.hypot(dx,dy);
-      if(along>-16&&along<cfg.reach&&side<cfg.width&&dist<cfg.reach+22)hits.push({e,along});
+      const along=dx*a.dir,side=Math.abs(dy);
+      if(along>=cfg.near&&along<=cfg.reach&&side<=cfg.width)hits.push({e,along});
     }
     hits.sort((a,b)=>a.along-b.along);
-    const dealt=hits.slice(0,a.kind==='punch'?1:2);
-    for(const h of dealt)hitEnemy(h.e,cfg.damage,cfg.kb,cfg.stagger,player.x);
-    if(dealt.length===0){particle(player.x+player.face*75,player.y-96,'휙','#fff7e3',14);}
+    const dealt=hits.slice(0,cfg.maxHits);
+    let struck=0;
+    for(const h of dealt){
+      if(hitEnemy(h.e,cfg.damage,cfg.kb,cfg.stagger,player.x,false,a.dir,a.kind==='kick'))struck++;
+    }
+    game.lastAttack={kind:a.kind,dir:a.dir,targets:struck,reach:cfg.reach,knockback:cfg.kb};
+    if(!struck&&a.kind==='punch')particle(player.x+a.dir*105,player.y-105,'휙','#fff7e3',14);
+    if(struck&&a.kind==='kick')particle(player.x+a.dir*155,player.y-118,'쿵!','#fff0bc',25);
   }
   function hurtPlayer(e){
     if(player.invuln>0||player.hp<=0||game.mode!=='playing')return;
@@ -234,7 +187,6 @@
     player.hp=Math.max(0,player.hp-d);player.invuln=.72;player.hurt=.25;player.stun=.18;
     player.x=clamp(player.x+Math.sign(player.x-e.x||-e.face)*23,45,WORLD_W-60);
     player.combo=0;particle(player.x,player.y-151,`-${d}`,'#ff6a87',26);game.shake=8;game.freeze=.06;sound('hurt');refreshHud();
-    damageTile(player.x,player.y-100,1.3);
     if(player.hp===0)finish(false);
   }
   function nearestEnemy(range=Infinity){
@@ -285,7 +237,7 @@
     player.comboTime=Math.max(0,player.comboTime-dt);if(player.comboTime===0&&player.combo!==0){player.combo=0;refreshHud();}
     game.shake=Math.max(0,game.shake-dt*21);game.freeze=Math.max(0,game.freeze-dt);
     if(input.punch){attack('punch');}if(input.kick){attack('kick');}if(input.skill){input.skill=false;useCard();}
-    if(player.attack){player.attack.age+=dt;if(!player.attack.hit&&player.attack.age>=moves[player.attack.kind].dur*.45){player.attack.hit=true;resolveAttack(player.attack);}if(player.attack.age>=moves[player.attack.kind].dur)player.attack=null;}
+    if(player.attack){const move=moves[player.attack.kind];player.attack.age+=dt;if(!player.attack.hit&&player.attack.age>=move.dur*move.impact){player.attack.hit=true;resolveAttack(player.attack);}if(player.attack.age>=move.dur)player.attack=null;}
     const [dx,dy]=moveVector();if(dx!==0)player.face=Math.sign(dx);
     if(player.stun===0){const limit=game.waveLive?game.zones[game.zone].end-105:WORLD_W-80;
       player.x=clamp(player.x+dx*216*dt,55,limit);
@@ -325,41 +277,21 @@
     for(const p of game.particles){p.age+=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;}
     game.particles=game.particles.filter(p=>p.age<p.life);
   }
-  function paintTile(ix,iy,x,y,w,h){
-    const atlas=images.tiles;
-    if(atlas.complete&&atlas.naturalWidth){
-      const sw=Math.floor(atlas.naturalWidth/2),sh=Math.floor(atlas.naturalHeight/2);
-      ctx.drawImage(atlas,ix*sw+1,iy*sh+1,sw-2,sh-2,x,y,w+1,h+1);
-    }else{ctx.fillStyle=iy?'#fbd5ca':'#f6acbe';ctx.fillRect(x,y,w,h);}
-  }
   function backdrop(){
-    const camera=game.camera;
-    if(!showSelectedArt()){
-      const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#f5b5c9');g.addColorStop(.55,'#e5cedf');g.addColorStop(1,'#a6e4d2');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-    }
-    if(tileSurface){ctx.drawImage(tileSurface,camera,0,Math.min(W,WORLD_W-camera),H,0,0,W,H);}
-    else{
-      const tileW=415,lo=Math.floor(camera/tileW)-1,hi=Math.ceil((camera+W)/tileW)+1;
-      for(let i=lo;i<=hi;i++){
-        const screenX=i*tileW-camera;
-        const section=game.zones?.find(z=>i*tileW>=z.start&&i*tileW<z.end)||game.zones?.[0];
-        paintTile(section?.wall||0,0,screenX,-33,tileW+1,335);
-        paintTile(section?.floor||0,1,screenX,284,tileW+1,256);
+    // The card game's original landscape background repeats at its native ratio.
+    // No destructible map layer, hidden illustration, or tile-hole compositing.
+    const img=images.alley;
+    if(img&&img.complete&&img.naturalWidth&&img.naturalHeight){
+      const tileW=H*img.naturalWidth/img.naturalHeight;
+      const start=Math.floor(game.camera/tileW);
+      for(let i=start;i*tileW<game.camera+W;i++){
+        const sx=Math.round(i*tileW-game.camera);
+        ctx.drawImage(img,sx,0,Math.ceil(tileW)+1,H);
       }
-    }
-    // Guided perspective lines emphasize the belt-scroll walking plane.
-    ctx.strokeStyle='#ffe5da55';ctx.lineWidth=2;
-    for(let x=Math.floor(camera/160)*160;x<camera+W+160;x+=160){let sx=x-camera;ctx.beginPath();ctx.moveTo(sx,296);ctx.lineTo(sx-31,540);ctx.stroke();}
-    // Scene landmarks are reused in every procedural zone, each with different lettering.
-    const names=['BE HAPPY','GAIA CITY','PINK CLUB','VENUS'];
-    for(let zone=0;zone<4;zone++){
-      const section=game.zones[zone];const x=section.start+205-camera;
-      if(x<-360||x>W+160)continue;
-      ctx.save();ctx.translate(x,96);ctx.fillStyle='#fff4df';roundRect(-100,-32,200,65,12);ctx.fill();ctx.strokeStyle='#b9669b';ctx.lineWidth=4;ctx.stroke();
-      ctx.fillStyle='#d675a7';ctx.textAlign='center';ctx.font='bold 25px system-ui';ctx.fillText(names[zone],0,12);ctx.font='24px sans-serif';ctx.fillText('♡',0,-36);ctx.restore();
-      if(!game.waveLive&&game.zone>zone)continue;
-      const gateX=section.end-90-camera;
-      if(gateX>-60&&gateX<W+80){ctx.fillStyle=game.waveLive&&game.zone===zone?'#b35595aa':'#7cccb755';roundRect(gateX,287,8,221,5);ctx.fill();}
+    }else{
+      const g=ctx.createLinearGradient(0,0,W,H);
+      g.addColorStop(0,'#faafc8');g.addColorStop(1,'#b6a7d3');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
     }
   }
   function roundRect(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
@@ -382,6 +314,44 @@
     }
     ctx.restore();
   }
+  function drawAttackEffect(a){
+    const move=moves[a.kind],t=clamp(a.age/move.dur,0,1);
+    if(a.kind==='punch'){
+      if(t<.07||t>.96)return;
+      const swipe=clamp((t-.07)/.78,0,1),glow=Math.sin(Math.PI*swipe);
+      ctx.save();ctx.translate(9+swipe*12,-106);ctx.globalAlpha=Math.max(.05,glow)*.92;
+      const grad=ctx.createLinearGradient(37,-65,154,66);
+      grad.addColorStop(0,'#fffdf3');grad.addColorStop(.55,'#fff7b5');grad.addColorStop(1,'#f58cb9');
+      ctx.fillStyle=grad;
+      // Crescent strike: the displayed sweep covers the same front area as punch reach.
+      ctx.beginPath();ctx.ellipse(77,0,78,65,0,-1.35,1.35);
+      ctx.ellipse(76,0,54,44,0,1.35,-1.35,true);ctx.closePath();ctx.fill();
+      ctx.strokeStyle='#fffdf4';ctx.lineWidth=3;ctx.stroke();
+      ctx.strokeStyle='#ffe7f2aa';ctx.lineWidth=4;
+      for(let i=0;i<2;i++){
+        ctx.beginPath();ctx.moveTo(17-i*13,-43+i*17);
+        ctx.quadraticCurveTo(45-i*9,-60+i*24,87-i*7,-66+i*37);ctx.stroke();
+      }
+      ctx.restore();
+    }else{
+      // Slow wind-up; at impact the spear-shaped wave reaches all targets in its lane.
+      if(t<.28||t>.98)return;
+      const extend=clamp((t-.28)/(.62-.28),0,1);
+      const fade=t>.8?Math.max(0,(.98-t)/.18):1;
+      const tip=32+(move.reach-32)*extend;
+      ctx.save();ctx.translate(0,-108);ctx.globalAlpha=fade*.91;
+      const grad=ctx.createLinearGradient(28,0,tip,0);
+      grad.addColorStop(0,'#fff6cf');grad.addColorStop(.48,'#fffdf4');grad.addColorStop(1,'#95f4ef');
+      ctx.fillStyle=grad;ctx.strokeStyle='#fff5c8';ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(32,-13);ctx.lineTo(Math.max(34,tip-30),-14);
+      ctx.lineTo(tip,0);ctx.lineTo(Math.max(34,tip-30),14);
+      ctx.lineTo(32,13);ctx.lineTo(53,0);ctx.closePath();ctx.fill();ctx.stroke();
+      ctx.strokeStyle='#ffc0d9';ctx.lineWidth=5;
+      ctx.beginPath();ctx.moveTo(20,-24);ctx.lineTo(Math.max(25,tip-51),-18);
+      ctx.moveTo(19,23);ctx.lineTo(Math.max(25,tip-59),18);ctx.stroke();
+      ctx.restore();
+    }
+  }
   function drawFighter(unit,hero=false){
     const img=images[hero?'hero':unit.kind];if(!img||!img.complete||!img.naturalWidth)return;
     const x=unit.x-game.camera,groundY=unit.y;
@@ -392,17 +362,19 @@
     const blinking=unit.hurt>0||unit.invuln>0;
     if(blinking&&Math.floor(game.elapsed*23)%2===0)ctx.globalAlpha=.38;
     ctx.fillStyle='#6047634d';ctx.beginPath();ctx.ellipse(0,-2,w*.38,11,0,0,Math.PI*2);ctx.fill();
-    ctx.scale(unit.face,1);ctx.filter=hero?'none':unit.colorShift?`hue-rotate(${unit.colorShift}deg)`: 'none';
+    ctx.scale(hero&&unit.attack?unit.attack.dir:unit.face,1);ctx.filter=hero?'none':unit.colorShift?`hue-rotate(${unit.colorShift}deg)`: 'none';
     const walkBob=hero&&Math.hypot(...moveVector())>.2?Math.abs(Math.sin(game.elapsed*12))*3:0;
     const attackSpriteKey=hero&&unit.attack?
       `${unit.attack.kind==='punch'?'upper':'lower'}${unit.attack.age/moves[unit.attack.kind].dur<.42?'Prep':'Hit'}`:null;
     const attackSprite=attackSpriteKey?images[attackSpriteKey]:null;
     if(attackSprite&&attackSprite.complete&&attackSprite.naturalWidth){
       const poseH=h,poseW=poseH*attackSprite.naturalWidth/attackSprite.naturalHeight;
-      // Each frame is its own transparent PNG; red ball layers were removed pixel-by-pixel.
-      ctx.save();ctx.scale(-1,1);ctx.drawImage(attackSprite,-poseW*.5,-poseH,poseW,poseH);ctx.restore();
+      // Upper/chest pose faces left in source; lower/hip pose faces right (backward stance).
+      ctx.save();ctx.scale(unit.attack.kind==='kick'?1:-1,1);
+      ctx.drawImage(attackSprite,-poseW*.5,-poseH,poseW,poseH);ctx.restore();
     } else ctx.drawImage(img,-w*.5,-h-walkBob,w,h);
     ctx.filter='none';
+    if(hero&&unit.attack)drawAttackEffect(unit.attack);
     const anim=hero?unit.attack:unit.swing>0?{kind:'punch',age:.14}:null;
     if(anim&&(!hero||!attackSprite?.complete||!attackSprite.naturalWidth)){
       const prog=hero?anim.age/moves[anim.kind].dur:.6;
@@ -442,20 +414,6 @@
   $('shopClose').addEventListener('click',closeShop);
   $('pause').addEventListener('click',()=>{if(game.mode==='playing'){game.mode='paused';showPanel($intro);$('start').textContent='수사 계속하기 ▶';}else if(game.mode==='paused'){game.mode='playing';hidePanels();$('start').textContent='뒷골목 출동 ▶';}});
   $('fullScreen').addEventListener('click',async()=>{try{if(!document.fullscreenElement)await $('game-shell').requestFullscreen();else await document.exitFullscreen();if(screen.orientation?.lock&&document.fullscreenElement)await screen.orientation.lock('landscape').catch(()=>{});}catch(_){toast('기기에서 전체화면을 지원하지 않습니다.');}});
-  $('artPick').addEventListener('click',()=>$('artFile').click());
-  $('artToggle').addEventListener('click',()=>{
-    if(!artwork){toast('먼저 기기에 저장된 배경 이미지를 선택하세요.');return;}
-    artEnabled=!artEnabled;$('artToggle').textContent=artEnabled?'일러스트 ON':'일러스트 OFF';
-    toast(artEnabled?'배경 일러스트 표시':'기본 가이아 배경 표시',1.6);
-  });
-  $('artFile').addEventListener('change',e=>{
-    const file=e.target.files?.[0];if(!file||!file.type.startsWith('image/'))return;
-    const url=URL.createObjectURL(file),img=new Image();
-    img.onload=()=>{artwork=maskEyes(img);URL.revokeObjectURL(url);artEnabled=true;
-      $('artToggle').textContent='일러스트 ON';toast('이미지 불러옴 · 눈 가리개 적용 · 기기에만 보관',3);
-    };
-    img.onerror=()=>{URL.revokeObjectURL(url);toast('선택한 이미지를 읽지 못했습니다.');};img.src=url;
-  });
   // Touch buttons hold for repeat attacks, J/K repeat while held on keyboard too.
   for(const key of ['punch','kick','skill']){
     const el=$(key);const release=()=>{input[key]=false;el.classList.remove('pressed');};
@@ -483,7 +441,6 @@
   window.addEventListener('keyup',e=>{held.delete(e.code);if(e.code==='KeyJ')input.punch=false;if(e.code==='KeyK')input.kick=false;});
   window.addEventListener('blur',()=>{held.clear();input.punch=false;input.kick=false;input.skill=false;joystick.x=joystick.y=0;});
   // Debug state is read-only: useful to verify collision, waves and shops in browser tests.
-  window.__gaiaBrawlerDebug=()=>({mode:game.mode,zone:game.zone,enemies:game.enemies.map(e=>({hp:e.hp,x:e.x,y:e.y,kind:e.kind})),player:{x:player.x,y:player.y,hp:player.hp},gold:wallet.gold,owned:[...wallet.owned],equipped:wallet.equipped,arrests:game.arrests,holes:game.cracks.length,artEnabled});
-  images.tiles.onload=buildTileSurface;
+  window.__gaiaBrawlerDebug=()=>({mode:game.mode,zone:game.zone,enemies:game.enemies.map(e=>({hp:e.hp,x:e.x,y:e.y,kind:e.kind})),player:{x:player.x,y:player.y,hp:player.hp,attack:player.attack?.kind||null,attackDir:player.attack?.dir||null},gold:wallet.gold,owned:[...wallet.owned],equipped:wallet.equipped,arrests:game.arrests,lastAttack:game.lastAttack});
   makeProps();refreshHud();
 })();
