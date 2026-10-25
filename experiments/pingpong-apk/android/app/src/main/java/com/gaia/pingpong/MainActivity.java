@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Iterator;
 import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
@@ -51,11 +53,28 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 // GAIA Pingpong offline wrapper. Native haptics and baseT save sync adapted from ARPG.
-// Game assets are bundled; no remote game update or repository token is used.
+// Bundled fallback and verified game updates; no repository token is used.
 public final class MainActivity extends Activity {
     private static final String REMOTE = "https://appassets.androidplatform.net/assets/game/index.html";
     private static final String LOCAL = "https://appassets.androidplatform.net/assets/game/index.html";
     private WebView game;
+    private GameUpdates updates;
+    private File activeGameDir;
+    private final ExecutorService updateIO=Executors.newSingleThreadExecutor();
+    private final java.util.concurrent.atomic.AtomicBoolean updateBusy=new java.util.concurrent.atomic.AtomicBoolean();
+    private volatile String updateMessage="업데이트 확인 중";
+    private void checkGameUpdate(boolean manual){
+        if(!isOnline()){updateMessage="오프라인 · 현재 버전 사용 중";return;}
+        if(!updateBusy.compareAndSet(false,true))return;
+        updateMessage="업데이트 확인 중";
+        updateIO.execute(()->{try{
+            boolean changed=updates.check();
+            boolean pending=updates.active()!=null&&!updates.active().equals(activeGameDir);
+            updateMessage=pending?"업데이트 준비 완료 · 앱을 다시 시작하면 적용됩니다":"최신 게임 버전입니다";
+            if(changed||manual)ui.post(()->Toast.makeText(this,updateMessage,Toast.LENGTH_LONG).show());
+        }catch(Exception e){updateMessage="업데이트 확인 대기 · 현재 버전 유지";if(manual)ui.post(()->Toast.makeText(this,updateMessage,Toast.LENGTH_LONG).show());}
+        finally{updateBusy.set(false);js("window.onGaiaGameUpdate&&window.onGaiaGameUpdate()");}});
+    }
 
     private static final int REQ_FILE=710,REQ_FOLDER=711;
     private ValueCallback<Uri[]> fileCallback;
@@ -149,6 +168,8 @@ public final class MainActivity extends Activity {
 
     @Override public void onCreate(Bundle b) {
         super.onCreate(b);
+        updates=new GameUpdates(new File(getFilesDir(),"game-updates"));
+        activeGameDir=updates.active();
         store = getSharedPreferences("store", MODE_PRIVATE);
         backupPrefs = getSharedPreferences("backup", MODE_PRIVATE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -165,7 +186,7 @@ public final class MainActivity extends Activity {
         s.setSupportZoom(false);
         s.setBuiltInZoomControls(false);
         s.setMediaPlaybackRequiresUserGesture(false);
-        s.setCacheMode(WebSettings.LOAD_DEFAULT);
+        s.setCacheMode(WebSettings.LOAD_NO_CACHE);
         game.setWebViewClient(new WebViewClient() {
             @Override public WebResourceResponse shouldInterceptRequest(WebView v, WebResourceRequest r) {
                 Uri uri=r.getUrl();
@@ -174,7 +195,13 @@ public final class MainActivity extends Activity {
                 if(path==null||!path.startsWith("/assets/")||path.contains(".."))return null;
                 try {String name=path.substring(8);String mime=android.webkit.MimeTypeMap.getSingleton().getMimeTypeFromExtension(android.webkit.MimeTypeMap.getFileExtensionFromUrl(name));
                     if(name.endsWith(".html"))mime="text/html";else if(name.endsWith(".js"))mime="application/javascript";else if(name.endsWith(".woff2"))mime="font/woff2";
-                    return new WebResourceResponse(mime==null?"application/octet-stream":mime,"UTF-8",getAssets().open(name));
+                    InputStream content=null;
+                    if(activeGameDir!=null&&name.startsWith("game/")){
+                        File file=new File(activeGameDir,name.substring(5));
+                        if(file.getCanonicalPath().startsWith(activeGameDir.getCanonicalPath()+File.separator)&&file.isFile())content=new FileInputStream(file);
+                    }
+                    if(content==null)content=getAssets().open(name);
+                    return new WebResourceResponse(mime==null?"application/octet-stream":mime,"UTF-8",content);
                 }catch(Exception e){return new WebResourceResponse("text/plain","UTF-8",404,"Not Found",null,new java.io.ByteArrayInputStream(new byte[0]));}
             }
             @Override public void onReceivedError(WebView v, WebResourceRequest r, android.webkit.WebResourceError e) {
@@ -222,6 +249,7 @@ public final class MainActivity extends Activity {
         setContentView(game);
         requestHighestRefreshRate();
         usingLocal=true;game.loadUrl(LOCAL);
+        checkGameUpdate(false);
     }
 
     /** 게임이 부르는 앱 기능: 저장 보관 */
@@ -270,6 +298,8 @@ public final class MainActivity extends Activity {
             synchronized (backupLock) { if (restoringBackup) return; store.edit().remove(k).apply(); }
             queueBackup(false);
         }
+        @JavascriptInterface public void checkGameUpdate(){MainActivity.this.checkGameUpdate(true);}
+        @JavascriptInterface public String gameUpdateStatus(){return updateMessage;}
         @JavascriptInterface public boolean isApp() { return true; }
         @JavascriptInterface public String reconcileLocal(String text) {
             synchronized (backupLock) {
@@ -636,7 +666,7 @@ public final class MainActivity extends Activity {
         synchronized (hapticLock) { foreground = false; stopVibration(); }
         if (connectivity != null && networkCallback != null) connectivity.unregisterNetworkCallback(networkCallback);
         pageReady = false;
-        backupIO.shutdown();documentIO.shutdown();
+        backupIO.shutdown();documentIO.shutdown();updateIO.shutdown();
         super.onDestroy();
     }
 

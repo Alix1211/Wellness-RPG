@@ -31,14 +31,17 @@
   for(const [selector,useFile]of [['#gn-use-remote',true],['#gn-use-local',false]])node.querySelector(selector).onclick=()=>{if(!confirm(useFile?'드라이브 진행을 적용할까요? 이 기기 진행은 바뀝니다.':'이 기기 진행으로 드라이브 파일을 덮어쓸까요?'))return;node.remove();conflict=false;try{B.resolveConflict(useFile)}catch{window.onGaiaSyncDone()}};
  };
  function refresh(){const el=document.querySelector('#gaia-native-status');if(!el)return;try{const s=JSON.parse(B.backupStatus()||'{}');el.textContent=(s.linked?'파일 연결됨':'파일 연결 안 됨')+(s.syncing?' · 동기화 중':s.error?' · 동기화 대기':'')+(s.at?' · '+new Date(s.at).toLocaleString():'')}catch{el.textContent='기기 저장 사용 중'}}
+ function refreshGameUpdate(){const e=document.querySelector('#gaia-update-status');if(e)try{e.textContent=B.gameUpdateStatus()}catch{}}
+ window.onGaiaGameUpdate=refreshGameUpdate;
  const previousSettings=settingsModal;
- settingsModal=function(){previousSettings();const m=$('#overlay .modal');m.insertAdjacentHTML('beforeend','<div class="settings-row"><span>진동</span><button data-action="native-vibration">'+(settings.vibration===false?'꺼짐':'켜짐')+'</button></div><h3>기기 간 세이브</h3><p id="gaia-native-status" class="notice"></p><div class="actions"><button data-action="native-link">드라이브 파일 연결</button><button class="secondary" data-action="native-sync">지금 동기화</button></div>');refresh()};
+ settingsModal=function(){previousSettings();const m=$('#overlay .modal');m.insertAdjacentHTML('beforeend','<div class="settings-row"><span>진동</span><button data-action="native-vibration">'+(settings.vibration===false?'꺼짐':'켜짐')+'</button></div><h3>기기 간 세이브</h3><p id="gaia-native-status" class="notice"></p><div class="actions"><button data-action="native-link">드라이브 파일 연결</button><button class="secondary" data-action="native-sync">지금 동기화</button></div><h3>게임 업데이트</h3><p id="gaia-update-status" class="notice"></p><div class="actions"><button data-action="native-update">업데이트 확인</button></div>');refresh();refreshGameUpdate()};
  window.GaiaNativeSettings=()=>{pauseForNative();nativeSettings=true;settingsModal()};
  window.GaiaNativeBack=()=>{if(conflict||window.GAIA_NATIVE_GATE)return true;if(!$('#overlay').hidden){if(activeGame)resumeGame();else closeModal();nativeSettings=false;autoPaused=null;return true;}if(activeGame){pauseGame();return true}return false};
  window.GaiaNativeLifecycle=value=>{if(value){pauseForNative();GaiaNativeFlush()}else if(!window.GAIA_NATIVE_GATE&&!nativeSettings)resumeNative()};
  document.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!b)return;const a=b.dataset.action;
   if(a==='native-vibration'){e.preventDefault();e.stopImmediatePropagation();settings.vibration=settings.vibration===false;try{localStorage.setItem(SAVE_KEY+'-settings',JSON.stringify(settings));if(settings.vibration)B.vibrate('30');else B.vibrate('0')}catch{}settingsModal();}
   else if(a==='native-link'){e.preventDefault();e.stopImmediatePropagation();GaiaNativeFlush();B.pickBackup()}
+  else if(a==='native-update'){e.preventDefault();e.stopImmediatePropagation();B.checkGameUpdate();refreshGameUpdate()}
   else if(a==='native-sync'){e.preventDefault();e.stopImmediatePropagation();GaiaNativeFlush();B.syncBackup()}
   else if(a==='close'&&nativeSettings){e.preventDefault();e.stopImmediatePropagation();nativeSettings=false;if(autoPaused)resumeNative();else closeModal()}
  },true);

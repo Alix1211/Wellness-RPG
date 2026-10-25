@@ -1,7 +1,7 @@
 {
   "source": "GAIA-Pingpong-v12.12.html",
   "source_sha256": "874401d50fdefc652c7b8c7d752b6c85b70d8c2781713d8939f76e7e36f7a8cb",
-  "bundled_sha256": "6a128d6bc2524eff0d16d0a25507752963a4bdbdbefe43dcd5dcfb21058b3b7e",
+  "bundled_sha256": "df034b4c9e309fa0eeb41a04b536fd68cd0674dd44285890d4f7a008941cd7d0",
   "native_changes": [
     "early native local mirror",
     "save sync gate and meaningful-change timestamp",

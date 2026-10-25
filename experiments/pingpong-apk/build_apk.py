@@ -19,7 +19,7 @@ if not key.exists():
  if '--first-build' not in sys.argv:raise SystemExit('Restore the signing backup to private/ before rebuilding. Only the first release may use --first-build.')
  password.write_text(secrets.token_urlsafe(32)+'\n');password.chmod(0o600);env['GAIA_SIGN_PASSWORD']=password.read_text().strip()
  run(['java','-m','java.base/sun.security.tools.keytool.Main','-genkeypair','-keystore',key,'-storetype','PKCS12','-storepass:env','GAIA_SIGN_PASSWORD','-keypass:env','GAIA_SIGN_PASSWORD','-alias','gaia-pingpong','-keyalg','RSA','-keysize','3072','-validity','10000','-dname','CN=GAIA Pingpong, O=Personal Game, C=KR'])
-final=out/'GAIA-Pingpong-v12.12.2.apk';pending=out/'signed.pending'
+final=out/'GAIA-Pingpong-v12.12.3.apk';pending=out/'signed.pending'
 run(['java','-jar',bt/'lib/apksigner.jar','sign','--ks',key,'--ks-key-alias','gaia-pingpong','--ks-pass','file:'+str(password),'--out',pending,out/'aligned.apk'])
 with pending.open('rb') as f:os.fsync(f.fileno())
 os.replace(pending,final)
@@ -29,5 +29,5 @@ with zipfile.ZipFile(final) as z:
  assert z.read('assets/game/index.html')==(android/'app/src/main/assets/game/index.html').read_bytes()
  for f in (android/'app/src/main/assets/game/assets').rglob('*'):
   if f.is_file():assert z.read('assets/game/assets/'+str(f.relative_to(android/'app/src/main/assets/game/assets')))==f.read_bytes()
-result={'apk':final.name,'bytes':final.stat().st_size,'sha256':hashlib.sha256(final.read_bytes()).hexdigest(),'package':'com.gaia.pingpong','versionCode':2026102502,'versionName':'12.12.2','signature_verified':True,'zipalign_verified':True,'assets_verified':True}
+result={'apk':final.name,'bytes':final.stat().st_size,'sha256':hashlib.sha256(final.read_bytes()).hexdigest(),'package':'com.gaia.pingpong','versionCode':2026102503,'versionName':'12.12.3','signature_verified':True,'zipalign_verified':True,'assets_verified':True}
 (out/'build-result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result))
