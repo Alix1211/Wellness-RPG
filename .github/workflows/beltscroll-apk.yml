@@ -1,0 +1,35 @@
+name: GAIA BELTSCROLL APK
+on:
+  push:
+    branches: [main, gaia-detective-assets]
+    paths: ['belt-scroll/**', '.github/workflows/beltscroll-apk.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: {group: gaia-beltscroll-apk, cancel-in-progress: true}
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '21'}
+      - uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: gaia-beltscroll-gradle-${{ hashFiles('belt-scroll/android/**/*.gradle', 'belt-scroll/android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gaia-beltscroll-gradle-
+      - name: 게임 코드 문법 검사
+        run: for f in belt-scroll/js/*.js; do node --check "$f"; done
+      - name: 게임 파일 묶음 만들기
+        run: python3 belt-scroll/android/build_web.py
+      - name: APK 컴파일
+        run: cd belt-scroll/android && chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+      - name: APK 게시
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: beltscroll-app-latest
+          name: GAIA 벨트스크롤 최신 APK
+          body: 게임 내용이 바뀔 때마다 새 APK가 만들어집니다. 같은 서명이라 덮어 설치하면 저장이 유지됩니다.
+          make_latest: false
+          files: belt-scroll/android/app/build/outputs/apk/debug/gaia-beltscroll.apk

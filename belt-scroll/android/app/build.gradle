@@ -1,0 +1,42 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.gaia.beltscroll'
+    compileSdk 37
+    defaultConfig {
+        applicationId 'com.gaia.beltscroll'
+        minSdk 26
+        targetSdk 35
+        // 같은 서명으로 덮어 설치할 수 있도록 versionCode는 빌드 시각(분)으로 올린다.
+        versionCode ((int) (System.currentTimeMillis() / 60000L - 29000000L))
+        versionName '1.0'
+    }
+    // 개인용 테스트 앱이라 서명 키를 저장소에 고정한다. 키가 바뀌면 덮어 설치가 안 되므로 바꾸지 않는다.
+    signingConfigs {
+        stable {
+            storeFile file('../gaia-beltscroll.keystore')
+            storePassword 'gaiabeltscroll'
+            keyAlias 'gaia'
+            keyPassword 'gaiabeltscroll'
+        }
+    }
+    buildTypes { debug { signingConfig signingConfigs.stable } }
+    // 게임 파일은 android/build_web.py 가 android/web 에 만든다(저장소에는 올리지 않음).
+    sourceSets.main.assets.srcDir(file('../web'))
+    // 그림·소리는 이미 압축된 형식이라 다시 압축하지 않는다.
+    androidResources { noCompress += ['webp', 'png', 'mp3', 'ogg'] }
+}
+dependencies {
+    implementation 'androidx.webkit:webkit:1.12.1'
+}
+tasks.configureEach {
+    if (name.startsWith('merge') && name.endsWith('Assets')) doFirst {
+        if (!rootProject.file('web/index.html').isFile()) throw new GradleException('먼저 python3 belt-scroll/android/build_web.py 를 실행하세요')
+    }
+}
+tasks.configureEach { task ->
+    if (task.name == 'assembleDebug') task.doLast {
+        def dir = layout.buildDirectory.dir('outputs/apk/debug').get().asFile
+        java.nio.file.Files.copy(new File(dir, 'app-debug.apk').toPath(), new File(dir, 'gaia-beltscroll.apk').toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+}
