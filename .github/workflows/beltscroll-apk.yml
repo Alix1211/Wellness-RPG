@@ -33,3 +33,11 @@ jobs:
           body: 게임 내용이 바뀔 때마다 새 APK가 만들어집니다. 같은 서명이라 덮어 설치하면 저장이 유지됩니다.
           make_latest: false
           files: belt-scroll/android/app/build/outputs/apk/debug/gaia-beltscroll.apk
+      - name: 자동 업데이트 목록 게시
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: beltscroll-web-latest
+          name: GAIA 벨트스크롤 게임 자동 업데이트
+          body: 앱이 켜질 때 이 목록을 읽고 바뀐 게임 파일만 받아 갑니다. 직접 받을 필요 없습니다.
+          make_latest: false
+          files: belt-scroll/android/update.json

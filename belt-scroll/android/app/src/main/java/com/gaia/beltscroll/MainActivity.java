@@ -3,11 +3,17 @@ package com.gaia.beltscroll;
 import android.app.Activity;
 import android.media.AudioAttributes;
 import android.os.Build;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.webkit.JavascriptInterface;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
@@ -26,6 +32,18 @@ public class MainActivity extends Activity {
     private final Object hapticLock = new Object();
     private Vibrator vibrator;
     private volatile boolean foreground = false;
+    private WebUpdates updates;
+    private TextView status;
+    private final Handler ui = new Handler(Looper.getMainLooper());
+    private boolean loaded = false, downloading = false;
+
+    // 게임 화면을 한 번만 연다(업데이트 확인이 끝났거나, 오래 걸리면 지금 있는 버전으로).
+    private void loadOnce() {
+        if (loaded || web == null) return;
+        loaded = true;
+        web.loadUrl(START);
+        if (status != null) status.setVisibility(View.GONE);
+    }
 
     private Vibrator getVibrator() {
         if (vibrator == null) {
@@ -88,7 +106,18 @@ public class MainActivity extends Activity {
                     WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
         }
         web = new WebView(this);
-        setContentView(web);
+        FrameLayout box = new FrameLayout(this);
+        box.setBackgroundColor(Color.BLACK);
+        box.addView(web, new FrameLayout.LayoutParams(-1, -1));
+        status = new TextView(this);
+        status.setTextColor(0xFFCCCCCC);
+        status.setTextSize(15);
+        status.setGravity(Gravity.CENTER);
+        status.setText("");
+        status.setVisibility(View.GONE);
+        box.addView(status, new FrameLayout.LayoutParams(-1, -1));
+        setContentView(box);
+        updates = new WebUpdates(this);
 
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
@@ -98,7 +127,7 @@ public class MainActivity extends Activity {
         s.setAllowContentAccess(false);
 
         final WebViewAssetLoader loader = new WebViewAssetLoader.Builder()
-                .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                .addPathHandler("/assets/", path -> updates.serve(path))
                 .build();
         web.setWebViewClient(new WebViewClient() {
             @Override
@@ -109,8 +138,14 @@ public class MainActivity extends Activity {
         web.addJavascriptInterface(new Bridge(), "GaiaBridge");
         web.setWebChromeClient(new WebChromeClient());
         web.setBackgroundColor(0xFF000000);
-        if (state == null) web.loadUrl(START);
-        else web.restoreState(state);
+        if (state != null) { loaded = true; web.restoreState(state); return; }
+        // 켤 때 업데이트를 확인한다. 끝나면 게임을 연다. 인터넷이 없거나 느리면 지금 있는 버전으로 바로 연다.
+        updates.setProgress(t -> ui.post(() -> {
+            downloading = true;
+            if (status != null && !loaded) { status.setText(t); status.setVisibility(View.VISIBLE); }
+        }));
+        updates.check(() -> ui.post(this::loadOnce));
+        ui.postDelayed(() -> { if (!downloading) loadOnce(); }, 6000);
     }
 
     @Override

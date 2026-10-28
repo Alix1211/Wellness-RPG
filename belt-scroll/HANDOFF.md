@@ -34,3 +34,11 @@ GPT가 만든 벨트스크롤 소스를 Claude가 이어서 확장한 것. 카�
 
 ## 케인 작업 규칙 (요약)
 존댓말만 / 도구 쓰기 전 한 줄 설명 / 임의 창작은 '임시' 표시 / 피드백은 모아서 한 번에 / 푸시·MD는 마지막에 한 번 / 비활성 버튼은 회색 / 진동은 길고 아주 세게 / 기술 설명 최소화·결과와 케인이 할 일만 / 근거 없이 추측 금지 / 토큰 많이 드는 작업은 먼저 말하기.
+
+
+## 자동 업데이트 (2026-10-28)
+- 앱이 켜질 때 GitHub 릴리스 `beltscroll-web-latest`의 `update.json`(파일별 해시 목록)을 읽고, APK 안 파일과 다른 것만 `raw.githubusercontent.com`에서 받는다. 전부 받은 뒤에만 교체(원자적), 실패·오프라인이면 이전 버전/APK 그대로. 저장은 그대로 유지.
+- 구성: `android/app/src/main/java/com/gaia/beltscroll/WebUpdates.java`, `android/build_web.py`(목록 생성), `.github/workflows/beltscroll-apk.yml`(APK + 목록 게시).
+- 이를 위해 `game.js` 안의 큰 그림 묶음을 `js/game-art.js`로 분리(게임 코드 124KB만 바뀌어도 가볍게 받도록).
+- 예외: `js/mini-assets.js`(미니게임)는 업데이트 대상이 아님 — 미니게임을 고치면 APK 재설치 필요. 앱 이름·아이콘·진동 같은 앱 자체(Java) 변경도 재설치 필요.
+- 저장소를 비공개로 바꾸면 이 업데이트(와 카드게임 앱 업데이트)는 동작하지 않는다.
