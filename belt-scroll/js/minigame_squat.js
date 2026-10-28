@@ -75,7 +75,7 @@ function ensureAC(){if(ac)return ac;const C=window.AudioContext||window.webkitAu
 async function buf(name){if(!SRC[name]||!ac)return null;if(!bufs[name]){bufs[name]=Promise.resolve().then(()=>{const v=SRC[name];if(v.slice(0,5)!=='data:')return fetch(v).then(r=>r.arrayBuffer());const raw=atob(v.split(',')[1]);return Uint8Array.from(raw,c=>c.charCodeAt(0)).buffer;}).then(a=>ac.decodeAudioData(a)).catch(()=>null);}return bufs[name];}
 const decoded={};
 async function prep(names){await Promise.all(names.map(async n=>{decoded[n]=await buf(n);}));}
-function shot(name,when,vol){const b=decoded[name];if(!b||!ac)return null;try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=b;gn.gain.value=vol;s.connect(gn).connect(master);s.start(Math.max(when,ac.currentTime));sched.push(s);s.onended=()=>{const i=sched.indexOf(s);if(i>=0)sched.splice(i,1);try{s.disconnect();gn.disconnect();}catch{}};return s;}catch{return null;}}
+function shot(name,when,vol){const b=decoded[name];if(!b||!ac)return null;try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=b;gn.gain.value=vol*(parent.GaiaSettings?.effects??1);s.connect(gn).connect(master);s.start(Math.max(when,ac.currentTime));sched.push(s);s.onended=()=>{const i=sched.indexOf(s);if(i>=0)sched.splice(i,1);try{s.disconnect();gn.disconnect();}catch{}};return s;}catch{return null;}}
 let lastVoice=-9;
 function voice(name,vol){const now=performance.now();if(now-lastVoice<320)return;lastVoice=now;shot(name,0,vol);}
 function stopAll(){for(const s of sched.splice(0)){try{s.onended=null;s.stop();}catch{}}if(bed){try{bed.stop();}catch{}bed=null;}}
@@ -123,8 +123,8 @@ async function begin(){
  await Promise.all([ready,fxReady,prep(names)]);warm();
  stopAll();
  t0=ac.currentTime+.25;
- if(decoded[RULE.bgm]){try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=decoded[RULE.bgm];s.loop=true;gn.gain.value=(RULE.bgmg||1)*2; /* BGM만 +6.02 dB (진폭 2배), 박자·효과음 유지 */s.connect(gn).connect(master);s.start(t0);sched.push(s);}catch{}}
- if(decoded[RULE.key]){try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=decoded[RULE.key];s.loop=true;gn.gain.value=.62;s.connect(gn).connect(master);s.start(t0);bed=s;}catch{}}
+ if(decoded[RULE.bgm]){try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=decoded[RULE.bgm];s.loop=true;gn.gain.value=(RULE.bgmg||1)*2*(parent.GaiaSettings?.music??1); /* BGM만 +6.02 dB (진폭 2배), 박자·효과음 유지 */s.connect(gn).connect(master);s.start(t0);sched.push(s);}catch{}}
+ if(decoded[RULE.key]){try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=decoded[RULE.key];s.loop=true;gn.gain.value=.62*(parent.GaiaSettings?.effects??1);s.connect(gn).connect(master);s.start(t0);bed=s;}catch{}}
  for(const e of events)e.time=beatT(e.beat);
  state='play';paused=false;$('#veil').hidden=true;$('#tier').textContent='스쿼트 · '+RULE.name;
 }

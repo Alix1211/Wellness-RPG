@@ -2,7 +2,7 @@ window.AlleyAudio=(()=>{
   let music=null,musicKey='',muted=false,context=null,master=null,voiceNode=null,lastVoiceAt=-1000,lastVoiceKey='',lastDieKey='',lastEnemyAt=-1000,duckUntil=0,epoch=0;
   const buffers={},pending={},active=new Set(),history=[];
   function init(){
-    if(!context){context=new (window.AudioContext||window.webkitAudioContext)();master=context.createGain();master.gain.value=.84;const limiter=context.createDynamicsCompressor();limiter.threshold.value=-5;limiter.knee.value=10;limiter.ratio.value=5;master.connect(limiter);limiter.connect(context.destination);}
+    if(!context){context=new (window.AudioContext||window.webkitAudioContext)();master=context.createGain();master.gain.value=.84*(window.GaiaSettings?.effects??1);const limiter=context.createDynamicsCompressor();limiter.threshold.value=-5;limiter.knee.value=10;limiter.ratio.value=5;master.connect(limiter);limiter.connect(context.destination);}
     if(context.state==='suspended')context.resume().catch(()=>{});return context;
   }
   async function buffer(key){
@@ -30,7 +30,7 @@ window.AlleyAudio=(()=>{
     const bank={upper:['rosie_strain','rosie_pant'],lower:['rosie_pant','rosie_strain'],slam:['rosie_strain','rosie_pant'],jump:['rosie_sigh','rosie_pant'],guard:['rosie_strain'],hurt:['rosie_yelp','rosie_surprise','rosie_pant'],down:['rosie_cry','rosie_yelp']}[action]||['rosie_pant'];
     const options=bank.filter(k=>k!==lastVoiceKey),pool=options.length?options:bank,key=pool[Math.floor(Math.random()*pool.length)];
     lastVoiceAt=now;lastVoiceKey=key;remember('hero:'+action,key);duckUntil=now+850;
-    if(music)music.volume=.11;play(key,action==='down'?.85:action==='hurt'?.82:1.0,action==='down'?1.5:action==='lower'||action==='slam'?1.05:.75,true);
+    if(music)music.volume=.11*(window.GaiaSettings?.music??1);play(key,action==='down'?.85:action==='hurt'?.82:1.0,action==='down'?1.5:action==='lower'||action==='slam'?1.05:.75,true);
   }
   function impact(strong,kind){
     remember('impact','hit');play('hit',strong?.7:.55,.27,false);
@@ -54,13 +54,14 @@ window.AlleyAudio=(()=>{
   function bgm(next){
     preload();if(musicKey===next){if(music&&!muted)music.play().catch(()=>{});return;}
     if(music){music.pause();music.src='';}musicKey=next;if(!next||!AUDIO_ASSETS[next]){music=null;return;}
-    music=new Audio(AUDIO_ASSETS[next]);music.loop=true;music.volume=next==='map'?.2:.24;if(!muted)music.play().catch(()=>{});
+    music=new Audio(AUDIO_ASSETS[next]);music.loop=true;music.volume=(next==='map'?.2:.24)*(window.GaiaSettings?.music??1);if(!muted)music.play().catch(()=>{});
   }
   function pause(){epoch++;music?.pause();for(const n of active){try{n.stop();}catch{}}active.clear();}
   function effect(name,volume=.4){remember('effect',name);play(name,volume);}
   function mute(v){muted=v;if(v)pause();else if(music)music.play().catch(()=>{});}
-  function tick(){if(music&&!muted&&performance.now()>duckUntil){const target=musicKey==='map'?.2:.24;music.volume=Math.min(target,music.volume+.007);}}
-  return {bgm,pause,effect,mute,hero,impact,die,preload,tick,cartoon,weapon,debug:()=>({muted,history:history.slice(),loaded:Object.keys(buffers),context:context?.state,active:active.size})};
+  function tick(){if(music&&!muted&&performance.now()>duckUntil){const target=(musicKey==='map'?.2:.24)*(window.GaiaSettings?.music??1);music.volume=Math.min(target,music.volume+.007);}}
+  function setLevels(){if(master)master.gain.value=.84*(window.GaiaSettings?.effects??1);if(music)music.volume=(performance.now()<duckUntil?.11:musicKey==='map'?.2:.24)*(window.GaiaSettings?.music??1);}
+  return {setLevels,bgm,pause,effect,mute,hero,impact,die,preload,tick,cartoon,weapon,debug:()=>({muted,history:history.slice(),loaded:Object.keys(buffers),context:context?.state,active:active.size})};
 })();
 
 window.GAIA=window.GAIA||{};
@@ -91,7 +92,7 @@ window.DetectiveApp=(()=>{
  function start(stage,checkpoint=0){const info=C.stages[stage];if(!engineReady||!info)return;const r=C.regions[info.region];if(r.stages.indexOf(stage)>0&&!state['stage'+r.stages[0]])return;locationId=info.region;state.last=locationId;closeEntry();GAIA.map.close();document.body.classList.add('inbattle');$('cityTop').classList.add('hidden');$('game-shell').classList.remove('hidden');AlleyGame.start(stage,checkpoint);AlleyGame.focus();}
  function result(info){state.hp=Math.max(1,info.hp);state.mp=Math.max(0,Math.min(100,info.mp??state.mp));state.arrests+=info.arrests;state.slotUsed=0;state.lastReward='';state.tickets=Math.min(9,state.tickets+(info.won?2:1));if(!info.won){state.hp=Math.min(160,state.hp+30);state.stats.복종도=Math.min(30,state.stats.복종도+1);}const n=info.stage,r=C.regions[C.stages[n].region];if(info.won){state['stage'+n]=true;state.checkpoint[n]=0;if(r.stages.length>1&&n===r.stages[0])chosen=n+1;const old=state.records[n];state.records[n]={time:old?Math.min(old.time,info.elapsed):info.elapsed,arrests:info.arrests};state.hp=Math.min(160,state.hp+40);state.lastReward=BeltCards.reward(n);if(n===13)state.eventRuns=(state.eventRuns||0)+1;if(n===10)state.last='district';}save();sync();}
  GAIA.config={player:{maxHp:160}};GAIA.run={get:()=>({wl:Math.floor(Object.keys(state).filter(k=>/^stage\d+$/.test(k)&&state[k]).length/3),hp:Math.ceil(state.hp),deck:[]}),spotInfo:id=>(id==='police'||C.regions[id])?{state:'open',title:id==='police'?'경찰서':C.regions[id].name,sub:'',go:id==='police'?'들어가기':'출동'}:{state:'locked',sub:'',go:null},enter};
- function init(){$('entryBack').onclick=closeEntry;$('stageOne').onclick=()=>choose(region().stages[0]);$('stageTwo').onclick=()=>choose(region().stages[1]);$('mapBag').textContent='경찰서';$('mapBag').onclick=()=>enter('police');$('mapFs').onclick=async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen();}catch{}};$('cityFocus').onclick=()=>enter('warehouse');$('cityClub').onclick=()=>enter('club');city();}
+ function init(){$('entryBack').onclick=closeEntry;$('stageOne').onclick=()=>choose(region().stages[0]);$('stageTwo').onclick=()=>choose(region().stages[1]);$('mapBag').textContent='경찰서';$('mapBag').onclick=()=>enter('police');$('cityFocus').onclick=()=>enter('warehouse');$('cityClub').onclick=()=>enter('club');city();}
  function ready(){engineReady=true;sync();if(!$('missionEntry').classList.contains('hidden')&&C.regions[state.last])choose(chosen);}
  return {state,sync,save,city,enter,start,result,ready,init};
 })();

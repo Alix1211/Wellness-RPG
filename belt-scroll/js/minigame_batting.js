@@ -11,6 +11,10 @@
     // APK에 고정된 mini-assets 대신 자동 업데이트되는 원본 문서를 읽는다.
     docUrl: 'assets/minigame/batting_police/game.html',
     transformDoc: doc => doc
+      .replace('let ac=null,master=null;', 'let ac=null,master=null,effectsBus=null;')
+      .replace('master.connect(ac.destination);', 'master.connect(ac.destination);effectsBus=ac.createGain();effectsBus.gain.value=parent.GaiaSettings?.effects??1;effectsBus.connect(master);')
+      .replace('node.connect(gain).connect(master);', 'node.connect(gain).connect(effectsBus);')
+      .replace('g.gain.value=1;', 'g.gain.value=parent.GaiaSettings?.music??1;')
       .replace("function makeHit(k){", "function makeHit(k){if(k==='swing'){const rate=ac.sampleRate,b=ac.createBuffer(1,Math.ceil(rate*.16),rate),a=b.getChannelData(0);let low=0;for(let i=0;i<a.length;i++){const t=i/a.length,n=Math.random()*2-1;low+=.12*(n-low);a[i]=(n-low)*Math.sin(Math.PI*t)*.24;}return b;}")
       .replace("(k==='hit_slap'||k==='hit_punch')", "(k==='hit_slap'||k==='hit_punch'||k==='swing')")
       .replace("function sfx(name){if(!solo)send('wellness-sfx',{name});}", "function sfx(name){if(name==='swing')Sound.play('swing');else if(!solo)send('wellness-sfx',{name});}"),

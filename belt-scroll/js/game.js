@@ -61,7 +61,7 @@
       const path=[[223,39],[210,25],[182,14],[140,12],[98,17],[60,36],[31,64],[15,99],[9,143],[12,181],[25,217],[50,251],[86,278],[127,297],[161,316],[177,339],[179,358],[173,372]];
       g.beginPath();path.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.stroke();g.clearRect(0,0,130,240);g.clearRect(0,240,218,172);g.clearRect(0,0,255,40);g.restore();enemyFrames.whip=[c];}
     document.querySelectorAll('[data-art]').forEach(el=>el.src=ASSET[el.dataset.art]);
-    $('heroPortrait').src=ASSET.move1;
+    $('heroPortrait').src='assets/ui/rosie-portrait.jpg';
     if(assetsFailed.length){$('error').classList.remove('hidden');$('error').textContent='이미지를 불러오지 못했습니다. 파일을 다시 열어 주세요.';return;}
     DetectiveApp.ready();
   }
@@ -105,8 +105,8 @@
     $('stick').style.transform='translate(-50%,-50%)';document.querySelectorAll('.pressed').forEach(e=>e.classList.remove('pressed'));}
   function pause(abort=false){
     if(game.mode!=='playing'&&game.mode!=='paused')return;
-    clearInput();game.mode='paused';AlleyAudio.pause();$('pauseTitle').textContent='일시정지';
-    $('pauseDesc').textContent='';
+    clearInput();game.mode='paused';AlleyAudio.pause();$('pauseTitle').textContent='설정';
+    $('pauseDesc').textContent='게임이 일시정지되었습니다.';
     showPanel($intro);
   }
   function returnToCity(){
@@ -1601,10 +1601,7 @@
 
   $('start').onclick=()=>{clearInput();game.mode='playing';AlleyAudio.bgm(WAVES[game.zone].boss?'boss':'battle');hidePanels();};
   $('pauseReturn').onclick=returnToCity;$('resultReturn').onclick=returnToCity;
-  $('battleMap').onclick=()=>pause(true);
   $('pause').onclick=()=>{if(game.mode==='playing')pause();else if(game.mode==='paused'){$('start').click();}};
-  $('soundToggle').onclick=()=>{muted=!muted;AlleyAudio.mute(muted);$('soundToggle').textContent=muted?'×♪':'♪';$('soundToggle').setAttribute('aria-label',muted?'소리 켜기':'소리 끄기');};
-  $('fullScreen').onclick=async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen();if(screen.orientation?.lock&&document.fullscreenElement)await screen.orientation.lock('landscape').catch(()=>{});}catch{toast('전체화면을 지원하지 않는 환경입니다.');}};
 
   // Four combat buttons: upper/lower repeat while held, jump is a one-shot,
   // guard remains active only while held. Two M-powered skills use separate controls.

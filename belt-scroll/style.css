@@ -204,3 +204,25 @@ button:disabled{filter:grayscale(1);opacity:.52;cursor:default}button:focus-visi
 .sl-jp img:first-child{left:2vw}
 .sl-jp img:last-child{right:2vw;animation-delay:.12s}
 @keyframes sljppop{0%{transform:scale(0) rotate(-12deg);opacity:0}18%{transform:scale(1.18) rotate(6deg);opacity:1}30%{transform:scale(1) rotate(-3deg)}45%{transform:translateY(-1.6vh)}60%{transform:translateY(0)}80%{opacity:1}100%{transform:scale(1);opacity:0}}
+
+/* 기존 HUD·전투를 유지하고 설정 패널과 초상화만 정리. */
+#pause{width:52px;height:52px;display:grid;place-items:center}
+#pause svg{width:27px;height:27px}
+#introPanel{width:min(440px,88vw);max-height:88vh;overflow:auto;box-sizing:border-box;padding:22px 26px}
+#introPanel h2{margin:0 0 6px;font-size:25px}
+#introPanel #pauseDesc{margin:0 0 14px;font-size:13px}
+.settings-fields{text-align:left;display:grid;gap:9px}
+.settings-fields>label:not(.vibration-row){display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:15px}
+.settings-fields output{font-size:13px;color:#936479;font-variant-numeric:tabular-nums}
+.settings-fields input[type=range]{width:100%;height:28px;margin:0 0 6px;accent-color:#d578a5;touch-action:pan-x}
+.vibration-row{display:flex;align-items:center;gap:12px;padding:9px 0;font-weight:800}
+.vibration-row>span:first-child{flex:1}
+#vibrationToggle{width:24px;height:24px;margin:0;accent-color:#d578a5}
+#vibrationStatus{min-width:30px;font-size:13px;color:#936479}
+.settings-actions{display:flex;gap:10px;margin-top:13px}
+#introPanel .settings-actions button{flex:1;width:auto;min-height:46px;margin:0;font-size:14px;padding:10px 8px}
+.portrait{overflow:hidden}
+#heroPortrait{object-fit:cover;object-position:50% 38%;transform:scale(1.32);transform-origin:50% 35%}
+@media(max-height:450px){#introPanel{padding:13px 22px}#introPanel h2{font-size:22px}#introPanel #pauseDesc{margin-bottom:7px}.settings-fields{gap:5px}.settings-fields input[type=range]{height:24px;margin-bottom:3px}.vibration-row{padding:4px 0}.settings-actions{margin-top:8px}}
+
+#introPanel #pauseDesc{display:block!important}
