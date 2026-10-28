@@ -128,7 +128,7 @@ button:disabled{filter:grayscale(1);opacity:.52;cursor:default}button:focus-visi
 @media (orientation:portrait){#mapInfo{width:min(40vh,58vw)}
 #mapFs{right:1.6vh;top:7vh}
 #mapHint{top:12.5vh}}
-#mapPan::before{content:"";position:absolute;left:-4000px;top:-3000px;width:11000px;height:8000px;background:#9bc765 var(--map-grass,none) 0 0/384px 384px repeat;pointer-events:none}
+#mapPan::before{content:"";position:absolute;left:-4000px;top:-3000px;width:11000px;height:8000px;background:var(--map-grass,var(--sk-grass)) 0 0/836px 836px repeat;pointer-events:none}
 #cityTop{display:none!important}
 #map #mapInfo{display:block}
 

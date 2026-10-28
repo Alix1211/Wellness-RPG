@@ -7,41 +7,8 @@
   let s = 1, z = 1, sBase = 1, ox = 0, oy = 0, vw = 0, vh = 0, W = 0, H = 0, land = true, curId = null;
   const spots = {}, PAD = 140; // PAD: 지도 둘레에 더 보이는 잔디 여백(지도 픽셀, 임시)
 
-  // Draw once, then repeat a light, quiet lawn under the original map artwork.
-  function grassBackground() {
-    const tile = document.createElement('canvas'); tile.width = tile.height = 384;
-    const ctx = tile.getContext('2d'); if (!ctx) return 'none';
-    ctx.fillStyle = '#9bc765'; ctx.fillRect(0, 0, 384, 384);
-    let seed = 20261028;
-    const random = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
-    // Wrap patches and blades at tile edges so the repeated lawn has no seams.
-    function wrap(x, y, draw) {
-      for (const dx of [-384, 0, 384]) for (const dy of [-384, 0, 384]) draw(x + dx, y + dy);
-    }
-    for (let i = 0; i < 18; i++) {
-      const x = random() * 384, y = random() * 384, radius = 25 + random() * 45;
-      const color = i % 2 ? 'rgba(207,224,139,.18)' : 'rgba(100,155,74,.12)';
-      wrap(x, y, (px, py) => {
-        const shade = ctx.createRadialGradient(px, py, 0, px, py, radius);
-        shade.addColorStop(0, color); shade.addColorStop(1, 'rgba(155,199,101,0)');
-        ctx.fillStyle = shade; ctx.fillRect(px - radius, py - radius, radius * 2, radius * 2);
-      });
-    }
-    ctx.lineWidth = 1.5; ctx.lineCap = 'round';
-    for (let i = 0; i < 95; i++) {
-      const x = random() * 384, y = random() * 384, h = 3 + random() * 4;
-      ctx.strokeStyle = i % 3 ? 'rgba(89,142,65,.25)' : 'rgba(228,239,166,.45)';
-      wrap(x, y, (px, py) => {
-        ctx.beginPath(); ctx.moveTo(px - 3, py - h * .6); ctx.quadraticCurveTo(px, py - h * .4, px, py);
-        ctx.quadraticCurveTo(px, py - h * .7, px + 1, py - h);
-        ctx.moveTo(px, py); ctx.quadraticCurveTo(px + 1, py - h * .5, px + 4, py - h * .7); ctx.stroke();
-      });
-    }
-    return 'url("' + tile.toDataURL('image/png') + '")';
-  }
-
   function build() {
-    pan.innerHTML = ''; pan.style.setProperty('--map-grass', grassBackground());
+    pan.innerHTML = ''; pan.style.setProperty('--map-grass', 'url(' + src('grass_tile') + ')'); // 지도 바깥 잔디(케인 그림, 이음새 제거 타일)
     D.sheets.forEach((sh, si) => {
       const el = document.createElement('div'); el.className = 'sheet'; el.dataset.si = si;
       const g = document.createElement('img'); g.src = src(sh.ground); g.draggable = false; el.appendChild(g);

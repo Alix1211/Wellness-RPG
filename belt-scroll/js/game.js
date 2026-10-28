@@ -1815,7 +1815,7 @@
       const b=unit.splash,im=images['splash'+(b.age<.14?0:b.age<.46?1:2)],scale=169/550;
       ctx.save();ctx.scale(-1,1);ctx.drawImage(im,-im.naturalWidth*scale/2,-im.naturalHeight*scale-unit.jumpZ,im.naturalWidth*scale,im.naturalHeight*scale);ctx.restore();
     }else if(attackSprite&&attackSprite.complete&&attackSprite.naturalWidth){
-      const poseH=h*(unit.attack?.finisher==='bigHip'?1.22:1),poseW=poseH*attackSprite.naturalWidth/attackSprite.naturalHeight;
+      const poseH=h,poseW=poseH*attackSprite.naturalWidth/attackSprite.naturalHeight;
       // Upper/chest pose faces left in source; lower/hip pose faces right (backward stance).
       ctx.save();ctx.scale(unit.charge||unit.skillPose?.kind==='release'||unit.attack?.kind==='kick'?1:-1,1);
       const hip=unit.attack?.kind==='kick',t=hip?clamp(unit.attack.age/moves.kick.dur,0,1):0,hop=hip?Math.abs(Math.sin(t*Math.PI*2)):0;
