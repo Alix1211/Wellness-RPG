@@ -18,6 +18,10 @@
   function show(){
     stopTyping();const l=scene.lines[index],c=scene.ctx,speaks=l.who==='hero';
     hero.src=c.hero||'assets/ui/rosie-portrait.jpg';hero.classList.toggle('dim',!speaks);
+    if(l.who==='caption'){ // 현장 안내자: 초상화 없이 자막만(양쪽 모두 어둡게)
+      hero.classList.add('dim');npc.removeAttribute('src');npc.hidden=true;$('stNpcLabel').textContent='';
+      $('stName').textContent=l.name||'현장 안내자';$('stName').className='npc';
+    }else{
     const firstActor=scene.lines.find(x=>x.actor)?.actor;
     const actorId=speaks?(scene.lastActor||firstActor):l.actor;
     if(!speaks&&l.actor)scene.lastActor=l.actor;
@@ -25,6 +29,7 @@
     if(actor.portrait){npc.src=actor.portrait;npc.hidden=false;}else{npc.removeAttribute('src');npc.hidden=true;}
     npc.classList.toggle('dim',speaks);$('stNpcLabel').textContent=actor.name||'';
     $('stName').textContent=speaks?'로지':(l.name||actor.name||'상대');$('stName').className=speaks?'hero':'npc';
+    }
     $('stContext').textContent=c.title||'';full=l.text;$('stText').textContent='';$('stMore').style.opacity='0';
     const reduce=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     if(reduce){$('stText').textContent=full;$('stMore').style.opacity='1';return;}
