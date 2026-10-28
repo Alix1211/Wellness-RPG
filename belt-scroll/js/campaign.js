@@ -1,6 +1,7 @@
 window.GaiaCampaign=(()=>{
- const regions={warehouse:{name:'뒷골목',stages:[1,2]},club:{name:'클럽',stages:[3,4]},farm:{name:'농장',stages:[5,6]},hotel:{name:'호텔',stages:[7,8]},studio:{name:'영화촬영소',stages:[9,10]},district:{name:'환락가',stages:[11,12]},park:{name:'공원',stages:[13]}};
- const stages={};for(const [id,r] of Object.entries(regions))r.stages.forEach((n,i)=>stages[n]={id:n,region:id,name:r.name,route:i+1,bg:n===1?'alley_a':n===2?'alley_b':n===3?'club_a':n===4?'club_b':id+'_'+(i?'b':'a'),arena:n===2?'alleyBoss':n===4?'club_arena':n<=4?null:id+'_arena',hpScale:n<=4?1:id==='farm'?1.04:id==='hotel'?1.08:id==='studio'?1.10:id==='district'?1.14:1,event:id==='park'});stages[13].arena='park_b';
+ const regions={warehouse:{name:'뒷골목',stages:[1,2]},club:{name:'클럽',stages:[3,4]},farm:{name:'농장',stages:[5,6]},hotel:{name:'호텔',stages:[7,8]},studio:{name:'영화촬영소',stages:[9,10]},district:{name:'환락가',stages:[11,12]},park:{name:'공원',stages:[13]},casino:{name:'카지노',stages:[14]}};
+ const stages={};for(const [id,r] of Object.entries(regions))r.stages.forEach((n,i)=>stages[n]={id:n,region:id,name:r.name,route:i+1,bg:n===1?'alley_a':n===2?'alley_b':n===3?'club_a':n===4?'club_b':id+'_'+(i?'b':'a'),arena:n===2?'alleyBoss':n===4?'club_arena':n<=4?null:id+'_arena',hpScale:n<=4?1:id==='farm'?1.04:id==='hotel'?1.08:id==='studio'?1.10:id==='district'?1.14:1,event:id==='park'});stages[13].arena='park_b';Object.assign(stages[14],{bg:'hotel_b',arena:'hotel_arena',entry:'casino_entry'}); // 카지노 전투 배경은 호텔 그림 임시 사용
+ 
  const boss=(name,hp,attack,speed,drawH,reach,spacing,telegraph,interval,pattern,art,extra={})=>({name,hp,attack,speed,drawH,reach,spacing,telegraph,interval,style:pattern[0],pattern,boss:true,regional:true,frames:[art+'_idle',art+'_attack'],reward:100,...extra});
  const types={
  scientist:boss('연구소장',290,9,76,214,150,106,.95,2.35,['spray','bottle','spray'],'scientist',{name:'연구소장',keep:270}),

@@ -1,5 +1,5 @@
 window.AlleyAudio=(()=>{
-  let music=null,musicKey='',muted=false,context=null,master=null,voiceNode=null,lastVoiceAt=-1000,lastVoiceKey='',lastEnemyAt=-1000,duckUntil=0,epoch=0;
+  let music=null,musicKey='',muted=false,context=null,master=null,voiceNode=null,lastVoiceAt=-1000,lastVoiceKey='',lastDieKey='',lastEnemyAt=-1000,duckUntil=0,epoch=0;
   const buffers={},pending={},active=new Set(),history=[];
   function init(){
     if(!context){context=new (window.AudioContext||window.webkitAudioContext)();master=context.createGain();master.gain.value=.84;const limiter=context.createDynamicsCompressor();limiter.threshold.value=-5;limiter.knee.value=10;limiter.ratio.value=5;master.connect(limiter);limiter.connect(context.destination);}
@@ -10,7 +10,13 @@ window.AlleyAudio=(()=>{
     return pending[key]=(async()=>{try{const c=init(),raw=atob(src.slice(src.indexOf(',')+1)),bytes=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);return buffers[key]=await c.decodeAudioData(bytes.buffer);}catch{return null;}})();
   }
   function remember(type,key){history.push({type,key,at:performance.now()});if(history.length>60)history.shift();}
-  function preload(){try{init();for(const key of ['rosie_strain','rosie_pant','rosie_sigh','rosie_surprise','rosie_yelp','rosie_cry','hit','enemy_m01','enemy_m05','enemy_m11','enemy_m16'])buffer(key);}catch{}}
+  function preload(){try{init();const dv=window.DIE_VOICES||{male:[],female:[]};for(const key of ['rosie_strain','rosie_pant','rosie_sigh','rosie_surprise','rosie_yelp','rosie_cry','hit','enemy_m01','enemy_m05','enemy_m11','enemy_m16',...dv.male,...dv.female])buffer(key);}catch{}}
+  // 적이 쓰러질 때 비명: 남성은 '으악' 계열, 여성(채찍 여전사·제작사 회장)은 신음 한 번. 직전과 같은 소리는 피한다.
+  function die(kind){
+    if(muted)return;const dv=window.DIE_VOICES;if(!dv)return;const pool=(['whip','heiress'].includes(kind)?dv.female:dv.male)||[];if(!pool.length)return;
+    const opts=pool.filter(k=>k!==lastDieKey),pick=opts.length?opts:pool,key=pick[Math.floor(Math.random()*pick.length)];
+    lastDieKey=key;remember('die',key);play(key,.95,1.7,false);
+  }
   async function play(key,volume=.5,limit=0,voice=false){
     if(muted)return;const ticket=epoch,b=await buffer(key);if(!b||muted||ticket!==epoch)return;
     const c=init(),node=c.createBufferSource(),gain=c.createGain();node.buffer=b;node.connect(gain);gain.connect(master);
@@ -54,7 +60,7 @@ window.AlleyAudio=(()=>{
   function effect(name,volume=.4){remember('effect',name);play(name,volume);}
   function mute(v){muted=v;if(v)pause();else if(music)music.play().catch(()=>{});}
   function tick(){if(music&&!muted&&performance.now()>duckUntil){const target=musicKey==='map'?.2:.24;music.volume=Math.min(target,music.volume+.007);}}
-  return {bgm,pause,effect,mute,hero,impact,preload,tick,cartoon,weapon,debug:()=>({muted,history:history.slice(),loaded:Object.keys(buffers),context:context?.state,active:active.size})};
+  return {bgm,pause,effect,mute,hero,impact,die,preload,tick,cartoon,weapon,debug:()=>({muted,history:history.slice(),loaded:Object.keys(buffers),context:context?.state,active:active.size})};
 })();
 
 window.GAIA=window.GAIA||{};
@@ -78,13 +84,13 @@ window.DetectiveApp=(()=>{
  function choose(stage){
   const r=region();if(!r||!r.stages.includes(stage)||r.stages.indexOf(stage)>0&&!state['stage'+r.stages[0]])return;chosen=stage;
   const first=r.stages[0],second=r.stages[1];$('stageOne').classList.toggle('selected',stage===first);$('stageTwo').classList.toggle('selected',stage===second);$('stageTwo').classList.toggle('hidden',!second);$('stageChoices').style.gridTemplateColumns=second?'':'1fr';$('stageTwo').disabled=!!second&&!state['stage'+first];
-  $('stageOne').querySelector('b').textContent=(r.stages.length===1?'이벤트 출동':'01')+(state['stage'+first]?' ✓':'');$('stageTwo').querySelector('b').textContent='02'+(state['stage'+second]?' ✓':'');
-  const bg=C.stages[stage].bg,src=window.REGION_ART?.[bg]||'assets/'+bg+'.webp';$('entryArt').style.backgroundImage=`url('${src}')`;
-  const cp=state.checkpoint[stage]||0;$('deploy').textContent=engineReady?(cp?'이어서':'출동'):'…';$('deploy').disabled=!engineReady;$('deploy').onclick=()=>start(stage,cp);
+  $('stageOne').querySelector('b').textContent=(r.stages.length===1?(stage===14?(state.stage14?'슬롯머신':'출동'):'이벤트 출동'):'01')+(state['stage'+first]?' ✓':'');$('stageTwo').querySelector('b').textContent='02'+(state['stage'+second]?' ✓':'');
+  const bg=C.stages[stage].entry||C.stages[stage].bg,src=window.REGION_ART?.[bg]||'assets/'+bg+'.webp';$('entryArt').style.backgroundImage=`url('${src}')`;
+  const cp=state.checkpoint[stage]||0;$('deploy').textContent=engineReady?(cp?'이어서':'출동'):'…';$('deploy').disabled=!engineReady;$('deploy').onclick=()=>start(stage,cp);if(stage===14&&state.stage14){$('deploy').textContent='슬롯머신';$('deploy').disabled=false;$('deploy').onclick=()=>BeltSlot.open();}
  }
  function start(stage,checkpoint=0){const info=C.stages[stage];if(!engineReady||!info)return;const r=C.regions[info.region];if(r.stages.indexOf(stage)>0&&!state['stage'+r.stages[0]])return;locationId=info.region;state.last=locationId;closeEntry();GAIA.map.close();document.body.classList.add('inbattle');$('cityTop').classList.add('hidden');$('game-shell').classList.remove('hidden');AlleyGame.start(stage,checkpoint);AlleyGame.focus();}
- function result(info){state.hp=Math.max(1,info.hp);state.mp=Math.max(0,Math.min(100,info.mp??state.mp));state.arrests+=info.arrests;state.lastReward='';state.tickets=Math.min(9,state.tickets+(info.won?2:1));if(!info.won){state.hp=Math.min(160,state.hp+30);state.stats.복종도=Math.min(30,state.stats.복종도+1);}const n=info.stage,r=C.regions[C.stages[n].region];if(info.won){state['stage'+n]=true;state.checkpoint[n]=0;if(r.stages.length>1&&n===r.stages[0])chosen=n+1;const old=state.records[n];state.records[n]={time:old?Math.min(old.time,info.elapsed):info.elapsed,arrests:info.arrests};state.hp=Math.min(160,state.hp+40);state.lastReward=BeltCards.reward(n);if(n===13)state.eventRuns=(state.eventRuns||0)+1;if(n===10)state.last='district';}save();sync();}
- GAIA.config={player:{maxHp:160}};GAIA.run={get:()=>({wl:0,hp:Math.ceil(state.hp),deck:[]}),spotInfo:id=>(id==='police'||C.regions[id])?{state:'open',title:id==='police'?'경찰서':C.regions[id].name,sub:'',go:id==='police'?'들어가기':'출동'}:{state:'locked',sub:'',go:null},enter};
+ function result(info){state.hp=Math.max(1,info.hp);state.mp=Math.max(0,Math.min(100,info.mp??state.mp));state.arrests+=info.arrests;state.slotUsed=0;state.lastReward='';state.tickets=Math.min(9,state.tickets+(info.won?2:1));if(!info.won){state.hp=Math.min(160,state.hp+30);state.stats.복종도=Math.min(30,state.stats.복종도+1);}const n=info.stage,r=C.regions[C.stages[n].region];if(info.won){state['stage'+n]=true;state.checkpoint[n]=0;if(r.stages.length>1&&n===r.stages[0])chosen=n+1;const old=state.records[n];state.records[n]={time:old?Math.min(old.time,info.elapsed):info.elapsed,arrests:info.arrests};state.hp=Math.min(160,state.hp+40);state.lastReward=BeltCards.reward(n);if(n===13)state.eventRuns=(state.eventRuns||0)+1;if(n===10)state.last='district';}save();sync();}
+ GAIA.config={player:{maxHp:160}};GAIA.run={get:()=>({wl:Math.floor(Object.keys(state).filter(k=>/^stage\d+$/.test(k)&&state[k]).length/3),hp:Math.ceil(state.hp),deck:[]}),spotInfo:id=>(id==='police'||C.regions[id])?{state:'open',title:id==='police'?'경찰서':C.regions[id].name,sub:'',go:id==='police'?'들어가기':'출동'}:{state:'locked',sub:'',go:null},enter};
  function init(){$('entryBack').onclick=closeEntry;$('stageOne').onclick=()=>choose(region().stages[0]);$('stageTwo').onclick=()=>choose(region().stages[1]);$('mapBag').textContent='경찰서';$('mapBag').onclick=()=>enter('police');$('mapFs').onclick=async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen();}catch{}};$('cityFocus').onclick=()=>enter('warehouse');$('cityClub').onclick=()=>enter('club');city();}
  function ready(){engineReady=true;sync();if(!$('missionEntry').classList.contains('hidden')&&C.regions[state.last])choose(chosen);}
  return {state,sync,save,city,enter,start,result,ready,init};
