@@ -1,5 +1,7 @@
 # 벨트스크롤 (GAIA CITY: DETECTIVE 벨트액션판) 인수인계 — 2026-10-28
 
+> **GPT는 먼저 `GPT_HANDOFF.md`(브랜치 경로·업데이트 방법)를 읽을 것.**
+
 ## 이 폴더
 GPT가 만든 벨트스크롤 소스를 Claude가 이어서 확장한 것. 카드게임(`gaia-detective/`)과는 별개 폴더.
 빌드: `python3 build_portable.py` → `GAIA_Detective_All_Stages.html` (단일 파일, 약 59MB) + `js/mini-assets.js`(자동 생성, 저장소엔 없음).
