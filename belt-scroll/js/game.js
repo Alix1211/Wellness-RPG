@@ -265,7 +265,7 @@
   function reset(stage=activeStage,checkpoint=0){
     const storyRetry=(game.mode==='lost'&&stage===activeStage)||checkpoint>0;
     window.BeltStory?.cancel();storyBossSeen=new Set();lastStoryBoss=null;storyPackBosses=[];
-    activeStage=stage;applyDifficulty();WAVES=makePlan(stage);checkpointStart=Math.max(0,Math.min(WAVES.length-1,checkpoint));hasReported=false;
+    activeStage=stage;applyDifficulty();WAVES=makePlan(stage);planBreakables();checkpointStart=Math.max(0,Math.min(WAVES.length-1,checkpoint));hasReported=false;
     game.hazards=[];game.castaways=[];game.regionalFX=[];game.encounterBossMax=0;
     game.seed=activeStage===13?67821+(wallet.eventRuns||0)*997:67821;game.zone=checkpointStart;game.waveLive=false;game.arrests=0;game.camera=0;game.elapsed=0;game.enemies=[];game.particles=[];game.decals=[];game.bubbles=[];game.shockwaves=[];game.skillBursts=[];game.projectiles=[];game.shake=0;game.freeze=0;game.lastAttack=null;game.nextThreatAt=0;game.nextRangedAt=0;game.transition=0;game.artParticles=[];game.artBursts=[];game.skillRings=[];game.heartBursts=[];
     makeProps();
@@ -983,12 +983,21 @@
   const DROP={item:.62,gold:.23}; // 나머지는 꽝
   const propImg={},pimg=n=>propImg[n]||(propImg[n]=Object.assign(new Image(),{src:'assets/props/'+n+'.webp'}));
   Object.keys(OBJ_SPEC).forEach(pimg);Object.keys(ITEM_SPEC).forEach(k=>pimg('i_'+k));
+  // 한 스테이지에 5~6개만: 보스 구역을 뺀 구역들에 골고루 나눠 놓는다.
+  function planBreakables(){
+    const total=5+(Math.random()<.5?1:0),zs=[];
+    for(let i=0;i<WAVES.length;i++)if(!WAVES[i].boss)zs.push(i);
+    if(!zs.length)for(let i=0;i<WAVES.length;i++)zs.push(i);
+    for(let i=zs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[zs[i],zs[j]]=[zs[j],zs[i]];}
+    const plan={};for(let k=0;k<total;k++){const z=zs[k%zs.length];plan[z]=(plan[z]||0)+1;}
+    game.propPlan=plan;
+  }
   function spawnBreakables(zone){
     const z=game.zones[zone];if(!z)return;
-    const ids=Object.keys(OBJ_SPEC),n=WAVES[zone]?.boss?2:3,list=[];
+    const ids=Object.keys(OBJ_SPEC),n=(game.propPlan&&game.propPlan[zone])||0,list=[];
     for(let i=0,tries=0;i<n&&tries<60;tries++){
       const x=z.start+260+Math.random()*(z.end-z.start-520),y=Y_MIN+16+Math.random()*(Y_MAX-Y_MIN-16);
-      if(list.some(b=>Math.abs(b.x-x)<170))continue;
+      if(list.some(b=>Math.abs(b.x-x)<260))continue;
       const id=ids[Math.floor(Math.random()*ids.length)],sp=OBJ_SPEC[id];
       list.push({id,x,y,h:sp[0],hp:sp[1],maxHp:sp[1],shake:0,flash:0});i++;
     }
