@@ -144,7 +144,7 @@
     if(style==='heartShot'){for(const off of [-30,0,30])shot('enemyHeart',def.attack,270,off);return true;}
     if(style==='contract'){shot('contract',7,235);return true;}
     if(style==='cleaverFan'){for(const off of [-38,0,38])shot('cleaverShot',def.attack-3,300,off);return true;}
-    if(style==='stomp'||style==='megaphone'){const radius=style==='stomp'?164:182;game.regionalFX.push({kind:style,x:e.x,y:e.y,dir,age:0,life:.55,radius});const hit=style==='stomp'?Math.abs(player.x-e.x)<radius&&lane<75:front>0&&front<radius&&lane<64;if(hit)damagePlayer(def.attack,e.x,style==='stomp'?'heavy':'normal');game.shake=Math.max(game.shake,style==='stomp'?5:2);return true;}
+    if(style==='stomp'||style==='megaphone'){const radius=style==='stomp'?164:182;game.regionalFX.push({kind:style,x:e.x,y:e.y,dir,age:0,life:.55,radius});const hit=style==='stomp'?Math.abs(player.x-e.x)<radius&&lane<80:front>=-12&&front<radius&&lane<76;if(hit)damagePlayer(def.attack,e.x,style==='stomp'?'heavy':'normal');game.shake=Math.max(game.shake,style==='stomp'?5:2);return true;}
     if(style==='callCrew'){
       game.regionalFX.push({kind:'call',x:e.x,y:e.y,dir,age:0,life:.55,radius:90});
       if(game.enemies.filter(x=>x.hp>0).length<7){const area=game.zones[game.zone],kinds=e.kind==='pimp'?['boxer','bouncer']:['clubPunk','punk'];for(let i=0;i<2;i++){const kind=kinds[i],d=TYPES[kind],x=clamp(e.x+dir*(165+i*80),area.start+65,area.end-65),hp=Math.round(d.hp*.9);game.enemies.push({kind,name:d.name,x,y:clamp(e.y+(i?37:-37),Y_MIN,Y_MAX),face:Math.sign(player.x-x)||-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:d.style,attackCd:1.5+i*.7,swing:0,swingStyle:d.style,id:++enemySerial,slotY:(i?1:-1)*25,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:0,captured:false,reward:0,entry:.8});}}
@@ -317,10 +317,10 @@
     game.bubbles.push({unit,label,age:0,life:1.48});
     if(game.bubbles.length>2)game.bubbles.shift();
   }
-  // Real single-target melee: large cutout artwork never enlarges the hitbox.
+  // 임시: 몸통 두께를 감안해 근접 판정 폭을 넓힘. 입력·속도·피해량은 유지.
   const moves={
-    punch:{dur:.42,impact:.51,near:13,reach:94,width:39,damage:13,stagger:.23,kb:15,maxHits:1},
-    kick:{dur:.65,impact:.63,near:18,reach:126,width:42,damage:28,stagger:.68,kb:91,maxHits:1}
+    punch:{dur:.42,impact:.51,near:-12,reach:94,width:64,damage:13,stagger:.23,kb:15,maxHits:1},
+    kick:{dur:.65,impact:.63,near:-12,reach:126,width:70,damage:28,stagger:.68,kb:91,maxHits:1}
   };
   const slamMove={damage:23,radiusX:169,radiusY:76,kb:139,stagger:.82,dropSpeed:450,recovery:.37};
   function attack(kind){
@@ -846,7 +846,7 @@
       player.x=clamp(b.fromX+b.dir*174*(1-(1-t)**2),Math.max(45,game.zones[Math.max(0,game.zone-1)].start+35),limit);
       player.face=b.dir;player.jumpZ=t<1?Math.max(0,b.lift*(1-t)+30*Math.sin(Math.PI*t)):0;
       if(!b.hit&&b.age>=.10&&b.age<=.46){
-        const e=game.enemies.filter(e=>e.hp>0&&(e.x-player.x)*b.dir>=-18&&(e.x-player.x)*b.dir<98&&Math.abs(e.y-player.y)<44).sort((a,b)=>Math.abs(a.x-player.x)-Math.abs(b.x-player.x))[0];
+        const e=game.enemies.filter(e=>e.hp>0&&(e.x-player.x)*b.dir>=-18&&(e.x-player.x)*b.dir<98&&Math.abs(e.y-player.y)<64).sort((a,b)=>Math.abs(a.x-player.x)-Math.abs(b.x-player.x))[0];
         if(e&&hitEnemy(e,24,96,.6,player.x,false,b.dir,true)){b.hit=true;game.lastAttack={kind:'splash',dir:b.dir,targets:1};AlleyAudio.impact(true,e.kind);}
       }
       if(t>=1&&!b.landed){b.landed=true;player.stun=Math.max(player.stun,.28);game.lastAttack={kind:'splash',dir:b.dir,targets:b.hit?1:0};comicPop(player.x+b.dir*26,player.y-23,'thud',{size:60,life:.28});}
@@ -895,12 +895,12 @@
       e.attackCd=Math.max(0,e.attackCd-dt);e.swing=Math.max(0,e.swing-dt);
       if(e.air||e.floorTime>0||e.bind>0||e.stun>0){e.rush=null;e.followup=null;e.strikes=null;continue;}
       if(e.strikes){
-        for(const hit of e.strikes){hit.time-=dt;if(hit.time<=0&&!hit.done){hit.done=true;const front=(player.x-e.x)*hit.dir;if(front>=0&&front<TYPES[e.kind].reach+8&&Math.abs(player.y-e.y)<53)hurtPlayer(e);}}
+        for(const hit of e.strikes){hit.time-=dt;if(hit.time<=0&&!hit.done){hit.done=true;const front=(player.x-e.x)*hit.dir;if(front>=-12&&front<TYPES[e.kind].reach+8&&Math.abs(player.y-e.y)<72)hurtPlayer(e);}}
         if(e.strikes&&e.strikes.every(hit=>hit.done))e.strikes=null;
       }
-      if(e.followup){e.followup.time-=dt;if(e.followup.time<=0){const dir=e.followup.dir;e.followup=null;e.face=dir;e.swing=.44;e.swingStyle='shock';if((player.x-e.x)*dir>=0&&Math.abs(player.x-e.x)<TYPES[e.kind].reach&&Math.abs(player.y-e.y)<55)hurtPlayer(e);}}
+      if(e.followup){e.followup.time-=dt;if(e.followup.time<=0){const dir=e.followup.dir;e.followup=null;e.face=dir;e.swing=.44;e.swingStyle='shock';if((player.x-e.x)*dir>=-12&&Math.abs(player.x-e.x)<TYPES[e.kind].reach&&Math.abs(player.y-e.y)<72)hurtPlayer(e);}}
       if(e.rush){const r=e.rush;r.age+=dt;const t=clamp(r.age/r.duration,0,1);e.x=clamp(r.fromX+r.dir*r.distance*t,game.zones[game.zone].start+55,game.zones[game.zone].end-70);e.face=r.dir;e.walking=true;
-        if(!r.hit&&Math.abs(player.x-e.x)<105&&Math.abs(player.y-e.y)<63){r.hit=true;damagePlayer(TYPES[e.kind].attack,e.x,'heavy');}
+        if(!r.hit&&Math.abs(player.x-e.x)<105&&Math.abs(player.y-e.y)<76){r.hit=true;damagePlayer(TYPES[e.kind].attack,e.x,'heavy');}
         if(t>=1){e.rush=null;e.attackCd=1.7;}continue;
       }
       const deltaX=player.x-e.x,deltaY=player.y-e.y,dist=Math.hypot(deltaX,deltaY*1.35);
@@ -927,25 +927,25 @@
             e.rush={age:0,duration:.68,dir:e.face,fromX:e.x,distance:Math.min(270,Math.abs(player.x-e.x)+45),hit:false};
           }else if(released==='shock'){
             e.x=clamp(e.x+e.face*25,game.zones[game.zone].start+55,game.zones[game.zone].end-65);
-            if((player.x-e.x)*e.face>=0&&Math.abs(player.x-e.x)<def.reach&&Math.abs(deltaY)<57)hurtPlayer(e);
+            if((player.x-e.x)*e.face>=-12&&Math.abs(player.x-e.x)<def.reach&&Math.abs(deltaY)<72)hurtPlayer(e);
             e.followup={time:.42,dir:e.face};
           }else if(released==='sweep'){
-            if(Math.abs(player.x-e.x)<def.reach&&Math.abs(deltaY)<65)hurtPlayer(e);
+            if(Math.abs(player.x-e.x)<def.reach&&Math.abs(deltaY)<80)hurtPlayer(e);
           }else if(['flame','rocket','grenade','dagger','bullet'].includes(released))throwEnemyProjectile(e,released);
           else if(released==='whip'){
             // A broad frontal sweep, not a one-pixel punch: readable warning,
             // then one hit. The backward half-plane remains safe.
             const front=(player.x-e.x)*e.face;
-            if(front>10&&front<def.reach&&Math.abs(deltaY)<92)hurtPlayer(e);
+            if(front>=-12&&front<def.reach&&Math.abs(deltaY)<92)hurtPlayer(e);
           }else if(meleeProps[e.kind]){
             const duration=released==='paddle'?.58:.55,first=duration*(.45-.3)/.7;
             e.strikes=(meleeProps[e.kind].kind==='fist'?[first,first+.24]:[first]).map(time=>({time,dir:e.face,done:false}));
-          }else if((released==='whirlwind'||(player.x-e.x)*e.face>=0)&&Math.abs(player.x-e.x)<def.reach+(released==='whirlwind'?38:8)&&Math.abs(deltaY)<(released==='whirlwind'?77:53))hurtPlayer(e);
+          }else if((released==='whirlwind'||(player.x-e.x)*e.face>=-12)&&Math.abs(player.x-e.x)<def.reach+(released==='whirlwind'?38:8)&&Math.abs(deltaY)<(released==='whirlwind'?80:72))hurtPlayer(e);
         }
       } else if(e.swing<=0) {
         const ranged=isRangedStyle(style);
         const reach=ranged?500:style==='rush'?360:def.reach;
-        const inLine=Math.abs(deltaY)<(ranged?80:style==='whip'?92:52);
+        const inLine=Math.abs(deltaY)<(ranged?80:style==='whip'?92:72);
         // One telegraphed enemy threat at a time; ranged attackers additionally
         // share a longer fire-window to stop simultaneous projectile walls.
         const canAttack=game.elapsed>=game.nextThreatAt&&
