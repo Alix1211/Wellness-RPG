@@ -33,7 +33,7 @@
     }).catch(() => close());
   }
   let prevBgm = null; // 게임 중에는 본게임 BGM을 끄고, 닫으면 원래 곡으로
-  function play(id, opts) { ensure(); const def = defs[id]; if (!def) return; cur = { def: def, opts: opts || {} }; if (G.sfx && G.sfx.bgmGet) { prevBgm = G.sfx.bgmGet(); G.sfx.bgm(null); } launch(); }
+  function play(id, opts) { ensure(); const def = defs[id]; if (!def) return; cur = { def: def, opts: opts || {} }; if (G.sfx && G.sfx.bgmGet) { prevBgm = G.sfx.bgmGet(); G.sfx.bgm(null); } if(window.BeltStory)BeltStory.play('police.training',{title:'경찰서 · 단련',...window.BeltDialogue.actors.chief},()=>{if(cur?.def===def)launch();});else launch(); }
   function close() { if (!cur) return; const c = cur; cur = null; fr.srcdoc = ''; root.classList.add('hidden'); if (G.sfx && G.sfx.bgm && prevBgm) G.sfx.bgm(prevBgm); prevBgm = null; if (c.opts.onClose) c.opts.onClose(); }
   G.minigame = {
     register: (id, d) => { d.id = id; defs[id] = d; }, play: play, close: close, layout: {},

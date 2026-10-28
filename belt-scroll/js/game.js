@@ -110,8 +110,10 @@
     showPanel($intro);
   }
   function returnToCity(){
+    const report=game.mode==='won';
     clearInput();if(!hasReported){wallet.mp=player.mp;wallet.hp=Math.max(1,player.hp);wallet.arrests+=game.arrests;hasReported=true;}save();
     game.mode='city';hidePanels();DetectiveApp.city();
+    window.BeltStory?.play(report?'police.return':'common.return',{title:'경찰서 · 복귀',...window.BeltDialogue?.actors.chief});
   }
   // Explicit, data-driven encounter groups: composition and reinforcement count
   // control the length. No forced timer or idle waves delay a skilled player.
@@ -232,31 +234,35 @@
   }
   function makeProps(){generateLayout();game.props=[];}
 
-  let storyBossSeen=new Set(),lastStoryBoss=null;
+  let storyBossSeen=new Set(),lastStoryBoss=null,storyPackBosses=[];
   function storyContext(boss){
     const kind=boss?.kind||WAVES.flatMap(w=>w.packs.flat()).find(k=>TYPES[k]?.boss);
-    const def=TYPES[kind],key=def?.frames?.[0]||(kind==='clubBoss'?'clubBoss_whip':kind?kind+'_idle':null);
-    return {hero:'assets/ui/rosie-portrait.jpg',portrait:ASSET[key]||ASSET[kind]||'',name:boss?.name||def?.name||'',title:GaiaCampaign.stages[activeStage].name+' · '+GaiaCampaign.stages[activeStage].route};
+    const portraitFor=(k,d)=>ASSET[d?.frames?.[0]||(k==='clubBoss'?'clubBoss_whip':k+'_idle')]||ASSET[k]||'';
+    const def=TYPES[kind],info=GaiaCampaign.stages[activeStage],actors={};
+    for(const [k,d]of Object.entries(TYPES))if(d.boss)actors[k]={name:d.name,portrait:portraitFor(k,d)};
+    return {hero:'assets/ui/rosie-portrait.jpg',portrait:portraitFor(kind,def),name:boss?.name||def?.name||'',kind,actors,
+      region:info.region,route:info.route,routes:GaiaCampaign.regions[info.region].stages.length,title:info.name+' · '+info.route};
   }
-  function battleStory(key,boss){
+  function battleStory(event,boss){
     if(!window.BeltStory)return;
     if(boss)lastStoryBoss=boss;
+    const c=storyContext(boss),key=BeltStory.key(event,c);
     clearInput();if(game.mode==='playing')game.mode='dialogue';
-    BeltStory.play(key,storyContext(boss),()=>{
-      clearInput();
-      if(game.mode==='dialogue'&&!BeltStory.active){game.mode='playing';if(document.hidden)pause();}
-    });
+    const done=()=>{clearInput();if(game.mode==='dialogue'&&!BeltStory.active){game.mode='playing';if(document.hidden)pause();}};
+    if(event==='boss'&&boss?.kind==='host')BeltStory.play('studio.reveal',c,done);
+    BeltStory.play(key,c,done);
   }
 
   function reset(stage=activeStage,checkpoint=0){
-    window.BeltStory?.cancel();storyBossSeen=new Set();lastStoryBoss=null;
+    const storyRetry=(game.mode==='lost'&&stage===activeStage)||checkpoint>0;
+    window.BeltStory?.cancel();storyBossSeen=new Set();lastStoryBoss=null;storyPackBosses=[];
     activeStage=stage;WAVES=makePlan(stage);checkpointStart=Math.max(0,Math.min(WAVES.length-1,checkpoint));hasReported=false;
     game.hazards=[];game.castaways=[];game.regionalFX=[];game.encounterBossMax=0;
     game.seed=activeStage===13?67821+(wallet.eventRuns||0)*997:67821;game.zone=checkpointStart;game.waveLive=false;game.arrests=0;game.camera=0;game.elapsed=0;game.enemies=[];game.particles=[];game.decals=[];game.bubbles=[];game.shockwaves=[];game.skillBursts=[];game.projectiles=[];game.shake=0;game.freeze=0;game.lastAttack=null;game.nextThreatAt=0;game.nextRangedAt=0;game.transition=0;game.artParticles=[];game.artBursts=[];game.skillRings=[];game.heartBursts=[];
     makeProps();
     const startX=game.zones[checkpointStart].start+145;
     Object.assign(player,{x:startX,y:435,face:1,hp:checkpoint?Math.max(112,wallet.hp):Math.max(80,wallet.hp),maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,mp:wallet.mp??100,maxMp:100,pushCd:0,chargeCd:0,charge:null,skillPose:null,stun:0,combo:0,comboTime:0,jump:null,jumpZ:0,guard:false,down:null,slam:null,splash:null,cardGuard:0,cardDef:0,cardSpd:0,dopa:0,climaxT:0,climaxCd:0,dazeT:0});game.cardQ=[];if(window.BeltCards)BeltCards.begin(stage);
-    game.camera=Math.max(0,startX-345);clearInput();game.mode='playing';AlleyAudio.bgm('battle');hidePanels();battleStory('enter');spawnWave(checkpointStart);
+    game.camera=Math.max(0,startX-345);clearInput();game.mode='playing';AlleyAudio.bgm('battle');hidePanels();if(storyRetry)battleStory('common.retry');battleStory('enter');spawnWave(checkpointStart);
     toast(stage===1?'뒷골목 1 · 중간보스를 찾아 전진하세요':'뒷골목 2 · 골목 안쪽으로 진입합니다',2.6);refreshHud();
   }
   function spawnWave(zone){
@@ -280,6 +286,7 @@
       game.enemies.push({kind,name:def.name,x,y:Y_MIN+25+(i%3)*48,face:left?1:-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:def.style,attackCd:1.3+i*.4+rng()*.35,swing:0,swingStyle:def.style,colorShift:0,id:++enemySerial,slotY:(i%3-1)*27,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:rng()*Math.PI*2,captured:false,reward:0,entry:.8});
     });
     game.encounterBossMax=game.enemies.filter(e=>TYPES[e.kind].boss).reduce((n,e)=>n+e.maxHp,0);
+    storyPackBosses=game.enemies.filter(e=>TYPES[e.kind].boss).map(e=>({kind:e.kind,name:e.name}));
     const newBosses=game.enemies.filter(e=>TYPES[e.kind].boss&&!storyBossSeen.has(e.kind));
     if(newBosses.length){newBosses.forEach(e=>storyBossSeen.add(e.kind));battleStory('boss',newBosses[0]);}
     if(packIndex>1&&!WAVES[game.zone].boss)toast('추가 인원 접근 · 주변을 확인하세요',1.5);
@@ -691,7 +698,7 @@
     $('resultReturn').classList.toggle('hidden',won);
     $('restart').onclick=()=>{if(won)returnToCity();else reset(activeStage,wallet.checkpoint[activeStage]||0);};
     refreshHud();
-    if(window.BeltStory)BeltStory.play(won?'win':'lose',storyContext(lastStoryBoss),()=>showPanel($result));
+    if(window.BeltStory)BeltStory.play(BeltStory.key(won?'win':'lose',storyContext(lastStoryBoss)),storyContext(lastStoryBoss),()=>showPanel($result));
     else showPanel($result);
   }
 
@@ -903,6 +910,7 @@
     game.enemies=game.enemies.filter(e=>e.hp>0||e.air||e.floorTime>0||e.exit&&e.exit.age<e.exit.duration);
 
     if(game.waveLive&&game.enemies.length===0){
+      if(storyPackBosses.length){const boss=storyPackBosses[0];storyPackBosses=[];battleStory('defeated',boss);return;}
       if(packIndex<WAVES[game.zone].packs.length){spawnPack();}
       else{
         game.waveLive=false;const next=game.zone+1;
