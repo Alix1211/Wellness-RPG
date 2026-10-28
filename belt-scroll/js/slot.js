@@ -45,9 +45,9 @@ window.BeltSlot=(()=>{
     h+='<button class="sl-lev" id="slLev" aria-label="레버"></button></div><div class="sl-jp hidden" id="slJp"></div></div>';
     root.innerHTML=h;
     for(let c=0;c<3;c++)showCol(c,[grid[0][c],grid[1][c],grid[2][c]]);
-    $('slExit').addEventListener('click',()=>{if(spinning)return;sfx('hit',.18);close();});
-    $('slB0').addEventListener('click',()=>{if(spinning||used()>=SLOT.limit)return;nLines=(nLines+1)%SLOT.lines.length;sfx('hit',.18);msg='';hud();});
-    $('slB1').addEventListener('click',()=>{if(spinning||used()>=SLOT.limit)return;nBet=(nBet+1)%SLOT.bets.length;sfx('hit',.18);msg='';hud();});
+    $('slExit').addEventListener('click',()=>{if(spinning)return;sfx('hit',.1);close();});
+    $('slB0').addEventListener('click',()=>{if(spinning||used()>=SLOT.limit)return;nLines=(nLines+1)%SLOT.lines.length;sfx('hit',.1);msg='';hud();});
+    $('slB1').addEventListener('click',()=>{if(spinning||used()>=SLOT.limit)return;nBet=(nBet+1)%SLOT.bets.length;sfx('hit',.1);msg='';hud();});
     $('slB2').addEventListener('click',spin);$('slLev').addEventListener('click',spin);
     if(used()>=SLOT.limit)showBunnyMan();
     hud();
@@ -86,7 +86,7 @@ window.BeltSlot=(()=>{
       const dur=1000+c*450;
       st.style.transition='transform '+dur+'ms cubic-bezier(.17,.7,.22,1)';
       st.style.transform='translateY(-'+((len-3)/len*100).toFixed(4)+'%)';
-      setTimeout(()=>{$('rc'+c).classList.remove('mv');sfx('hit',.22);hap('tick');if(c===2){grid=res;settle(res);}},dur);
+      setTimeout(()=>{$('rc'+c).classList.remove('mv');sfx('hit',.12);hap('tick');if(c===2){grid=res;settle(res);}},dur);
     }
   }
   function settle(res){

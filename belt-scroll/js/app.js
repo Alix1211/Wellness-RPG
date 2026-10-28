@@ -33,7 +33,7 @@ window.AlleyAudio=(()=>{
     if(music)music.volume=.11;play(key,action==='down'?.85:action==='hurt'?.82:1.0,action==='down'?1.5:action==='lower'||action==='slam'?1.05:.75,true);
   }
   function impact(strong,kind){
-    remember('impact','hit');play('hit',strong?.48:.3,.22,false);
+    remember('impact','hit');play('hit',strong?.7:.55,.27,false);
     const now=performance.now();if(now-lastEnemyAt<680)return;lastEnemyAt=now;
     if(!['whip','grenadier'].includes(kind)){const keys=['enemy_m01','enemy_m05','enemy_m11','enemy_m16'];play(keys[Math.floor(Math.random()*keys.length)],.45,.7);}
   }
