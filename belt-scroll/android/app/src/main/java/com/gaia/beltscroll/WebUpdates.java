@@ -146,7 +146,7 @@ final class WebUpdates {
                 int done = 0;
                 if (!need.isEmpty()) say("업데이트 받는 중… (0/" + need.size() + ")");
                 for (String path : need) {
-                    String encoded = new android.net.Uri.Builder().path("belt-scroll/" + path).build().getEncodedPath();
+                    String encoded = new android.net.Uri.Builder().path("/belt-scroll/" + path).build().getEncodedPath();
                     downloadFile("https://raw.githubusercontent.com/" + REPO + "/" + version + encoded, nextFiles.getString(path));
                     say("업데이트 받는 중… (" + (++done) + "/" + need.size() + ")");
                 }

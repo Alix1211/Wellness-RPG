@@ -63,3 +63,9 @@ GPT가 만든 벨트스크롤 소스를 Claude가 이어서 확장한 것. 카�
 - 파일: index.html, style.css, js/settings.js, js/app.js, js/game.js, js/minigame_squat.js, js/minigame_batting.js, 위 초상화. APK build_web가 기존 CSS/JS/assets를 복사하므로 전부 자동 업데이트 대상.
 - 검증: JS/iframe 스크립트 문법 통과. jsdom 실제 DOM에서 단일 설정 아이콘/구버튼 제거, 두 음량 0 포함 저장·복원, 진동 저장, 일시정지 타이머 정지, 슬라이더 조작 중 정지 유지, 계속/지도 복귀 HP 보존 검사 통과. AudioContext 모형에서 음악/효과음 독립 및 음량 조작 중 곡 재개 없음 확인. 원본 이미지 Git blob SHA 동일 확인.
 - 제한: 브라우저 실행 파일 설치가 다운로드 오류로 실패하여 실제 렌더링 및 태블릿 APK 실기기 조작·청취는 미확인. 앱 재실행 후 설정창 높이/초상화 구도·두 슬라이더 체감 확인 필요.
+
+
+## 2026-10-28 자동 업데이트 미적용 원인·수정 (GPT)
+- 배포/목록은 최신이었으나 앱 다운로드 URL이 잘못됨. Uri.Builder.path("belt-scroll/"+path)는 상대 경로이므로 version+encoded 결합 시 커밋 SHA 뒤에 / 없이 폴더명이 붙어 404 발생. 기존 코드가 예외를 숨기고 이전 게임으로 실행해 버튼/초상화가 갱신되지 않음.
+- 수정: 경로를 "/belt-scroll/"+path로 만들어 커밋과 폴더 사이 구분자 보장. 같은 커밋/index.html로 잘못된 URL=404, 올바른 URL=200 실제 확인.
+- 이는 Java 네이티브 수정이므로 사용자는 수정 APK를 기존 앱 위에 한 번 덮어 설치해야 함(삭제하지 않음). 배포 성공을 기기 적용 완료로 표현하지 말 것. 이 수정 이후 자동 업데이트 수신은 기기에서 별도 확인 필요.
