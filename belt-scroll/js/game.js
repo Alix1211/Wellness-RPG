@@ -253,10 +253,19 @@
     BeltStory.play(key,c,done);
   }
 
+  // ===== 난이도: 월드 레벨(깬 스테이지 3개마다 +1) 연동 + 보스 기본 강화 — 수치 전부 [임시] =====
+  // 적 체력 +25%/레벨, 공격력 +12%/레벨. 보스는 기본 체력 ×2.6(마피아 사수 4인조는 ×1.6), 공격력 ×1.25.
+  const BOSS_HP={mafiaA:1.6,mafiaB:1.6,mafiaC:1.6,mafiaD:1.6},BOSS_HP_DEFAULT=2.6,BOSS_ATK=1.25;
+  const worldLevel=()=>Math.floor(Object.keys(wallet).filter(k=>/^stage\d+$/.test(k)&&wallet[k]).length/3);
+  function applyDifficulty(){
+    const wl=worldLevel(),atk=1+.12*wl;
+    for(const d of Object.values(TYPES)){if(d.baseAttack==null)d.baseAttack=d.attack;d.attack=Math.max(1,Math.round(d.baseAttack*atk*(d.boss?BOSS_ATK:1)));}
+    game.hpMul=1+.25*wl;
+  }
   function reset(stage=activeStage,checkpoint=0){
     const storyRetry=(game.mode==='lost'&&stage===activeStage)||checkpoint>0;
     window.BeltStory?.cancel();storyBossSeen=new Set();lastStoryBoss=null;storyPackBosses=[];
-    activeStage=stage;WAVES=makePlan(stage);checkpointStart=Math.max(0,Math.min(WAVES.length-1,checkpoint));hasReported=false;
+    activeStage=stage;applyDifficulty();WAVES=makePlan(stage);checkpointStart=Math.max(0,Math.min(WAVES.length-1,checkpoint));hasReported=false;
     game.hazards=[];game.castaways=[];game.regionalFX=[];game.encounterBossMax=0;
     game.seed=activeStage===13?67821+(wallet.eventRuns||0)*997:67821;game.zone=checkpointStart;game.waveLive=false;game.arrests=0;game.camera=0;game.elapsed=0;game.enemies=[];game.particles=[];game.decals=[];game.bubbles=[];game.shockwaves=[];game.skillBursts=[];game.projectiles=[];game.shake=0;game.freeze=0;game.lastAttack=null;game.nextThreatAt=0;game.nextRangedAt=0;game.transition=0;game.artParticles=[];game.artBursts=[];game.skillRings=[];game.heartBursts=[];
     makeProps();
@@ -282,7 +291,7 @@
       const def=TYPES[kind],boss=def.boss;
       const left=packIndex>1&&i===0&&!boss&&player.x>z.start+260;
       const x=clamp(left?player.x-245:player.x+345+i*73,z.start+80,z.end-95);
-      const hp=Math.round(def.hp*(boss?(activeStage===13?.60:1):GaiaCampaign.stages[activeStage].hpScale));
+      const hp=Math.round(def.hp*(boss?(activeStage===13?.60:1)*(BOSS_HP[kind]??BOSS_HP_DEFAULT):GaiaCampaign.stages[activeStage].hpScale)*(game.hpMul||1));
       game.enemies.push({kind,name:def.name,x,y:Y_MIN+25+(i%3)*48,face:left?1:-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:def.style,attackCd:1.3+i*.4+rng()*.35,swing:0,swingStyle:def.style,colorShift:0,id:++enemySerial,slotY:(i%3-1)*27,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:rng()*Math.PI*2,captured:false,reward:0,entry:.8});
     });
     game.encounterBossMax=game.enemies.filter(e=>TYPES[e.kind].boss).reduce((n,e)=>n+e.maxHp,0);
@@ -1063,7 +1072,7 @@
     });
   }
 
-  window.__gaiaProps={game,player,applyItem,dropItem,damageBreakable,OBJ_SPEC,ITEM_SPEC}; // 점검용
+  window.__gaiaProps={spawnWave,spawnPack,get WAVES(){return WAVES;},TYPES,worldLevel,game,player,applyItem,dropItem,damageBreakable,OBJ_SPEC,ITEM_SPEC}; // 점검용
   function drawProp(p){
     const x=p.x-game.camera;if(x<-120||x>W+120)return;
     const y=p.y;
