@@ -14,10 +14,15 @@
     if(event==='lose')return 'common.defeat';
     return event;
   }
+  // 로지 초상화: 평상시(약간 소심) / 기쁠 때. 체포·클리어·복귀 장면은 기쁜 얼굴, 나머지는 평상시. 줄마다 mood:'happy'|'normal' 로 따로 지정도 가능.
+  const ART={normal:'assets/story/rosie_normal.webp',happy:'assets/story/rosie_happy.webp'};
+  Object.values(ART).forEach(u=>{const i=new Image();i.src=u;});
+  const HAPPY=/(\.defeated|\.clear|^police\.return|^common\.return)$/;
+  function heroArt(l){return ART[l.mood||(HAPPY.test(scene.key||'')?'happy':'normal')];}
   function stopTyping(){clearInterval(timer);timer=null;}
   function show(){
     stopTyping();const l=scene.lines[index],c=scene.ctx,speaks=l.who==='hero';
-    hero.src=c.hero||'assets/ui/rosie-portrait.jpg';hero.classList.toggle('dim',!speaks);
+    hero.src=heroArt(l);hero.classList.toggle('dim',!speaks);
     if(l.who==='caption'){ // 현장 안내자: 초상화 없이 자막만(양쪽 모두 어둡게)
       hero.classList.add('dim');npc.removeAttribute('src');npc.hidden=true;$('stNpcLabel').textContent='';
       $('stName').textContent=l.name||'현장 안내자';$('stName').className='npc';
@@ -40,7 +45,7 @@
   function next(){if(!scene)return;if(timer){stopTyping();$('stText').textContent=full;$('stMore').style.opacity='1';return;}if(++index>=scene.lines.length)end();else show();}
   function play(key,ctx,done){
     const lines=scenes[key];if(!lines?.length){done?.();return;}
-    queue.push({lines:lines.slice(),ctx:ctx||{},done});if(!scene)take();
+    queue.push({key,lines:lines.slice(),ctx:ctx||{},done});if(!scene)take();
   }
   function cancel(){stopTyping();queue.length=0;scene=null;root.classList.add('hidden');hero.removeAttribute('src');npc.removeAttribute('src');}
   root.addEventListener('pointerdown',e=>e.stopPropagation());

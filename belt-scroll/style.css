@@ -242,7 +242,7 @@ button:disabled{filter:grayscale(1);opacity:.52;cursor:default}button:focus-visi
 @media (orientation:portrait){#story img{height:min(44vh,70vw*1.9);bottom:25vh}#stBox{bottom:2.5vh;min-height:20vh}#stText{font-size:min(2.6vh,5vw)}}
 #story{position:fixed;z-index:120;touch-action:manipulation;isolation:isolate}
 #story img{max-width:39vw;object-fit:contain;object-position:bottom center;pointer-events:none}
-#story #stHero{height:50vh;max-width:33vw;bottom:25vh;border-radius:14px;object-fit:cover}
+#story #stHero{height:62vh;max-width:36vw;bottom:19vh;border-radius:0;object-fit:contain;object-position:bottom center}
 #story #stNpc{bottom:25vh;height:58vh}
 #stBox{z-index:2;min-height:19vh;bottom:3vh;padding-top:4.4vh}
 #stContext{display:block;font-size:1.8vh;color:#926379;margin-bottom:1vh}
