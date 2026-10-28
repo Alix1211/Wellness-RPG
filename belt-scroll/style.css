@@ -226,3 +226,26 @@ button:disabled{filter:grayscale(1);opacity:.52;cursor:default}button:focus-visi
 @media(max-height:450px){#introPanel{padding:13px 22px}#introPanel h2{font-size:22px}#introPanel #pauseDesc{margin-bottom:7px}.settings-fields{gap:5px}.settings-fields input[type=range]{height:24px;margin-bottom:3px}.vibration-row{padding:4px 0}.settings-actions{margin-top:8px}}
 
 #introPanel #pauseDesc{display:block!important}
+
+/* 대화: 기존 좌우 초상화와 하단 창 배치 이식 */
+#story{position:absolute;inset:0;z-index:40;background:rgba(40,12,36,.55);cursor:pointer}
+#story img{position:absolute;bottom:20vh;height:56vh;width:auto;filter:drop-shadow(0 1vh 1.2vh rgba(60,20,50,.45));transition:filter .2s,transform .2s}
+#story img.dim{filter:brightness(.5) saturate(.7) drop-shadow(0 1vh 1.2vh rgba(60,20,50,.45));transform:scale(.97)}
+#stHero{left:1vw}#stNpc{right:1vw}
+#stBox{position:absolute;left:3vw;right:3vw;bottom:3vh;min-height:16vh;padding:3.4vh 3.2vw 2.4vh;border-radius:2vh;background:rgba(255,246,252,.96);border:.4vh solid #e86aa8;box-shadow:0 .8vh 2vh rgba(90,30,70,.4)}
+#stName{position:absolute;left:3vw;top:-2.6vh;padding:.5vh 2.6vh;border-radius:2vh;color:#fff;font-size:2.4vh;font-weight:900}
+#stName.hero{background:#ee5a9c}#stName.npc{background:#5a8a6a}
+#stText{margin:0;font-size:2.7vh;font-weight:800;color:#5a2a46;line-height:1.45;word-break:keep-all}
+#stMore{position:absolute;right:2.4vh;bottom:1.2vh;color:#e86aa8;font-style:normal;animation:stb .8s infinite alternate}
+@keyframes stb{to{transform:translateY(.8vh)}}
+#stSkip{position:absolute;right:2vw;top:2vh;padding:.8vh 2.2vh;border-radius:2vh;border:.3vh solid #fff;background:rgba(90,30,70,.6);color:#fff;font-weight:800;font-size:2.2vh}
+@media (orientation:portrait){#story img{height:min(44vh,70vw*1.9);bottom:25vh}#stBox{bottom:2.5vh;min-height:20vh}#stText{font-size:min(2.6vh,5vw)}}
+#story{position:fixed;z-index:120;touch-action:manipulation;isolation:isolate}
+#story img{max-width:39vw;object-fit:contain;object-position:bottom center;pointer-events:none}
+#story #stHero{height:50vh;max-width:33vw;bottom:25vh;border-radius:14px;object-fit:cover}
+#story #stNpc{bottom:25vh;height:58vh}
+#stBox{z-index:2;min-height:19vh;bottom:3vh;padding-top:4.4vh}
+#stContext{display:block;font-size:1.8vh;color:#926379;margin-bottom:1vh}
+#stNpcLabel{position:absolute;right:3vw;bottom:25vh;color:#fff;font-size:2.2vh;font-weight:800;text-shadow:0 2px 5px #312033}
+#story #stSkip{z-index:3;min-height:38px}
+@media(max-height:450px){#stText{font-size:max(14px,2.7vh)}#stName{font-size:max(13px,2.4vh)}#stContext{font-size:max(11px,1.8vh)}#stSkip{font-size:13px}}

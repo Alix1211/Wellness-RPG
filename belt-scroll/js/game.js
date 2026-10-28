@@ -231,14 +231,32 @@
     game.zones=zones;WORLD_W=cursor;
   }
   function makeProps(){generateLayout();game.props=[];}
+
+  let storyBossSeen=new Set(),lastStoryBoss=null;
+  function storyContext(boss){
+    const kind=boss?.kind||WAVES.flatMap(w=>w.packs.flat()).find(k=>TYPES[k]?.boss);
+    const def=TYPES[kind],key=def?.frames?.[0]||(kind==='clubBoss'?'clubBoss_whip':kind?kind+'_idle':null);
+    return {hero:'assets/ui/rosie-portrait.jpg',portrait:ASSET[key]||ASSET[kind]||'',name:boss?.name||def?.name||'',title:GaiaCampaign.stages[activeStage].name+' · '+GaiaCampaign.stages[activeStage].route};
+  }
+  function battleStory(key,boss){
+    if(!window.BeltStory)return;
+    if(boss)lastStoryBoss=boss;
+    clearInput();if(game.mode==='playing')game.mode='dialogue';
+    BeltStory.play(key,storyContext(boss),()=>{
+      clearInput();
+      if(game.mode==='dialogue'&&!BeltStory.active){game.mode='playing';if(document.hidden)pause();}
+    });
+  }
+
   function reset(stage=activeStage,checkpoint=0){
+    window.BeltStory?.cancel();storyBossSeen=new Set();lastStoryBoss=null;
     activeStage=stage;WAVES=makePlan(stage);checkpointStart=Math.max(0,Math.min(WAVES.length-1,checkpoint));hasReported=false;
     game.hazards=[];game.castaways=[];game.regionalFX=[];game.encounterBossMax=0;
     game.seed=activeStage===13?67821+(wallet.eventRuns||0)*997:67821;game.zone=checkpointStart;game.waveLive=false;game.arrests=0;game.camera=0;game.elapsed=0;game.enemies=[];game.particles=[];game.decals=[];game.bubbles=[];game.shockwaves=[];game.skillBursts=[];game.projectiles=[];game.shake=0;game.freeze=0;game.lastAttack=null;game.nextThreatAt=0;game.nextRangedAt=0;game.transition=0;game.artParticles=[];game.artBursts=[];game.skillRings=[];game.heartBursts=[];
     makeProps();
     const startX=game.zones[checkpointStart].start+145;
     Object.assign(player,{x:startX,y:435,face:1,hp:checkpoint?Math.max(112,wallet.hp):Math.max(80,wallet.hp),maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,mp:wallet.mp??100,maxMp:100,pushCd:0,chargeCd:0,charge:null,skillPose:null,stun:0,combo:0,comboTime:0,jump:null,jumpZ:0,guard:false,down:null,slam:null,splash:null,cardGuard:0,cardDef:0,cardSpd:0,dopa:0,climaxT:0,climaxCd:0,dazeT:0});game.cardQ=[];if(window.BeltCards)BeltCards.begin(stage);
-    game.camera=Math.max(0,startX-345);clearInput();game.mode='playing';AlleyAudio.bgm('battle');hidePanels();spawnWave(checkpointStart);
+    game.camera=Math.max(0,startX-345);clearInput();game.mode='playing';AlleyAudio.bgm('battle');hidePanels();battleStory('enter');spawnWave(checkpointStart);
     toast(stage===1?'뒷골목 1 · 중간보스를 찾아 전진하세요':'뒷골목 2 · 골목 안쪽으로 진입합니다',2.6);refreshHud();
   }
   function spawnWave(zone){
@@ -262,6 +280,8 @@
       game.enemies.push({kind,name:def.name,x,y:Y_MIN+25+(i%3)*48,face:left?1:-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:def.style,attackCd:1.3+i*.4+rng()*.35,swing:0,swingStyle:def.style,colorShift:0,id:++enemySerial,slotY:(i%3-1)*27,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:rng()*Math.PI*2,captured:false,reward:0,entry:.8});
     });
     game.encounterBossMax=game.enemies.filter(e=>TYPES[e.kind].boss).reduce((n,e)=>n+e.maxHp,0);
+    const newBosses=game.enemies.filter(e=>TYPES[e.kind].boss&&!storyBossSeen.has(e.kind));
+    if(newBosses.length){newBosses.forEach(e=>storyBossSeen.add(e.kind));battleStory('boss',newBosses[0]);}
     if(packIndex>1&&!WAVES[game.zone].boss)toast('추가 인원 접근 · 주변을 확인하세요',1.5);
   }
 
@@ -670,7 +690,9 @@
     $('restart').textContent=won?'지도':'재도전';
     $('resultReturn').classList.toggle('hidden',won);
     $('restart').onclick=()=>{if(won)returnToCity();else reset(activeStage,wallet.checkpoint[activeStage]||0);};
-    showPanel($result);refreshHud();
+    refreshHud();
+    if(window.BeltStory)BeltStory.play(won?'win':'lose',storyContext(lastStoryBoss),()=>showPanel($result));
+    else showPanel($result);
   }
 
   function moveVector(){
