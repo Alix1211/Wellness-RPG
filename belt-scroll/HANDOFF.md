@@ -40,5 +40,15 @@ GPT가 만든 벨트스크롤 소스를 Claude가 이어서 확장한 것. 카�
 - 앱이 켜질 때 GitHub 릴리스 `beltscroll-web-latest`의 `update.json`(파일별 해시 목록)을 읽고, APK 안 파일과 다른 것만 `raw.githubusercontent.com`에서 받는다. 전부 받은 뒤에만 교체(원자적), 실패·오프라인이면 이전 버전/APK 그대로. 저장은 그대로 유지.
 - 구성: `android/app/src/main/java/com/gaia/beltscroll/WebUpdates.java`, `android/build_web.py`(목록 생성), `.github/workflows/beltscroll-apk.yml`(APK + 목록 게시).
 - 이를 위해 `game.js` 안의 큰 그림 묶음을 `js/game-art.js`로 분리(게임 코드 124KB만 바뀌어도 가볍게 받도록).
-- 예외: `js/mini-assets.js`(미니게임)는 업데이트 대상이 아님 — 미니게임을 고치면 APK 재설치 필요. 앱 이름·아이콘·진동 같은 앱 자체(Java) 변경도 재설치 필요.
+- 예외: `js/mini-assets.js`는 업데이트 대상이 아님. 다만 스쿼트 코드(`js/minigame_squat.js`)는 업데이트되며, 컨베이어는 10/28 사운드 점검 이후 `assets/minigame/batting_police/game.html`을 직접 읽으므로 문서도 업데이트된다. mini-assets 안에 고정된 그림·음원을 바꾸는 경우와 앱 자체(Java) 변경은 별도 대응/재설치가 필요.
 - 저장소를 비공개로 바꾸면 이 업데이트(와 카드게임 앱 업데이트)는 동작하지 않는다.
+
+
+## 2026-10-28 경찰서 미니게임 사운드 점검 (GPT)
+- 적용 브랜치: gaia-detective-assets, 대상 폴더 belt-scroll/ (카드게임 폴더는 변경하지 않음).
+- 스쿼트: 모든 난이도 음악 전용 Gain을 2배(+6.02 dB, 압축기 전단)로 변경. 쉬움 1.1→2.2, 보통/어려움 1→2. 박자 트랙 .62, 타격 .7, 음성 .55와 기존 압축기/마스터는 유지. 체감 음량은 태블릿 확인 필요.
+- 컨베이어: 내장 hit_slap/hit_punch/miss/normal/perfect/homerun 및 BGM 3곡의 파일 디코딩 정상(FFmpeg). 실제 기본 판정은 정타 hit_punch+homerun, 그 외 적중 hit_slap+normal, 실패 miss. perfect 파일은 존재하지만 기본 판정에서 별도 사용되지 않음.
+- 기존 wellness-sfx 메시지는 공통 호스트가 처리하지 않아 swing 요청이 무음이었음. 컨베이어 등록의 transformDoc에서 짧은 바람 소리를 게임 내부 Sound 경로에 연결. 이미 직접 재생하는 타격/실패 소리는 중복 추가하지 않음.
+- 자동 업데이트: 컨베이어 docUrl을 업데이트되는 원본 문서로 전환, 공통 실행부는 선택적 transformDoc 적용 지원. mini-assets의 오래된 문서에 고정되지 않도록 함. 기존 미니게임 등록에는 영향 없음.
+- 검증: JS 및 iframe 내부 스크립트 문법 검사, 내장 음원 9개 디코딩, AudioContext 모형으로 효과/음성 7개 및 BGM 3곡 시작 경로, 스쿼트 3난이도 음악 2배/박자 유지 확인. 이 환경에 브라우저 실행 파일이 없어 실제 브라우저·APK 청취는 미확인. 실제 기기 음량/일시정지·재개는 사용자 확인 필요.
+- 다음: 자동 빌드가 beltscroll-web-latest/update.json 게시 후 앱 완전 종료→재실행하여 음악과 효과음 확인. 기기 볼륨 균형 피드백에 따라 음악만 추가 조정.

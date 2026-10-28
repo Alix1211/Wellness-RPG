@@ -123,7 +123,7 @@ async function begin(){
  await Promise.all([ready,fxReady,prep(names)]);warm();
  stopAll();
  t0=ac.currentTime+.25;
- if(decoded[RULE.bgm]){try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=decoded[RULE.bgm];s.loop=true;gn.gain.value=RULE.bgmg||1;s.connect(gn).connect(master);s.start(t0);sched.push(s);}catch{}}
+ if(decoded[RULE.bgm]){try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=decoded[RULE.bgm];s.loop=true;gn.gain.value=(RULE.bgmg||1)*2; /* BGM만 +6.02 dB (진폭 2배), 박자·효과음 유지 */s.connect(gn).connect(master);s.start(t0);sched.push(s);}catch{}}
  if(decoded[RULE.key]){try{const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=decoded[RULE.key];s.loop=true;gn.gain.value=.62;s.connect(gn).connect(master);s.start(t0);bed=s;}catch{}}
  for(const e of events)e.time=beatT(e.beat);
  state='play';paused=false;$('#veil').hidden=true;$('#tier').textContent='스쿼트 · '+RULE.name;

@@ -26,6 +26,7 @@
     const def = cur.def, cfg = def.cfg(cur.opts), c0 = cur;
     getDoc(def).then(doc => {
       if (cur !== c0) return;
+      if (def.transformDoc) doc = def.transformDoc(doc);
       const boot = '<script>window.GAIA_SOUND_SOURCES=' + JSON.stringify(def.sounds ? def.sounds() : {}) + ';<\/script>';
       fr.srcdoc = doc.replace('/*LIFE_CONFIG*/', JSON.stringify(cfg).replace(/</g, '\\u003c')).replace('<meta', boot + '<meta');
       root.classList.remove('hidden');
