@@ -1,6 +1,7 @@
 /* Original city artwork and a restrained rose-gold overlay. */
 :root{color-scheme:light;font-family:'Noto Sans KR','Malgun Gothic',system-ui,sans-serif;color:#563748}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;touch-action:none;background:#2b2434}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;width:100%;height:100%;overflow:hidden;touch-action:none;background:#2b2434;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text}
 button{font:inherit;font-weight:800;cursor:pointer;touch-action:none;-webkit-tap-highlight-color:transparent}
 button:disabled{filter:grayscale(1);opacity:.52;cursor:default}button:focus-visible{outline:3px solid #80e1c1;outline-offset:3px}
 .hidden{display:none!important}
@@ -127,7 +128,7 @@ button:disabled{filter:grayscale(1);opacity:.52;cursor:default}button:focus-visi
 @media (orientation:portrait){#mapInfo{width:min(40vh,58vw)}
 #mapFs{right:1.6vh;top:7vh}
 #mapHint{top:12.5vh}}
-#mapPan::before{content:"";position:absolute;left:-4000px;top:-3000px;width:11000px;height:8000px;background:var(--map-grass,var(--sk-grass)) 0 0/836px 836px repeat;pointer-events:none}
+#mapPan::before{content:"";position:absolute;left:-4000px;top:-3000px;width:11000px;height:8000px;background:#9bc765 var(--map-grass,none) 0 0/384px 384px repeat;pointer-events:none}
 #cityTop{display:none!important}
 #map #mapInfo{display:block}
 
