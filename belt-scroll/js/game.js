@@ -294,6 +294,7 @@
       const hp=Math.round(def.hp*(boss?(activeStage===13?.60:1)*(BOSS_HP[kind]??BOSS_HP_DEFAULT):GaiaCampaign.stages[activeStage].hpScale)*(game.hpMul||1));
       game.enemies.push({kind,name:def.name,x,y:Y_MIN+25+(i%3)*48,face:left?1:-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:def.style,attackCd:1.3+i*.4+rng()*.35,swing:0,swingStyle:def.style,colorShift:0,id:++enemySerial,slotY:(i%3-1)*27,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:rng()*Math.PI*2,captured:false,reward:0,entry:.8});
     });
+    game.reinfT=undefined;
     game.encounterBossMax=game.enemies.filter(e=>TYPES[e.kind].boss).reduce((n,e)=>n+e.maxHp,0);
     storyPackBosses=game.enemies.filter(e=>TYPES[e.kind].boss).map(e=>({kind:e.kind,name:e.name}));
     const newBosses=game.enemies.filter(e=>TYPES[e.kind].boss&&!storyBossSeen.has(e.kind));
@@ -515,12 +516,14 @@
             if(other===e||other.hp<=0||other.air||other.floorTime>0||flight.contacts.has(other.id))continue;
             if(Math.abs(other.x-e.x)>62||Math.abs(other.y-e.y)>53)continue;
             flight.contacts.add(other.id);
-            const bump=flight.depth===0?12:8;
+            const otherBoss=TYPES[other.kind].boss;
+            const bump=otherBoss?Math.round(other.maxHp*(flight.depth===0?.06:.04)):flight.depth===0?12:8;
             other.hp=Math.max(0,other.hp-bump);
             other.hurt=.25;other.invuln=.22;other.windup=0;
             if(other.hp===0)defeatEnemy(other,flight.dir);
+            else if(otherBoss){other.stun=Math.max(other.stun,.8);other.swing=0;other.closeWind=0;other.barrageWind=0;other.volley=0;}
             else launchEnemy(other,flight.dir,flight.distance*.78,flight.depth+1);
-            particle(other.x,other.y-125,'퍽!','#ffe9a9',25);
+            particle(other.x,other.y-125,otherBoss?'쾅!!':'퍽!','#ffe9a9',otherBoss?38:25);
             game.shake=Math.max(game.shake,5);
           }
         }
@@ -576,6 +579,90 @@
     if(e.kind==='fedora')return dist<158?'whirlwind':'dagger';
     if(e.kind==='redBoss')return dist<144?'paddle':'bullet';
     return TYPES[e.kind].style;
+  }
+  // ---- 보스 압박: 탄막 · 근접 밀쳐내기 · 졸개 증원 (수치는 임시) ----
+  function bossReady(e){return e.hp>0&&!e.exit&&!e.air&&e.floorTime<=0&&e.stun<=0&&e.bind<=0&&!(e.entry>0);}
+  function fireBarrage(e,wave){
+    const def=TYPES[e.kind],wl=worldLevel(),face=e.face;
+    const n=3+Math.min(2,wl)+(e.hp<e.maxHp*.5?1:0);
+    const sx=e.x+face*def.drawH*.38,sy=e.y-def.drawH*.67;
+    const speed=265+wl*16,t=Math.max(.35,Math.abs(player.x-sx)/speed);
+    const baseVy=(player.y-108-sy)/t,gap=wave%2?42:60;
+    for(let i=0;i<n;i++){
+      const k=i-(n-1)/2;
+      game.projectiles.push({kind:'bullet',x:sx,y:sy,vx:face*speed,vy:clamp(baseVy+k*gap,-270,270),face,age:0,ttl:2.7,sourceX:e.x,damage:Math.max(5,Math.round(def.attack*.5))});
+    }
+    comicPop(sx,sy,'flare',{size:96,life:.24,dir:face,behind:true});
+    AlleyAudio.weapon('bullet');game.shake=Math.max(game.shake,3);
+  }
+  function updateBossPressure(dt){
+    if(!game.waveLive)return;
+    const wl=worldLevel();
+    for(const e of game.enemies){
+      const def=TYPES[e.kind];if(!def.boss||!bossReady(e))continue;
+      if(e.barrageCd===undefined){e.barrageCd=2.2;e.closeCd=3;e.barrageWind=0;e.volley=0;e.barrageNo=0;}
+      e.barrageCd-=dt;e.closeCd-=dt;
+      const dx=player.x-e.x,dy=player.y-e.y,busy=e.windup>0||e.swing>0||e.rush||e.followup||e.strikes;
+      // 가까이 붙으면 밀쳐내기 (예고 후 발동)
+      if(e.closeWind>0){
+        e.closeWind-=dt;
+        if(e.closeWind<=0){
+          comicPop(e.x+Math.sign(dx||1)*60,e.y-def.drawH*.4,'swat',{size:130,life:.3,dir:Math.sign(dx||1)});
+          game.shake=Math.max(game.shake,8);AlleyAudio.weapon('whirlwind');
+          if(Math.abs(player.x-e.x)<150&&Math.abs(player.y-e.y)<62&&player.jumpZ<20)damagePlayer(Math.max(8,Math.round(def.attack*.8)),e.x,'heavy');
+        }
+        continue;
+      }
+      if(!busy&&e.closeCd<=0&&Math.abs(dx)<125&&Math.abs(dy)<58){
+        e.closeWind=.5;e.closeCd=Math.max(2.6,4.2-wl*.3);e.face=Math.sign(dx)||e.face;
+        particle(e.x,e.y-def.drawH-8,'!','#ff5a5a',44);continue;
+      }
+      // 연속 사격: 두 번째 묶음
+      if(e.volley>0){
+        e.barrageWind-=dt;
+        if(e.barrageWind<=0){e.volley--;e.face=Math.sign(dx)||e.face;fireBarrage(e,++e.barrageNo);e.barrageWind=.55;}
+        continue;
+      }
+      // 멀리 있을 때 탄막
+      if(!busy&&e.barrageCd<=0&&(Math.abs(dx)>150||Math.abs(dy)>70)){
+        if(e.barrageWind<=0){e.barrageWind=.55;e.face=Math.sign(dx)||e.face;particle(e.x,e.y-def.drawH-8,'!','#ffb347',44);comicPop(e.x+e.face*def.drawH*.38,e.y-def.drawH*.67,'flare',{size:60,life:.5,dir:e.face,behind:true});continue;}
+      }
+      if(e.barrageWind>0&&e.volley===0){
+        e.barrageWind-=dt;
+        if(e.barrageWind<=0){
+          e.face=Math.sign(dx)||e.face;fireBarrage(e,++e.barrageNo);
+          const rage=e.hp<e.maxHp*.6||wl>=1;
+          if(rage){e.volley=1;e.barrageWind=.55;}
+          e.barrageCd=Math.max(2.3,3.6-wl*.25)*(e.hp<e.maxHp*.5?.8:1);
+        }
+      }
+    }
+  }
+  function bossMinionPool(){
+    if(game.reinfPool&&game.reinfPoolStage===activeStage)return game.reinfPool;
+    const all=[...new Set(WAVES.flatMap(w=>w.packs.flat()).filter(k=>TYPES[k]&&!TYPES[k].boss))];
+    const melee=all.filter(k=>!isRangedStyle(TYPES[k].style));
+    game.reinfPool=melee.length?melee:all;game.reinfPoolStage=activeStage;return game.reinfPool;
+  }
+  function updateReinforcements(dt){
+    if(!game.waveLive||game.mode!=='playing')return;
+    const live=e=>e.hp>0&&!e.exit;
+    const bossAlive=game.enemies.some(e=>TYPES[e.kind].boss&&live(e));
+    if(!bossAlive){
+      for(const e of game.enemies)if(e.reinf&&live(e)){e.hp=0;defeatEnemy(e,1);}
+      game.reinfT=undefined;return;
+    }
+    if(game.reinfT===undefined)game.reinfT=5.5;
+    game.reinfT-=dt;if(game.reinfT>0)return;
+    const wl=worldLevel();game.reinfT=Math.max(3.6,6.2-wl*.4);
+    const alive=game.enemies.filter(e=>!TYPES[e.kind].boss&&live(e)).length;
+    if(alive>=3+Math.min(1,wl))return;
+    const pool=bossMinionPool();if(!pool.length)return;
+    const kind=pool[Math.floor(Math.random()*pool.length)],def=TYPES[kind],z=game.zones[game.zone];
+    let x=player.x+(Math.random()<.5?1:-1)*(380+Math.random()*60);
+    x=clamp(x,z.start+80,z.end-95);if(Math.abs(x-player.x)<220)x=clamp(player.x+(player.x<(z.start+z.end)/2?1:-1)*400,z.start+80,z.end-95);
+    const hp=Math.round(def.hp*GaiaCampaign.stages[activeStage].hpScale*(game.hpMul||1));
+    game.enemies.push({kind,name:def.name,x,y:Y_MIN+25+Math.floor(Math.random()*3)*48,face:Math.sign(player.x-x)||-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:def.style,attackCd:1.4+Math.random()*.5,swing:0,swingStyle:def.style,colorShift:0,id:++enemySerial,slotY:(Math.floor(Math.random()*3)-1)*27,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:Math.random()*Math.PI*2,captured:false,reward:0,entry:.6,reinf:true});
   }
   function jump(){
     if(game.mode!=='playing'||player.hp<=0||player.stun>0||player.jump||player.down||player.guard||player.attack||player.slam||player.splash||player.charge)return;
@@ -798,6 +885,7 @@
     }
     updateEnemyFlights(dt);
     updateEnemyExits(dt);
+    updateBossPressure(dt);updateReinforcements(dt);
     for(const e of game.enemies){
       if(e.hp<=0)continue;
       if(e.entry>0){e.entry=Math.max(0,e.entry-dt);continue;}
