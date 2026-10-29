@@ -70,7 +70,7 @@
     const im=new Image();images[key]=im;im.onload=finishAsset;im.onerror=()=>{assetsFailed.push(key);finishAsset();};im.src=src;
   }
 
-  const player = {x:148,y:428,face:1,hp:160,maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,mp:100,maxMp:100,pushCd:0,chargeCd:0,charge:null,skillPose:null,anim:0,stun:0,combo:0,comboTime:0,jump:null,jumpZ:0,crouch:false,crouchHold:0,crouchBlend:0,dash:null,dashLink:null,dashFollow:null,dashCd:0,down:null,slam:null,splash:null};
+  const player = {x:148,y:428,face:1,hp:160,maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,mp:100,maxMp:100,pushCd:0,chargeCd:0,charge:null,skillPose:null,anim:0,stun:0,combo:0,comboTime:0,jump:null,jumpZ:0,grab:null,grabCd:2,crouch:false,crouchHold:0,crouchBlend:0,dash:null,dashLink:null,dashFollow:null,dashCd:0,down:null,slam:null,splash:null};
   const game = {mode:'menu',oldMode:'menu',hazards:[],castaways:[],regionalFX:[],zone:0,waveLive:false,arrests:0,seed:Date.now(),camera:0,elapsed:0,particles:[],decals:[],bubbles:[],props:[],shockwaves:[],skillBursts:[],projectiles:[],shake:0,freeze:0,tip:'',tipTime:0,enemies:[],lastAttack:null,nextThreatAt:0,nextRangedAt:0};
   let toastTimer=0, audioCtx=null;
   const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
@@ -113,6 +113,7 @@
     showPanel($intro);
   }
   function returnToCity(){
+    releaseGrab(false);
     const report=game.mode==='won';
     clearInput();if(!hasReported){wallet.mp=player.mp;wallet.hp=Math.max(1,player.hp);wallet.arrests+=game.arrests;hasReported=true;}save();
     game.mode='city';hidePanels();DetectiveApp.city();
@@ -286,7 +287,7 @@
     game.seed=activeStage===13?67821+(wallet.eventRuns||0)*997:67821;game.zone=checkpointStart;game.waveLive=false;game.arrests=0;game.camera=0;game.elapsed=0;game.enemies=[];game.particles=[];game.decals=[];game.bubbles=[];game.shockwaves=[];game.skillBursts=[];game.projectiles=[];game.shake=0;game.freeze=0;game.lastAttack=null;game.nextThreatAt=0;game.nextRangedAt=0;game.transition=0;game.artParticles=[];game.artBursts=[];game.skillRings=[];game.heartBursts=[];
     makeProps();
     const startX=game.zones[checkpointStart].start+145;
-    Object.assign(player,{x:startX,y:435,face:1,hp:checkpoint?Math.max(112,wallet.hp):Math.max(80,wallet.hp),maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,mp:wallet.mp??100,maxMp:100,pushCd:0,chargeCd:0,charge:null,skillPose:null,stun:0,combo:0,comboTime:0,jump:null,jumpZ:0,crouch:false,crouchHold:0,crouchBlend:0,dash:null,dashLink:null,dashFollow:null,dashCd:0,down:null,slam:null,splash:null,cardGuard:0,cardDef:0,cardSpd:0,dopa:0,climaxT:0,climaxCd:0,dazeT:0});game.cardQ=[];if(window.BeltCards)BeltCards.begin(stage);
+    Object.assign(player,{x:startX,y:435,face:1,hp:checkpoint?Math.max(112,wallet.hp):Math.max(80,wallet.hp),maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,mp:wallet.mp??100,maxMp:100,pushCd:0,chargeCd:0,charge:null,skillPose:null,stun:0,combo:0,comboTime:0,jump:null,jumpZ:0,grab:null,grabCd:2,crouch:false,crouchHold:0,crouchBlend:0,dash:null,dashLink:null,dashFollow:null,dashCd:0,down:null,slam:null,splash:null,cardGuard:0,cardDef:0,cardSpd:0,dopa:0,climaxT:0,climaxCd:0,dazeT:0});game.cardQ=[];if(window.BeltCards)BeltCards.begin(stage);
     game.camera=Math.max(0,startX-345);clearInput();game.mode='playing';AlleyAudio.bgm('battle');hidePanels();if(storyRetry)battleStory('common.retry');battleStory('enter');spawnWave(checkpointStart);
     toast(stage===1?'뒷골목 1 · 중간보스를 찾아 전진하세요':'뒷골목 2 · 골목 안쪽으로 진입합니다',2.6);refreshHud();
   }
@@ -346,7 +347,7 @@
   };
   const slamMove={damage:23,radiusX:169,radiusY:76,kb:139,stagger:.82,dropSpeed:450,recovery:.37};
   function attack(kind){
-    if(game.mode!=='playing'||player.hp<=0||player.splash)return;
+    if(game.mode!=='playing'||player.hp<=0||player.splash||player.grab)return;
     const wasDashing=!!(player.dash||player.dashLink);
     if(wasDashing){if(player.stun>0||player.charge||player.skillPose||player.attackCooldown>0)return;continueDash(kind==='kick'?'hip':'hug');}
     if(kind==='punch'&&player.jump&&player.jumpZ>18&&player.stun===0&&!player.slam){
@@ -503,6 +504,7 @@
     comicPop(player.x,player.y-119,'bigBang',{size:128,life:.56});
   }
   function damagePlayer(d,sourceX,kind='normal'){
+    if(player.grab)return false;
     if(player.hp<=0||game.mode!=='playing')return false;
     if(player.cardGuard>0){particle(player.x,player.y-120,'◇','#bbfff4',24);return false;}
     if(player.cardDef>0)d=d*.35;
@@ -588,7 +590,48 @@
   function updateEnemyExits(dt){
     for(const e of game.enemies)if(e.exit)e.exit.age=Math.min(e.exit.duration,e.exit.age+dt);
   }
+  const GRABBERS=new Set(['punk','boxer','goth','hippie','clubPunk','bouncer','breaker']);
+  function beginGrab(e,pose){
+    if(game.mode!=='playing'||!GRABBERS.has(e.kind)||player.grab||player.grabCd>0||player.hp<=0||player.invuln>0||player.jump||player.down||player.slam||player.splash||player.dash||player.charge||e.hp<=0||e.exit||e.air||e.floorTime>0||e.stun>0||e.hurt>0||e.bind>0||Math.abs(e.x-player.x)>78||Math.abs(e.y-player.y)>58)return false;
+    clearInput();player.attack=null;player.skillPose=null;player.attackCooldown=0;player.stun=0;player.hurt=0;player.dazeT=0;
+    const dir=Math.sign(e.x-player.x)||player.face;game.grabCount=(game.grabCount||0)+1;
+    player.grab={enemy:e,pose:pose||((game.grabCount%2)?'hip':'low'),dir,age:0,taps:0,need:6,x:player.x,y:player.y};
+    e.holdingPlayer=true;e.face=-dir;e.x=clamp(player.x+dir*62,game.zones[game.zone].start+55,game.zones[game.zone].end-60);e.y=clamp(player.y-8,Y_MIN,Y_MAX);e.windup=0;e.swing=0;e.followup=null;e.strikes=null;e.rush=null;e.setupPush=null;e.walking=false;
+    game.freeze=0;return true;
+  }
+  function releaseGrab(escaped=false){
+    const g=player.grab;if(!g)return;
+    g.enemy.holdingPlayer=false;g.enemy.attackCd=Math.max(g.enemy.attackCd||0,1);g.enemy.stun=Math.max(g.enemy.stun||0,escaped?.45:0);
+    player.grab=null;player.grabCd=9;player.invuln=Math.max(player.invuln,.65);player.stun=0;
+    if(escaped){const z=game.zones[game.zone];player.x=clamp(player.x-g.dir*24,Math.max(55,z.start+35),z.end-35);comicPop(player.x,player.y-100,'speed',{size:65,life:.24,dir:-g.dir});}
+  }
+  function mashGrab(){
+    if(game.mode!=='playing'||!player.grab)return false;
+    const g=player.grab;g.taps=Math.min(g.need,g.taps+1);
+    if(g.age>=1&&g.taps>=g.need)releaseGrab(true);
+    return true;
+  }
+  function updateGrab(dt){
+    const g=player.grab;if(!g)return;
+    const e=g.enemy;
+    if(!game.enemies.includes(e)||e.hp<=0||e.exit||e.air||e.floorTime>0||e.stun>0||e.hurt>0||e.bind>0){releaseGrab(false);return;}
+    g.age+=dt;player.x=g.x;player.y=g.y;player.crouch=false;player.crouchHold=0;player.crouchBlend=0;player.attack=null;player.dash=null;player.dashFollow=null;player.dashLink=null;player.jumpZ=0;
+    if(g.age>=1&&g.taps>=g.need)releaseGrab(true);
+  }
+  function drawGrab(){
+    const g=player.grab;if(!g)return;
+    const x=player.x-game.camera,h=g.pose==='hip'?169:112,cy=player.y-h-12,t=g.age*8;
+    for(let j=0;j<3;j++){const a=t+j*Math.PI*2/3;tinyHeart(x+Math.cos(a)*28,cy+Math.sin(a)*8,7,Math.sin(a)<0?.55:1);}
+    // Gloved grip markers on the upper arms, away from the pelvis.
+    ctx.save();ctx.lineCap='round';
+    for(const side of [-1,1]){const gx=x+g.dir*10+side*12,gy=player.y-(g.pose==='hip'?112:73)+side*5;
+      ctx.strokeStyle='#392c38';ctx.lineWidth=5;for(let j=0;j<3;j++){ctx.beginPath();ctx.moveTo(gx-3,gy-4+j*4);ctx.quadraticCurveTo(gx+6,gy-4+j*4,gx+5,gy+j*4);ctx.stroke();}
+      ctx.strokeStyle='#d8a58e';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(gx-2,gy-5);ctx.lineTo(gx+3,gy-4);ctx.stroke();}
+    ctx.font='bold 14px system-ui';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#65475f';ctx.fillStyle='#fff1f7';
+    const label='탈출 · 버튼 연타 '+g.taps+' / '+g.need,hudY=Math.min(cy-20,g.enemy.y-TYPES[g.enemy.kind].drawH-40);ctx.strokeText(label,x,hudY);ctx.fillText(label,x,hudY);ctx.restore();
+  }
   function hurtPlayer(e){
+    if(beginGrab(e))return;
     const d=Math.max(2,TYPES[e.kind].attack-(e.powerDown>0?3:0));
     // Ordinary enemy blows should not make Rozie fall over every second.
     damagePlayer(d,e.x,d>=10&&Math.random()<.20?'heavy':'normal');
@@ -703,18 +746,18 @@
     game.enemies.push({kind,name:def.name,x,y:Y_MIN+25+Math.floor(Math.random()*3)*48,face:Math.sign(player.x-x)||-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:def.style,attackCd:1.4+Math.random()*.5,swing:0,swingStyle:def.style,colorShift:0,id:++enemySerial,slotY:(Math.floor(Math.random()*3)-1)*27,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:Math.random()*Math.PI*2,captured:false,reward:0,entry:.6,reinf:true});
   }
   function jump(){
-    if(game.mode!=='playing'||player.hp<=0||player.stun>0||player.jump||player.down||player.crouch&&!player.dash||player.attack||player.slam||player.splash||player.charge)return;
+    if(game.mode!=='playing'||player.hp<=0||player.grab||player.stun>0||player.jump||player.down||player.crouch&&!player.dash||player.attack||player.slam||player.splash||player.charge)return;
     const fromDash=!!(player.dash||player.dashLink);if(fromDash)continueDash('jump');
     player.jump={age:0,duration:.88,fromDash};player.jumpZ=0;AlleyAudio.hero('jump');
   }
   // 임시: 버튼을 떼어도 0.38초 앉기 유지, 전환 0.22초/0.18초. 공격 입력은 즉시 허용.
   function syncCrouch(){
-    const free=!player.dash&&!player.dashFollow&&!player.charge&&!player.jump&&!player.down&&!player.attack&&!player.slam&&!player.splash&&player.stun===0&&player.hp>0;
+    const free=!player.grab&&!player.dash&&!player.dashFollow&&!player.charge&&!player.jump&&!player.down&&!player.attack&&!player.slam&&!player.splash&&player.stun===0&&player.hp>0;
     player.crouch=!!(free&&(input.crouch||player.crouchHold>0||player.crouchBlend>.02));
   }
   function updateCrouch(dt){
     player.crouchHold=input.crouch?.38:Math.max(0,(player.crouchHold||0)-dt);
-    const blocked=player.dash||player.dashFollow||player.charge||player.jump||player.down||player.slam||player.splash||player.stun>0||player.hp<=0;
+    const blocked=player.grab||player.dash||player.dashFollow||player.charge||player.jump||player.down||player.slam||player.splash||player.stun>0||player.hp<=0;
     if(blocked){player.crouchHold=0;player.crouchBlend=0;}
     else if(player.attack){player.crouchBlend=['split','headbutt'].includes(player.attack.kind)?1:0;}
     else{const down=input.crouch||player.crouchHold>0;player.crouchBlend=clamp((player.crouchBlend||0)+(down?dt/.22:-dt/.18),0,1);}
@@ -727,7 +770,7 @@
   }
   // 임시: 0.18초 / 160px 대쉬, 0.55초 재사용. 입력 대기나 공격 예약 없음.
   function dash(){
-    if(game.mode!=='playing'||player.hp<=0||player.stun>0||player.attack||player.attackCooldown>0||player.jump||player.down||player.slam||player.splash||player.charge||player.skillPose||player.dash||player.dashCd>0)return false;
+    if(game.mode!=='playing'||player.hp<=0||player.grab||player.stun>0||player.attack||player.attackCooldown>0||player.jump||player.down||player.slam||player.splash||player.charge||player.skillPose||player.dash||player.dashCd>0)return false;
     let [dx,dy]=moveVector();const n=Math.hypot(dx,dy);if(n>.2){dx/=n;dy/=n;}else{dx=player.face;dy=0;}
     if(Math.abs(dx)>.1)player.face=Math.sign(dx);
     player.crouch=false;player.crouchHold=0;player.crouchBlend=0;player.dashFollow=null;player.dashLink=null;player.dash={age:0,duration:.18,dx,dy,dir:player.face,fromX:player.x,fromY:player.y};player.dashCd=.55;
@@ -742,7 +785,7 @@
   }
 
   const SKILLS={pushCost:18,pushCooldown:3,chargeCost:25,chargeCooldown:5,maxCharge:3,maxStored:100};
-  function canSkill(){return game.mode==='playing'&&player.hp>0&&!player.down&&!player.jump&&!player.slam&&!player.splash&&!player.dash&&!player.dashFollow&&player.stun<=0&&!player.charge;}
+  function canSkill(){return game.mode==='playing'&&player.hp>0&&!player.grab&&!player.down&&!player.jump&&!player.slam&&!player.splash&&!player.dash&&!player.dashFollow&&player.stun<=0&&!player.charge;}
   function pushSkill(){
     return false; // 하트 속박 스킬은 쓰지 않아 제거(케인 지시)
     if(!canSkill()||player.mp<SKILLS.pushCost||player.pushCd>0)return false;
@@ -854,7 +897,7 @@
     wallet.hp=player.hp;wallet.mp=player.mp;refreshHud();return true;
   }
   function finish(won){
-    if(hasReported)return;clearInput();game.mode=won?'won':'lost';hasReported=true;AlleyAudio.pause();AlleyAudio.effect(won?'victory':'defeat',.38);
+    if(hasReported)return;releaseGrab(false);clearInput();game.mode=won?'won':'lost';hasReported=true;AlleyAudio.pause();AlleyAudio.effect(won?'victory':'defeat',.38);
     DetectiveApp.result({won,stage:activeStage,hp:player.hp,mp:player.mp,arrests:game.arrests,elapsed:game.elapsed});
     $('resultKicker').textContent='';
     $('resultTitle').textContent=won?'체포 완료':'잠깐 휴식';
@@ -888,6 +931,7 @@
     player.comboTime=Math.max(0,player.comboTime-dt);if(player.comboTime===0&&player.combo!==0){player.combo=0;refreshHud();}
     game.shake=Math.max(0,game.shake-dt*21);game.freeze=Math.max(0,game.freeze-dt);
     if(player.dashLink){player.dashLink.life-=dt;if(player.dashLink.life<=0||player.stun>0||input.crouch)player.dashLink=null;}
+    player.grabCd=Math.max(0,(player.grabCd||0)-dt);updateGrab(dt);
     updateCrouch(dt);
     player.dashCd=Math.max(0,(player.dashCd||0)-dt);
     if(input.dash){input.dash=false;dash();}
@@ -962,7 +1006,7 @@
     syncCrouch();
     // Only the actual, visible stage boundary is closed during a live wave.
     // The old end-105 limit stranded Rozie while ranged enemies kept moving.
-    if(player.stun===0&&!dashing&&!(player.attack&&(moves[player.attack.kind].bothSides||moves[player.attack.kind].setup))&&player.attack?.kind!=='headbutt'&&!player.crouch&&!player.slam&&!player.splash&&!player.charge){const limit=game.waveLive?game.zones[game.zone].end-35:WORLD_W-80;
+    if(player.stun===0&&!player.grab&&!dashing&&!(player.attack&&(moves[player.attack.kind].bothSides||moves[player.attack.kind].setup))&&player.attack?.kind!=='headbutt'&&!player.crouch&&!player.slam&&!player.splash&&!player.charge){const limit=game.waveLive?game.zones[game.zone].end-35:WORLD_W-80;
       player.x=clamp(player.x+dx*216*dt*(player.cardSpd>0?1.5:1),Math.max(55,game.zones[Math.max(0,game.zone-1)].start+35),limit);
       player.y=clamp(player.y+dy*169*dt*(player.cardSpd>0?1.5:1),Y_MIN,Y_MAX);
     }
@@ -971,6 +1015,7 @@
     updateBossPressure(dt);updateReinforcements(dt);
     for(const e of game.enemies){
       if(e.hp<=0)continue;
+      if(e.holdingPlayer){e.walking=false;continue;}
       if(e.entry>0){e.entry=Math.max(0,e.entry-dt);continue;}
       const previousX=e.x,previousY=e.y;
       e.walking=false;e.motionPhase=(e.motionPhase||0)+dt*1.6;
@@ -1653,7 +1698,7 @@
     // The illustration remains ONE contiguous silhouette in every frame.
     // A waist-sliced puppet left a naked seam when the two halves rotated.
     // Entire-body timing/footside squash is enough to give each foe character.
-    if(unit.air||unit.floorTime>0||unit.exit){ctx.drawImage(img,-w/2,-h,w,h);return;}
+    if(unit.holdingPlayer||unit.air||unit.floorTime>0||unit.exit){ctx.drawImage(img,-w/2,-h,w,h);return;}
     const beat=Math.sin(unit.motionPhase||0),walking=unit.walking;
     const rest=Math.sin(game.elapsed*1.65+unit.id*1.9);
     let shift=0,lift=0,lean=0,scaleX=1,scaleY=1;
@@ -1697,6 +1742,7 @@
     ctx.drawImage(img,-w/2,-h,w,h);ctx.restore();
   }
   function drawDaze(u,hero){
+    if(hero&&player.grab)return;
     const on=hero?(player.dazeT>0&&player.hp>0):(u.hp>0&&u.stun>.55&&!u.air&&!(u.floorTime>0)&&!u.exit);
     if(!on)return;
     const x=u.x-game.camera,h=hero?169:TYPES[u.kind].drawH,t=game.elapsed*5,cy=u.y-h-8;
@@ -1728,7 +1774,7 @@
     const art=!hero&&!unit.exit?ART[unit.kind]:null;
     const flying=!!(art&&(unit.air||unit.floorTime>0)&&artOk(art.fly));
     // 두번째 동작 이미지와 번갈아: 제자리 움짤
-    if(art&&!flying&&!alternatePose&&!unit.air&&!(unit.floorTime>0)&&!(unit.swing>0||unit.windup>0)&&artOk(art.alt)&&Math.floor(game.elapsed*3.6+unit.id*.37)%2===1)img=art.alt;
+    if(art&&!unit.holdingPlayer&&!flying&&!alternatePose&&!unit.air&&!(unit.floorTime>0)&&!(unit.swing>0||unit.windup>0)&&artOk(art.alt)&&Math.floor(game.elapsed*3.6+unit.id*.37)%2===1)img=art.alt;
     if(unit.kind==='whip')unit.hideRig=flying||img===art?.alt||!!window.EnemyWalk?.canDraw(unit,images); // 새 컷엔 채찍이 그려져 있어서 물리 밧줄은 숨김
     if(!img||!(img.naturalWidth||img.width))return;
     const x=unit.x-game.camera,groundY=unit.y;
@@ -1906,7 +1952,7 @@
     }
     drawComicDecals(true);drawWeaponRigs();
     const objects=[...(game.breakables||[]).map(b=>({y:b.y,draw:()=>drawBreakable(b)})),...(game.pickups||[]).map(p=>({y:p.y+1,draw:()=>drawPickup(p)})),...game.props.map(p=>({y:p.y,draw:()=>drawProp(p)})),...game.enemies.filter(e=>e.hp>0||e.air||e.floorTime>0||e.exit).map(e=>({y:e.y,draw:()=>{drawFighter(e);drawDaze(e,false);}})),{y:player.y,draw:()=>{drawFighter(player,true);drawDaze(player,true);}}];
-    objects.sort((a,b)=>a.y-b.y);for(const o of objects)o.draw();
+    objects.sort((a,b)=>a.y-b.y);for(const o of objects)o.draw();drawGrab();
     for(const p of game.projectiles)drawProjectile(p);
     for(const s of game.skillBursts){
       if(s.age<0)continue;
@@ -1949,12 +1995,12 @@
   // crouch remains active only while held; dash is a one-shot. Two M-powered skills use separate controls.
   for(const key of ['punch','kick','jump','crouch','dash']){
     const el=$(key);const release=()=>{if(key!=='jump'&&key!=='dash')input[key]=false;if(key==='kick')slamKickLock=false;el.classList.remove('pressed');};
-    el.addEventListener('pointerdown',e=>{e.preventDefault();el.setPointerCapture(e.pointerId);input[key]=true;if(key==='crouch')player.crouchHold=.38;if(key==='punch'||key==='kick')queuedAttack[key]=true;el.classList.add('pressed');});
+    el.addEventListener('pointerdown',e=>{e.preventDefault();el.setPointerCapture(e.pointerId);if(player.grab){mashGrab();input[key]=false;el.classList.add('pressed');return;}input[key]=true;if(key==='crouch')player.crouchHold=.38;if(key==='punch'||key==='kick')queuedAttack[key]=true;el.classList.add('pressed');});
     for(const ev of ['pointerup','pointercancel','lostpointercapture'])el.addEventListener(ev,release);
   }
-  $('pushSkill').addEventListener('pointerdown',e=>{e.preventDefault();pushSkill();});
+  $('pushSkill').addEventListener('pointerdown',e=>{e.preventDefault();if(player.grab){mashGrab();return;}pushSkill();});
   let chargePointer=null;
-  $('chargeSkill').addEventListener('pointerdown',e=>{e.preventDefault();if(chargePointer!==null)return;chargePointer=e.pointerId;e.currentTarget.setPointerCapture(e.pointerId);beginCharge();});
+  $('chargeSkill').addEventListener('pointerdown',e=>{e.preventDefault();if(player.grab){mashGrab();return;}if(chargePointer!==null)return;chargePointer=e.pointerId;e.currentTarget.setPointerCapture(e.pointerId);beginCharge();});
   $('chargeSkill').addEventListener('pointerup',e=>{if(e.pointerId===chargePointer){chargePointer=null;releaseCharge();}});
   for(const event of ['pointercancel','lostpointercapture'])$('chargeSkill').addEventListener(event,e=>{if(e.pointerId===chargePointer){chargePointer=null;cancelCharge();}});
   const joy=$('joystick'),stick=$('stick');
@@ -1976,6 +2022,7 @@
     if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();
     held.add(e.code);
     if(e.repeat)return;
+    if(player.grab&&['KeyJ','KeyK','Space','ShiftLeft','ShiftRight','KeyL','KeyQ','KeyE'].includes(e.code)){mashGrab();return;}
     if(e.code==='KeyQ')pushSkill();if(e.code==='KeyE')beginCharge();if(e.code==='KeyJ')input.punch=true;
     if(e.code==='KeyK')input.kick=true;
     if(e.code==='Space')input.jump=true;
@@ -1993,7 +2040,7 @@
   window.AlleyGame={debug:{addDopa,hurt:d=>damagePlayer(d,player.x+60),player:()=>player},hold:s=>{game.freeze=Math.max(game.freeze,s);},useCard,canUseCard:()=>game.mode==='playing'&&player.hp>0,start:reset,focus:()=>{cvs.focus();},state:()=>({stage:activeStage,mode:game.mode,zone:game.zone,packs:packIndex,enemies:game.enemies.length,time:game.elapsed,checkpoint:wallet.checkpoint[activeStage]||0})};
   if(new URLSearchParams(location.search).has('qa'))window.__alleyQA={
     get game(){return game;},get player(){return player;},get types(){return TYPES;},get waves(){return WAVES;},get assetsFailed(){return assetsFailed;},
-    dash,moves,femaleAttack,makePlan,spawnPack,regionalAttack,regionalStyle,regionalVisibleY,combatBeat,enemyBodyMotion,comicWeaponPhase,comicWeaponPose,heroTrailSamples,hipHeartSamples,pushSkill,beginCharge,releaseCharge,SKILLS,enemyAttackStyle,update,damagePlayer,hitEnemy,attack,jump,spawnWave,finish,clearInput,drawWorld,poses,images,throwEnemyProjectile,drawFighter,drawProjectile,drawAttackEffect,updateCombatArt,defeatEnemy,emitBlast,
+    beginGrab,mashGrab,releaseGrab,drawGrab,dash,moves,femaleAttack,makePlan,spawnPack,regionalAttack,regionalStyle,regionalVisibleY,combatBeat,enemyBodyMotion,comicWeaponPhase,comicWeaponPose,heroTrailSamples,hipHeartSamples,pushSkill,beginCharge,releaseCharge,SKILLS,enemyAttackStyle,update,damagePlayer,hitEnemy,attack,jump,spawnWave,finish,clearInput,drawWorld,poses,images,throwEnemyProjectile,drawFighter,drawProjectile,drawAttackEffect,updateCombatArt,defeatEnemy,emitBlast,
     teleport(x,y){player.x=x;player.y=y;game.camera=clamp(x-345,0,WORLD_W-W);},
     clearPack(){for(const e of game.enemies){e.hp=0;e.exit=null;}game.enemies=[];update(.016);},
     move(dx,dy){joystick.x=dx;joystick.y=dy;},input
