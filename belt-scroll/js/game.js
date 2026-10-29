@@ -2049,8 +2049,10 @@
       if(thrust>.6){ctx.fillStyle='#ffe087';ctx.font='23px sans-serif';ctx.fillText('✦',75,-h*.70);}
     }
     ctx.restore();
+    // Ordinary enemies no longer show floating HP bars. Keep their combat
+    // telegraph / bind markers; boss health remains in the dedicated HUD.
     if(!hero&&!unit.exit&&!unit.cutIn&&!TYPES[unit.kind].boss){
-      ctx.save();const barW=Math.min(98,w*.7);ctx.fillStyle='#4f3958cc';roundRect(x-barW/2,groundY-h-16-((unit.id||0)%3)*9,barW,7,3);ctx.fill();ctx.fillStyle=unit.hurt>0?'#ffe89b':'#77e2b3';roundRect(x-barW/2,groundY-h-16-((unit.id||0)%3)*9,barW*Math.max(0,unit.hp/unit.maxHp),7,3);ctx.fill();
+      ctx.save();
       ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.strokeStyle='#624257';ctx.lineWidth=3;
       if(unit.windup>0){ctx.strokeStyle='#ffdca9';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,groundY-h-25,5,0,Math.PI*2);ctx.stroke();}
       if(unit.bind>0){ctx.fillStyle='#b8fff0';ctx.font='22px sans-serif';ctx.fillText('⌁',x+23,groundY-h-30);}

@@ -210,5 +210,11 @@ Playwright로 `http://127.0.0.1:8765/index.html` 접속 → `localStorage.clear(
 - 경찰서 카드 중 빈 이미지였던 **10개 소모품**(`a18`,`a20`,`a21`,`b10`,`c12`~`c17`)에 원래 `gaia-detective` 마트의 `assets/gaia-detective/ui/items/*.webp`를 바이트 동일하게 복사, `belt-scroll/assets/cards/items/`에 넣고 `js/cards-data.js`에서만 연결. 특히 `c13` 분홍 하트 집게는 별도 원본 이미지. 카드 이름·효과·가격·기존 그림/게임/저장값은 바꾸지 않음.
 - 검증: `node tests/hero-actions.cjs`, `node tests/difficulty-pressure.cjs`, `node tests/card-item-images.cjs`, `node --check belt-scroll/js/game.js` / `cards-data.js`. 태블릿의 실제 터치 감각은 배포 뒤 사용자 확인.
 
+## 2026-10-30 일반 몹 체력바 숨김 · 피격 모션 현황 조사
+- 복원 지점: `backup/gaia-belt-scroll-before-hpbar-hide-20261030` (커밋 `fe68229e6ba1928b5cbc09f83e23bb683864d764`).
+- `js/game.js`의 `drawFighter()`에서 **보스 아닌 일반 몹의 머리 위 체력 게이지 두 겹**만 제거. 보스의 화면 상단 전용 HUD(`bossHUD` / `bossFill`)는 그대로. 일반 적의 공격 예고 원과 속박 표시 아이콘도 유지.
+- 기존 피격 모션 조사: 일반 남성 적은 `hitEnemy()`에서 `hurt=.21` 및 밝기 변화, 밀침/강타시 비행을 적용하지만 전용 피격 포즈는 없음. 일부 여성 적은 `female-enemies.js`의 `state1` 피격 이미지 사용. `enemy-walk.js`는 피격 중 걷기 시트를 끔.
+- 베어너클·더블드래곤의 공식 게임플레이·제작사 소개를 참조해, 추후 원하면 약타 반응/연타 경직/마무리 넉백을 별도의 피격 자세·타이밍으로 나누는 개선안을 검토할 수 있음. **이번 요청에는 피격 애니메이션이나 공격 수치 변경을 포함하지 않음**.
+
 ## 7. 관련 문서
 `HANDOFF.md`(전체 내역·날짜별 기록) · `DIALOGUE_REVIEW.md`(대사 검토, [임시] 표시) · `BOSS_SCENARIO.md`(보스 원문 시나리오) · `README.md`
