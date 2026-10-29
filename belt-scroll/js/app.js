@@ -38,7 +38,9 @@ window.AlleyAudio=(()=>{
     if(!['whip','grenadier','yogaFighter','bikiniFighter','waterQueen'].includes(kind)){const keys=['enemy_m01','enemy_m05','enemy_m11','enemy_m16'];play(keys[Math.floor(Math.random()*keys.length)],.45,.7);}
   }
   function cartoon(kind){
-    if(muted)return;try{const c=init(),now=c.currentTime,osc=c.createOscillator(),gain=c.createGain();osc.connect(gain);gain.connect(master);osc.type=kind==='boss'?'triangle':'sine';
+    if(muted)return;try{const c=init(),now=c.currentTime;
+      if(kind==='whoosh'){const b=c.createBuffer(1,Math.ceil(c.sampleRate*.18),c.sampleRate),a=b.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=(Math.random()*2-1)*(1-i/a.length);const n=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();n.buffer=b;f.type='highpass';f.frequency.value=850;g.gain.setValueAtTime(.24,now);g.gain.exponentialRampToValueAtTime(.001,now+.18);n.connect(f);f.connect(g);g.connect(master);active.add(n);n.onended=()=>active.delete(n);n.start(now);n.stop(now+.18);remember('dash','whoosh');return;}
+      const osc=c.createOscillator(),gain=c.createGain();osc.connect(gain);gain.connect(master);osc.type=kind==='boss'?'triangle':'sine';
       const notes=kind==='spring'?[[0,180],[.08,570],[.18,250],[.32,760]]:kind==='cuffs'?[[0,1300],[.07,900],[.12,1700]]:kind==='boss'?[[0,95],[.12,40],[.22,65]]:[[0,460],[.1,730],[.2,260]];
       for(const [t,f] of notes)osc.frequency.exponentialRampToValueAtTime(f,now+t+.001);
       gain.gain.setValueAtTime(kind==='boss'?.32:.11,now);gain.gain.exponentialRampToValueAtTime(.001,now+.39);active.add(osc);osc.onended=()=>active.delete(osc);osc.start(now);osc.stop(now+.4);remember('exit',kind);

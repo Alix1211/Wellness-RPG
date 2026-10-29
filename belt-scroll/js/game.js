@@ -41,7 +41,7 @@
     clubBoss:{name:'클럽 보스',hp:430,attack:15,speed:38,drawH:265,reach:220,style:'whip',boss:true,interval:2.5,telegraph:1.0,spacing:190}
   };
   Object.assign(TYPES,GaiaCampaign.types,window.FemaleEnemies?.types||{});
-  Object.assign(ASSET,window.FemaleEnemies?.assets||{},window.EnemyWalk?.assets||{});
+  Object.assign(ASSET,window.FemaleEnemies?.assets||{},window.EnemyWalk?.assets||{},window.HeroActions?.assets||{});
   const wallet=DetectiveApp.state;
   const ST=k=>Math.min(30,(wallet.stats&&wallet.stats[k])||0),sk=()=>1+.04*ST('개방성');
   const save=()=>DetectiveApp.save();
@@ -70,7 +70,7 @@
     const im=new Image();images[key]=im;im.onload=finishAsset;im.onerror=()=>{assetsFailed.push(key);finishAsset();};im.src=src;
   }
 
-  const player = {x:148,y:428,face:1,hp:160,maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,mp:100,maxMp:100,pushCd:0,chargeCd:0,charge:null,skillPose:null,anim:0,stun:0,combo:0,comboTime:0,jump:null,jumpZ:0,guard:false,down:null,slam:null,splash:null};
+  const player = {x:148,y:428,face:1,hp:160,maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,mp:100,maxMp:100,pushCd:0,chargeCd:0,charge:null,skillPose:null,anim:0,stun:0,combo:0,comboTime:0,jump:null,jumpZ:0,crouch:false,dash:null,dashCd:0,down:null,slam:null,splash:null};
   const game = {mode:'menu',oldMode:'menu',hazards:[],castaways:[],regionalFX:[],zone:0,waveLive:false,arrests:0,seed:Date.now(),camera:0,elapsed:0,particles:[],decals:[],bubbles:[],props:[],shockwaves:[],skillBursts:[],projectiles:[],shake:0,freeze:0,tip:'',tipTime:0,enemies:[],lastAttack:null,nextThreatAt:0,nextRangedAt:0};
   let toastTimer=0, audioCtx=null;
   const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
@@ -78,7 +78,7 @@
   const $modal=$('modal'),$intro=$('introPanel'),$result=$('resultPanel');
   let joystick={active:false,x:0,y:0,pid:null};
   const held=new Set();
-  const input={punch:false,kick:false,jump:false,guard:false,skill:false,charge:false};
+  const input={punch:false,kick:false,jump:false,dash:false,crouch:false,skill:false,charge:false};
   const queuedAttack={punch:false,kick:false};
   let slamKickLock=false; // Require a fresh lower-attack press after a jumping slam.
   function showPanel(panel){$modal.classList.remove('hidden');for(const p of [$intro,$result])p.classList.toggle('hidden',p!==panel);}
@@ -87,7 +87,8 @@
   function sound(kind){
     if(muted)return;
     if(kind==='punch')AlleyAudio.hero('upper');
-    else if(kind==='kick')AlleyAudio.hero('lower');
+    else if(kind==='kick'||kind==='split')AlleyAudio.hero('lower');
+    else if(kind==='headbutt')AlleyAudio.hero('upper');
     else if(kind==='hurt')AlleyAudio.hero(player.down?'down':'hurt');
   }
 
@@ -102,7 +103,7 @@
     $('bossHUD').classList.toggle('hidden',!boss);
     if(boss){$('bossName').textContent=boss.name;$('bossFill').style.width=100*game.enemies.filter(e=>TYPES[e.kind].boss).reduce((n,e)=>n+Math.max(0,e.hp),0)/(game.encounterBossMax||boss.maxHp)+'%';}
   }
-  function clearInput(){cancelCharge();held.clear();queuedAttack.punch=queuedAttack.kick=false;for(const k of Object.keys(input))input[k]=false;joystick.x=joystick.y=0;joystick.active=false;joystick.pid=null;slamKickLock=false;
+  function clearInput(){cancelCharge();player.crouch=false;player.dash=null;held.clear();queuedAttack.punch=queuedAttack.kick=false;for(const k of Object.keys(input))input[k]=false;joystick.x=joystick.y=0;joystick.active=false;joystick.pid=null;slamKickLock=false;
     $('stick').style.transform='translate(-50%,-50%)';document.querySelectorAll('.pressed').forEach(e=>e.classList.remove('pressed'));}
   function pause(abort=false){
     if(game.mode!=='playing'&&game.mode!=='paused')return;
@@ -284,7 +285,7 @@
     game.seed=activeStage===13?67821+(wallet.eventRuns||0)*997:67821;game.zone=checkpointStart;game.waveLive=false;game.arrests=0;game.camera=0;game.elapsed=0;game.enemies=[];game.particles=[];game.decals=[];game.bubbles=[];game.shockwaves=[];game.skillBursts=[];game.projectiles=[];game.shake=0;game.freeze=0;game.lastAttack=null;game.nextThreatAt=0;game.nextRangedAt=0;game.transition=0;game.artParticles=[];game.artBursts=[];game.skillRings=[];game.heartBursts=[];
     makeProps();
     const startX=game.zones[checkpointStart].start+145;
-    Object.assign(player,{x:startX,y:435,face:1,hp:checkpoint?Math.max(112,wallet.hp):Math.max(80,wallet.hp),maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,mp:wallet.mp??100,maxMp:100,pushCd:0,chargeCd:0,charge:null,skillPose:null,stun:0,combo:0,comboTime:0,jump:null,jumpZ:0,guard:false,down:null,slam:null,splash:null,cardGuard:0,cardDef:0,cardSpd:0,dopa:0,climaxT:0,climaxCd:0,dazeT:0});game.cardQ=[];if(window.BeltCards)BeltCards.begin(stage);
+    Object.assign(player,{x:startX,y:435,face:1,hp:checkpoint?Math.max(112,wallet.hp):Math.max(80,wallet.hp),maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,mp:wallet.mp??100,maxMp:100,pushCd:0,chargeCd:0,charge:null,skillPose:null,stun:0,combo:0,comboTime:0,jump:null,jumpZ:0,crouch:false,dash:null,dashCd:0,down:null,slam:null,splash:null,cardGuard:0,cardDef:0,cardSpd:0,dopa:0,climaxT:0,climaxCd:0,dazeT:0});game.cardQ=[];if(window.BeltCards)BeltCards.begin(stage);
     game.camera=Math.max(0,startX-345);clearInput();game.mode='playing';AlleyAudio.bgm('battle');hidePanels();if(storyRetry)battleStory('common.retry');battleStory('enter');spawnWave(checkpointStart);
     toast(stage===1?'뒷골목 1 · 중간보스를 찾아 전진하세요':'뒷골목 2 · 골목 안쪽으로 진입합니다',2.6);refreshHud();
   }
@@ -334,23 +335,28 @@
   // 임시: 몸통 두께를 감안해 근접 판정 폭을 넓힘. 입력·속도·피해량은 유지.
   const moves={
     punch:{dur:.42,impact:.51,near:-12,reach:94,width:64,damage:13,stagger:.23,kb:15,maxHits:1},
-    kick:{dur:.65,impact:.63,near:-12,reach:126,width:70,damage:28,stagger:.68,kb:91,maxHits:1}
+    kick:{dur:.65,impact:.63,near:-12,reach:126,width:70,damage:28,stagger:.68,kb:91,maxHits:1},
+    // 임시: 앉은 공격. 기본 상단/하단과 같은 피해량, 다리찢기는 양쪽 발 범위.
+    headbutt:{dur:.42,impact:.51,near:-12,reach:94,width:64,damage:13,stagger:.32,kb:36,maxHits:1},
+    split:{dur:.65,impact:.42,near:-112,reach:112,width:70,damage:28,stagger:.68,kb:91,maxHits:3,bothSides:true}
   };
   const slamMove={damage:23,radiusX:169,radiusY:76,kb:139,stagger:.82,dropSpeed:450,recovery:.37};
   function attack(kind){
-    if(game.mode!=='playing'||player.hp<=0||player.splash)return;
+    if(game.mode!=='playing'||player.hp<=0||player.splash||player.dash)return;
     if(kind==='punch'&&player.jump&&player.jumpZ>18&&player.stun===0&&!player.slam){
       player.splash={age:0,dir:player.face,fromX:player.x,lift:player.jumpZ,hit:false,landed:false};
-      player.jump=null;player.attack=null;player.guard=false;player.attackCooldown=.84;AlleyAudio.hero('upper');return;
+      player.jump=null;player.attack=null;player.crouch=false;player.attackCooldown=.84;AlleyAudio.hero('upper');return;
     }
 
     // Pressing the existing LOWER button in mid-jump replaces the forward spear
     // with a falling seated slam. Its damage happens only when the feet reach ground.
     if(kind==='kick'&&player.jump&&player.jumpZ>18&&!player.slam&&!slamKickLock&&player.stun===0){
       player.slam={phase:'dive',age:0,recovery:0};player.jump=null;
-      player.guard=false;slamKickLock=true;player.attackCooldown=0;AlleyAudio.hero('slam');return;
+      player.crouch=false;slamKickLock=true;player.attackCooldown=0;AlleyAudio.hero('slam');return;
     }
-    if(game.mode!=='playing'||player.charge||player.skillPose||player.stun>0||player.attackCooldown>0||player.hp<=0||player.guard||player.jump||player.down||player.slam||kind==='kick'&&slamKickLock)return;
+    if(game.mode!=='playing'||player.charge||player.skillPose||player.stun>0||player.attackCooldown>0||player.hp<=0||player.jump||player.down||player.slam||kind==='kick'&&slamKickLock)return;
+    if(input.crouch||player.crouch)kind=kind==='kick'?'split':'headbutt';
+    player.crouch=false;
     const cfg=moves[kind];player.attack={kind,age:0,hit:false,dir:player.face};
     player.attackCooldown=cfg.dur*1.12;player.anim=.22;sound(kind);
   }
@@ -445,15 +451,17 @@
       const along=dx*a.dir,side=Math.abs(dy);
       if(along>=cfg.near&&along<=cfg.reach&&side<=cfg.width)hits.push({e,along});
     }
-    hits.sort((a,b)=>a.along-b.along);
+    hits.sort((a,b)=>cfg.bothSides?Math.abs(a.along)-Math.abs(b.along):a.along-b.along);
     const dealt=hits.slice(0,cfg.maxHits);
     let struck=0;
     for(const h of dealt){
-      if(hitEnemy(h.e,cfg.damage,cfg.kb,cfg.stagger,player.x,false,a.dir,a.kind==='kick'))struck++;
+      if(hitEnemy(h.e,cfg.damage,cfg.kb,cfg.stagger,player.x,false,cfg.bothSides?(Math.sign(h.e.x-player.x)||a.dir):a.dir,a.kind==='kick'||a.kind==='split'))struck++;
     }
     hitBreakables(a,cfg);
     game.lastAttack={kind:a.kind,dir:a.dir,targets:struck,reach:cfg.reach,knockback:cfg.kb};
-    if(struck)comicPop(player.x+a.dir*(a.kind==='punch'?74:98),player.y-(a.kind==='punch'?124:88),
+    if(struck&&a.kind==='headbutt')comicPop(player.x+a.dir*65,player.y-105,'speed',{size:76,life:.23,dir:a.dir,behind:true});
+    else if(struck&&a.kind==='split'){for(const dir of [-1,1])comicPop(player.x+dir*70,player.y-23,'arc',{size:96,life:.25,dir,behind:true});}
+    else if(struck)comicPop(player.x+a.dir*(a.kind==='punch'?74:98),player.y-(a.kind==='punch'?124:88),
       a.kind==='punch'?'speed':'arc',{size:a.kind==='punch'?104:132,life:.25,dir:a.dir,behind:true});
     if(!struck&&a.kind==='punch')particle(player.x+a.dir*105,player.y-105,'휙','#fff7e3',14);
   }
@@ -488,12 +496,8 @@
       if(player.hp<=0){cancelCharge();finish(false);}return true;
     }
     if(player.invuln>0)return false;
-    const front=Math.sign(sourceX-player.x||player.face)===player.face;
-    if(kind!=='explosion'&&player.guard&&front){
-      player.invuln=.18;particle(player.x+player.face*36,player.y-130,'◇','#bbfff4',23);AlleyAudio.hero('guard');return false;
-    }
     if(kind!=='explosion'&&player.jump&&player.jump.age<.12&&player.jumpZ>36){return false;} // 점프 직후 아주 짧은 순간만 무적 [임시]
-    player.hp=Math.max(0,player.hp-d);player.combo=0;player.attack=null;player.guard=false;player.slam=null;player.splash=null;
+    player.hp=Math.max(0,player.hp-d);player.combo=0;player.attack=null;player.crouch=false;player.dash=null;player.slam=null;player.splash=null;
     player.jump=null;player.jumpZ=0;
     const away=Math.sign(player.x-sourceX||player.face);
     if(kind==='heavy'||kind==='explosion'){
@@ -679,9 +683,19 @@
     game.enemies.push({kind,name:def.name,x,y:Y_MIN+25+Math.floor(Math.random()*3)*48,face:Math.sign(player.x-x)||-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:def.style,attackCd:1.4+Math.random()*.5,swing:0,swingStyle:def.style,colorShift:0,id:++enemySerial,slotY:(Math.floor(Math.random()*3)-1)*27,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:Math.random()*Math.PI*2,captured:false,reward:0,entry:.6,reinf:true});
   }
   function jump(){
-    if(game.mode!=='playing'||player.hp<=0||player.stun>0||player.jump||player.down||player.guard||player.attack||player.slam||player.splash||player.charge)return;
+    if(game.mode!=='playing'||player.hp<=0||player.stun>0||player.jump||player.down||player.crouch||player.attack||player.slam||player.splash||player.charge||player.dash)return;
     player.jump={age:0,duration:.88};player.jumpZ=0;AlleyAudio.hero('jump');
   }
+  // 임시: 0.18초 / 160px 대쉬, 0.55초 재사용. 입력 대기나 공격 예약 없음.
+  function dash(){
+    if(game.mode!=='playing'||player.hp<=0||player.stun>0||player.attack||player.attackCooldown>0||player.jump||player.down||player.slam||player.splash||player.charge||player.skillPose||player.dash||player.dashCd>0)return false;
+    let [dx,dy]=moveVector();const n=Math.hypot(dx,dy);if(n>.2){dx/=n;dy/=n;}else{dx=player.face;dy=0;}
+    if(Math.abs(dx)>.1)player.face=Math.sign(dx);
+    player.crouch=false;player.dash={age:0,duration:.18,dx,dy,dir:player.face,fromX:player.x,fromY:player.y};player.dashCd=.55;
+    AlleyAudio.cartoon('whoosh');return true;
+  }
+  function refreshDashHud(){const el=$('dash'),off=player.dashCd>0||player.attackCooldown>0||player.stun>0||!!(player.attack||player.jump||player.down||player.slam||player.splash||player.charge||player.skillPose||player.dash)||player.hp<=0;
+    el.classList.toggle('unavailable',off);el.setAttribute?.('aria-disabled',String(off));}
   function nearestEnemy(range=Infinity){
     let best=null,dist=range;
     for(const e of game.enemies){if(e.hp<=0)continue;const d=Math.hypot(e.x-player.x,(e.y-player.y)*1.4);if(d<dist){dist=d;best=e;}}
@@ -689,11 +703,11 @@
   }
 
   const SKILLS={pushCost:18,pushCooldown:3,chargeCost:25,chargeCooldown:5,maxCharge:3,maxStored:100};
-  function canSkill(){return game.mode==='playing'&&player.hp>0&&!player.down&&!player.jump&&!player.slam&&!player.splash&&player.stun<=0&&!player.charge;}
+  function canSkill(){return game.mode==='playing'&&player.hp>0&&!player.down&&!player.jump&&!player.slam&&!player.splash&&!player.dash&&player.stun<=0&&!player.charge;}
   function pushSkill(){
     return false; // 하트 속박 스킬은 쓰지 않아 제거(케인 지시)
     if(!canSkill()||player.mp<SKILLS.pushCost||player.pushCd>0)return false;
-    player.mp-=SKILLS.pushCost;player.pushCd=SKILLS.pushCooldown;player.attack=null;player.guard=false;player.attackCooldown=.3;
+    player.mp-=SKILLS.pushCost;player.pushCd=SKILLS.pushCooldown;player.attack=null;player.crouch=false;player.attackCooldown=.3;
     let targets=0;
     for(const e of game.enemies){
       if(e.hp<=0||Math.hypot(e.x-player.x,(e.y-player.y)*2)>181)continue;
@@ -706,7 +720,7 @@
   }
   function beginCharge(){
     if(!canSkill()||player.mp<SKILLS.chargeCost||player.chargeCd>0)return false;
-    player.mp-=SKILLS.chargeCost;player.attack=null;player.guard=false;player.invuln=0;player.charge={age:0,stored:0,raw:0,hits:0,dir:player.face};refreshHud();return true;
+    player.mp-=SKILLS.chargeCost;player.attack=null;player.crouch=false;player.invuln=0;player.charge={age:0,stored:0,raw:0,hits:0,dir:player.face};refreshHud();return true;
   }
   function releaseCharge(){
     const c=player.charge;if(!c||game.mode!=='playing')return false;
@@ -834,7 +848,9 @@
     if(Math.ceil(player.skillCooldown)!==oldSkillSec)refreshHud();
     player.comboTime=Math.max(0,player.comboTime-dt);if(player.comboTime===0&&player.combo!==0){player.combo=0;refreshHud();}
     game.shake=Math.max(0,game.shake-dt*21);game.freeze=Math.max(0,game.freeze-dt);
-    player.guard=input.guard&&!player.charge&&!player.jump&&!player.down&&!player.attack&&!player.slam&&!player.splash&&player.stun===0&&player.hp>0;
+    player.crouch=input.crouch&&!player.dash&&!player.charge&&!player.jump&&!player.down&&!player.attack&&!player.slam&&!player.splash&&player.stun===0&&player.hp>0;
+    player.dashCd=Math.max(0,(player.dashCd||0)-dt);
+    if(input.dash){input.dash=false;dash();}
     if(input.jump){input.jump=false;jump();}
     if(input.skill){input.skill=false;pushSkill();}if(input.punch||queuedAttack.punch){queuedAttack.punch=false;attack('punch');}if(input.kick||queuedAttack.kick){queuedAttack.kick=false;attack('kick');}if(input.skill){input.skill=false;useCard();}
     if(player.attack){const move=moves[player.attack.kind];player.attack.age+=dt*(player.hasteT>0?1.5:1);if(!player.attack.hit&&player.attack.age>=move.dur*move.impact){player.attack.hit=true;resolveAttack(player.attack);}if(player.attack.age>=move.dur)player.attack=null;}
@@ -888,12 +904,19 @@
       }
       if(p>=1){comicPop(player.x,player.y-64,'thud',{size:87,life:.48});player.down=null;player.stun=0;}
     }
+    const dashing=!!player.dash;
+    if(player.dash){const d=player.dash;d.age=Math.min(d.duration,d.age+dt);const t=d.age/d.duration,q=1-(1-t)**2;
+      const lo=Math.max(55,game.zones[Math.max(0,game.zone-1)].start+35),hi=game.waveLive?game.zones[game.zone].end-35:WORLD_W-80;
+      player.x=clamp(d.fromX+d.dx*160*q,lo,hi);player.y=clamp(d.fromY+d.dy*96*q,Y_MIN,Y_MAX);player.face=d.dir;
+      if(d.age>=d.duration)player.dash=null;
+    }
+    refreshDashHud();
     AlleyAudio.tick();
-    const [dx,dy]=moveVector();if(dx!==0&&!player.down&&!player.slam&&!player.splash&&!player.charge)player.face=Math.sign(dx);
-    player.guard=input.guard&&!player.charge&&!player.jump&&!player.down&&!player.attack&&!player.slam&&!player.splash&&player.stun===0&&player.hp>0;
+    const [dx,dy]=moveVector();if(dx!==0&&!dashing&&!player.down&&!player.slam&&!player.splash&&!player.charge)player.face=Math.sign(dx);
+    player.crouch=input.crouch&&!player.dash&&!player.charge&&!player.jump&&!player.down&&!player.attack&&!player.slam&&!player.splash&&player.stun===0&&player.hp>0;
     // Only the actual, visible stage boundary is closed during a live wave.
     // The old end-105 limit stranded Rozie while ranged enemies kept moving.
-    if(player.stun===0&&!player.guard&&!player.slam&&!player.splash&&!player.charge){const limit=game.waveLive?game.zones[game.zone].end-35:WORLD_W-80;
+    if(player.stun===0&&!dashing&&!(player.attack&&moves[player.attack.kind].bothSides)&&player.attack?.kind!=='headbutt'&&!player.crouch&&!player.slam&&!player.splash&&!player.charge){const limit=game.waveLive?game.zones[game.zone].end-35:WORLD_W-80;
       player.x=clamp(player.x+dx*216*dt*(player.cardSpd>0?1.5:1),Math.max(55,game.zones[Math.max(0,game.zone-1)].start+35),limit);
       player.y=clamp(player.y+dy*169*dt*(player.cardSpd>0?1.5:1),Y_MIN,Y_MAX);
     }
@@ -1115,7 +1138,7 @@
     for(const b of game.breakables||[]){
       if(b.hp<=0)continue;
       const along=(b.x-player.x)*a.dir,dy=Math.abs((b.y-player.y)*1.12);
-      if(along>=cfg.near-35&&along<=cfg.reach+40&&dy<=cfg.width+14)damageBreakable(b,a.kind==='kick'?2:1);
+      if(along>=cfg.near-35&&along<=cfg.reach+40&&dy<=cfg.width+14)damageBreakable(b,a.kind==='kick'||a.kind==='split'?2:1);
     }
   }
   function slamBreakables(){for(const b of game.breakables||[])if(b.hp>0&&Math.abs(b.x-player.x)<slamMove.radiusX+30&&Math.abs(b.y-player.y)<slamMove.radiusY+24)damageBreakable(b,3);}
@@ -1649,6 +1672,7 @@
   const artOk=im=>im&&im.complete&&im.naturalWidth;
   const FLY_LINES=['아앙~♥','더 세게!','으앗~♥','날아간다~♥','좋아~♥']; // 날아갈 때 대사 [임시, 케인이 바꿀 것]
   function drawFighter(unit,hero=false){
+    if(hero&&window.HeroActions?.draw(ctx,images,unit,game))return;
     if(!hero&&TYPES[unit.kind].female){window.FemaleEnemies.draw(ctx,images,unit,game);return;}
     const figures=hero?null:enemyFrames[unit.kind];
     const alternatePose=!hero&&TYPES[unit.kind].regional?(unit.swing>0||unit.windup>0&&unit.windup<.22):unit.swing>0&&(unit.kind==='fedora'&&unit.swingStyle==='whirlwind'||
@@ -1735,7 +1759,7 @@
 
     }
     ctx.filter=hero?'none':unit.hurt>0?'brightness(1.17) saturate(1.1)':unit.colorShift?`hue-rotate(${unit.colorShift}deg)`: 'none';
-    const walking=hero&&!unit.charge&&!unit.skillPose&&Math.hypot(...moveVector())>.2&&unit.stun===0&&!unit.guard&&!unit.attack&&!unit.down&&!unit.slam;
+    const walking=hero&&!unit.charge&&!unit.skillPose&&Math.hypot(...moveVector())>.2&&unit.stun===0&&!unit.crouch&&!unit.attack&&!unit.down&&!unit.slam;
     const walkBob=walking?Math.abs(Math.sin(game.elapsed*12))*3:0;
     const attackSpriteKey=hero&&(unit.charge||unit.skillPose)?(unit.charge?'lowerPrep':unit.skillPose.kind==='release'?'lowerHit':'upperHit'):hero&&unit.attack?
       `${unit.attack.kind==='punch'?'upper':'lower'}${unit.attack.age/moves[unit.attack.kind].dur<.42?'Prep':'Hit'}`:null;
@@ -1756,7 +1780,7 @@
         const t=clamp(unit.jump.age/unit.jump.duration,0,1);
         pose=poses.jump[t<.12?0:t<.36?1:t<.64?2:t<.88?1:3];
         poseScale=h/685;poseLift=unit.jumpZ;
-      }else if(unit.guard&&poses.move.length===3){
+      }else if(unit.crouch&&poses.move.length===3){
         pose=poses.move[2];poseScale=h/pose.height;
       }else if(walking&&poses.walk.length===4){
         pose=poses.walk[Math.floor(game.elapsed*9)%4];
@@ -1874,9 +1898,9 @@
   $('pause').onclick=()=>{if(game.mode==='playing')pause();else if(game.mode==='paused'){$('start').click();}};
 
   // Four combat buttons: upper/lower repeat while held, jump is a one-shot,
-  // guard remains active only while held. Two M-powered skills use separate controls.
-  for(const key of ['punch','kick','jump','guard']){
-    const el=$(key);const release=()=>{if(key!=='jump')input[key]=false;if(key==='kick')slamKickLock=false;el.classList.remove('pressed');};
+  // crouch remains active only while held; dash is a one-shot. Two M-powered skills use separate controls.
+  for(const key of ['punch','kick','jump','crouch','dash']){
+    const el=$(key);const release=()=>{if(key!=='jump'&&key!=='dash')input[key]=false;if(key==='kick')slamKickLock=false;el.classList.remove('pressed');};
     el.addEventListener('pointerdown',e=>{e.preventDefault();el.setPointerCapture(e.pointerId);input[key]=true;if(key==='punch'||key==='kick')queuedAttack[key]=true;el.classList.add('pressed');});
     for(const ev of ['pointerup','pointercancel','lostpointercapture'])el.addEventListener(ev,release);
   }
@@ -1907,20 +1931,21 @@
     if(e.code==='KeyQ')pushSkill();if(e.code==='KeyE')beginCharge();if(e.code==='KeyJ')input.punch=true;
     if(e.code==='KeyK')input.kick=true;
     if(e.code==='Space')input.jump=true;
-    if(e.code==='ShiftLeft'||e.code==='ShiftRight')input.guard=true;
+    if(e.code==='KeyL')input.dash=true;
+    if(e.code==='ShiftLeft'||e.code==='ShiftRight')input.crouch=true;
     
     if(e.code==='Escape'&&game.mode==='playing')$('pause').click();
   });
-  window.addEventListener('keyup',e=>{held.delete(e.code);if(e.code==='KeyE')releaseCharge();if(e.code==='KeyJ')input.punch=false;if(e.code==='KeyK'){input.kick=false;slamKickLock=false;}if(e.code==='ShiftLeft'||e.code==='ShiftRight')input.guard=held.has('ShiftLeft')||held.has('ShiftRight');});
+  window.addEventListener('keyup',e=>{held.delete(e.code);if(e.code==='KeyE')releaseCharge();if(e.code==='KeyJ')input.punch=false;if(e.code==='KeyK'){input.kick=false;slamKickLock=false;}if(e.code==='ShiftLeft'||e.code==='ShiftRight')input.crouch=held.has('ShiftLeft')||held.has('ShiftRight');});
   window.addEventListener('blur',()=>{clearInput();if(game.mode==='playing')pause();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){clearInput();if(game.mode==='playing')pause();}});
   // Debug state is read-only: useful to verify collision, waves and shops in browser tests.
-  window.__gaiaBrawlerDebug=()=>({mode:game.mode,zone:game.zone,zoneEnd:game.zones[game.zone]?.end,waveLive:game.waveLive,enemies:game.enemies.map(e=>({hp:e.hp,x:e.x,y:e.y,face:e.face,windup:e.windup,kind:e.kind,airborne:!!e.air,landed:e.floorTime>0})),player:{x:player.x,y:player.y,hp:player.hp,attack:player.attack?.kind||null,attackDir:player.attack?.dir||null,jump:!!player.jump,jumpZ:player.jumpZ,guard:player.guard,down:player.down?.kind||null,slam:player.slam?.phase||null},poses:{move:poses.move.length,walk:poses.walk.length,jump:poses.jump.length,fall:poses.fall.length},shockwaves:game.shockwaves.length,projectiles:game.projectiles.map(p=>({x:p.x,y:p.y,vx:p.vx,vy:p.vy,face:p.face})),gold:wallet.gold,owned:[...(wallet.owned||[])],equipped:wallet.equipped,arrests:game.arrests,lastAttack:game.lastAttack});
+  window.__gaiaBrawlerDebug=()=>({mode:game.mode,zone:game.zone,zoneEnd:game.zones[game.zone]?.end,waveLive:game.waveLive,enemies:game.enemies.map(e=>({hp:e.hp,x:e.x,y:e.y,face:e.face,windup:e.windup,kind:e.kind,airborne:!!e.air,landed:e.floorTime>0})),player:{x:player.x,y:player.y,hp:player.hp,attack:player.attack?.kind||null,attackDir:player.attack?.dir||null,jump:!!player.jump,jumpZ:player.jumpZ,crouch:player.crouch,dash:!!player.dash,down:player.down?.kind||null,slam:player.slam?.phase||null},poses:{move:poses.move.length,walk:poses.walk.length,jump:poses.jump.length,fall:poses.fall.length},shockwaves:game.shockwaves.length,projectiles:game.projectiles.map(p=>({x:p.x,y:p.y,vx:p.vx,vy:p.vy,face:p.face})),gold:wallet.gold,owned:[...(wallet.owned||[])],equipped:wallet.equipped,arrests:game.arrests,lastAttack:game.lastAttack});
 
   window.AlleyGame={debug:{addDopa,hurt:d=>damagePlayer(d,player.x+60),player:()=>player},hold:s=>{game.freeze=Math.max(game.freeze,s);},useCard,canUseCard:()=>game.mode==='playing'&&player.hp>0,start:reset,focus:()=>{cvs.focus();},state:()=>({stage:activeStage,mode:game.mode,zone:game.zone,packs:packIndex,enemies:game.enemies.length,time:game.elapsed,checkpoint:wallet.checkpoint[activeStage]||0})};
   if(new URLSearchParams(location.search).has('qa'))window.__alleyQA={
     get game(){return game;},get player(){return player;},get types(){return TYPES;},get waves(){return WAVES;},get assetsFailed(){return assetsFailed;},
-    femaleAttack,makePlan,spawnPack,regionalAttack,regionalStyle,regionalVisibleY,combatBeat,enemyBodyMotion,comicWeaponPhase,comicWeaponPose,heroTrailSamples,hipHeartSamples,pushSkill,beginCharge,releaseCharge,SKILLS,enemyAttackStyle,update,damagePlayer,hitEnemy,attack,jump,spawnWave,finish,clearInput,drawWorld,poses,images,throwEnemyProjectile,drawFighter,drawProjectile,drawAttackEffect,updateCombatArt,defeatEnemy,emitBlast,
+    dash,moves,femaleAttack,makePlan,spawnPack,regionalAttack,regionalStyle,regionalVisibleY,combatBeat,enemyBodyMotion,comicWeaponPhase,comicWeaponPose,heroTrailSamples,hipHeartSamples,pushSkill,beginCharge,releaseCharge,SKILLS,enemyAttackStyle,update,damagePlayer,hitEnemy,attack,jump,spawnWave,finish,clearInput,drawWorld,poses,images,throwEnemyProjectile,drawFighter,drawProjectile,drawAttackEffect,updateCombatArt,defeatEnemy,emitBlast,
     teleport(x,y){player.x=x;player.y=y;game.camera=clamp(x-345,0,WORLD_W-W);},
     clearPack(){for(const e of game.enemies){e.hp=0;e.exit=null;}game.enemies=[];update(.016);},
     move(dx,dy){joystick.x=dx;joystick.y=dy;},input

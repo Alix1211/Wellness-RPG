@@ -1,0 +1,27 @@
+/* Rosie crouch, split, headbutt and dash: one anatomical scale, ground anchored. */
+window.HeroActions=(()=>{
+  const DATA={"00":{"rect":[6,9,157,241],"anchor":[101.934,240]},"01":{"rect":[396,6,171,244],"anchor":[94.815,243]},"02":{"rect":[786,27,192,223],"anchor":[142.02,222]},"03":{"rect":[1176,9,157,241],"anchor":[101.145,240]},"10":{"rect":[6,268,204,199],"anchor":[123.605,198]},"11":{"rect":[396,270,378,197],"anchor":[182.758,196]},"12":{"rect":[786,275,355,192],"anchor":[172.637,191]},"13":{"rect":[1176,262,148,205],"anchor":[80.865,204]},"20":{"rect":[6,479,297,203],"anchor":[187.59,202]},"21":{"rect":[396,498,311,184],"anchor":[226.568,183]},"22":{"rect":[786,482,289,200],"anchor":[178.702,199]},"23":{"rect":[1176,503,221,179],"anchor":[112.692,178]}};
+  const assets={rosie_actions:'assets/hero/rosie-actions.webp'};
+  function pose(u){
+    if(u.down||u.jump||u.slam||u.splash||u.charge||u.skillPose||u.stun>0||u.hp<=0)return null;
+    if(u.dash)return '2'+Math.min(3,Math.floor(u.dash.age/u.dash.duration*4));
+    if(u.attack?.kind==='headbutt'){const t=u.attack.age/.42;return t<.25?'01':t<.66?'02':'03';}
+    if(u.attack?.kind==='split'){const t=u.attack.age/.65;return t<.24?'10':t<.58?'11':t<.78?'12':'13';}
+    return u.crouch?'00':null;
+  }
+  function frame(ctx,im,key,x=0,y=0){const f=DATA[key];if(!f)return;const [sx,sy,w,h]=f.rect;ctx.drawImage(im,sx,sy,w,h,x-f.anchor[0]/2,y-f.anchor[1]/2,w/2,h/2);}
+  function draw(ctx,images,u,game){
+    const key=pose(u),im=images.rosie_actions;if(!key||!(im?.naturalWidth||im?.width))return false;
+    const x=u.x-game.camera;if(x<-340||x>1600)return true;
+    ctx.save();ctx.translate(x,u.y);ctx.fillStyle='#6047634d';ctx.beginPath();ctx.ellipse(0,-2,key[0]==='1'?76:31,9,0,0,Math.PI*2);ctx.fill();
+    ctx.scale(-(u.dash?.dir||u.attack?.dir||u.face),1);
+    if(u.dash){
+      for(let j=3;j>0;j--){ctx.save();ctx.globalAlpha=.1+(3-j)*.07;frame(ctx,im,key,j*18,0);ctx.restore();}
+      ctx.save();ctx.strokeStyle='#e1fff5';ctx.lineWidth=2;ctx.globalAlpha=.75;ctx.lineCap='round';
+      for(let j=0;j<3;j++){ctx.beginPath();ctx.moveTo(27+j*7,-45-j*19);ctx.lineTo(68+j*12,-45-j*19);ctx.stroke();}ctx.restore();
+    }
+    frame(ctx,im,key);
+    ctx.restore();return true;
+  }
+  return {assets,data:DATA,pose,frame,draw};
+})();
