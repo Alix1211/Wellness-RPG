@@ -262,3 +262,6 @@ button:disabled{filter:grayscale(1);opacity:.52;cursor:default}button:focus-visi
 @media(max-width:1000px){.skill-controls{right:221px}}
 @media(max-height:500px){.skill-controls{right:195px}}
 @media(orientation:portrait){.skill-controls{right:131px}}
+
+/* 새 그림 아이콘의 원형 테두리를 그대로 사용. 버튼 위치와 크기는 유지. */
+.stance-button{background:transparent;border:0;box-shadow:none;display:block}
