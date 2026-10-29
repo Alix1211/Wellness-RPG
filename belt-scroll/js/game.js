@@ -87,7 +87,32 @@
     {steps:['punch','punch','kick'],move:'hipCrash'},
     {steps:['kick','kick','punch','punch'],move:'whirlSplit'}
   ];
-  function resetComboChain(){comboChain.steps=[];comboChain.last=-99;}
+  // Four-tap input is detected at physical press time, not after each slow attack recovery.
+  // There is no long action queue: the fourth press starts the finisher immediately.
+  const splitTaps={steps:[],last:-99};
+  function resetComboChain(){comboChain.steps=[];comboChain.last=-99;splitTaps.steps=[];splitTaps.last=-99;}
+  function detectSplitTap(kind){
+    if(game.mode!=='playing'||player.hp<=0||player.grab||player.stun>0||player.jump||player.down||player.slam||player.splash||player.charge||player.skillPose||player.dash||player.dashLink||player.dashFollow||input.crouch||player.crouch){splitTaps.steps=[];return false;}
+    const pattern=['kick','kick','punch','punch'];
+    const taps=[...(game.elapsed-splitTaps.last<=1.15?splitTaps.steps:[]),kind];
+    if(taps.length===4&&taps.every((s,i)=>s===pattern[i])){
+      if(player.attack&&!['punch','kick'].includes(player.attack.kind)){splitTaps.steps=[];return false;}
+      resetComboChain();
+      const cfg=moves.whirlSplit;
+      player.attack={kind:'whirlSplit',age:0,hit:false,dir:player.face,fromDash:false,hitIds:new Set()};
+      player.attackCooldown=cfg.dur*1.12;player.anim=.22;player.crouch=false;
+      queuedAttack.punch=queuedAttack.kick=0;
+      sound('whirlSplit');AlleyAudio.cartoon('whoosh');
+      return true;
+    }
+    let prefix=[];
+    for(let n=1;n<=taps.length;n++){
+      const tail=taps.slice(-n);
+      if(tail.every((s,i)=>s===pattern[i]))prefix=tail;
+    }
+    splitTaps.steps=prefix;splitTaps.last=game.elapsed;
+    return false;
+  }
   function comboMove(kind,fresh){
     if(!fresh){resetComboChain();return kind;}
     const steps=[...(game.elapsed-comboChain.last<=COMBO_GAP?comboChain.steps:[]),kind];
@@ -2094,7 +2119,7 @@
   // crouch remains active only while held; dash is a one-shot. Two M-powered skills use separate controls.
   for(const key of ['punch','kick','jump','crouch','dash']){
     const el=$(key);const release=()=>{if(key!=='jump'&&key!=='dash')input[key]=false;if(key==='kick')slamKickLock=false;el.classList.remove('pressed');};
-    el.addEventListener('pointerdown',e=>{e.preventDefault();el.setPointerCapture(e.pointerId);if(player.grab){mashGrab();input[key]=false;el.classList.add('pressed');return;}input[key]=true;if(key==='crouch')player.crouchHold=.38;if(key==='punch'||key==='kick')queuedAttack[key]=COMBO_TAP_GRACE;el.classList.add('pressed');});
+    el.addEventListener('pointerdown',e=>{e.preventDefault();el.setPointerCapture(e.pointerId);if(player.grab){mashGrab();input[key]=false;el.classList.add('pressed');return;}input[key]=true;if(key==='crouch')player.crouchHold=.38;if(key==='punch'||key==='kick'){if(!detectSplitTap(key))queuedAttack[key]=COMBO_TAP_GRACE;}el.classList.add('pressed');});
     for(const ev of ['pointerup','pointercancel','lostpointercapture'])el.addEventListener(ev,release);
   }
   $('pushSkill').addEventListener('pointerdown',e=>{e.preventDefault();if(player.grab){mashGrab();return;}pushSkill();});
@@ -2122,8 +2147,8 @@
     held.add(e.code);
     if(e.repeat)return;
     if(player.grab&&['KeyJ','KeyK','Space','ShiftLeft','ShiftRight','KeyL','KeyQ','KeyE'].includes(e.code)){mashGrab();return;}
-    if(e.code==='KeyQ')pushSkill();if(e.code==='KeyE')beginCharge();if(e.code==='KeyJ'){input.punch=true;queuedAttack.punch=COMBO_TAP_GRACE;}
-    if(e.code==='KeyK'){input.kick=true;queuedAttack.kick=COMBO_TAP_GRACE;}
+    if(e.code==='KeyQ')pushSkill();if(e.code==='KeyE')beginCharge();if(e.code==='KeyJ'){input.punch=true;if(!detectSplitTap('punch'))queuedAttack.punch=COMBO_TAP_GRACE;}
+    if(e.code==='KeyK'){input.kick=true;if(!detectSplitTap('kick'))queuedAttack.kick=COMBO_TAP_GRACE;}
     if(e.code==='Space')input.jump=true;
     if(e.code==='KeyL')input.dash=true;
     if(e.code==='ShiftLeft'||e.code==='ShiftRight'){input.crouch=true;player.crouchHold=.38;}

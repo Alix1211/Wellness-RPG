@@ -87,3 +87,16 @@ reset();g.enemies=[frozenEnemy('punk',1200)];tapCombo('punch');settle(.51);p.inv
 assert(q.damagePlayer(3,p.x+60));p.hurt=0;p.stun=0;p.down=null;settle(.51);
 tapCombo('punch');settle(.51);assert.equal(tapCombo('kick'),'kick');
 console.log('PASS player damage cancels the previous combo sequence');
+
+// Regression for real tablet taps faster than the long lower-attack recovery.
+// The fourth physical tap must fire the split without waiting for four animations.
+reset();g.enemies=[frozenEnemy('punk',545),{...frozenEnemy('punk',255),id:2}];
+for(const kind of ['kick','kick','punch']){press(kind);release(kind);settle(.22);}
+press('punch');release('punch');
+assert.equal(p.attack.kind,'whirlSplit');assert.equal(p.attack.age,0);
+settle(1.2);assert.equal(g.enemies[0].hp,55);assert.equal(g.enemies[1].hp,55);
+assert(!q.comboChain.steps.length);console.log('PASS fast 0.22s tablet taps trigger spinning split immediately and land both pulses');
+
+reset();g.enemies=[frozenEnemy('punk',1200)];
+for(const kind of ['kick','punch','kick','punch']){press(kind);release(kind);settle(.22);}
+assert.notEqual(p.attack?.kind,'whirlSplit');console.log('PASS incorrect four-tap order does not trigger the finisher');
