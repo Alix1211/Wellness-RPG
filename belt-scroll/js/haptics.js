@@ -35,25 +35,27 @@
   }
   function stop() { holdUntil = 0; holdPri = -1; try { if (root.GaiaBridge) root.GaiaBridge.vibrate('0'); if (navigator.vibrate) navigator.vibrate(0); } catch (e) {} return true; }
   function set(v) { enabled = !!v; try { localStorage.setItem(KEY, enabled ? '1' : '0'); } catch (e) {} if (!enabled) stop(); return enabled; }
-  // 포코 모터는 짧고 약한 신호에 반응하지 않아 전부 길고 세게 준다(케인 확인: 센 진동만 울림).
+  // 강진동과 미니게임 판정 진동은 소음 감소를 위해 기존 패턴 길이의 50%로 제한.
+  // Android GaiaBridge는 세기(amplitude)가 아닌 시간 패턴만 받으므로, 실제 진동 강도 자체는 변경되지 않는다.
+  const half = a => a.map(n => Math.round(n / 2));
   const fx = {
     tick: () => request([35], 0),
     hit: () => request([90], 1),
-    bigHit: () => request([120, 40, 180], 1),
-    hurt: () => request([170, 50, 170], 2),
-    heavyHurt: () => request([240, 60, 240, 60, 320], 2),
-    arrest: () => request([130, 50, 130, 50, 380], 2),
-    orgasm: () => request([220, 80, 220, 80, 360, 100, 900], 3),
-    miniPerfect: () => request([220, 60, 320], 2),
-    miniGood: () => request([170], 1),
-    miniBad: () => request([130], 1),
-    miniMiss: () => request([110], 1),
-    victory: () => request([130, 60, 130, 60, 420], 2)
+    bigHit: () => request(half([120, 40, 180]), 1),
+    hurt: () => request(half([170, 50, 170]), 2),
+    heavyHurt: () => request(half([240, 60, 240, 60, 320]), 2),
+    arrest: () => request(half([130, 50, 130, 50, 380]), 2),
+    orgasm: () => request(half([220, 80, 220, 80, 360, 100, 900]), 3),
+    miniPerfect: () => request(half([220, 60, 320]), 2),
+    miniGood: () => request(half([170]), 1),
+    miniBad: () => request(half([130]), 1),
+    miniMiss: () => request(half([110]), 1),
+    victory: () => request(half([130, 60, 130, 60, 420]), 2)
   };
   root.GAIA_HAPTICS = {
     request, stop, fx, get enabled() { return enabled; }, setEnabled: set,
-    toggle() { const v = set(!enabled); toast(v ? '진동 켜짐' : '진동 꺼짐'); if (v) request([120, 60, 160], 3, true); return v; },
-    test() { set(true); toast('진동 테스트'); return request([500, 120, 650], 3, true); }
+    toggle() { const v = set(!enabled); toast(v ? '진동 켜짐' : '진동 꺼짐'); if (v) request(half([120, 60, 160]), 3, true); return v; },
+    test() { set(true); toast('진동 테스트'); return request(half([500, 120, 650]), 3, true); }
   };
   document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
 })(window);
