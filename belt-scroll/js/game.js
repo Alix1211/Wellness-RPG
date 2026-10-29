@@ -630,6 +630,35 @@
     ctx.font='bold 14px system-ui';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#65475f';ctx.fillStyle='#fff1f7';
     const label='탈출 · 버튼 연타 '+g.taps+' / '+g.need,hudY=Math.min(cy-20,g.enemy.y-TYPES[g.enemy.kind].drawH-40);ctx.strokeText(label,x,hudY);ctx.fillText(label,x,hudY);ctx.restore();
   }
+  const GRAB_LINES={enemy:'야! 이 판국에 뭐하는거야!!',rosie:'앙..체포 중이랍니다~~'};
+  function grabBubble(text,x,y,width,rosie=false){
+    ctx.save();ctx.font='bold 20px system-ui';ctx.textAlign='left';ctx.textBaseline='top';
+    const lines=[];let line='';for(const ch of text){if(line&&ctx.measureText(line+ch).width>width-30){lines.push(line);line=ch;}else line+=ch;}if(line)lines.push(line);
+    const height=lines.length*29+24;ctx.fillStyle=rosie?'#f0badbd9':'#fff1e4d9';ctx.strokeStyle=rosie?'#ffe9f2':'#efd1ac';ctx.lineWidth=1.5;
+    roundRect(x,y,width,height,13);ctx.fill();ctx.stroke();ctx.fillStyle=rosie?'#724159':'#665266';
+    lines.forEach((t,i)=>ctx.fillText(t,x+15,y+12+i*29));ctx.restore();
+  }
+  function drawGrabOverlay(){
+    const g=player.grab;if(!g)return;
+    if(!g.backdrop&&document.createElement){const c=document.createElement('canvas');c.width=cvs.width;c.height=cvs.height;const b=c.getContext('2d');if(b){b.drawImage(cvs,0,0);g.backdrop=c;}}
+    ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,W,H);
+    if(g.backdrop){ctx.save();ctx.filter='blur(5px)';ctx.drawImage(g.backdrop,-8,-8,W+16,H+16);ctx.restore();}
+    else{ctx.fillStyle='#b38095';ctx.fillRect(0,0,W,H);}
+    ctx.fillStyle='#68465855';ctx.fillRect(0,0,W,H);
+    // Existing sprites are enlarged together. No battle coordinates are changed.
+    const oldCamera=game.camera,scale=Math.min(1.95,360/TYPES[g.enemy.kind].drawH),baseX=W*.46,baseY=H*.83;
+    const hero={...player,x:-30,y:0,face:1,grab:{...g,dir:1}};
+    const foe={...g.enemy,x:35+Math.sin(g.age*95+.8)*1.7,y:-8+Math.cos(g.age*83)*.8,face:-1,holdingPlayer:true,cutIn:true};
+    ctx.save();ctx.translate(baseX,baseY);ctx.scale(scale,scale);game.camera=0;
+    try{drawFighter(foe);drawFighter(hero,true);}finally{game.camera=oldCamera;ctx.restore();}
+    const headX=baseX-30*scale,headY=baseY-(g.pose==='hip'?181:124)*scale;
+    for(let j=0;j<3;j++){const a=g.age*8+j*Math.PI*2/3;tinyHeart(headX+Math.cos(a)*35,headY+Math.sin(a)*11,9,Math.sin(a)<0?.55:1);}
+    grabBubble(GRAB_LINES.enemy,W*.57,H*.14,Math.min(300,W*.32));
+    grabBubble(GRAB_LINES.rosie,W*.06,H*.40,Math.min(255,W*.29),true);
+    ctx.font='bold 17px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=4;ctx.strokeStyle='#6c455e';ctx.fillStyle='#fff0f5';
+    const progress='버튼 연타로 풀려나기 · '+g.taps+' / '+g.need;ctx.strokeText(progress,W*.18,H*.65);ctx.fillText(progress,W*.18,H*.65);
+    ctx.restore();
+  }
   function hurtPlayer(e){
     if(beginGrab(e))return;
     const d=Math.max(2,TYPES[e.kind].attack-(e.powerDown>0?3:0));
@@ -873,7 +902,7 @@
     refreshHud();
   }
   function useCard(card){
-    if(!card||game.mode!=='playing'||player.hp<=0)return false;
+    if(!card||game.mode!=='playing'||player.grab||player.hp<=0)return false;
     const g=BELT_G[card.grade]||1,P=BELT_POW,near=()=>game.enemies.filter(e=>e.hp>0&&Math.abs(e.x-player.x)<540),boss=e=>!!TYPES[e.kind].boss;
     game.shake=Math.max(game.shake,10);vib();AlleyAudio.cartoon('boss');
     const sparkle=(col,labels)=>{for(let i=0;i<16;i++)particle(player.x+(Math.random()-.5)*110,player.y-40-Math.random()*150,labels[i%labels.length],col,22+Math.random()*10);};
@@ -921,6 +950,8 @@
   function update(dt){
     if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('toast').classList.remove('show');}
     if(game.mode!=='playing')return;
+    // The grab cut-in has its own clock; battle state stays exactly paused.
+    if(player.grab){updateGrab(dt);return;}
     // Short hit-stop makes every successful strike readable; the landing slam
     // holds the whole stage slightly longer for a comic 'THUD!' impact.
     if(game.freeze>0){game.freeze=Math.max(0,game.freeze-dt);game.shake=Math.max(0,game.shake-dt*21);return;}
@@ -1931,7 +1962,7 @@
       if(thrust>.6){ctx.fillStyle='#ffe087';ctx.font='23px sans-serif';ctx.fillText('✦',75,-h*.70);}
     }
     ctx.restore();
-    if(!hero&&!unit.exit&&!TYPES[unit.kind].boss){
+    if(!hero&&!unit.exit&&!unit.cutIn&&!TYPES[unit.kind].boss){
       ctx.save();const barW=Math.min(98,w*.7);ctx.fillStyle='#4f3958cc';roundRect(x-barW/2,groundY-h-16-((unit.id||0)%3)*9,barW,7,3);ctx.fill();ctx.fillStyle=unit.hurt>0?'#ffe89b':'#77e2b3';roundRect(x-barW/2,groundY-h-16-((unit.id||0)%3)*9,barW*Math.max(0,unit.hp/unit.maxHp),7,3);ctx.fill();
       ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.strokeStyle='#624257';ctx.lineWidth=3;
       if(unit.windup>0){ctx.strokeStyle='#ffdca9';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,groundY-h-25,5,0,Math.PI*2);ctx.stroke();}
@@ -1940,6 +1971,7 @@
     }
   }
   function drawWorld(){
+    if(player.grab){drawGrabOverlay();return;}
     ctx.save();if(game.shake>0)ctx.translate((Math.random()-.5)*Math.min(5,game.shake),(Math.random()-.5)*Math.min(3,game.shake*.5));
     backdrop();drawRegionalFloor();
     for(const s of game.shockwaves){
@@ -2037,10 +2069,10 @@
   // Debug state is read-only: useful to verify collision, waves and shops in browser tests.
   window.__gaiaBrawlerDebug=()=>({mode:game.mode,zone:game.zone,zoneEnd:game.zones[game.zone]?.end,waveLive:game.waveLive,enemies:game.enemies.map(e=>({hp:e.hp,x:e.x,y:e.y,face:e.face,windup:e.windup,kind:e.kind,airborne:!!e.air,landed:e.floorTime>0})),player:{x:player.x,y:player.y,hp:player.hp,attack:player.attack?.kind||null,attackDir:player.attack?.dir||null,jump:!!player.jump,jumpZ:player.jumpZ,crouch:player.crouch,dash:!!player.dash,down:player.down?.kind||null,slam:player.slam?.phase||null},poses:{move:poses.move.length,walk:poses.walk.length,jump:poses.jump.length,fall:poses.fall.length},shockwaves:game.shockwaves.length,projectiles:game.projectiles.map(p=>({x:p.x,y:p.y,vx:p.vx,vy:p.vy,face:p.face})),gold:wallet.gold,owned:[...(wallet.owned||[])],equipped:wallet.equipped,arrests:game.arrests,lastAttack:game.lastAttack});
 
-  window.AlleyGame={debug:{addDopa,hurt:d=>damagePlayer(d,player.x+60),player:()=>player},hold:s=>{game.freeze=Math.max(game.freeze,s);},useCard,canUseCard:()=>game.mode==='playing'&&player.hp>0,start:reset,focus:()=>{cvs.focus();},state:()=>({stage:activeStage,mode:game.mode,zone:game.zone,packs:packIndex,enemies:game.enemies.length,time:game.elapsed,checkpoint:wallet.checkpoint[activeStage]||0})};
+  window.AlleyGame={debug:{addDopa,hurt:d=>damagePlayer(d,player.x+60),player:()=>player},hold:s=>{game.freeze=Math.max(game.freeze,s);},useCard,canUseCard:()=>game.mode==='playing'&&!player.grab&&player.hp>0,start:reset,focus:()=>{cvs.focus();},state:()=>({stage:activeStage,mode:game.mode,zone:game.zone,packs:packIndex,enemies:game.enemies.length,time:game.elapsed,checkpoint:wallet.checkpoint[activeStage]||0})};
   if(new URLSearchParams(location.search).has('qa'))window.__alleyQA={
     get game(){return game;},get player(){return player;},get types(){return TYPES;},get waves(){return WAVES;},get assetsFailed(){return assetsFailed;},
-    beginGrab,mashGrab,releaseGrab,drawGrab,dash,moves,femaleAttack,makePlan,spawnPack,regionalAttack,regionalStyle,regionalVisibleY,combatBeat,enemyBodyMotion,comicWeaponPhase,comicWeaponPose,heroTrailSamples,hipHeartSamples,pushSkill,beginCharge,releaseCharge,SKILLS,enemyAttackStyle,update,damagePlayer,hitEnemy,attack,jump,spawnWave,finish,clearInput,drawWorld,poses,images,throwEnemyProjectile,drawFighter,drawProjectile,drawAttackEffect,updateCombatArt,defeatEnemy,emitBlast,
+    GRAB_LINES,drawGrabOverlay,beginGrab,mashGrab,releaseGrab,drawGrab,dash,moves,femaleAttack,makePlan,spawnPack,regionalAttack,regionalStyle,regionalVisibleY,combatBeat,enemyBodyMotion,comicWeaponPhase,comicWeaponPose,heroTrailSamples,hipHeartSamples,pushSkill,beginCharge,releaseCharge,SKILLS,enemyAttackStyle,update,damagePlayer,hitEnemy,attack,jump,spawnWave,finish,clearInput,drawWorld,poses,images,throwEnemyProjectile,drawFighter,drawProjectile,drawAttackEffect,updateCombatArt,defeatEnemy,emitBlast,
     teleport(x,y){player.x=x;player.y=y;game.camera=clamp(x-345,0,WORLD_W-W);},
     clearPack(){for(const e of game.enemies){e.hp=0;e.exit=null;}game.enemies=[];update(.016);},
     move(dx,dy){joystick.x=dx;joystick.y=dy;},input
