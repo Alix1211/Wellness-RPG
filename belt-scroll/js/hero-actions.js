@@ -17,7 +17,9 @@ window.HeroActions=(()=>{
   function draw(ctx,images,u,game){
     const key=pose(u),im=key==='grabHip'?images.lowerPrep:key?.startsWith('h')?images.rosie_hug:images.rosie_actions;if(!key||!(im?.naturalWidth||im?.width))return false;
     const x=u.x-game.camera;if(x<-340||x>1600)return true;
-    ctx.save();ctx.translate(x,u.y);if(u.grab){const fast=u.grab.age<1,beat=u.grab.age*(fast?112:72);ctx.translate(Math.sin(beat)*(fast?2.5:1.1),Math.cos(beat*.8)*(fast?1.5:.7));}ctx.fillStyle='#6047634d';ctx.beginPath();ctx.ellipse(0,-2,key[0]==='1'?76:31,9,0,0,Math.PI*2);ctx.fill();
+    ctx.save();ctx.translate(x,u.y);ctx.fillStyle='#6047634d';ctx.beginPath();ctx.ellipse(0,-2,key[0]==='1'?76:31,9,0,0,Math.PI*2);ctx.fill();
+    // A readable, foot-planted comic wobble instead of high-frequency jitter.
+    if(u.grab)ctx.rotate(Math.sin(u.grab.age*Math.PI*2*1.8)*.065*(u.grab.dir||1));
     const hip=u.attack?.kind==='dashHip'||u.grab?.pose==='hip',dir=u.grab?.dir||u.dash?.dir||u.attack?.dir||u.face;ctx.scale(hip?dir:-dir,1);
     if(u.dash||hip&&u.dashFollow){
       for(let j=3;j>0;j--){ctx.save();ctx.globalAlpha=.1+(3-j)*.07;frame(ctx,im,key,(hip?-1:1)*j*18,0);ctx.restore();}

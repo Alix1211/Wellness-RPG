@@ -648,9 +648,13 @@
     // Existing sprites are enlarged together. No battle coordinates are changed.
     const oldCamera=game.camera,scale=Math.min(1.95,360/TYPES[g.enemy.kind].drawH),baseX=W*.46,baseY=H*.83;
     const hero={...player,x:-30,y:0,face:1,grab:{...g,dir:1}};
-    const foe={...g.enemy,x:35+Math.sin(g.age*95+.8)*1.7,y:-8+Math.cos(g.age*83)*.8,face:-1,holdingPlayer:true,cutIn:true};
+    const foe={...g.enemy,x:9,y:-8,face:-1,holdingPlayer:true,cutIn:true};
     ctx.save();ctx.translate(baseX,baseY);ctx.scale(scale,scale);game.camera=0;
-    try{drawFighter(foe);drawFighter(hero,true);}finally{game.camera=oldCamera;ctx.restore();}
+    try{
+      // Bring the standing captor's shoulder/arm beside Rosie; rock about planted feet.
+      ctx.save();ctx.translate(foe.x,foe.y);ctx.rotate(-Math.sin(g.age*Math.PI*2*1.8)*.045);ctx.translate(-foe.x,-foe.y);drawFighter(foe);ctx.restore();
+      drawFighter(hero,true);
+    }finally{game.camera=oldCamera;ctx.restore();}
     const headX=baseX-30*scale,headY=baseY-(g.pose==='hip'?181:124)*scale;
     for(let j=0;j<3;j++){const a=g.age*8+j*Math.PI*2/3;tinyHeart(headX+Math.cos(a)*35,headY+Math.sin(a)*11,9,Math.sin(a)<0?.55:1);}
     grabBubble(GRAB_LINES.enemy,W*.57,H*.14,Math.min(300,W*.32));
