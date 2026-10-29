@@ -20,7 +20,14 @@ window.HeroActions=(()=>{
       ctx.save();ctx.strokeStyle='#e1fff5';ctx.lineWidth=2;ctx.globalAlpha=.75;ctx.lineCap='round';
       for(let j=0;j<3;j++){ctx.beginPath();ctx.moveTo(27+j*7,-45-j*19);ctx.lineTo(68+j*12,-45-j*19);ctx.stroke();}ctx.restore();
     }
-    frame(ctx,im,key);
+    const blend=key==='00'?Math.max(0,Math.min(1,u.crouchBlend??1)):1;
+    const transition=key==='00'&&blend<.7?(blend<.28?images.move1:images.jump0):null;
+    if(transition?.naturalWidth||transition?.width){
+      // Standing -> original shallow crouch -> deep crouch, all at original size.
+      const k=blend<.28?169/(transition.naturalHeight||transition.height):169/685;
+      const w=(transition.naturalWidth||transition.width)*k,h=(transition.naturalHeight||transition.height)*k;
+      ctx.drawImage(transition,-w/2,-h,w,h);
+    }else frame(ctx,im,key);
     ctx.restore();return true;
   }
   return {assets,data:DATA,pose,frame,draw};
