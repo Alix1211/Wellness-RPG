@@ -28,8 +28,8 @@ console.log('PASS all 12 action poses share fixed anatomical scale and planted g
 
 for(const kind of ['punch','kick']){reset();g.enemies=[frozenEnemy('punk',1200)];q.move(1,0);q.dash();q.update(.06);const x=p.x;q.attack(kind);assert(!p.dash);assert.equal(p.attack.kind,kind==='punch'?'dashHug':'dashHip');assert(p.attack.fromDash);assert.equal(p.attack.age,0);assert(p.dashFollow);q.update(.02);assert(p.x>x);assert.equal(q.moves[kind].damage,kind==='punch'?13:28);console.log('PASS dash immediately links '+kind+' with momentum and unchanged damage');}
 reset();g.enemies=[frozenEnemy('punk',1200)];q.move(1,0);q.dash();q.update(.05);q.jump();assert(!p.dash);assert(p.jump.fromDash);const jumpX=p.x;q.update(.06);assert(p.x>jumpX);assert(p.jumpZ>18);q.attack('punch');assert(p.splash);assert(!p.dashFollow);console.log('PASS dash links jump and existing airborne upper attack without a queue');
-reset();g.enemies=[frozenEnemy('punk',1200)];press('crouch');q.update(.03);release('crouch');settle(.18);q.attack('kick');assert.equal(p.attack.kind,'split');console.log('PASS tap crouch, release, then press lower still gives seated split');
-reset();g.enemies=[frozenEnemy('punk',1200)];press('crouch');q.update(.10);assert(p.crouchBlend>0&&p.crouchBlend<1);release('crouch');settle(.43);assert(p.crouch);assert(p.crouchBlend>0&&p.crouchBlend<1);settle(.4);assert(!p.crouch);assert.equal(p.crouchBlend,0);console.log('PASS gradual sit/stand blend at fixed sprite sizes');
+reset();g.enemies=[frozenEnemy('punk',1200)];press('crouch');q.update(.03);release('crouch');settle(.08);q.attack('kick');assert.equal(p.attack.kind,'split');console.log('PASS tap crouch, release, then promptly press lower still gives seated split');
+reset();g.enemies=[frozenEnemy('punk',1200)];press('crouch');q.update(.10);assert(p.crouchBlend>0&&p.crouchBlend<1);release('crouch');settle(.08);assert(p.crouch);settle(.20);assert(!p.crouch);assert.equal(p.crouchBlend,0);console.log('PASS gradual sit, faster stand-up (0.10s grace + 0.12s upstroke)');
 reset();g.enemies=[frozenEnemy('punk',1200)];q.dash();q.attack('punch');assert(p.dashFollow);q.damagePlayer(10,p.x+60);assert(!p.dashFollow);q.clearInput();assert(!p.crouchHold&&!p.crouchBlend);console.log('PASS hit and pause/input reset clear link momentum and stance grace');
 
 reset();g.enemies=[frozenEnemy('punk',1200)];q.dash();q.jump();q.update(.06);q.attack('kick');assert(p.slam);assert(!p.dashFollow);console.log('PASS dash jump links existing airborne lower slam');
@@ -76,9 +76,18 @@ settle(.42);assert.equal(g.enemies[0].hp,55);assert.equal(g.enemies[1].hp,55);
 assert.equal(g.lastAttack.kind,'whirlSplit');assert(!q.comboChain.steps.length);
 console.log('PASS hip-hip-chest-chest triggers split and two outward spinning attack pulses');
 
-reset();g.enemies=[frozenEnemy('punk',1200)];press('punch');settle(1.3);release('punch');
-assert(q.comboChain.steps.length===0);assert.notEqual(p.attack?.kind,'hipCrash');
-console.log('PASS press-and-hold repeats ordinary upper attacks without progressing a combo');
+for(const kind of ['punch','kick']){
+ reset();g.enemies=[frozenEnemy('punk',1200)];press(kind);settle(4.5);
+ assert.equal(q.holdAttacks[kind],3,kind+' held count caps at exactly 3');
+ assert.equal(q.basicChain.count,3,kind+' third hit is the finisher');
+ assert.equal(p.attack,null,'held attacks must stop after 3, never loop forever');
+ assert(q.comboChain.steps.length<=1);release(kind);assert.equal(q.holdAttacks[kind],0);
+ press(kind);q.update(.016);assert.equal(p.attack.kind,kind,'new press starts fresh attacks');release(kind);
+ console.log('PASS '+kind+' hold stops after three, releases unlock a new attack');
+}
+reset();const finishingTarget=frozenEnemy('punk',465);finishingTarget.hp=200;finishingTarget.maxHp=200;g.enemies=[finishingTarget];
+for(let i=1;i<=3;i++){p.attack=null;p.attackCooldown=0;const start=finishingTarget.x;q.attack('punch');assert.equal(p.attack.basicHit,i);settle(.26);assert.equal(!!finishingTarget.air,i===3,'knockback only on 3rd hit');finishingTarget.invuln=0;finishingTarget.x=start;finishingTarget.air=null;}
+console.log('PASS third ordinary upper hit, not earlier hits, applies knockback');
 reset();g.enemies=[frozenEnemy('punk',1200)];assert.equal(tapCombo('punch'),'punch');settle(1.25);
 assert.equal(tapCombo('punch'),'punch');settle(.51);assert.equal(tapCombo('kick'),'kick');
 console.log('PASS an expired input pattern does not fire a finisher');
@@ -100,3 +109,11 @@ assert(!q.comboChain.steps.length);console.log('PASS fast 0.22s tablet taps trig
 reset();g.enemies=[frozenEnemy('punk',1200)];
 for(const kind of ['kick','punch','kick','punch']){press(kind);release(kind);settle(.22);}
 assert.notEqual(p.attack?.kind,'whirlSplit');console.log('PASS incorrect four-tap order does not trigger the finisher');
+
+// Three-tap input must be independent of the first/second normal attack cooldown.
+reset();g.enemies=[frozenEnemy('punk',540)];
+for(const kind of ['punch','punch']){press(kind);release(kind);settle(.08);}
+press('kick');release('kick');
+assert.equal(p.attack.kind,'hipCrash');assert.equal(p.attack.age,0);
+settle(.55);assert.equal(g.enemies[0].hp,56);assert(!q.comboChain.steps.length);
+console.log('PASS fast 0.08s tablet taps P-P-K immediately trigger hip crash despite cooldown');

@@ -80,51 +80,47 @@
   const held=new Set();
   const input={punch:false,kick:false,jump:false,dash:false,crouch:false,skill:false,charge:false};
   const queuedAttack={punch:0,kick:0};
-  // [임시] 연속 탭만 연속기로 계산. 홀드 자동공격은 제외하고 0.16초만 입력 유예.
+  // [임시] 홀드 자동공격은 3타 뒤 멈추며, 버튼을 떼고 다시 눌러야 새 3타 시작.
+  const holdAttacks={punch:0,kick:0};
+  const basicChain={kind:null,count:0,last:-99};
+  function resetBasicChain(){basicChain.kind=null;basicChain.count=0;basicChain.last=-99;}
+  function countBasicHit(kind){
+    const count=basicChain.kind===kind&&game.elapsed-basicChain.last<=1.15?basicChain.count%3+1:1;
+    basicChain.kind=kind;basicChain.count=count;basicChain.last=game.elapsed;
+    holdAttacks[kind]=Math.min(3,holdAttacks[kind]+1);
+    return count;
+  }
+  // 실제 터치/키 누름만 연속기로 인식. 기본 공격은 0.16초만 입력 유예.
   const COMBO_TAP_GRACE=.16,COMBO_GAP=1.12;
   const comboChain={steps:[],last:-99};
   const comboRecipes=[
     {steps:['punch','punch','kick'],move:'hipCrash'},
     {steps:['kick','kick','punch','punch'],move:'whirlSplit'}
   ];
-  // Four-tap input is detected at physical press time, not after each slow attack recovery.
-  // There is no long action queue: the fourth press starts the finisher immediately.
-  const splitTaps={steps:[],last:-99};
-  function resetComboChain(){comboChain.steps=[];comboChain.last=-99;splitTaps.steps=[];splitTaps.last=-99;}
-  function detectSplitTap(kind){
-    if(game.mode!=='playing'||player.hp<=0||player.grab||player.stun>0||player.jump||player.down||player.slam||player.splash||player.charge||player.skillPose||player.dash||player.dashLink||player.dashFollow||input.crouch||player.crouch){splitTaps.steps=[];return false;}
-    const pattern=['kick','kick','punch','punch'];
-    const taps=[...(game.elapsed-splitTaps.last<=1.15?splitTaps.steps:[]),kind];
-    if(taps.length===4&&taps.every((s,i)=>s===pattern[i])){
-      if(player.attack&&!['punch','kick'].includes(player.attack.kind)){splitTaps.steps=[];return false;}
-      resetComboChain();
-      const cfg=moves.whirlSplit;
-      player.attack={kind:'whirlSplit',age:0,hit:false,dir:player.face,fromDash:false,hitIds:new Set()};
+  function resetComboChain(){comboChain.steps=[];comboChain.last=-99;}
+  function detectComboTap(kind){
+    if(game.mode!=='playing'||player.hp<=0||player.grab||player.stun>0||player.jump||player.down||player.slam||player.splash||player.charge||player.skillPose||player.dash||player.dashLink||player.dashFollow||input.crouch||player.crouch){resetComboChain();return false;}
+    const steps=[...(game.elapsed-comboChain.last<=1.15?comboChain.steps:[]),kind];
+    const complete=comboRecipes.find(r=>steps.length===r.steps.length&&steps.every((s,i)=>s===r.steps[i]));
+    if(complete){
+      if(player.attack&&!['punch','kick'].includes(player.attack.kind)){resetComboChain();return false;}
+      resetComboChain();resetBasicChain();
+      const cfg=moves[complete.move];
+      player.attack={kind:complete.move,age:0,hit:false,dir:player.face,fromDash:false,hitIds:new Set()};
       player.attackCooldown=cfg.dur*1.12;player.anim=.22;player.crouch=false;
       queuedAttack.punch=queuedAttack.kick=0;
-      sound('whirlSplit');AlleyAudio.cartoon('whoosh');
+      // A held final button must not restart a basic attack after the finisher.
+      holdAttacks.punch=holdAttacks.kick=3;
+      sound(complete.move);if(complete.move==='whirlSplit')AlleyAudio.cartoon('whoosh');
       return true;
     }
-    let prefix=[];
-    for(let n=1;n<=taps.length;n++){
-      const tail=taps.slice(-n);
-      if(tail.every((s,i)=>s===pattern[i]))prefix=tail;
-    }
-    splitTaps.steps=prefix;splitTaps.last=game.elapsed;
-    return false;
-  }
-  function comboMove(kind,fresh){
-    if(!fresh){resetComboChain();return kind;}
-    const steps=[...(game.elapsed-comboChain.last<=COMBO_GAP?comboChain.steps:[]),kind];
-    const complete=comboRecipes.find(r=>steps.length===r.steps.length&&steps.every((s,i)=>s===r.steps[i]));
-    if(complete){resetComboChain();return complete.move;}
     let prefix=[];
     for(let n=1;n<=steps.length;n++){
       const tail=steps.slice(-n);
       if(comboRecipes.some(r=>tail.every((s,i)=>s===r.steps[i])))prefix=tail;
     }
     comboChain.steps=prefix;comboChain.last=game.elapsed;
-    return kind;
+    return false;
   }
   let slamKickLock=false; // Require a fresh lower-attack press after a jumping slam.
   function showPanel(panel){$modal.classList.remove('hidden');for(const p of [$intro,$result])p.classList.toggle('hidden',p!==panel);}
@@ -150,7 +146,7 @@
     $('bossHUD').classList.toggle('hidden',!boss);
     if(boss){$('bossName').textContent=boss.name;$('bossFill').style.width=100*game.enemies.filter(e=>TYPES[e.kind].boss).reduce((n,e)=>n+Math.max(0,e.hp),0)/(game.encounterBossMax||boss.maxHp)+'%';}
   }
-  function clearInput(){cancelCharge();resetComboChain();player.crouch=false;player.crouchHold=0;player.crouchBlend=0;player.dash=null;player.dashLink=null;player.dashFollow=null;held.clear();queuedAttack.punch=queuedAttack.kick=0;for(const k of Object.keys(input))input[k]=false;joystick.x=joystick.y=0;joystick.active=false;joystick.pid=null;slamKickLock=false;
+  function clearInput(){cancelCharge();resetComboChain();resetBasicChain();holdAttacks.punch=holdAttacks.kick=0;player.crouch=false;player.crouchHold=0;player.crouchBlend=0;player.dash=null;player.dashLink=null;player.dashFollow=null;held.clear();queuedAttack.punch=queuedAttack.kick=0;for(const k of Object.keys(input))input[k]=false;joystick.x=joystick.y=0;joystick.active=false;joystick.pid=null;slamKickLock=false;
     $('stick').style.transform='translate(-50%,-50%)';document.querySelectorAll('.pressed').forEach(e=>e.classList.remove('pressed'));}
   function pause(abort=false){
     if(game.mode!=='playing'&&game.mode!=='paused')return;
@@ -409,9 +405,9 @@
   function attack(kind,fresh=false){
     if(game.mode!=='playing'||player.hp<=0||player.splash||player.grab)return false;
     const wasDashing=!!(player.dash||player.dashLink);
-    if(wasDashing){if(player.stun>0||player.charge||player.skillPose||player.attackCooldown>0)return false;resetComboChain();continueDash(kind==='kick'?'hip':'hug');}
+    if(wasDashing){if(player.stun>0||player.charge||player.skillPose||player.attackCooldown>0)return false;resetComboChain();resetBasicChain();continueDash(kind==='kick'?'hip':'hug');}
     if(kind==='punch'&&player.jump&&player.jumpZ>18&&player.stun===0&&!player.slam){
-      resetComboChain();
+      resetComboChain();resetBasicChain();
       player.splash={age:0,dir:player.face,fromX:player.x,lift:player.jumpZ,hit:false,landed:false};
       player.jump=null;player.attack=null;player.crouch=false;player.dashFollow=null;player.attackCooldown=.84;AlleyAudio.hero('upper');return true;
     }
@@ -419,16 +415,16 @@
     // Pressing the existing LOWER button in mid-jump replaces the forward spear
     // with a falling seated slam. Its damage happens only when the feet reach ground.
     if(kind==='kick'&&player.jump&&player.jumpZ>18&&!player.slam&&!slamKickLock&&player.stun===0){
-      resetComboChain();
+      resetComboChain();resetBasicChain();
       player.dashFollow=null;player.slam={phase:'dive',age:0,recovery:0};player.jump=null;
       player.crouch=false;slamKickLock=true;player.attackCooldown=0;AlleyAudio.hero('slam');return true;
     }
     if(game.mode!=='playing'||player.charge||player.skillPose||player.stun>0||player.attackCooldown>0||player.hp<=0||player.jump||player.down||player.slam||kind==='kick'&&slamKickLock)return false;
     if(wasDashing)kind=kind==='kick'?'dashHip':'dashHug';
-    if(!wasDashing&&(input.crouch||player.crouch||player.crouchHold>0)){resetComboChain();kind=kind==='kick'?'split':'headbutt';}
-    else if(!wasDashing)kind=comboMove(kind,fresh);
+    if(!wasDashing&&(input.crouch||player.crouch||player.crouchHold>0)){resetComboChain();resetBasicChain();kind=kind==='kick'?'split':'headbutt';}
     player.crouch=false;
-    const cfg=moves[kind];player.attack={kind,age:0,hit:false,dir:player.face,fromDash:wasDashing,hitIds:new Set()};
+    const basicHit=kind==='punch'||kind==='kick'?countBasicHit(kind):0;
+    const cfg=moves[kind];player.attack={kind,age:0,hit:false,dir:player.face,fromDash:wasDashing,basicHit,hitIds:new Set()};
     player.attackCooldown=cfg.dur*1.12;player.anim=.22;sound(kind);
     if(kind==='whirlSplit')AlleyAudio.cartoon('whoosh');
     return true;
@@ -491,13 +487,12 @@
     }
     e.invuln=.13;if(!setup)e.setupPush=null;
     const dir=forceDir||Math.sign(e.x-sourceX||player.face);
-    // Even large punches/kicks usually produce a short shove. A rare strong
-    // blow launches a living mob; bosses almost never become tumbling toys.
-    // 임시: 모든 강타(발차기·내려찍기)와 연타 4번째 타격은 확정으로 날린다(예전: 15% 확률). 보스는 날리지 않고 크게 휘청.
-    const isBoss=!!TYPES[e.kind].boss,comboHit=!setup&&(player.combo+1)%4===0;
+    // The third ordinary hit is the finisher; unrelated fourth-hit counters
+    // must not trigger a surprise launch during another move.
+    const isBoss=!!TYPES[e.kind].boss;
     if(e.hp<=0)defeatEnemy(e,dir);
-    else if(!isBoss&&(strong||comboHit)){launchEnemy(e,dir,strong?Math.max(120,kb*1.7):130);bigImpact(e,dir,strong);}
-    else if(isBoss&&(strong||comboHit)){e.x=clamp(e.x+dir*48,50,WORLD_W-50);if(canStagger&&!setup)e.stun=Math.max(e.stun,Math.min(.3,stagger+.3));game.shake=Math.max(game.shake,9);game.freeze=Math.max(game.freeze,.07);vib();}
+    else if(!isBoss&&strong){launchEnemy(e,dir,Math.max(120,kb*1.7));bigImpact(e,dir,strong);}
+    else if(isBoss&&strong){e.x=clamp(e.x+dir*48,50,WORLD_W-50);if(canStagger&&!setup)e.stun=Math.max(e.stun,Math.min(.3,stagger+.3));game.shake=Math.max(game.shake,9);game.freeze=Math.max(game.freeze,.07);vib();}
     else e.x=clamp(e.x+dir*Math.min(kb,29),50,WORLD_W-50);
     if(e.hp>0){
       if(crit||Math.random()<.76){
@@ -529,7 +524,7 @@
     const dealt=hits.slice(0,cfg.maxHits);
     let struck=0;
     for(const h of dealt){
-      const strong=a.kind==='kick'||a.kind==='split'||a.kind==='hipCrash'||a.kind==='whirlSplit'&&finalPulse;
+      const strong=(a.kind==='punch'||a.kind==='kick')&&a.basicHit===3||a.kind==='split'||a.kind==='hipCrash'||a.kind==='whirlSplit'&&finalPulse;
       const kb=a.kind==='whirlSplit'&&!finalPulse?0:cfg.kb;
       if(hitEnemy(h.e,a.kind==='whirlSplit'?(finalPulse?25:20):cfg.damage,kb,cfg.stagger,player.x,false,cfg.bothSides?(Math.sign(h.e.x-player.x)||a.dir):a.dir,strong))struck++;
     }
@@ -595,7 +590,7 @@
     }
     if(player.invuln>0)return false;
     if(kind!=='explosion'&&player.jump&&player.jump.age<.12&&player.jumpZ>36){return false;} // 점프 직후 아주 짧은 순간만 무적 [임시]
-    player.hp=Math.max(0,player.hp-d);player.combo=0;resetComboChain();player.attack=null;player.crouch=false;player.crouchHold=0;player.crouchBlend=0;player.dash=null;player.dashLink=null;player.dashFollow=null;player.slam=null;player.splash=null;
+    player.hp=Math.max(0,player.hp-d);player.combo=0;resetComboChain();resetBasicChain();player.attack=null;player.crouch=false;player.crouchHold=0;player.crouchBlend=0;player.dash=null;player.dashLink=null;player.dashFollow=null;player.slam=null;player.splash=null;
     player.jump=null;player.jumpZ=0;
     const away=Math.sign(player.x-sourceX||player.face);
     if(kind==='heavy'||kind==='explosion'){
@@ -855,21 +850,21 @@
   }
   function jump(){
     if(game.mode!=='playing'||player.hp<=0||player.grab||player.stun>0||player.jump||player.down||player.crouch&&!player.dash||player.attack||player.slam||player.splash||player.charge)return;
-    resetComboChain();
+    resetComboChain();resetBasicChain();
     const fromDash=!!(player.dash||player.dashLink);if(fromDash)continueDash('jump');
     player.jump={age:0,duration:.88,fromDash};player.jumpZ=0;AlleyAudio.hero('jump');
   }
-  // 임시: 버튼을 떼어도 0.38초 앉기 유지, 전환 0.22초/0.18초. 공격 입력은 즉시 허용.
+  // Downstroke stays 0.22s; release grace and upstroke are shortened.
   function syncCrouch(){
     const free=!player.grab&&!player.dash&&!player.dashFollow&&!player.charge&&!player.jump&&!player.down&&!player.attack&&!player.slam&&!player.splash&&player.stun===0&&player.hp>0;
     player.crouch=!!(free&&(input.crouch||player.crouchHold>0||player.crouchBlend>.02));
   }
   function updateCrouch(dt){
-    player.crouchHold=input.crouch?.38:Math.max(0,(player.crouchHold||0)-dt);
+    player.crouchHold=input.crouch?.10:Math.max(0,(player.crouchHold||0)-dt);
     const blocked=player.grab||player.dash||player.dashFollow||player.charge||player.jump||player.down||player.slam||player.splash||player.stun>0||player.hp<=0;
     if(blocked){player.crouchHold=0;player.crouchBlend=0;}
     else if(player.attack){player.crouchBlend=['split','headbutt'].includes(player.attack.kind)?1:0;}
-    else{const down=input.crouch||player.crouchHold>0;player.crouchBlend=clamp((player.crouchBlend||0)+(down?dt/.22:-dt/.18),0,1);}
+    else{const down=input.crouch||player.crouchHold>0;player.crouchBlend=clamp((player.crouchBlend||0)+(down?dt/.22:-dt/.12),0,1);}
     syncCrouch();
   }
   function continueDash(action){
@@ -882,7 +877,7 @@
     if(game.mode!=='playing'||player.hp<=0||player.grab||player.stun>0||player.attack||player.attackCooldown>0||player.jump||player.down||player.slam||player.splash||player.charge||player.skillPose||player.dash||player.dashCd>0)return false;
     let [dx,dy]=moveVector();const n=Math.hypot(dx,dy);if(n>.2){dx/=n;dy/=n;}else{dx=player.face;dy=0;}
     if(Math.abs(dx)>.1)player.face=Math.sign(dx);
-    resetComboChain();player.crouch=false;player.crouchHold=0;player.crouchBlend=0;player.dashFollow=null;player.dashLink=null;player.dash={age:0,duration:.18,dx,dy,dir:player.face,fromX:player.x,fromY:player.y};player.dashCd=.55;
+    resetComboChain();resetBasicChain();player.crouch=false;player.crouchHold=0;player.crouchBlend=0;player.dashFollow=null;player.dashLink=null;player.dash={age:0,duration:.18,dx,dy,dir:player.face,fromX:player.x,fromY:player.y};player.dashCd=.55;
     AlleyAudio.cartoon('whoosh');return true;
   }
   function refreshDashHud(){const el=$('dash'),off=player.dashCd>0||player.attackCooldown>0||player.stun>0||!!(player.attack||player.jump||player.down||player.slam||player.splash||player.charge||player.skillPose||player.dash)||player.hp<=0;
@@ -1048,8 +1043,8 @@
     if(input.dash){input.dash=false;dash();}
     if(input.jump){input.jump=false;jump();}
     if(input.skill){input.skill=false;pushSkill();}
-    if(input.punch||queuedAttack.punch>0){if(attack('punch',queuedAttack.punch>0))queuedAttack.punch=0;}
-    if(input.kick||queuedAttack.kick>0){if(attack('kick',queuedAttack.kick>0))queuedAttack.kick=0;}
+    if((input.punch&&holdAttacks.punch<3)||queuedAttack.punch>0){if(attack('punch',queuedAttack.punch>0))queuedAttack.punch=0;}
+    if((input.kick&&holdAttacks.kick<3)||queuedAttack.kick>0){if(attack('kick',queuedAttack.kick>0))queuedAttack.kick=0;}
     queuedAttack.punch=Math.max(0,queuedAttack.punch-dt);queuedAttack.kick=Math.max(0,queuedAttack.kick-dt);
     if(input.skill){input.skill=false;useCard();}
     if(player.attack){const a=player.attack,move=moves[a.kind];a.age+=dt*(player.hasteT>0?1.5:1);
@@ -1057,7 +1052,7 @@
         if(!a.hit&&a.age>=move.dur*move.impact){a.hit=true;resolveAttack(a,false);}
         if(!a.spinFinal&&a.age>=move.dur*.72){a.spinFinal=true;resolveAttack(a,true);}
       }else if(!move.setup&&!a.hit&&a.age>=move.dur*move.impact){a.hit=true;resolveAttack(a);}
-      if(a.age>=move.dur){if(['headbutt','split'].includes(a.kind)){player.crouchHold=Math.max(player.crouchHold||0,.22);player.crouchBlend=1;}player.attack=null;}}
+      if(a.age>=move.dur){if(['headbutt','split'].includes(a.kind)){player.crouchHold=Math.max(player.crouchHold||0,.10);player.crouchBlend=1;}player.attack=null;}}
     if(player.jump){
       player.jump.age+=dt;
       const t=clamp(player.jump.age/player.jump.duration,0,1);
@@ -2115,11 +2110,11 @@
   $('pauseReturn').onclick=returnToCity;$('resultReturn').onclick=returnToCity;
   $('pause').onclick=()=>{if(game.mode==='playing')pause();else if(game.mode==='paused'){$('start').click();}};
 
-  // Four combat buttons: upper/lower repeat while held, jump is a one-shot,
+  // Four combat buttons: upper/lower perform at most three hits per hold, jump is a one-shot,
   // crouch remains active only while held; dash is a one-shot. Two M-powered skills use separate controls.
   for(const key of ['punch','kick','jump','crouch','dash']){
-    const el=$(key);const release=()=>{if(key!=='jump'&&key!=='dash')input[key]=false;if(key==='kick')slamKickLock=false;el.classList.remove('pressed');};
-    el.addEventListener('pointerdown',e=>{e.preventDefault();el.setPointerCapture(e.pointerId);if(player.grab){mashGrab();input[key]=false;el.classList.add('pressed');return;}input[key]=true;if(key==='crouch')player.crouchHold=.38;if(key==='punch'||key==='kick'){if(!detectSplitTap(key))queuedAttack[key]=COMBO_TAP_GRACE;}el.classList.add('pressed');});
+    const el=$(key);const release=()=>{if(key!=='jump'&&key!=='dash')input[key]=false;if(key==='punch'||key==='kick')holdAttacks[key]=0;if(key==='kick')slamKickLock=false;el.classList.remove('pressed');};
+    el.addEventListener('pointerdown',e=>{e.preventDefault();el.setPointerCapture(e.pointerId);if(player.grab){mashGrab();input[key]=false;el.classList.add('pressed');return;}input[key]=true;if(key==='crouch')player.crouchHold=.10;if(key==='punch'||key==='kick'){if(!detectComboTap(key))queuedAttack[key]=COMBO_TAP_GRACE;}el.classList.add('pressed');});
     for(const ev of ['pointerup','pointercancel','lostpointercapture'])el.addEventListener(ev,release);
   }
   $('pushSkill').addEventListener('pointerdown',e=>{e.preventDefault();if(player.grab){mashGrab();return;}pushSkill();});
@@ -2147,15 +2142,15 @@
     held.add(e.code);
     if(e.repeat)return;
     if(player.grab&&['KeyJ','KeyK','Space','ShiftLeft','ShiftRight','KeyL','KeyQ','KeyE'].includes(e.code)){mashGrab();return;}
-    if(e.code==='KeyQ')pushSkill();if(e.code==='KeyE')beginCharge();if(e.code==='KeyJ'){input.punch=true;if(!detectSplitTap('punch'))queuedAttack.punch=COMBO_TAP_GRACE;}
-    if(e.code==='KeyK'){input.kick=true;if(!detectSplitTap('kick'))queuedAttack.kick=COMBO_TAP_GRACE;}
+    if(e.code==='KeyQ')pushSkill();if(e.code==='KeyE')beginCharge();if(e.code==='KeyJ'){input.punch=true;if(!detectComboTap('punch'))queuedAttack.punch=COMBO_TAP_GRACE;}
+    if(e.code==='KeyK'){input.kick=true;if(!detectComboTap('kick'))queuedAttack.kick=COMBO_TAP_GRACE;}
     if(e.code==='Space')input.jump=true;
     if(e.code==='KeyL')input.dash=true;
-    if(e.code==='ShiftLeft'||e.code==='ShiftRight'){input.crouch=true;player.crouchHold=.38;}
+    if(e.code==='ShiftLeft'||e.code==='ShiftRight'){input.crouch=true;player.crouchHold=.10;}
     
     if(e.code==='Escape'&&game.mode==='playing')$('pause').click();
   });
-  window.addEventListener('keyup',e=>{held.delete(e.code);if(e.code==='KeyE')releaseCharge();if(e.code==='KeyJ')input.punch=false;if(e.code==='KeyK'){input.kick=false;slamKickLock=false;}if(e.code==='ShiftLeft'||e.code==='ShiftRight')input.crouch=held.has('ShiftLeft')||held.has('ShiftRight');});
+  window.addEventListener('keyup',e=>{held.delete(e.code);if(e.code==='KeyE')releaseCharge();if(e.code==='KeyJ'){input.punch=false;holdAttacks.punch=0;}if(e.code==='KeyK'){input.kick=false;holdAttacks.kick=0;slamKickLock=false;}if(e.code==='ShiftLeft'||e.code==='ShiftRight')input.crouch=held.has('ShiftLeft')||held.has('ShiftRight');});
   window.addEventListener('blur',()=>{clearInput();if(game.mode==='playing')pause();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){clearInput();if(game.mode==='playing')pause();}});
   // Debug state is read-only: useful to verify collision, waves and shops in browser tests.
@@ -2164,7 +2159,7 @@
   window.AlleyGame={debug:{addDopa,hurt:d=>damagePlayer(d,player.x+60),player:()=>player},hold:s=>{game.freeze=Math.max(game.freeze,s);},useCard,canUseCard:()=>game.mode==='playing'&&!player.grab&&player.hp>0,start:reset,focus:()=>{cvs.focus();},state:()=>({stage:activeStage,mode:game.mode,zone:game.zone,packs:packIndex,enemies:game.enemies.length,time:game.elapsed,checkpoint:wallet.checkpoint[activeStage]||0})};
   if(new URLSearchParams(location.search).has('qa'))window.__alleyQA={
     get game(){return game;},get player(){return player;},get types(){return TYPES;},get waves(){return WAVES;},get assetsFailed(){return assetsFailed;},
-    femaleEnemy,femaleHealth,enemyActionRate,enemyReach,applyDifficulty,updateBossPressure,updateReinforcements,GRAB_LINES,drawGrabOverlay,beginGrab,mashGrab,releaseGrab,drawGrab,dash,moves,comboChain,femaleAttack,makePlan,spawnPack,regionalAttack,regionalStyle,regionalVisibleY,combatBeat,enemyBodyMotion,comicWeaponPhase,comicWeaponPose,heroTrailSamples,hipHeartSamples,pushSkill,beginCharge,releaseCharge,SKILLS,enemyAttackStyle,update,damagePlayer,hitEnemy,attack,jump,spawnWave,finish,clearInput,drawWorld,poses,images,throwEnemyProjectile,drawFighter,drawProjectile,drawAttackEffect,updateCombatArt,defeatEnemy,emitBlast,
+    femaleEnemy,femaleHealth,enemyActionRate,enemyReach,applyDifficulty,updateBossPressure,updateReinforcements,GRAB_LINES,drawGrabOverlay,beginGrab,mashGrab,releaseGrab,drawGrab,dash,moves,comboChain,holdAttacks,basicChain,femaleAttack,makePlan,spawnPack,regionalAttack,regionalStyle,regionalVisibleY,combatBeat,enemyBodyMotion,comicWeaponPhase,comicWeaponPose,heroTrailSamples,hipHeartSamples,pushSkill,beginCharge,releaseCharge,SKILLS,enemyAttackStyle,update,damagePlayer,hitEnemy,attack,jump,spawnWave,finish,clearInput,drawWorld,poses,images,throwEnemyProjectile,drawFighter,drawProjectile,drawAttackEffect,updateCombatArt,defeatEnemy,emitBlast,
     teleport(x,y){player.x=x;player.y=y;game.camera=clamp(x-345,0,WORLD_W-W);},
     clearPack(){for(const e of game.enemies){e.hp=0;e.exit=null;}game.enemies=[];update(.016);},
     move(dx,dy){joystick.x=dx;joystick.y=dy;},input

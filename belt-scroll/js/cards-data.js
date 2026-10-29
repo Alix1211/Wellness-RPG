@@ -13,6 +13,14 @@ window.BELT_POW={
  bind:(n,g)=>Math.min(7,3.5+g)
 };
 window.BELT_IMG={C01:'assets/cards/C01.webp',C02:'assets/cards/C02.webp',C03:'assets/cards/C03.webp',C04:'assets/cards/C04.webp',C05:'assets/cards/C05.webp',C06:'assets/cards/C06.webp',C07:'assets/cards/C07.webp',C08:'assets/cards/C08.webp',C09:'assets/cards/C09.webp',C10:'assets/cards/C10.webp',C11:'assets/cards/C11.webp',C12:'assets/cards/C12.webp',C13:'assets/cards/C13.webp',C14:'assets/cards/C14.webp',C15:'assets/cards/C15.webp',C16:'assets/cards/C16.webp',C17:'assets/cards/C17.webp',C18:'assets/cards/C18.webp',C19:'assets/cards/C19.webp',C20:'assets/cards/C20.webp',C21:'assets/cards/C21.webp',C22:'assets/cards/C22.webp',C23:'assets/cards/C23.webp',C24:'assets/cards/C24.webp',C25:'assets/cards/C25.webp',C26:'assets/cards/C26.webp',C27:'assets/cards/C27.webp',C28:'assets/cards/C28.webp',C29:'assets/cards/C29.webp',C30:'assets/cards/C30.webp',C31:'assets/cards/C31.webp',C32:'assets/cards/C32.webp',C33:'assets/cards/C33.webp',C34:'assets/cards/C34.webp',C35:'assets/cards/C35.webp',C36:'assets/cards/C36.webp',C37:'assets/cards/C37.webp',C38:'assets/cards/C38.webp',C39:'assets/cards/C39.webp',C40:'assets/cards/C40.webp',C41:'assets/cards/C41.webp',C42:'assets/cards/C42.webp',C43:'assets/cards/C43.webp',C44:'assets/cards/C44.webp',C45:'assets/cards/C45.webp',C46:'assets/cards/C46.webp',C47:'assets/cards/C47.webp',C48:'assets/cards/C48.webp',C49:'assets/cards/C49.webp',C50:'assets/cards/C50.webp'};
+// The ten consumables come from the original GAIA Detective mart asset set.
+// Keep their identity and artwork intact: only connect the missing card images.
+Object.assign(window.BELT_IMG,{
+ a18:'assets/cards/items/a18.webp',a20:'assets/cards/items/a20.webp',a21:'assets/cards/items/a21.webp',
+ b10:'assets/cards/items/b10.webp',c12:'assets/cards/items/c12.webp',c13:'assets/cards/items/c13.webp',
+ c14:'assets/cards/items/c14.webp',c15:'assets/cards/items/c15.webp',c16:'assets/cards/items/c16.webp',
+ c17:'assets/cards/items/c17.webp'
+});
 (function(){
  const P=BELT_POW;
  for(const c of BELT_CARDS){const g=BELT_G[c.grade]||1,t=[];
