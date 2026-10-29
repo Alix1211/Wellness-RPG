@@ -35,7 +35,7 @@ window.AlleyAudio=(()=>{
   function impact(strong,kind){
     remember('impact','hit');play('hit',strong?.7:.55,.27,false);
     const now=performance.now();if(now-lastEnemyAt<680)return;lastEnemyAt=now;
-    if(!['whip','grenadier'].includes(kind)){const keys=['enemy_m01','enemy_m05','enemy_m11','enemy_m16'];play(keys[Math.floor(Math.random()*keys.length)],.45,.7);}
+    if(!['whip','grenadier','yogaFighter','bikiniFighter','waterQueen'].includes(kind)){const keys=['enemy_m01','enemy_m05','enemy_m11','enemy_m16'];play(keys[Math.floor(Math.random()*keys.length)],.45,.7);}
   }
   function cartoon(kind){
     if(muted)return;try{const c=init(),now=c.currentTime,osc=c.createOscillator(),gain=c.createGain();osc.connect(gain);gain.connect(master);osc.type=kind==='boss'?'triangle':'sine';

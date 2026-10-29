@@ -40,7 +40,8 @@
     manager:{name:'보안팀장',hp:260,attack:12,speed:104,drawH:216,reach:161,style:'shock',boss:true,interval:1.9,telegraph:.8,spacing:141},
     clubBoss:{name:'클럽 보스',hp:430,attack:15,speed:38,drawH:265,reach:220,style:'whip',boss:true,interval:2.5,telegraph:1.0,spacing:190}
   };
-  Object.assign(TYPES,GaiaCampaign.types);
+  Object.assign(TYPES,GaiaCampaign.types,window.FemaleEnemies?.types||{});
+  Object.assign(ASSET,window.FemaleEnemies?.assets||{});
   const wallet=DetectiveApp.state;
   const ST=k=>Math.min(30,(wallet.stats&&wallet.stats[k])||0),sk=()=>1+.04*ST('개방성');
   const save=()=>DetectiveApp.save();
@@ -117,7 +118,7 @@
   }
   // Explicit, data-driven encounter groups: composition and reinforcement count
   // control the length. No forced timer or idle waves delay a skilled player.
-    const REGIONAL_RANGED=new Set(['spray','bottle','womanThrow','banknotes','heartShot','contract','cleaverFan']);
+    const REGIONAL_RANGED=new Set(['spray','bottle','womanThrow','banknotes','heartShot','contract','cleaverFan','water']);
   function isRangedStyle(style){return ['flame','rocket','grenade','dagger','bullet'].includes(style)||REGIONAL_RANGED.has(style);}
   function regionalStyle(e){const d=TYPES[e.kind],cycle=e.kind==='studentBoss'&&e.hp<e.maxHp*.5?['cleaver','rush','feint','cleaverFan','cleaver']:d.pattern;return cycle?.[(e.pattern||0)%cycle.length]||d.style;}
   function makeRegionalPlan(stage){
@@ -132,10 +133,21 @@
     const plan=Array.from({length:ZN(stage)},(_,i)=>({packs:variants[(i+stage)%6].map(p=>p.slice()),checkpoint:i>0&&i%4===0}));
     const bosses={5:[['whip','goth'],['scientist']],6:[['paddleBrute','hippie'],['farmer']],7:[['punk','bouncer'],['mafiaA','mafiaB','mafiaC','mafiaD']],8:[['boxer','goth'],['mafiaBoss']],9:[['clubPunk','breaker'],['director']],10:[['bouncer','whip'],['heiress'],['host']],11:[['paddleBrute','bouncer'],['pimp']],12:[['whip','goth'],['studentBoss']],14:[['bouncer','whip','boxer'],['paddleBrute','goth','clubPunk','hippie']]};plan.push({packs:bosses[stage],boss:true});return plan;
   }
+  function femaleAttack(e,style){
+    const def=TYPES[e.kind],dir=e.face;
+    if(style==='water'){
+      const x=e.x+dir*72,y=e.y-126,travel=Math.max(.3,Math.abs(player.x-x)/340);
+      game.projectiles.push({kind:'water',x,y,vx:dir*340,vy:clamp((player.y-108-y)/travel,-130,130),face:dir,age:0,ttl:2.1,sourceX:e.x,damage:def.attack,lane:e.y});
+    }else if(style==='dive'){
+      e.dive={age:0,duration:.62,dir,fromX:e.x,distance:Math.min(180,Math.abs(player.x-e.x)+25),hit:false};
+    }else e.strikes=[{time:.16,dir,done:false}];
+    return true;
+  }
   function regionalAttack(e,style){
+    if(TYPES[e.kind].female)return femaleAttack(e,style);
     if(!TYPES[e.kind].regional)return false;
     const def=TYPES[e.kind],dir=e.face,front=(player.x-e.x)*dir,lane=Math.abs(player.y-e.y),origin={x:e.x+dir*def.drawH*.43,y:e.y-def.drawH*.72};
-    const shot=(kind,damage,speed=270,spread=0)=>{const travel=Math.max(.4,Math.abs(player.x-origin.x)/speed),target=player.y-108;game.projectiles.push({kind,x:origin.x,y:origin.y,vx:dir*speed,vy:clamp((target-origin.y)/travel+spread,-180,180),face:dir,age:0,ttl:['person','bottle'].includes(kind)?travel:2.3,sourceX:e.x,damage,lane:player.y,figure:(e.pattern||0)%2?'grenadier':'whip'});};
+    const shot=(kind,damage,speed=270,spread=0)=>{const travel=Math.max(.4,Math.abs(player.x-origin.x)/speed),target=player.y-108;game.projectiles.push({kind,x:origin.x,y:origin.y,vx:dir*speed,vy:clamp((target-origin.y)/travel+spread,-180,180),face:dir,age:0,ttl:['person','bottle'].includes(kind)?travel:2.3,sourceX:e.x,damage,lane:player.y,figure:(e.pattern||0)%2?'yogaFighter':'bikiniFighter'});};
     if(['rake','clapper','handbag','cane','baton','cleaver','feint'].includes(style)){e.strikes=(style==='feint'?[.15,.36]:[.15]).map(time=>({time,dir,done:false}));return true;}
     if(style==='spray'){for(const off of [-18,0,18])shot('spray',def.attack,220,off);return true;}
     if(style==='bottle'){shot('bottle',def.attack,220);return true;}
@@ -155,7 +167,7 @@
   }
   function regionalVisibleY(p){return p.y-(['grenade','person','bottle'].includes(p.kind)?Math.sin(Math.PI*clamp(p.age/p.ttl,0,1))*(p.kind==='person'?85:82):0);}
   function regionalProjectileEnd(p,impact){
-    if(p.kind==='person')game.castaways.push({x:p.x,y:clamp(p.lane,Y_MIN,Y_MAX),figure:p.figure,age:0,life:1.05,angle:(p.face||1)*1.28});
+    if(p.kind==='person')game.castaways.push({x:p.x,y:clamp(p.lane,Y_MIN,Y_MAX),figure:p.figure,age:0,life:1.05,face:p.face||1,angle:(p.face||1)*1.28});
     if(p.kind==='bottle'){game.hazards.push({x:p.x,y:clamp(p.lane,Y_MIN,Y_MAX),age:0,life:2.8,tick:0});comicPop(p.x,regionalVisibleY(p),'puff',{size:65,life:.35});}
     if(p.kind==='contract'&&impact&&player.hurt>0)player.stun=Math.max(player.stun,.30);
   }
@@ -167,13 +179,14 @@
   function regionalBodyMotion(e){if(!TYPES[e.kind].regional||e.air||e.stun>0||e.bind>0||e.exit)return {shift:0,lean:0};if(e.windup>0)return {shift:4*(1-e.windup/TYPES[e.kind].telegraph),lean:.025};const t=e.swing>0?clamp(1-e.swing/.55,0,1):0,drive=Math.sin(t*Math.PI);return {shift:-10*drive,lean:-.045*drive};}
   function drawRegionalAttack(e,h){
     if(!TYPES[e.kind].regional||e.air||e.stun>0||e.bind>0)return;const style=e.windup>0?e.windupStyle:e.swingStyle;
-    if(e.windup>0&&style==='womanThrow'&&e.windup<.7){const im=images[(e.pattern||0)%2?'grenadier':'whip'],height=127,w=height*im.naturalWidth/im.naturalHeight;ctx.save();ctx.translate(32,-h*.92);ctx.rotate(.5);ctx.drawImage(im,-w/2,-height,w,height);ctx.restore();}
+    if(e.windup>0&&style==='womanThrow'&&e.windup<.7){ctx.save();ctx.translate(32,-h*.82);window.FemaleEnemies.frame(ctx,images,(e.pattern||0)%2?'yogaFighter':'bikiniFighter','dive0');ctx.restore();}
     if(e.swing<=0)return;const t=clamp(1-e.swing/.55,0,1);if(['rake','clapper','handbag','cane','baton','cleaver','feint'].includes(style)){ctx.save();ctx.globalAlpha=(1-t)*.58;ctx.lineWidth=style==='cleaver'?5:3;ctx.strokeStyle=style==='cleaver'?'#eff8ff':'#ffbdda';ctx.lineCap='round';ctx.beginPath();ctx.ellipse(-h*.24,-h*.59,h*.37,h*.27,-.25,-Math.PI*.8,-Math.PI*.8+Math.PI*1.6*Math.min(1,t*3));ctx.stroke();ctx.restore();}
   }
   function drawRegionalProjectile(p){
-    if(!['spray','bottle','person','banknote','enemyHeart','contract','cleaverShot'].includes(p.kind))return false;
+    if(!['spray','bottle','person','banknote','enemyHeart','contract','cleaverShot','water'].includes(p.kind))return false;
     const x=p.x-game.camera,y=regionalVisibleY(p);ctx.save();ctx.translate(x,y);
-    if(p.kind==='person'){const im=images[p.figure],h=138,w=h*im.naturalWidth/im.naturalHeight;ctx.rotate((p.face||1)*(-.6+p.age*4.5));ctx.drawImage(im,-w/2,-h/2,w,h);}
+    if(p.kind==='person'){ctx.scale(-(p.face||1),1);window.FemaleEnemies.frame(ctx,images,p.figure,p.age<.12?'dive0':'dive1');}
+    else if(p.kind==='water'){ctx.scale(p.face||1,1);ctx.fillStyle='#67dcff';ctx.strokeStyle='#d9faff';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,0,19,7,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle='#a5efff88';ctx.beginPath();ctx.ellipse(-24,0,13,4,0,0,Math.PI*2);ctx.fill();}
     else if(p.kind==='bottle'){ctx.rotate(p.age*8);ctx.fillStyle='#9bdf83';ctx.strokeStyle='#4b7653';ctx.lineWidth=2;roundRect(-11,-17,22,34,5);ctx.fill();ctx.stroke();ctx.fillStyle='#f1d0ef';ctx.fillRect(-7,-25,14,9);ctx.fillStyle='#fffbd2';ctx.fillRect(-8,-4,16,11);}
     else if(p.kind==='spray'){const g=ctx.createRadialGradient(-3,-3,1,0,0,15);g.addColorStop(0,'#efffd2');g.addColorStop(.6,'#93da83');g.addColorStop(1,'#509d73aa');ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,13,0,Math.PI*2);ctx.fill();}
     else if(p.kind==='enemyHeart')tinyHeart(0,0,12);
@@ -183,12 +196,13 @@
   }
   function drawRegionalFloor(){
     for(const h of game.hazards){ctx.save();ctx.globalAlpha=Math.min(1,(h.life-h.age)/.5)*.48;ctx.fillStyle='#9bdca7';ctx.beginPath();ctx.ellipse(h.x-game.camera,h.y-3,62,21,0,0,Math.PI*2);ctx.fill();ctx.restore();}
-    for(const p of game.castaways){const im=images[p.figure],h=136,w=h*im.naturalWidth/im.naturalHeight;ctx.save();ctx.translate(p.x-game.camera,p.y-22);ctx.rotate(p.angle);ctx.globalAlpha=Math.min(1,(p.life-p.age)/.3);ctx.drawImage(im,-w/2,-h/2,w,h);ctx.restore();}
+    for(const p of game.castaways){ctx.save();ctx.translate(p.x-game.camera,p.y);ctx.scale(-(p.face||1),1);ctx.globalAlpha=Math.min(1,(p.life-p.age)/.3);window.FemaleEnemies.frame(ctx,images,p.figure,'state2');ctx.restore();}
     for(const f of game.regionalFX){const t=f.age/f.life;ctx.save();ctx.translate(f.x-game.camera,f.y);ctx.strokeStyle=f.kind==='megaphone'?'#edc1ff':'#fff1c8';ctx.globalAlpha=(1-t)*.8;ctx.lineWidth=4*(1-t)+1;for(let i=0;i<2;i++){ctx.beginPath();ctx.ellipse(f.kind==='megaphone'?f.dir*(30+t*95):0,-8,f.radius*(.2+t*.8)-i*13,12+t*25,0,0,Math.PI*2);ctx.stroke();}ctx.restore();}
   }
 
   const ZN=s=>s===14?4:s<=4?8:s<=9?11:14; // 구역 수(보스 제외) [임시] 초반 8 / 중반 11 / 후반 14
-  function makePlan(stage){
+  function makePlan(stage){return window.FemaleEnemies.decorate(makeBasePlan(stage),stage);}
+  function makeBasePlan(stage){
     if(stage>=5)return makeRegionalPlan(stage);
     if(stage>=3){
       const variants=[
@@ -365,14 +379,14 @@
     goth:'heart',flameGuy:'fold',rocketeer:'spring',grenadier:'cuffs',
     fedora:'spin',redBoss:'boss',clubPunk:'spring',bouncer:'squash',breaker:'spin',manager:'cuffs',clubBoss:'boss'
   };
-  const EXIT_LENGTH={spring:1.32,squash:1.18,fold:1.38,heart:1.42,cuffs:1.18,spin:1.35,boss:1.85};
+  const EXIT_LENGTH={female:1.4,spring:1.32,squash:1.18,fold:1.38,heart:1.42,cuffs:1.18,spin:1.35,boss:1.85};
 
   function defeatEnemy(e,dir=1){
     if(e.exit)return;
-    const kind=EXIT_BY_KIND[e.kind]||'cuffs';
+    const kind=TYPES[e.kind].female?'female':EXIT_BY_KIND[e.kind]||'cuffs';
     e.exit={kind,age:0,duration:EXIT_LENGTH[kind],dir:dir||1};
     e.air=null;e.floorTime=0;e.windup=0;e.swing=0;e.stun=2;
-    captureEnemy(e);emitExitFX(e);AlleyAudio.cartoon(EXIT_BY_KIND[e.kind]);AlleyAudio.die(e.kind);hap('bigHit');
+    captureEnemy(e);emitExitFX(e);AlleyAudio.cartoon(EXIT_BY_KIND[e.kind]);AlleyAudio.die(TYPES[e.kind].female?'whip':e.kind);hap('bigHit');
     const atY=e.y-TYPES[e.kind].drawH*.69;
     const graphic={squash:'thud',spin:'arc',spring:'boing',fold:'puff',heart:'hearts',cuffs:'flutter',boss:'bigBang'}[kind];
     comicPop(e.x,atY,graphic,{size:kind==='boss'?150:kind==='heart'?108:93,life:kind==='boss'?.73:.49,dir});
@@ -393,7 +407,7 @@
     e.hp=Math.max(0,e.hp-amount);e.hurt=.21;AlleyAudio.impact(strong,e.kind);hap(strong?'bigHit':'hit');
     if(e.staggerResist<=0||strong){
       e.stun=Math.max(e.stun,stagger);e.staggerResist=.92;
-      e.windup=0;e.followup=null;e.strikes=null;e.swing=0; // A clean counter-hit cancels a telegraphed enemy blow.
+      e.windup=0;e.followup=null;e.strikes=null;e.dive=null;e.swing=0; // A clean counter-hit cancels a telegraphed enemy blow.
     }
     e.invuln=.13;
     const dir=forceDir||Math.sign(e.x-sourceX||player.face);
@@ -893,7 +907,12 @@
       e.walking=false;e.motionPhase=(e.motionPhase||0)+dt*1.6;
       e.invuln=Math.max(0,e.invuln-dt);e.hurt=Math.max(0,e.hurt-dt);e.stun=Math.max(0,e.stun-dt);e.staggerResist=Math.max(0,e.staggerResist-dt);e.bind=Math.max(0,e.bind-dt);e.powerDown=Math.max(0,e.powerDown-dt);
       e.attackCd=Math.max(0,e.attackCd-dt);e.swing=Math.max(0,e.swing-dt);
-      if(e.air||e.floorTime>0||e.bind>0||e.stun>0){e.rush=null;e.followup=null;e.strikes=null;continue;}
+      if(e.air||e.floorTime>0||e.bind>0||e.stun>0){e.dive=null;e.rush=null;e.followup=null;e.strikes=null;continue;}
+      if(e.dive){const d=e.dive;d.age+=dt;const t=clamp(d.age/d.duration,0,1);
+        e.x=clamp(d.fromX+d.dir*d.distance*t,game.zones[game.zone].start+55,game.zones[game.zone].end-60);e.face=d.dir;
+        if(!d.hit&&t>.16&&Math.abs(player.x-e.x)<64&&Math.abs(player.y-e.y)<72){d.hit=true;hurtPlayer(e);}
+        if(t>=1){e.dive=null;e.swing=0;e.attackCd=Math.max(e.attackCd,.9);}continue;
+      }
       if(e.strikes){
         for(const hit of e.strikes){hit.time-=dt;if(hit.time<=0&&!hit.done){hit.done=true;const front=(player.x-e.x)*hit.dir;if(front>=-12&&front<TYPES[e.kind].reach+8&&Math.abs(player.y-e.y)<72)hurtPlayer(e);}}
         if(e.strikes&&e.strikes.every(hit=>hit.done))e.strikes=null;
@@ -1629,6 +1648,7 @@
   const artOk=im=>im&&im.complete&&im.naturalWidth;
   const FLY_LINES=['아앙~♥','더 세게!','으앗~♥','날아간다~♥','좋아~♥']; // 날아갈 때 대사 [임시, 케인이 바꿀 것]
   function drawFighter(unit,hero=false){
+    if(!hero&&TYPES[unit.kind].female){window.FemaleEnemies.draw(ctx,images,unit,game);return;}
     const figures=hero?null:enemyFrames[unit.kind];
     const alternatePose=!hero&&TYPES[unit.kind].regional?(unit.swing>0||unit.windup>0&&unit.windup<.22):unit.swing>0&&(unit.kind==='fedora'&&unit.swingStyle==='whirlwind'||
       unit.kind==='redBoss'&&unit.swingStyle==='paddle'||unit.kind==='manager'||unit.kind==='clubBoss'&&unit.swingStyle==='bullet');
@@ -1897,7 +1917,7 @@
   window.AlleyGame={debug:{addDopa,hurt:d=>damagePlayer(d,player.x+60),player:()=>player},hold:s=>{game.freeze=Math.max(game.freeze,s);},useCard,canUseCard:()=>game.mode==='playing'&&player.hp>0,start:reset,focus:()=>{cvs.focus();},state:()=>({stage:activeStage,mode:game.mode,zone:game.zone,packs:packIndex,enemies:game.enemies.length,time:game.elapsed,checkpoint:wallet.checkpoint[activeStage]||0})};
   if(new URLSearchParams(location.search).has('qa'))window.__alleyQA={
     get game(){return game;},get player(){return player;},get types(){return TYPES;},get waves(){return WAVES;},get assetsFailed(){return assetsFailed;},
-    regionalAttack,regionalStyle,regionalVisibleY,combatBeat,enemyBodyMotion,comicWeaponPhase,comicWeaponPose,heroTrailSamples,hipHeartSamples,pushSkill,beginCharge,releaseCharge,SKILLS,enemyAttackStyle,update,damagePlayer,hitEnemy,attack,jump,spawnWave,finish,clearInput,drawWorld,poses,images,throwEnemyProjectile,drawFighter,drawProjectile,drawAttackEffect,updateCombatArt,defeatEnemy,emitBlast,
+    femaleAttack,makePlan,spawnPack,regionalAttack,regionalStyle,regionalVisibleY,combatBeat,enemyBodyMotion,comicWeaponPhase,comicWeaponPose,heroTrailSamples,hipHeartSamples,pushSkill,beginCharge,releaseCharge,SKILLS,enemyAttackStyle,update,damagePlayer,hitEnemy,attack,jump,spawnWave,finish,clearInput,drawWorld,poses,images,throwEnemyProjectile,drawFighter,drawProjectile,drawAttackEffect,updateCombatArt,defeatEnemy,emitBlast,
     teleport(x,y){player.x=x;player.y=y;game.camera=clamp(x-345,0,WORLD_W-W);},
     clearPack(){for(const e of game.enemies){e.hp=0;e.exit=null;}game.enemies=[];update(.016);},
     move(dx,dy){joystick.x=dx;joystick.y=dy;},input
@@ -1905,4 +1925,3 @@
   game.skillRings=[];game.heartBursts=[];WAVES=makePlan(1);makeProps();refreshHud();refreshSkillHud();
 
 })();
-
