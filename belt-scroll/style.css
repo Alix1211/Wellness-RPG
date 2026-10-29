@@ -265,3 +265,111 @@ button:disabled{filter:grayscale(1);opacity:.52;cursor:default}button:focus-visi
 
 /* 새 그림 아이콘의 원형 테두리를 그대로 사용. 버튼 위치와 크기는 유지. */
 .stance-button{background:transparent;border:0;box-shadow:none;display:block}
+
+/* Police card desk: full-height browsing, pinned loadout/actions, original card art. */
+#missionEntry.card-mode{padding:8px;touch-action:pan-y}
+.card-mode .entryPanel{width:min(1320px,100%);height:calc(100dvh - 16px);max-height:none;overflow:hidden;border-radius:18px}
+.card-mode #entryArt,.card-mode #entryTitle,.card-mode #stageChoices{display:none}
+.card-mode .entryBody{height:100%;padding:12px 16px 10px;display:flex;flex-direction:column;min-height:0}
+.card-mode .entryActions{flex:none;margin:5px 0 0;gap:10px}
+.card-mode .entryActions button{min-height:40px;padding:8px 22px;font-size:14px;touch-action:manipulation}
+.card-mode #entryBack{flex:0 0 145px}
+#cardBox{margin:0;min-height:0;flex:1;display:flex;flex-direction:column;font-size:14px;color:#654354;gap:9px}
+#cardBox button{touch-action:pan-y}
+.cbHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;flex:none;min-height:32px}
+.cbHeader>div{display:flex;align-items:baseline;gap:12px}
+.cbHeader strong{font-size:23px;color:#563748}.cbHeader span{font-size:12px;color:#987082}
+.cbGold{padding:7px 16px;border-radius:20px;background:#f9e8cf;color:#866039;font-size:16px;white-space:nowrap}
+#cardBox .cbTabs{margin:0;gap:6px;flex:none;flex-wrap:nowrap}
+#cardBox .cbTabs button{border-radius:10px;min-height:36px;padding:6px 17px;font-size:14px;white-space:nowrap;color:#785064;background:#fffcf8;border-color:#e2c4cf}
+#cardBox .cbTabs>button.on{background:#c66691;color:#fff;border-color:#c66691}
+.cbFilters{margin-left:auto;display:flex;gap:4px;padding:3px;background:#f1e5e9;border-radius:12px}
+#cardBox .cbFilters button{border:0;background:transparent;min-height:30px;padding:4px 13px;font-size:12px}
+#cardBox .cbFilters button.on{background:#fffaf6;color:#8c4769;box-shadow:0 2px 5px #85506719}
+.cbWorkspace{display:grid;grid-template-columns:minmax(0,1fr) clamp(278px,31vw,340px);gap:14px;flex:1;min-height:0}
+.cbBrowse{display:flex;flex-direction:column;min-width:0;min-height:0;gap:8px}
+.cbTools{display:flex;align-items:center;gap:7px;flex:none;min-width:0}
+.cbTools input,.cbTools select{font:inherit;font-size:13px;min-width:0;min-height:36px;border:1px solid #dec8d2;background:#fffcf8;color:#69475a;border-radius:9px;padding:6px 9px;touch-action:manipulation}
+.cbTools input{flex:1;width:0;user-select:text;-webkit-user-select:text}
+.cbTools select{width:122px}.cbTools>small{white-space:nowrap;color:#977488;font-size:12px}
+.cbGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;align-content:start;min-height:0;flex:1;overflow:auto;padding:3px 6px 8px 3px;touch-action:pan-y;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#d7a8ba transparent}
+#cardBox .cbTile{display:block;min-width:0;padding:6px;border:2px solid #e6d4dc;border-radius:13px;background:#fffcf8;color:#614152;text-align:left;box-shadow:0 2px 5px #5432450c}
+#cardBox .cbTile.selected{border-color:var(--family);box-shadow:0 0 0 2px #f0d2df;background:#fff4f7}
+.cbTileArt{position:relative;aspect-ratio:.76;overflow:hidden;display:grid;place-items:center;border-radius:8px;background:#f2e7e7;color:#bd8b9f;font-size:45px}
+.cbTileArt img{width:100%;height:100%;object-fit:contain;position:absolute;inset:0}
+.cbTileFamily,.cbEquipped{position:absolute;top:5px;padding:3px 6px;font-size:11px;font-weight:800;border-radius:6px;box-shadow:0 1px 5px #31202f30}
+.cbTileFamily{left:5px;background:var(--family);color:#fff}.cbEquipped{right:5px;top:auto;bottom:5px;background:#fff6e7ed;color:#775235}
+.cbTile>b{display:block;font-size:13px;line-height:1.4;min-height:2.8em;margin:7px 1px 4px;overflow-wrap:anywhere}
+.cbTileMeta{display:flex;justify-content:space-between;align-items:center;gap:4px;margin:0 1px;font-size:11px;color:#967083}
+.cbTileMeta strong{color:#8c5a4a}.cbGrid .cbNone{grid-column:1/-1;padding:28px 10px;font-size:14px;line-height:1.8}
+.cbAside{display:flex;flex-direction:column;min-height:0;min-width:0;gap:9px;border-left:1px solid #e8d5dd;padding-left:14px}
+.cbLoadout{flex:none;min-width:0}.cbLoadoutTitle{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:6px;font-size:13px}
+.cbLoadoutTitle small{font-size:10px;color:#977387}
+#cardBox .cbSlots{display:flex;flex-wrap:nowrap;gap:5px;align-items:stretch}
+.cbLoadoutItem{position:relative;min-width:0;flex:1}
+#cardBox .cbSlot{display:flex;width:100%;height:60px;min-width:0;align-items:center;gap:5px;padding:5px;border:1px solid #dec8d3;border-radius:9px;background:#fffcf8;color:#795469;font-size:11px;line-height:1.3;text-align:left}
+#cardBox .target .cbSlot{border:2px solid #b85f89;background:#fce3ee;box-shadow:0 0 0 1px #fff inset}
+.cbSlot img{width:28px;height:42px;object-fit:contain;border-radius:3px;flex:none}
+.cbSlot>span:last-child{overflow-wrap:anywhere;max-height:3.9em;overflow:hidden}
+.cbSlotNumber{position:absolute;left:3px;top:-3px;background:#97617c;border-radius:5px;color:#fff;font-size:9px;padding:0 4px;line-height:15px}
+#cardBox .cbSlot.empty{color:#a88d9b;justify-content:center;border-style:dashed}
+#cardBox .cbRemove{position:absolute;right:-3px;top:-9px;z-index:1;width:25px;height:25px;line-height:1;padding:0;border:1px solid #dec8d3;border-radius:50%;background:#fff9f5;color:#9b5679;font-size:18px;touch-action:manipulation}
+.cbDetail{display:flex;flex-direction:column;min-height:0;flex:1;border:1px solid #e7d3dc;background:#fffcf8;border-radius:13px;overflow:hidden}
+.cbDetailMain{display:grid;grid-template-columns:104px minmax(0,1fr);gap:10px;min-height:0;flex:1;overflow:auto;padding:12px;align-content:start;touch-action:pan-y;overscroll-behavior:contain;scrollbar-width:thin}
+#cardBox .cbPreview{position:relative;align-self:start;border:0;background:#eee1e5;padding:0;border-radius:8px;overflow:hidden;aspect-ratio:.72;color:#b78c9f;font-size:35px}
+.cbPreview img{display:block;width:100%;height:100%;object-fit:contain}.cbPreview>small{position:absolute;left:0;right:0;bottom:0;background:#52374bc9;color:#fff;padding:5px 2px;font-size:10px;text-align:center}
+.cbDetailText{min-width:0}.cbFamily{display:block;color:var(--family);font-size:11px;font-weight:800}.cbDetailText h2{font-size:17px;line-height:1.45;margin:5px 0 8px;overflow-wrap:anywhere}
+.cbDetailText p{font-size:13px;color:#79596b;line-height:1.65;margin:0 0 9px;white-space:normal;overflow-wrap:anywhere}
+.cbOwned{font-size:11px;color:#9a7689}.cbOwned b{color:#775063}
+.cbDetailActions{padding:9px 10px 7px;border-top:1px solid #eddce3;background:#fff4f5;flex:none;display:flex;flex-direction:column;gap:7px}
+.cbPurchase{display:flex;gap:6px;align-items:stretch}.cbQuantity{display:flex;align-items:center;flex:none;border:1px solid #e0c6d1;border-radius:9px;overflow:hidden;background:#fffdf9}
+#cardBox .cbQuantity button{width:30px;min-height:36px;padding:0;font-size:19px;border:0;background:#f5e5ec;color:#8f5673}
+.cbQuantity output{min-width:30px;text-align:center;font-size:12px;font-weight:800}
+#cardBox .cbBuy,#cardBox .cbEquip{border:0;border-radius:9px;padding:8px;font-size:13px;min-height:40px;background:#f1d1df;color:#8a4968;line-height:1.4}
+#cardBox .cbBuy{flex:1;min-width:0}#cardBox .cbEquip{background:#bf638a;color:#fff;font-size:14px}
+.cbActionHint{font-size:10px;line-height:1.4;color:#986c82;min-height:1.4em}
+.cbEmptyDetail{display:grid;place-content:center;text-align:center;padding:20px;color:#a17b8f;font-size:13px;line-height:1.8}
+.cbNotice{flex:none;font-size:12px;color:#987084;line-height:1.3;min-height:16px}
+.cbZoom{position:fixed;inset:0;z-index:75;display:grid;place-items:center;padding:12px;isolation:isolate}
+#cardBox .cbZoomBackdrop{position:absolute;inset:0;border:0;background:#291a2ce8;backdrop-filter:blur(6px);width:100%;height:100%}
+.cbZoom>section{position:relative;display:flex;align-items:center;flex-direction:column;max-width:min(680px,94vw);max-height:96dvh;padding:42px 18px 13px;background:#fff5ef;border:2px solid #e0b29c;border-radius:17px;box-shadow:0 20px 70px #0006;overflow:auto;touch-action:pan-y}
+.cbZoom img{display:block;max-width:100%;height:min(64dvh,680px);min-height:0;object-fit:contain;flex-shrink:0;border-radius:9px}
+.cbZoom b{margin-top:8px;font-size:18px;flex:none}.cbZoom p{font-size:14px;line-height:1.5;max-width:540px;margin:6px 0 0;flex:none;color:#875c73}
+#cardBox .cbZoomClose{position:absolute;top:6px;right:8px;min-width:76px;min-height:32px;padding:5px 12px;border:0;border-radius:9px;background:#bf638a;color:#fff;font-size:14px}
+#cardBox .cbTrain{flex:1;min-height:0;overflow:auto;touch-action:pan-y;padding:6px 2px}
+#cardBox .cbTrain .cbList{max-height:none;overflow:visible}
+#cardBox .cbTrain p{font-size:14px;margin:7px 0 14px}
+#cardBox .cbStat{padding:15px 12px;gap:12px;font-size:15px}#cardBox .cbStat small{font-size:13px}#cardBox .cbStat b{width:58px}
+#cardBox .cbTrainBtns{margin-top:16px}#cardBox .cbTrainBtns button{min-height:48px;font-size:15px}
+@media(min-height:700px) and (min-width:700px){.cbDetailMain{grid-template-columns:1fr;align-content:start}.cbPreview{width:min(180px,85%);justify-self:center}.cbDetailText h2{font-size:20px}.cbDetailText p{font-size:15px}}
+@media(max-height:440px){.card-mode .entryBody{padding:7px 11px 6px}#cardBox{gap:5px}.cbHeader{min-height:27px}.cbHeader strong{font-size:19px}.cbGold{padding:4px 13px;font-size:14px}#cardBox .cbTabs button{min-height:31px;padding:4px 14px;font-size:13px}.cbFilters{padding:1px}#cardBox .cbFilters button{min-height:27px}.cbWorkspace{gap:10px;grid-template-columns:minmax(0,1fr) 285px}.cbAside{gap:6px;padding-left:10px}.cbLoadoutTitle{margin-bottom:4px;font-size:12px}#cardBox .cbSlot{height:45px;font-size:10px}.cbSlot img{width:22px;height:33px}.cbDetailMain{padding:8px;grid-template-columns:80px minmax(0,1fr);gap:8px}.cbDetailText h2{font-size:14px;margin:3px 0 4px}.cbDetailText p{font-size:12px;line-height:1.45}.cbDetailActions{padding:6px;gap:4px}#cardBox .cbBuy,#cardBox .cbEquip{min-height:34px;font-size:12px;padding:5px}.cbActionHint{font-size:9px}.cbQuantity button{min-height:30px!important}.cbNotice{font-size:10px;min-height:13px}.cbTools input,.cbTools select{min-height:31px;font-size:12px}.cbTools select{width:108px}.card-mode .entryActions button{min-height:34px;font-size:12px;padding:5px 16px}.card-mode .entryActions{margin-top:3px}.cbTileArt{aspect-ratio:.85}.cbZoom img{height:60dvh}}
+@media(max-width:600px) and (orientation:portrait){.card-mode .entryBody{padding:10px}.card-mode .entryPanel{border-radius:14px}#cardBox{gap:7px}.cbHeader span{display:none}.cbHeader strong{font-size:21px}#cardBox .cbTabs{flex-wrap:wrap}#cardBox .cbTabs>button{flex:1;padding:6px 12px}.cbFilters{width:100%;justify-content:space-between;margin-left:0}#cardBox .cbFilters button{flex:1}.cbWorkspace{display:flex;flex-direction:column;gap:8px}.cbBrowse{flex:1}.cbTools select{width:108px}.cbGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.cbAside{flex:none;display:grid;grid-template-columns:100px minmax(0,1fr);height:min(300px,39dvh);padding:8px 0 0;border-left:0;border-top:1px solid #e8d5dd;gap:8px}.cbLoadoutTitle{display:block;font-size:12px}.cbLoadoutTitle small{display:block;margin:3px 0;font-size:9px}#cardBox .cbSlots{flex-direction:column;gap:6px}#cardBox .cbSlot{height:43px;font-size:10px}.cbSlot img{width:21px;height:32px}.cbRemove{width:22px!important;height:22px!important;top:-5px!important}.cbDetailMain{grid-template-columns:65px minmax(0,1fr);padding:8px;gap:7px}.cbDetailText h2{font-size:14px;margin:3px 0 5px}.cbDetailText p{font-size:12px;line-height:1.5}.cbFamily,.cbOwned{font-size:10px}.cbDetailActions{padding:6px;gap:4px}.cbPurchase{flex-wrap:wrap}.cbQuantity{flex:1;justify-content:space-between}.cbQuantity button{min-height:30px!important}#cardBox .cbBuy{min-width:100%;min-height:32px}#cardBox .cbEquip{font-size:12px;min-height:35px}.cbActionHint{font-size:9px}.cbNotice{font-size:10px;min-height:13px}.card-mode .entryActions button{min-height:39px;font-size:13px}.card-mode #entryBack{flex:0 0 100px}#cardBox .cbStat{flex-wrap:wrap;gap:7px;padding:12px}#cardBox .cbStat small{flex-basis:100%}#cardBox .cbTrainBtns{flex-direction:column}.cbZoom img{height:min(62dvh,110vw)}}
+
+/* Short landscape screens keep a complete card row and the selected effect visible. */
+@media(max-height:440px) and (orientation:landscape){
+ .cbTileArt{height:82px;aspect-ratio:auto}
+ .cbTile>b{font-size:12px;min-height:2.6em;line-height:1.3;margin:5px 1px 3px}
+ .cbTileMeta{font-size:10px}
+ .cbDetailActions.withPurchase{display:grid;grid-template-columns:88px minmax(0,1fr) minmax(0,1fr);align-items:stretch}
+ .cbDetailActions.withPurchase .cbPurchase{display:contents}
+ .cbDetailActions.withPurchase .cbQuantity{grid-column:1;min-width:0}
+ .cbDetailActions.withPurchase .cbQuantity button{width:26px!important}
+ .cbDetailActions.withPurchase .cbQuantity output{min-width:28px}
+ .cbDetailActions.withPurchase .cbActionHint{grid-column:1/-1}
+ .cbPreview>small{top:0;bottom:auto}
+}
+.cbNotice:empty{display:none}
+@media(max-height:440px) and (orientation:landscape){
+ #cardBox .cbSlot{height:32px;font-size:10px}
+ .cbSlot img{display:none}
+ .cbSlot>span:last-child{max-height:2.6em}
+ .cbLoadoutTitle small{display:none}
+ .cbDetailText .cbFamily{display:none}
+ .cbDetailText h2{font-size:13px;line-height:1.3;margin:0 0 4px}
+ .cbDetailText p{font-size:11px;line-height:1.4}
+}
+@media(max-width:600px) and (max-height:700px) and (orientation:portrait){
+ .cbTileArt{height:92px;aspect-ratio:auto}
+ .cbTile>b{font-size:12px;min-height:2.6em;line-height:1.3;margin:5px 1px 3px}
+ .cbTileMeta{font-size:10px}
+}

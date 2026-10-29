@@ -2,7 +2,7 @@ window.BeltCards=(()=>{
  const ALL=window.BELT_CARDS||[],by=id=>ALL.find(c=>c.id===id),S=()=>DetectiveApp.state,$=id=>document.getElementById(id);
  const COL={회복:'#4fae82',공격:'#d4577f',버프:'#d39a3f'},FAMS=['회복','공격','버프'];
  const tierOf=n=>n<=4?2:n<=9?3:4;
- let ui={tab:'box',fam:'전체'},cur=[],bar=null;
+ let ui={tab:'box',fam:'전체',selected:null,slot:0,query:'',sort:'default',qty:1,notice:'',zoom:false},cur=[],bar=null;
  function box(){
   const s=S();
   if(!s.cards){s.cards={};s.loadout=[];for(const f of FAMS)ALL.filter(c=>c.fam===f&&c.price<=90).slice(0,2).forEach(c=>{s.cards[c.id]=(s.cards[c.id]||0)+1;});
@@ -11,41 +11,78 @@ window.BeltCards=(()=>{
  }
  function cap(){const s=S();let n=1;while(n<13&&s['stage'+n])n++;return tierOf(n);}
  function equipped(id){return (S().loadout||[]).filter(x=>x===id).length;}
- function esc(t){return String(t).replace(/[<>&]/g,'');}
+ function esc(t){return String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
  function mount(){
   let el=$('cardBox');if(el)return el;el=document.createElement('div');el.id='cardBox';
   const act=document.querySelector('#missionEntry .entryActions');act.parentNode.insertBefore(el,act);return el;
  }
- function render(){
-  const el=mount(),s=S(),cards=box(),C=cap();
-  while(s.loadout.length>C)s.loadout.pop();
-  let h=`<div class="cbSlots"><span>출동 카드 ${s.loadout.length}/${C}</span>`;
-  for(let i=0;i<C;i++){const c=by(s.loadout[i]);h+=c?`<button class="cbSlot" data-un="${i}" style="border-color:${COL[c.fam]}"><b>${esc(c.name)}</b><small>${esc(c.fx)}</small></button>`:`<button class="cbSlot empty" disabled>비어 있음</button>`;}
-  h+=`</div><div class="cbTabs"><button data-tab="box" class="${ui.tab==='box'?'on':''}">보관함</button><button data-tab="shop" class="${ui.tab==='shop'?'on':''}">상점</button><button data-tab="train" class="${ui.tab==='train'?'on':''}">단련</button><i></i>`;
-  if(ui.tab!=='train')for(const f of ['전체',...FAMS])h+=`<button data-fam="${f}" class="${ui.fam===f?'on':''}">${f}</button>`;
-  h+=`</div>`;
-  if(ui.tab==='train'){el.innerHTML=h+trainHtml();return;}
-  h+=`<div class="cbList">`;
-  const list=ALL.filter(c=>(ui.fam==='전체'||c.fam===ui.fam)&&(ui.tab==='shop'||cards[c.id]>0));
-  if(!list.length)h+=`<p class="cbNone">카드가 없습니다. 상점에서 구입하세요.</p>`;
-  for(const c of list){
-   const n=cards[c.id]||0,free=n-equipped(c.id);
-   h+=`<div class="cbRow"><i style="background:${COL[c.fam]}"></i>${c.img?`<img class="cbThumb" src="${c.img}" alt="">`:''}<div><b>${esc(c.name)}</b><small>${c.grade} · ${c.fam} · ${esc(c.fx)}</small></div><em>×${n}</em>`;
-   h+=ui.tab==='shop'?`<button data-buy="${c.id}" ${s.gold<c.price?'disabled':''}>${c.price} G</button>`:`<button data-eq="${c.id}" ${(free<=0||s.loadout.length>=C)?'disabled':''}>장착</button>`;
-   h+=`</div>`;
-  }
-  el.innerHTML=h+`</div>`;
+ function slotIndex(){return Math.max(0,Math.min(ui.slot,S().loadout.length,cap()-1));}
+ function select(id){ui.selected=id;ui.qty=1;ui.zoom=false;}
+ function slotsHtml(){
+  const s=S(),C=cap(),target=slotIndex();let h=`<section class="cbLoadout"><div class="cbLoadoutTitle"><b>출동 카드 ${s.loadout.length}/${C}</b><small>슬롯 선택 후 교체</small></div><div class="cbSlots">`;
+  for(let i=0;i<C;i++){const c=by(s.loadout[i]);h+=`<div class="cbLoadoutItem ${i===target?'target':''}"><button class="cbSlot ${c?'':'empty'}" data-slot="${i}" aria-pressed="${i===target}" aria-label="${i+1}번 슬롯${c?' · '+esc(c.name):' · 비어 있음'}" style="--family:${c?COL[c.fam]:'#d9bdc9'}"><span class="cbSlotNumber">${i+1}</span>${c?.img?`<img src="${esc(c.img)}" alt="">`:''}<span>${c?esc(c.name):'비어 있음'}</span></button>${c?`<button class="cbRemove" data-un="${i}" aria-label="${i+1}번 카드 장착 해제">×</button>`:''}</div>`;}
+  return h+'</div></section>';
  }
- function openBox(){box();ui.tab='box';render();mount().classList.remove('hidden');
-  const el=mount();el.onclick=ev=>{const b=ev.target.closest('button');if(!b||b.disabled)return;const s=S();
-   if(b.dataset.tab){ui.tab=b.dataset.tab;}else if(b.dataset.fam){ui.fam=b.dataset.fam;}
-   else if(b.dataset.un!==undefined){s.loadout.splice(+b.dataset.un,1);}
-   else if(b.dataset.eq){s.loadout.push(b.dataset.eq);}
+ function detailHtml(c){
+  if(!c)return '<div class="cbDetail cbEmptyDetail">카드를 선택하면<br>그림과 효과를 크게 볼 수 있습니다.</div>';
+  const s=S(),n=s.cards[c.id]||0,eq=equipped(c.id),target=slotIndex(),same=s.loadout[target]===c.id,swap=!!s.loadout[target],price=c.price;
+  ui.qty=Math.max(1,Math.min(ui.qty,99,Math.max(1,Math.floor(s.gold/price))));
+  const canEquip=!same&&n>eq,canBuy=s.gold>=price*ui.qty;
+  const action=same?'장착 중':swap?`${target+1}번 교체`:`${target+1}번 장착`;
+  const buyEquip=!same&&!canEquip&&ui.tab==='shop';
+  return `<section class="cbDetail" style="--family:${COL[c.fam]}"><div class="cbDetailMain"><button class="cbPreview" data-zoom="1" aria-label="${esc(c.name)} 이미지 크게 보기">${c.img?`<img src="${esc(c.img)}" alt="${esc(c.name)}">`:'<span>✦</span>'}<small>크게 보기 ⤢</small></button><div class="cbDetailText"><span class="cbFamily">${esc(c.grade)} · ${c.fam}</span><h2>${esc(c.name)}</h2><p>${esc(c.fx)}</p><div class="cbOwned">보유 <b>${n}</b>장 · 장착 <b>${eq}</b>장</div></div></div><div class="cbDetailActions ${ui.tab==='shop'?'withPurchase':''}">${ui.tab==='shop'?`<div class="cbPurchase"><div class="cbQuantity"><button data-qty="-1" ${ui.qty<=1?'disabled':''} aria-label="구매 수량 줄이기">−</button><output aria-label="구매 수량">${ui.qty}장</output><button data-qty="1" ${ui.qty>=99||s.gold<(ui.qty+1)*price?'disabled':''} aria-label="구매 수량 늘리기">+</button></div><button class="cbBuy" data-buy="${c.id}" ${canBuy?'':'disabled'}>구매 · ${price*ui.qty} G</button></div>`:''}<button class="cbEquip" ${buyEquip?`data-buy-eq="${c.id}" ${s.gold>=price?'':'disabled'}`:`data-eq="${c.id}" ${canEquip?'':'disabled'}`}>${buyEquip?`1장 구매 후 ${action} · ${price} G`:action}</button><small class="cbActionHint">${same?'다른 슬롯을 선택하면 추가 장착할 수 있습니다.':buyEquip&&s.gold<price?'자금이 부족합니다.':!canEquip&&!buyEquip?'남은 카드가 없습니다. 상점에서 구매할 수 있습니다.':swap?'선택 슬롯의 기존 카드는 보관함으로 돌아갑니다.':'장착한 카드는 전투에서 사용하면 1장 소모됩니다.'}</small></div></section>`;
+ }
+ function render(){
+  const el=mount(),s=S(),cards=box(),C=cap(),oldGrid=el.querySelector('.cbGrid'),scroll=oldGrid?.scrollTop||0,oldDetail=el.querySelector('.cbDetailMain'),detailScroll=oldDetail?.scrollTop||0;
+  const focus=document.activeElement?.matches?.('[data-search]'),caret=focus?document.activeElement.selectionStart:null;
+  while(s.loadout.length>C)s.loadout.pop();
+  let h=`<div class="cbHeader"><div><strong>경찰서</strong><span>카드 관리 · 단련</span></div><b class="cbGold">${s.gold.toLocaleString()} G</b></div><div class="cbTabs" role="group" aria-label="경찰서 메뉴">`;
+  for(const [tab,label]of [['box','보관함'],['shop','상점'],['train','단련']])h+=`<button data-tab="${tab}" class="${ui.tab===tab?'on':''}" aria-pressed="${ui.tab===tab}">${label}</button>`;
+  if(ui.tab!=='train'){h+='<div class="cbFilters" role="group" aria-label="카드 종류">';for(const f of ['전체',...FAMS])h+=`<button data-fam="${f}" class="${ui.fam===f?'on':''}" aria-pressed="${ui.fam===f}">${f}</button>`;h+='</div>';}
+  h+='</div>';
+  if(ui.tab==='train'){el.innerHTML=h+trainHtml();return;}
+  const query=ui.query.trim().toLocaleLowerCase();let list=ALL.filter(c=>(ui.fam==='전체'||c.fam===ui.fam)&&(ui.tab==='shop'||cards[c.id]>0)&&(!query||(c.name+' '+c.fx+' '+c.grade).toLocaleLowerCase().includes(query)));
+  if(ui.sort==='price')list.sort((a,b)=>a.price-b.price);else if(ui.sort==='owned')list.sort((a,b)=>(cards[b.id]||0)-(cards[a.id]||0));
+  if(!list.some(c=>c.id===ui.selected))select(list[0]?.id||null);
+  h+=`<div class="cbWorkspace"><section class="cbBrowse" aria-label="카드 목록"><div class="cbTools"><input type="search" data-search placeholder="카드 이름·효과 검색" value="${esc(ui.query)}" aria-label="카드 이름 또는 효과 검색"><select data-sort aria-label="카드 정렬">${[['default','기본 순'],['price','가격 낮은순'],['owned','보유 많은순']].map(([v,t])=>`<option value="${v}" ${ui.sort===v?'selected':''}>${t}</option>`).join('')}</select><small>${list.length}종</small></div><div class="cbGrid">`;
+  if(!list.length)h+=`<div class="cbNone">${query?'검색 결과가 없습니다.':ui.tab==='box'?'보유 카드가 없습니다. 상점에서 구매해 주세요.':'해당 카드가 없습니다.'}</div>`;
+  for(const c of list){const n=cards[c.id]||0,eq=equipped(c.id);h+=`<button class="cbTile ${c.id===ui.selected?'selected':''}" data-select="${c.id}" aria-pressed="${c.id===ui.selected}" style="--family:${COL[c.fam]}"><div class="cbTileArt">${c.img?`<img loading="lazy" src="${esc(c.img)}" alt="">`:'<span>✦</span>'}<span class="cbTileFamily">${c.fam}</span>${eq?`<span class="cbEquipped">장착 ${eq}</span>`:''}</div><b>${esc(c.name)}</b><div class="cbTileMeta"><span>보유 ${n}장</span><strong>${ui.tab==='shop'?c.price+' G':esc(c.grade)}</strong></div></button>`;}
+  h+=`</div></section><aside class="cbAside">${slotsHtml()}${detailHtml(by(ui.selected))}</aside></div><div class="cbNotice" role="status" aria-live="polite">${esc(ui.notice)}</div>`;
+  if(ui.zoom){const c=by(ui.selected);if(c)h+=`<div class="cbZoom" role="dialog" aria-modal="true" aria-label="카드 크게 보기"><button class="cbZoomBackdrop" data-zoom-close="1" aria-label="확대 보기 닫기"></button><section><button class="cbZoomClose" data-zoom-close="1" aria-label="확대 보기 닫기">닫기 ×</button>${c.img?`<img src="${esc(c.img)}" alt="${esc(c.name)}">`:''}<b>${esc(c.name)}</b><p>${esc(c.fx)}</p></section></div>`;}
+  el.innerHTML=h;
+  const grid=el.querySelector('.cbGrid');if(grid)grid.scrollTop=scroll;
+  const detail=el.querySelector('.cbDetailMain');if(detail)detail.scrollTop=detailScroll;
+  if(focus){const input=el.querySelector('[data-search]');input?.focus({preventScroll:true});if(caret!==null)try{input.setSelectionRange(caret,caret);}catch{}}
+ }
+ function equip(id,purchase=false){
+  const s=S(),c=by(id),target=slotIndex();if(!c||s.loadout[target]===id)return false;
+  if(purchase){if(s.gold<c.price)return false;s.gold-=c.price;s.cards[id]=(s.cards[id]||0)+1;}
+  else if((s.cards[id]||0)<=equipped(id))return false;
+  if(target<s.loadout.length)s.loadout[target]=id;else s.loadout.push(id);
+  ui.notice=`${target+1}번 슬롯에 장착했습니다.${purchase?' ('+c.price+' G 구매)':''}`;
+  if(s.loadout.length<cap())ui.slot=s.loadout.length;return true;
+ }
+ function openBox(){box();ui.tab='box';ui.notice='';ui.zoom=false;render();mount().classList.remove('hidden');$('missionEntry').classList.add('card-mode');
+  const el=mount();el.onclick=ev=>{const b=ev.target.closest('button');if(!b||b.disabled)return;const s=S();ui.notice='';
+   if(b.dataset.tab){ui.tab=b.dataset.tab;ui.zoom=false;}
+   else if(b.dataset.fam){ui.fam=b.dataset.fam;}
+   else if(b.dataset.select){select(b.dataset.select);}
+   else if(b.dataset.slot!==undefined){ui.slot=Math.min(+b.dataset.slot,s.loadout.length);const id=s.loadout[ui.slot];if(id){ui.fam='전체';ui.query='';select(id);}}
+   else if(b.dataset.un!==undefined){const i=+b.dataset.un;if(i<s.loadout.length){s.loadout.splice(i,1);ui.slot=s.loadout.length;ui.notice='장착을 해제했습니다.';}}
+   else if(b.dataset.eq){equip(b.dataset.eq);}
+   else if(b.dataset.buyEq){equip(b.dataset.buyEq,true);DetectiveApp.sync();}
    else if(b.dataset.play){playTrain(b.dataset.play);return;}
-   else if(b.dataset.buy){const c=by(b.dataset.buy);if(s.gold>=c.price){s.gold-=c.price;s.cards[c.id]=(s.cards[c.id]||0)+1;DetectiveApp.sync();}}
-   DetectiveApp.save();render();};}
- function closeBox(){const el=$('cardBox');if(el){el.classList.add('hidden');el.onclick=null;}}
-
+   else if(b.dataset.qty){ui.qty=Math.max(1,Math.min(99,ui.qty+Number(b.dataset.qty)));}
+   else if(b.dataset.zoom){ui.zoom=true;}
+   else if(b.dataset.zoomClose){ui.zoom=false;}
+   else if(b.dataset.buy){const c=by(b.dataset.buy),q=ui.qty;if(c&&s.gold>=c.price*q){s.gold-=c.price*q;s.cards[c.id]=(s.cards[c.id]||0)+q;ui.notice=`${q}장을 구매했습니다. (${c.price*q} G)`;DetectiveApp.sync();}}
+   DetectiveApp.save();render();if(ui.zoom)el.querySelector('.cbZoomClose')?.focus({preventScroll:true});};
+  el.oninput=ev=>{if(!ev.isComposing&&ev.target.matches('[data-search]')){ui.query=ev.target.value;ui.notice='';render();}};
+  el.oncompositionend=ev=>{if(ev.target.matches('[data-search]')){ui.query=ev.target.value;ui.notice='';render();}};
+  el.onchange=ev=>{if(ev.target.matches('[data-sort]')){ui.sort=ev.target.value;render();}};
+ }
+ function closeBox(){const el=$('cardBox');if(el){el.classList.add('hidden');el.onclick=null;el.oninput=null;el.onchange=null;el.oncompositionend=null;}ui.zoom=false;$('missionEntry')?.classList.remove('card-mode');}
+ document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&ui.zoom){ui.zoom=false;render();mount().querySelector('[data-zoom]')?.focus();}});
  // ---- 단련 ----
  const STATS={색기:'이동속도 · 회피',음란도:'공격력',복종도:'방어력 · 도파민 충전',개방성:'스킬 위력 · M 회복'};
  const fxOf=(k,L)=>({색기:`이동 +${(1.5*L).toFixed(0)}% · 회피 ${Math.min(30,L)}%`,음란도:`공격력 +${3*L}%`,복종도:`받는 피해 -${Math.round((1-1/(1+.025*L))*100)}% · 도파민 +${4*L}%`,개방성:`스킬 위력 +${4*L}% · M 회복 +${3*L}%`})[k];
@@ -103,3 +140,4 @@ window.BeltCards=(()=>{
  }
  return {openBox,closeBox,begin,reward,render,all:ALL};
 })();
+
