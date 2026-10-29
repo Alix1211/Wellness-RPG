@@ -29,7 +29,7 @@ window.FemaleEnemies=(()=>{
  function draw(ctx,images,e,game){
   const p=pose(e,game.elapsed);ctx.save();ctx.translate(e.x-game.camera,e.y);
   ctx.fillStyle='#6047634d';ctx.beginPath();ctx.ellipse(0,-2,30,9,0,0,Math.PI*2);ctx.fill();
-  ctx.translate(0,-p.lift);ctx.scale(-e.face,1);ctx.rotate(p.angle);ctx.globalAlpha=p.fade;
+  ctx.translate(0,-p.lift);ctx.scale(p.key.startsWith('hip')?e.face:-e.face,1);ctx.rotate(p.angle);ctx.globalAlpha=p.fade;
   frame(ctx,images,e.kind,p.key);ctx.restore();
  }
  function decorate(plan,stage){

@@ -25,3 +25,5 @@ for(const [char,data]of Object.entries(F.data)){
 }
 console.log('PASS all 34 frame rects use fixed native scale; animation transitions render');
 assert.equal(p.maxHp,160);assert(!('combatCommands'in q));console.log('PASS existing player input/health unchanged');
+
+for(const face of [-1,1]){let flip;const dc=new Proxy({scale(x){flip=x}},{get:(o,k)=>o[k]||noop});const e={...enemy('yogaFighter'),face,windup:.3,windupStyle:'hip'};F.draw(dc,images,e,g);assert.equal(flip,face);e.windup=0;e.walking=true;F.draw(dc,images,e,g);assert.equal(flip,-face);}console.log('PASS hip pose faces backward so hip strikes toward target; movement/dive face forward');
