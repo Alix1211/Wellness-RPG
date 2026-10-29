@@ -46,16 +46,11 @@ reset();const pushFollow={...enemy('punk',570),id:105};g.enemies=[pushFollow];q.
 reset();g.enemies=[frozenEnemy('punk',1200)];q.dash();q.update(.18);assert(!p.dash&&p.dashLink);q.attack('kick');assert.equal(p.attack.kind,'dashHip');assert(!p.dashLink);console.log('PASS fresh lower input immediately after dash end starts slide immediately');
 reset();g.enemies=[frozenEnemy('punk',1200)];q.dash();q.update(.18);settle(.2);q.attack('kick');assert.equal(p.attack.kind,'kick');console.log('PASS brief dash link window expires; ordinary lower attack remains ordinary');
 
-function grabReset(kind='boxer',pose='hip'){if(p.grab)q.releaseGrab(false);reset();p.grabCd=0;const e={...enemy(kind,p.x+50),id:900,stun:0,hurt:0,attackCd:99};g.enemies=[e];assert(q.beginGrab(e,pose));return e;}
-for(const pose of ['hip','low']){const e=grabReset('boxer',pose);assert(e.holdingPlayer);assert.equal(A.pose(p),pose==='hip'?'grabHip':'02');const x=p.x,y=p.y;press('punch');release('punch');assert.equal(p.grab.taps,1);assert(!p.attack);q.move(1,1);settle(1.4);assert(p.grab);assert.equal(p.x,x);assert.equal(p.y,y);assert.equal(p.grab.taps,1);assert.equal(q.damagePlayer(20,p.x+60),false);for(let i=0;i<5;i++){press('kick');release('kick');}assert(!p.grab);assert(!e.holdingPlayer);assert(p.invuln>0);assert(!p.attack);console.log('PASS '+pose+' grab: heart hold stays without mash, movement/damage locked, six fresh taps release without stray attack');}
-grabReset();for(let i=0;i<6;i++){press('dash');release('dash');}assert(p.grab);assert.equal(p.grab.taps,6);settle(.7);assert(p.grab);settle(.4);assert(!p.grab);assert(!p.dash);console.log('PASS grab cannot release before one second; completed mash releases at minimum time');
-let captor=grabReset();settle(.3);const age=p.grab.age;g.mode='paused';q.clearInput();q.update(.5);assert(p.grab);assert.equal(p.grab.age,age);g.mode='playing';q.update(.02);assert(p.grab.age>age);captor.hp=0;q.update(.02);assert(!p.grab);console.log('PASS pause preserves grab and freezes time; lost captor cleans up hold');
-for(const age of [.01,.12,.26,.43])assert.equal(A.pose({...p,hp:160,stun:0,grab:null,jump:null,down:null,slam:null,splash:null,charge:null,skillPose:null,attack:{kind:'dashHug',age}}),'h1');console.log('PASS sliding hug uses the same existing open-arm frame for entire action, never upright frame');
-
-if(p.grab)q.releaseGrab(false);reset();p.grabCd=0;const aiCaptor={...enemy('boxer',450),id:901,windup:.01,windupStyle:'punch',attackCd:99};g.enemies=[aiCaptor];settle(.4);assert(p.grab);assert.equal(p.hp,160);console.log('PASS real melee attack path enters hold instead of ordinary damage when grab is ready');q.releaseGrab(true);p.invuln=0;assert(!q.beginGrab(aiCaptor));assert(p.grabCd>8);console.log('PASS release cooldown prevents immediate repeat holds');
-
-if(p.grab)q.releaseGrab(false);let overlayFoe=grabReset('punk','low');g.projectiles=[{kind:'bullet',x:100,y:240,vx:200,vy:0,age:0,ttl:8,damage:5}];p.dashCd=.4;p.invuln=2;const frozen={time:g.elapsed,x:overlayFoe.x,y:overlayFoe.y,shotX:g.projectiles[0].x,shotAge:g.projectiles[0].age,cooldown:p.dashCd,invuln:p.invuln};settle(.6);assert(p.grab.age>.5);assert.equal(g.elapsed,frozen.time);assert.equal(overlayFoe.x,frozen.x);assert.equal(overlayFoe.y,frozen.y);assert.equal(g.projectiles[0].x,frozen.shotX);assert.equal(g.projectiles[0].age,frozen.shotAge);assert.equal(p.dashCd,frozen.cooldown);assert.equal(p.invuln,frozen.invuln);assert(!c.AlleyGame.canUseCard());for(let i=0;i<6;i++){press('punch');release('punch');}settle(.5);assert(!p.grab);const resumed=g.elapsed;settle(.1);assert(g.elapsed>resumed);assert(g.projectiles[0].x>frozen.shotX);console.log('PASS cut-in freezes enemy/projectile/battle clocks and cooldowns while escape input and its separate clock work; battle resumes after escape');
-assert.equal(q.GRAB_LINES.enemy,'야! 이 판국에 뭐하는거야!!');assert.equal(q.GRAB_LINES.rosie,'앙..체포 중이랍니다~~');console.log('PASS user dialogue preserved verbatim');
+reset();const wouldGrab=enemy('boxer',p.x+50);g.enemies=[wouldGrab];
+assert.equal(q.beginGrab(wouldGrab,'hip'),false);assert(!p.grab&&!wouldGrab.holdingPlayer);
+assert(q.damagePlayer(10,wouldGrab.x));assert.equal(p.hp,150);assert(!p.grab);
+console.log('PASS grab cut-in disabled; normal damage remains without pausing the fight');
+for(const age of [.01,.12,.26,.43])assert.equal(A.pose({...p,hp:160,stun:0,grab:null,jump:null,down:null,slam:null,splash:null,charge:null,skillPose:null,attack:{kind:'dashHug',age}}),'h1');console.log('PASS sliding hug uses the existing open-arm frame and is unchanged');
 
 // Finisher input tests: genuine taps, not held autofire or an old long input buffer.
 function tapCombo(kind){press(kind);release(kind);q.update(.016);return p.attack?.kind;}
@@ -117,3 +112,23 @@ press('kick');release('kick');
 assert.equal(p.attack.kind,'hipCrash');assert.equal(p.attack.age,0);
 settle(.55);assert.equal(g.enemies[0].hp,56);assert(!q.comboChain.steps.length);
 console.log('PASS fast 0.08s tablet taps P-P-K immediately trigger hip crash despite cooldown');
+
+// Finishers endure damage, including heavy/blast impacts, without a forced
+// knockdown or cancelling the remaining attack pulses.
+for(const [sequence,finisher,impact] of [
+ [['punch','punch','kick'],'hipCrash','heavy'],
+ [['kick','kick','punch','punch'],'whirlSplit','explosion']
+]){
+ reset();g.enemies=[frozenEnemy('punk',1200)];
+ for(const key of sequence){press(key);release(key);q.update(.08);}
+ assert.equal(p.attack.kind,finisher);
+ const hp=p.hp;assert(q.damagePlayer(20,p.x+60,impact));
+ assert.equal(p.hp,hp-20);assert.equal(p.attack.kind,finisher);
+ assert(!p.stun&&!p.down);assert(!p.grab);
+ assert.equal(q.damagePlayer(20,p.x+60,impact),false,'normal post-hit protection remains');
+ settle(1.4);assert.equal(g.lastAttack.kind,finisher);assert(!p.attack);
+ console.log('PASS '+finisher+' takes damage yet finishes uninterrupted under '+impact+' impact');
+}
+reset();g.enemies=[frozenEnemy('punk',1200)];q.attack('punch');
+assert(q.damagePlayer(10,p.x+60));assert(!p.attack);
+console.log('PASS ordinary attacks remain interruptible when the character is hit');

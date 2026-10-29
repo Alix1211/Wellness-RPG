@@ -590,6 +590,18 @@
     }
     if(player.invuln>0)return false;
     if(kind!=='explosion'&&player.jump&&player.jump.age<.12&&player.jumpZ>36){return false;} // 점프 직후 아주 짧은 순간만 무적 [임시]
+    // The two input-combo finishers take real damage, but a successful
+    // input sequence is not cancelled by ordinary, heavy, or blast hits.
+    // No invulnerability: preserve the normal 1.25s post-hit grace period.
+    if(player.attack&&['hipCrash','whirlSplit'].includes(player.attack.kind)){
+      player.hp=Math.max(0,player.hp-d);player.combo=0;
+      player.invuln=1.25;player.hurt=.24;
+      comicPop(player.x,player.y-141,'ouch',{size:68,life:.35,dir:Math.sign(player.x-sourceX||player.face)});
+      game.shake=Math.max(game.shake,6);game.freeze=Math.max(game.freeze,.04);
+      sound('hurt');hap(player.hp<=0?'heavyHurt':'hurt');refreshHud();
+      if(player.hp===0)finish(false);
+      return true;
+    }
     player.hp=Math.max(0,player.hp-d);player.combo=0;resetComboChain();resetBasicChain();player.attack=null;player.crouch=false;player.crouchHold=0;player.crouchBlend=0;player.dash=null;player.dashLink=null;player.dashFollow=null;player.slam=null;player.splash=null;
     player.jump=null;player.jumpZ=0;
     const away=Math.sign(player.x-sourceX||player.face);
@@ -663,6 +675,9 @@
   }
   const GRABBERS=new Set(['punk','boxer','goth','hippie','clubPunk','bouncer','breaker']);
   function beginGrab(e,pose){
+    // Removed from gameplay: enemy strikes always deal ordinary damage.
+    // Preserve the old code only for surgical rollback of this one feature.
+    return false;
     if(game.mode!=='playing'||!GRABBERS.has(e.kind)||player.grab||player.grabCd>0||player.hp<=0||player.invuln>0||player.jump||player.down||player.slam||player.splash||player.dash||player.charge||e.hp<=0||e.exit||e.air||e.floorTime>0||e.stun>0||e.hurt>0||e.bind>0||Math.abs(e.x-player.x)>78||Math.abs(e.y-player.y)>58)return false;
     clearInput();player.attack=null;player.skillPose=null;player.attackCooldown=0;player.stun=0;player.hurt=0;player.dazeT=0;
     const dir=Math.sign(e.x-player.x)||player.face;game.grabCount=(game.grabCount||0)+1;
