@@ -54,7 +54,7 @@ window.BeltCards=(()=>{
   for(const k of Object.keys(STATS)){const L=Math.min(30,s.stats[k]||0);h+=`<div class="cbStat"><b>${k}</b><span class="bar"><i style="width:${L/30*100}%"></i></span><em>${L}/30</em><small>${fxOf(k,L)}</small></div>`;}
   return h+`</div><div class="cbTrainBtns"><button data-play="squat" ${s.tickets<=0?'disabled':''}>스쿼트 (색기·개방성)</button><button data-play="batting" ${s.tickets<=0?'disabled':''}>맷집 배팅 (복종도·음란도)</button></div></div>`;
  }
- const GAIN={squat:{great:{색기:2,개방성:1},ok:{색기:1}},batting:{great:{복종도:2,음란도:1},ok:{복종도:1}}};
+ const GAIN={squat:{great:{색기:2,개방성:1},ok:{색기:1}},batting:{great:{복종도:2,음란도:1},ok:{복종도:1,음란도:1}}};
  function playTrain(id){
   const s=S();if(s.tickets<=0||!window.GAIA||!GAIA.minigame)return;
   const cleared=Object.keys(s).filter(k=>/^stage\d+$/.test(k)&&s[k]).length,wl=Math.floor(cleared/3);
