@@ -41,7 +41,7 @@
     clubBoss:{name:'클럽 보스',hp:430,attack:15,speed:38,drawH:265,reach:220,style:'whip',boss:true,interval:2.5,telegraph:1.0,spacing:190}
   };
   Object.assign(TYPES,GaiaCampaign.types,window.FemaleEnemies?.types||{});
-  Object.assign(ASSET,window.FemaleEnemies?.assets||{});
+  Object.assign(ASSET,window.FemaleEnemies?.assets||{},window.EnemyWalk?.assets||{});
   const wallet=DetectiveApp.state;
   const ST=k=>Math.min(30,(wallet.stats&&wallet.stats[k])||0),sk=()=>1+.04*ST('개방성');
   const save=()=>DetectiveApp.save();
@@ -1001,6 +1001,7 @@
       }
       const arena=game.zones[game.zone];e.x=clamp(e.x,arena.start+55,arena.end-60);
       e.walking=Math.hypot(e.x-previousX,e.y-previousY)>.30;
+      if(e.walking)e.walkDistance=(e.walkDistance||0)+Math.hypot(e.x-previousX,e.y-previousY);
       if(e.walking)e.motionPhase+=dt*(e.kind==='punk'?10:e.kind==='boxer'?5.5:e.kind==='hippie'?7.8:6.7);
     }
     updateCombatArt(dt);updateRegional(dt);
@@ -1657,7 +1658,7 @@
     const flying=!!(art&&(unit.air||unit.floorTime>0)&&artOk(art.fly));
     // 두번째 동작 이미지와 번갈아: 제자리 움짤
     if(art&&!flying&&!alternatePose&&!unit.air&&!(unit.floorTime>0)&&!(unit.swing>0||unit.windup>0)&&artOk(art.alt)&&Math.floor(game.elapsed*3.6+unit.id*.37)%2===1)img=art.alt;
-    if(unit.kind==='whip')unit.hideRig=flying||img===art?.alt; // 새 컷엔 채찍이 그려져 있어서 물리 밧줄은 숨김
+    if(unit.kind==='whip')unit.hideRig=flying||img===art?.alt||!!window.EnemyWalk?.canDraw(unit,images); // 새 컷엔 채찍이 그려져 있어서 물리 밧줄은 숨김
     if(!img||!(img.naturalWidth||img.width))return;
     const x=unit.x-game.camera,groundY=unit.y;
     const h=hero?169:TYPES[unit.kind].drawH;
@@ -1779,6 +1780,8 @@
       ctx.drawImage(pose.image,-pose.anchorX*poseScale,-pose.height*poseScale-poseLift,
         pose.width*poseScale,pose.height*poseScale);
       ctx.restore();
+    }else if(!hero&&window.EnemyWalk?.draw(ctx,images,unit,h)){
+      // Walk atlas has fixed per-character scale and foot anchors.
     }else if(flying){
       const k=h/(images[unit.kind].naturalHeight||h),fw=art.fly.naturalWidth*k,fh=art.fly.naturalHeight*k;
       ctx.drawImage(art.fly,-fw/2,-fh,fw,fh);

@@ -1,0 +1,282 @@
+{
+  "punk": {
+    "reference": "belt-scroll/assets/enemy/punk_alt.webp",
+    "sourceSHA256": "520f957555ce3dadd29b845a8fc0b95201705b5e1be7179e5ad28ee26588b1ad",
+    "generatedSheet": "exec-61b5b466-9898-4f5d-bdeb-98ef54a81414.png",
+    "set": 0,
+    "row": 0,
+    "drawHeight": 184,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/punk.webp"
+  },
+  "paddleBrute": {
+    "reference": "belt-scroll/assets/enemy/paddleBrute_alt.webp",
+    "sourceSHA256": "6709dfca2dc9aeff4fc48e63cef8a206ad037e4212694bef3c8b5a3380a557b6",
+    "generatedSheet": "exec-61b5b466-9898-4f5d-bdeb-98ef54a81414.png",
+    "set": 0,
+    "row": 1,
+    "drawHeight": 202,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/paddleBrute_props.webp"
+  },
+  "goth": {
+    "reference": "belt-scroll/assets/enemy/goth_alt.webp",
+    "sourceSHA256": "d2cb9f105e5659b88549edf5502911fa555ade4c251c13a40895e794b83c9aa5",
+    "generatedSheet": "exec-61b5b466-9898-4f5d-bdeb-98ef54a81414.png",
+    "set": 0,
+    "row": 2,
+    "drawHeight": 185,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/goth.webp"
+  },
+  "whip": {
+    "reference": "belt-scroll/assets/enemy/whip_alt.webp",
+    "sourceSHA256": "2a0e59101634c581cab85143b10004334ba9d85e94208b2e0aed40ca08112e96",
+    "generatedSheet": "exec-61b5b466-9898-4f5d-bdeb-98ef54a81414.png",
+    "set": 0,
+    "row": 3,
+    "drawHeight": 190,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/whip.webp"
+  },
+  "boxer": {
+    "reference": "belt-scroll/assets/enemy/boxer_alt.webp",
+    "sourceSHA256": "461baab386d574f8fc333768b69855e2ec4e18dc9c47b486b3de14b3319203be",
+    "generatedSheet": "exec-cc0c0beb-2264-447f-81b0-ffb8dd84112b.png",
+    "set": 1,
+    "row": 0,
+    "drawHeight": 199,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/boxer.webp"
+  },
+  "hippie": {
+    "reference": "belt-scroll/assets/enemy/hippie_alt.webp",
+    "sourceSHA256": "8c60b2bd92ab978d23b772a35d4ed2f1a1ec533a1ae19b268f96be033e2d5f03",
+    "generatedSheet": "exec-cc0c0beb-2264-447f-81b0-ffb8dd84112b.png",
+    "set": 1,
+    "row": 1,
+    "drawHeight": 186,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/hippie.webp"
+  },
+  "flameGuy": {
+    "reference": "belt-scroll/assets/enemy/flameGuy_alt.webp",
+    "sourceSHA256": "f16a726009a7407f6c186d46941342436d3ae1d6e48cdd3809c7c2c1e0e0639c",
+    "generatedSheet": "exec-cc0c0beb-2264-447f-81b0-ffb8dd84112b.png",
+    "set": 1,
+    "row": 2,
+    "drawHeight": 190,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/flameGuy.webp"
+  },
+  "rocketeer": {
+    "reference": "belt-scroll/assets/enemy/rocketeer_alt.webp",
+    "sourceSHA256": "711f38cf6b5ba619a05d0872d331eb6a4632fc13dfa81486cad5f9eaab9c7e90",
+    "generatedSheet": "exec-cc0c0beb-2264-447f-81b0-ffb8dd84112b.png",
+    "set": 1,
+    "row": 3,
+    "drawHeight": 198,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/rocketeer.webp"
+  },
+  "grenadier": {
+    "reference": "belt-scroll/assets/enemy/grenadier_alt.webp",
+    "sourceSHA256": "d336e1d9e30a26ae2ea1f4ee812f7598161387a2fb8bfdbc42393b7d0441e99c",
+    "generatedSheet": "exec-6439ef51-a9b9-43db-afab-c276f4307c69.png",
+    "set": 2,
+    "row": 0,
+    "drawHeight": 185,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/grenadier.webp"
+  },
+  "clubPunk": {
+    "reference": "belt-scroll/assets/clubPunk.webp",
+    "sourceSHA256": "392b63752e2f6da7c79388eec607dbe842b7ac50d37ed685074bf75fbd804952",
+    "generatedSheet": "exec-6439ef51-a9b9-43db-afab-c276f4307c69.png",
+    "set": 2,
+    "row": 1,
+    "drawHeight": 188,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/clubPunk.webp"
+  },
+  "bouncer": {
+    "reference": "belt-scroll/assets/bouncer.webp",
+    "sourceSHA256": "5baf942c781bae3d441c71c0e82639a5203b7f86cb02a1a874459f1e7e5ad6aa",
+    "generatedSheet": "exec-6439ef51-a9b9-43db-afab-c276f4307c69.png",
+    "set": 2,
+    "row": 2,
+    "drawHeight": 208,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/bouncer.webp"
+  },
+  "breaker": {
+    "reference": "belt-scroll/assets/breaker.webp",
+    "sourceSHA256": "3adc575de654bd5150e691ac02b1ac35e2b20dd111f53eb79d0eeb5169773358",
+    "generatedSheet": "exec-6439ef51-a9b9-43db-afab-c276f4307c69.png",
+    "set": 2,
+    "row": 3,
+    "drawHeight": 191,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/breaker.webp"
+  },
+  "fedora": {
+    "reference": "belt-scroll/assets/fedora_idle_props.webp",
+    "sourceSHA256": "9fce359cc9c2ff9cf8c64a2d2c72785d76dc035d6d301ce880d9d1cd5b7a9d4d",
+    "generatedSheet": "exec-408df0dd-c7ab-4e56-b95a-12c3ccad6a07.png",
+    "set": 3,
+    "row": 0,
+    "drawHeight": 244,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/fedora_idle_props.webp"
+  },
+  "redBoss": {
+    "reference": "belt-scroll/assets/redBoss_idle.webp",
+    "sourceSHA256": "315aedff80f92e7141a9b82fdc5c873aae8fbefd283da4bfb6e3f7c6a361ca41",
+    "generatedSheet": "exec-408df0dd-c7ab-4e56-b95a-12c3ccad6a07.png",
+    "set": 3,
+    "row": 1,
+    "drawHeight": 300,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/redBoss_idle.webp"
+  },
+  "manager": {
+    "reference": "belt-scroll/assets/manager_idle.webp",
+    "sourceSHA256": "827169914b500eaaed5d1cde9e3290b6f777790390d0b91843a74e283c0503ba",
+    "generatedSheet": "exec-408df0dd-c7ab-4e56-b95a-12c3ccad6a07.png",
+    "set": 3,
+    "row": 2,
+    "drawHeight": 216,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/manager_idle.webp"
+  },
+  "clubBoss": {
+    "reference": "belt-scroll/assets/clubBoss_whip.webp",
+    "sourceSHA256": "696cc2550e73e2d9f195139e07db89aff764f3b6636a9f527bb75993f1b0f9d5",
+    "generatedSheet": "exec-408df0dd-c7ab-4e56-b95a-12c3ccad6a07.png",
+    "set": 3,
+    "row": 3,
+    "drawHeight": 265,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/clubBoss_whip.webp"
+  },
+  "scientist": {
+    "reference": "belt-scroll/assets/regions/scientist_idle.webp",
+    "sourceSHA256": "6c80d34074cd6ee2868a6287930f84090ebdb44c813a0f7cb0bb0d0995e74078",
+    "generatedSheet": "exec-f8ebcc3b-32c4-4664-93ec-3519ff27ecc9.png",
+    "set": 4,
+    "row": 0,
+    "drawHeight": 214,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/regions/scientist_idle.webp"
+  },
+  "farmer": {
+    "reference": "belt-scroll/assets/regions/farmer_idle.webp",
+    "sourceSHA256": "e9eb1a5737f1dd9d552acf2c33f6930b260730f76de9bd2e1aa4fba942d7765e",
+    "generatedSheet": "exec-f8ebcc3b-32c4-4664-93ec-3519ff27ecc9.png",
+    "set": 4,
+    "row": 1,
+    "drawHeight": 270,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/regions/farmer_idle.webp"
+  },
+  "mafiaA": {
+    "reference": "belt-scroll/assets/regions/mafiaA_idle.webp",
+    "sourceSHA256": "1f42228a9ec3b75d83bc6fa36d1612bc2ac15a670c3f1cbfcf32c80047ad0a16",
+    "generatedSheet": "exec-f8ebcc3b-32c4-4664-93ec-3519ff27ecc9.png",
+    "set": 4,
+    "row": 2,
+    "drawHeight": 204,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/regions/mafiaA_idle.webp"
+  },
+  "mafiaB": {
+    "reference": "belt-scroll/assets/regions/mafiaB_idle.webp",
+    "sourceSHA256": "2a511c619a4ccc61a024e36e990005c675ea4029082b5457cb10e7d66d3bdccf",
+    "generatedSheet": "exec-f8ebcc3b-32c4-4664-93ec-3519ff27ecc9.png",
+    "set": 4,
+    "row": 3,
+    "drawHeight": 214,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/regions/mafiaB_idle.webp"
+  },
+  "mafiaC": {
+    "reference": "belt-scroll/assets/regions/mafiaC_idle.webp",
+    "sourceSHA256": "9eb7db8bdd6e89e8c9b0d8c3c69304cdfdaad9088ed7c5253f4267b212c9c3db",
+    "generatedSheet": "exec-4c24e55c-3767-45e4-a365-022d7e487445.png",
+    "set": 5,
+    "row": 0,
+    "drawHeight": 202,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/regions/mafiaC_idle.webp"
+  },
+  "mafiaD": {
+    "reference": "belt-scroll/assets/regions/mafiaD_idle.webp",
+    "sourceSHA256": "c53d717b7e3c9d838d551ad4fb86291ad494fb105ea467e78385dce07c906628",
+    "generatedSheet": "exec-4c24e55c-3767-45e4-a365-022d7e487445.png",
+    "set": 5,
+    "row": 1,
+    "drawHeight": 210,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/regions/mafiaD_idle.webp"
+  },
+  "mafiaBoss": {
+    "reference": "belt-scroll/assets/regions/mafiaBoss_idle.webp",
+    "sourceSHA256": "190cdca0a526fe518ee08d5c867f38217cacbf3e72a3b7e66da5939089497294",
+    "generatedSheet": "exec-4c24e55c-3767-45e4-a365-022d7e487445.png",
+    "set": 5,
+    "row": 2,
+    "drawHeight": 278,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/regions/mafiaBoss_idle.webp"
+  },
+  "director": {
+    "reference": "belt-scroll/assets/regions/director_idle.webp",
+    "sourceSHA256": "0403c1ab694b020c36c36fab986cddebce4c1d494880d40113ad1bdfcb244b70",
+    "generatedSheet": "exec-4c24e55c-3767-45e4-a365-022d7e487445.png",
+    "set": 5,
+    "row": 3,
+    "drawHeight": 216,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/regions/director_idle.webp"
+  },
+  "heiress": {
+    "reference": "belt-scroll/assets/regions/heiress_idle.webp",
+    "sourceSHA256": "1ae6a7f2bce5c0f7cb72b9431020a6ba95e1d9d9e3de5694ab4a0776799a557f",
+    "generatedSheet": "exec-78a2bd9d-7c9f-4913-be94-5f7694d5139b.png",
+    "set": 6,
+    "row": 0,
+    "drawHeight": 211,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/regions/heiress_idle.webp"
+  },
+  "host": {
+    "reference": "belt-scroll/assets/regions/host_idle.webp",
+    "sourceSHA256": "7a88c926796834e175212308811c9dfd4ddb895bf38dd46901bd5744fc9458ee",
+    "generatedSheet": "exec-78a2bd9d-7c9f-4913-be94-5f7694d5139b.png",
+    "set": 6,
+    "row": 1,
+    "drawHeight": 226,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/regions/host_idle.webp"
+  },
+  "pimp": {
+    "reference": "belt-scroll/assets/regions/pimp_idle.webp",
+    "sourceSHA256": "c83f0327ac32fbb55dc0001e2e6f2b4f8724fc2cfeeb36284996a59e8d1c5fba",
+    "generatedSheet": "exec-78a2bd9d-7c9f-4913-be94-5f7694d5139b.png",
+    "set": 6,
+    "row": 2,
+    "drawHeight": 258,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/regions/pimp_idle.webp"
+  },
+  "studentBoss": {
+    "reference": "belt-scroll/assets/regions/studentBoss_idle.webp",
+    "sourceSHA256": "f434d40be7ffab2b58654ed9c096e280862ef56994d970db18beab2942812fd2",
+    "generatedSheet": "exec-78a2bd9d-7c9f-4913-be94-5f7694d5139b.png",
+    "set": 6,
+    "row": 3,
+    "drawHeight": 223,
+    "referenceCommit": "800d9575cd6011f07f36768284a6a12f95657286",
+    "scaleReference": "belt-scroll/assets/regions/studentBoss_idle.webp"
+  }
+}

@@ -110,5 +110,13 @@ Playwright로 `http://127.0.0.1:8765/index.html` 접속 → `localStorage.clear(
 - 새 적의 사망 처리에 기존 여성 음성 사용, 일반 타격에 남성 신음이 나오지 않도록 제외. 기존 여성 사운드의 녹음·대사는 변경하지 않음. 플레이어 입력·공격 속도·피해량·기존 판정 개선은 유지. 연속기/입력 예약 없음.
 - 검증: `node tests/female-enemies.cjs`, 수정 JS 문법 검사, 아틀라스 34프레임 경계/고정 배율 확인, 실제 게임 그리기 코드 렌더. 14개 스테이지 편성, 세 적의 공격/피격/강타/사망, 돌진 1회 타격, 보스 투척/착지 검사 통과. 폰 손맛은 사용자 체험 후 조정.
 
+## 2026-10-29 기존 적·보스 28종 이동 시트 적용
+- 사용자 요청으로 깃허브의 기존 캐릭터 원본을 내려받아 참조하고 이미지 생성 도구로 걷기 4컷씩 제작. 총 112프레임, 7장 WebP 아틀라스(`assets/enemy/walk/set0.webp`~`set6.webp`). 새 여성 적 3종은 기존 이동 시트 유지.
+- 대상: punk/paddleBrute/goth/whip, boxer/hippie/flameGuy/rocketeer, grenadier/clubPunk/bouncer/breaker, fedora/redBoss/manager/clubBoss, scientist/farmer/mafiaA/mafiaB, mafiaC/mafiaD/mafiaBoss/director, heiress/host/pimp/studentBoss. 브레이커는 이동 중 걷고 기존 공격 때 회전. 클럽 보스는 기존 두 동행 여성도 함께 걷는 그림.
+- `js/enemy-walk.js`에서 실제 이동 거리로 4컷 순환. 캐릭터마다 기준 높이·배율 고정, 프레임별 골반/발 접지점을 아틀라스 메타데이터에 저장. 기존 원본의 표시 키와 몸 위치에 맞춤. 이동할 때만 새 시트를 사용하며 공격 준비·공격·피격·기절·속박·날아감·착지·퇴장·돌진은 기존 그림과 동작에 우선권. 채찍 이동 그림에는 채찍이 포함되어 중복 밧줄 숨김.
+- `frames.json`/`provenance.json`에 컷 좌표와 원본 체크섬·생성 시트 기록. `js/game-art.js` 등 원본 그림 묶음, 대사 파일, 전투 수치·이동 속도·입력·타격 판정 변경 없음.
+- 검증: `node tests/enemy-walk.cjs`, 기존 `node tests/female-enemies.cjs`, 수정 JS 문법 검사. 28종 112컷의 고정 배율·접지·상태 우선순위·이미지 누락 시 기존 그림 대체, 실제 이동/기절의 프레임 진행 검사. 실제 drawFighter로 원본과 4컷 비교 렌더. 휴대 기기 손맛은 사용자 체험 확인.
+- 웹 자동 업데이트 대상. 마지막에 한 번 푸시하고 Actions 성공 확인 후 앱 완전 종료·재실행 안내.
+
 ## 7. 관련 문서
 `HANDOFF.md`(전체 내역·날짜별 기록) · `DIALOGUE_REVIEW.md`(대사 검토, [임시] 표시) · `BOSS_SCENARIO.md`(보스 원문 시나리오) · `README.md`
