@@ -71,7 +71,7 @@
   }
 
   const player = {x:148,y:428,face:1,hp:160,maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,mp:100,maxMp:100,pushCd:0,chargeCd:0,charge:null,skillPose:null,anim:0,stun:0,combo:0,comboTime:0,jump:null,jumpZ:0,grab:null,grabCd:2,crouch:false,crouchHold:0,crouchBlend:0,dash:null,dashLink:null,dashFollow:null,dashCd:0,down:null,slam:null,splash:null};
-  const game = {mode:'menu',oldMode:'menu',hazards:[],castaways:[],regionalFX:[],zone:0,waveLive:false,arrests:0,seed:Date.now(),camera:0,elapsed:0,particles:[],decals:[],bubbles:[],props:[],shockwaves:[],skillBursts:[],projectiles:[],shake:0,freeze:0,tip:'',tipTime:0,enemies:[],lastAttack:null,nextThreatAt:0,nextRangedAt:0};
+  const game = {mode:'menu',oldMode:'menu',hazards:[],castaways:[],regionalFX:[],zone:0,waveLive:false,arrests:0,seed:Date.now(),camera:0,elapsed:0,particles:[],decals:[],bubbles:[],props:[],shockwaves:[],skillBursts:[],projectiles:[],shake:0,freeze:0,tip:'',tipTime:0,enemies:[],lastAttack:null};
   let toastTimer=0, audioCtx=null;
   const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
   const randFactory = s => () => {s^=s<<13;s^=s>>>17;s^=s<<5;return (s>>>0)/4294967296;};
@@ -123,6 +123,17 @@
   // control the length. No forced timer or idle waves delay a skilled player.
     const REGIONAL_RANGED=new Set(['spray','bottle','womanThrow','banknotes','heartShot','contract','cleaverFan','water']);
   function isRangedStyle(style){return ['flame','rocket','grenade','dagger','bullet'].includes(style)||REGIONAL_RANGED.has(style);}
+  // [임시] Independent enemy clocks; control effects still use real seconds.
+  const femaleEnemy=kind=>!!TYPES[kind].female||kind==='whip'||kind==='heiress';
+  const femaleHealth=kind=>femaleEnemy(kind)?2:1;
+  function enemyActionRate(kind){return femaleEnemy(kind)?2:TYPES[kind].boss?1.65:isRangedStyle(TYPES[kind].style)?1.55:1.35;}
+  function enemyReach(e,style){
+    if(style==='dive')return 300;
+    if(style==='sweep'||style==='whirlwind')return 290;
+    if(style==='rush')return 390;
+    if(isRangedStyle(style))return ({grenade:400,flame:600,rocket:660,water:680})[style]||780;
+    return TYPES[e.kind].reach;
+  }
   function regionalStyle(e){const d=TYPES[e.kind],cycle=e.kind==='studentBoss'&&e.hp<e.maxHp*.5?['cleaver','rush','feint','cleaverFan','cleaver']:d.pattern;return cycle?.[(e.pattern||0)%cycle.length]||d.style;}
   function makeRegionalPlan(stage){
     const info=GaiaCampaign.stages[stage],variants=[
@@ -140,9 +151,9 @@
     const def=TYPES[e.kind],dir=e.face;
     if(style==='water'){
       const x=e.x+dir*72,y=e.y-126,travel=Math.max(.3,Math.abs(player.x-x)/340);
-      game.projectiles.push({kind:'water',x,y,vx:dir*340,vy:clamp((player.y-108-y)/travel,-130,130),face:dir,age:0,ttl:2.1,sourceX:e.x,damage:def.attack,lane:e.y});
+      game.projectiles.push({kind:'water',x,y,vx:dir*340,vy:clamp((player.y-108-y)/travel,-130,130),face:dir,age:0,ttl:2.1,sourceX:e.x,damage:def.attack,lane:player.y});
     }else if(style==='dive'){
-      e.dive={age:0,duration:.62,dir,fromX:e.x,distance:Math.min(180,Math.abs(player.x-e.x)+25),hit:false};
+      e.dive={age:0,duration:.62,dir,fromX:e.x,distance:Math.min(280,Math.abs(player.x-e.x)+25),hit:false};
     }else e.strikes=[{time:.16,dir,done:false}];
     return true;
   }
@@ -162,7 +173,7 @@
     if(style==='stomp'||style==='megaphone'){const radius=style==='stomp'?164:182;game.regionalFX.push({kind:style,x:e.x,y:e.y,dir,age:0,life:.55,radius});const hit=style==='stomp'?Math.abs(player.x-e.x)<radius&&lane<80:front>=-12&&front<radius&&lane<76;if(hit)damagePlayer(def.attack,e.x,style==='stomp'?'heavy':'normal');game.shake=Math.max(game.shake,style==='stomp'?5:2);return true;}
     if(style==='callCrew'){
       game.regionalFX.push({kind:'call',x:e.x,y:e.y,dir,age:0,life:.55,radius:90});
-      if(game.enemies.filter(x=>x.hp>0).length<7){const area=game.zones[game.zone],kinds=e.kind==='pimp'?['boxer','bouncer']:['clubPunk','punk'];for(let i=0;i<2;i++){const kind=kinds[i],d=TYPES[kind],x=clamp(e.x+dir*(165+i*80),area.start+65,area.end-65),hp=Math.round(d.hp*.9);game.enemies.push({kind,name:d.name,x,y:clamp(e.y+(i?37:-37),Y_MIN,Y_MAX),face:Math.sign(player.x-x)||-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:d.style,attackCd:1.5+i*.7,swing:0,swingStyle:d.style,id:++enemySerial,slotY:(i?1:-1)*25,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:0,captured:false,reward:0,entry:.8});}}
+      if(game.enemies.filter(x=>x.hp>0).length<7){const area=game.zones[game.zone],kinds=e.kind==='pimp'?['boxer','bouncer']:['clubPunk','punk'];for(let i=0;i<2;i++){const kind=kinds[i],d=TYPES[kind],x=clamp(e.x+dir*(165+i*80),area.start+65,area.end-65),hp=Math.round(d.hp*femaleHealth(kind)*.9);game.enemies.push({kind,name:d.name,x,y:clamp(e.y+(i?37:-37),Y_MIN,Y_MAX),face:Math.sign(player.x-x)||-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:d.style,attackCd:.4+i*.15,swing:0,swingStyle:d.style,id:++enemySerial,slotY:(i?1:-1)*25,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:0,captured:false,reward:0,entry:.8});}}
       return true;
     }
     if(style==='bullet'&&e.kind.startsWith('mafia')){shot('bullet',def.attack,410);if(e.kind==='mafiaC')shot('bullet',def.attack,410,26);comicPop(origin.x,origin.y,'flare',{size:44,life:.18,behind:true});return true;}
@@ -271,8 +282,8 @@
   }
 
   // ===== 난이도: 월드 레벨(깬 스테이지 3개마다 +1) 연동 + 보스 기본 강화 — 수치 전부 [임시] =====
-  // 적 체력 +25%/레벨, 공격력 +12%/레벨. 보스는 기본 체력 ×2.6(마피아 사수 4인조는 ×1.6), 공격력 ×1.25.
-  const BOSS_HP={mafiaA:1.6,mafiaB:1.6,mafiaC:1.6,mafiaD:1.6},BOSS_HP_DEFAULT=2.6,BOSS_ATK=1.25;
+  // 적 체력 +25%/레벨, 공격력 +12%/레벨 유지. 여성 체력 ×2, 보스 기본 체력 ×3.6(마피아 사수 ×2.2). 공격력 배율은 기존 유지.
+  const BOSS_HP={mafiaA:2.2,mafiaB:2.2,mafiaC:2.2,mafiaD:2.2},BOSS_HP_DEFAULT=3.6,BOSS_ATK=1.25;
   const worldLevel=()=>Math.floor(Object.keys(wallet).filter(k=>/^stage\d+$/.test(k)&&wallet[k]).length/3);
   function applyDifficulty(){
     const wl=worldLevel(),atk=1+.12*wl;
@@ -284,7 +295,7 @@
     window.BeltStory?.cancel();storyBossSeen=new Set();lastStoryBoss=null;storyPackBosses=[];
     activeStage=stage;applyDifficulty();WAVES=makePlan(stage);planBreakables();checkpointStart=Math.max(0,Math.min(WAVES.length-1,checkpoint));hasReported=false;
     game.hazards=[];game.castaways=[];game.regionalFX=[];game.encounterBossMax=0;
-    game.seed=activeStage===13?67821+(wallet.eventRuns||0)*997:67821;game.zone=checkpointStart;game.waveLive=false;game.arrests=0;game.camera=0;game.elapsed=0;game.enemies=[];game.particles=[];game.decals=[];game.bubbles=[];game.shockwaves=[];game.skillBursts=[];game.projectiles=[];game.shake=0;game.freeze=0;game.lastAttack=null;game.nextThreatAt=0;game.nextRangedAt=0;game.transition=0;game.artParticles=[];game.artBursts=[];game.skillRings=[];game.heartBursts=[];
+    game.seed=activeStage===13?67821+(wallet.eventRuns||0)*997:67821;game.zone=checkpointStart;game.waveLive=false;game.arrests=0;game.camera=0;game.elapsed=0;game.enemies=[];game.particles=[];game.decals=[];game.bubbles=[];game.shockwaves=[];game.skillBursts=[];game.projectiles=[];game.shake=0;game.freeze=0;game.lastAttack=null;game.transition=0;game.artParticles=[];game.artBursts=[];game.skillRings=[];game.heartBursts=[];
     makeProps();
     const startX=game.zones[checkpointStart].start+145;
     Object.assign(player,{x:startX,y:435,face:1,hp:checkpoint?Math.max(112,wallet.hp):Math.max(80,wallet.hp),maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,mp:wallet.mp??100,maxMp:100,pushCd:0,chargeCd:0,charge:null,skillPose:null,stun:0,combo:0,comboTime:0,jump:null,jumpZ:0,grab:null,grabCd:2,crouch:false,crouchHold:0,crouchBlend:0,dash:null,dashLink:null,dashFollow:null,dashCd:0,down:null,slam:null,splash:null,cardGuard:0,cardDef:0,cardSpd:0,dopa:0,climaxT:0,climaxCd:0,dazeT:0});game.cardQ=[];if(window.BeltCards)BeltCards.begin(stage);
@@ -303,13 +314,13 @@
   function spawnPack(){
     const z=game.zones[game.zone],kinds=WAVES[game.zone].packs[packIndex++];
     const rng=randFactory((game.seed+game.zone*1133+packIndex*977)|0);
-    game.nextThreatAt=game.elapsed+1.25;game.nextRangedAt=game.elapsed+1.85;
+
     kinds.forEach((kind,i)=>{
       const def=TYPES[kind],boss=def.boss;
       const left=packIndex>1&&i===0&&!boss&&player.x>z.start+260;
       const x=clamp(left?player.x-245:player.x+345+i*73,z.start+80,z.end-95);
-      const hp=Math.round(def.hp*(boss?(activeStage===13?.60:1)*(BOSS_HP[kind]??BOSS_HP_DEFAULT):GaiaCampaign.stages[activeStage].hpScale)*(game.hpMul||1));
-      game.enemies.push({kind,name:def.name,x,y:Y_MIN+25+(i%3)*48,face:left?1:-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:def.style,attackCd:1.3+i*.4+rng()*.35,swing:0,swingStyle:def.style,colorShift:0,id:++enemySerial,slotY:(i%3-1)*27,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:rng()*Math.PI*2,captured:false,reward:0,entry:.8});
+      const hp=Math.round(def.hp*femaleHealth(kind)*(boss?(activeStage===13?.60:1)*(BOSS_HP[kind]??BOSS_HP_DEFAULT):GaiaCampaign.stages[activeStage].hpScale)*(game.hpMul||1));
+      game.enemies.push({kind,name:def.name,x,y:Y_MIN+25+(i%3)*48,face:left?1:-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:def.style,attackCd:.35+i*.12+rng()*.18,swing:0,swingStyle:def.style,colorShift:0,id:++enemySerial,slotY:(i%3-1)*27,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:rng()*Math.PI*2,captured:false,reward:0,entry:.8});
     });
     game.reinfT=undefined;
     game.encounterBossMax=game.enemies.filter(e=>TYPES[e.kind].boss).reduce((n,e)=>n+e.maxHp,0);
@@ -419,9 +430,10 @@
     amount=Math.max(1,Math.round(amount*(1+.03*ST('음란도'))*(player.climaxT>0?1.5:1)));
     if(e.kind==='bouncer'&&!strong&&e.windup<=0&&e.swing<=0&&Math.sign(sourceX-e.x)===e.face)amount=Math.max(1,Math.round(amount*.6));
     e.hp=Math.max(0,e.hp-amount);e.hurt=.21;AlleyAudio.impact(strong,e.kind);hap(strong?'bigHit':'hit');
-    if(e.staggerResist<=0||strong||setup){
-      e.stun=Math.max(e.stun,stagger);e.staggerResist=.92;
-      e.windup=0;e.followup=null;e.strikes=null;e.dive=null;e.swing=0; // A clean counter-hit cancels a telegraphed enemy blow.
+    const boss=!!TYPES[e.kind].boss,canStagger=setup||e.staggerResist<=0||strong&&!boss;
+    if(canStagger){
+      e.stun=Math.max(e.stun,boss&&!setup?Math.min(stagger,strong?.26:.16):stagger);e.staggerResist=boss?1.2:.92;
+      e.windup=0;e.followup=null;e.strikes=null;e.dive=null;e.spinRush=null;e.swing=0;e.closeWind=0;e.barrageWind=0;e.volley=0; // A clean counter-hit cancels a telegraphed enemy blow.
     }
     e.invuln=.13;if(!setup)e.setupPush=null;
     const dir=forceDir||Math.sign(e.x-sourceX||player.face);
@@ -431,7 +443,7 @@
     const isBoss=!!TYPES[e.kind].boss,comboHit=!setup&&(player.combo+1)%4===0;
     if(e.hp<=0)defeatEnemy(e,dir);
     else if(!isBoss&&(strong||comboHit)){launchEnemy(e,dir,strong?Math.max(120,kb*1.7):130);bigImpact(e,dir,strong);}
-    else if(isBoss&&(strong||comboHit)){e.x=clamp(e.x+dir*48,50,WORLD_W-50);e.stun=Math.max(e.stun,stagger+.3);game.shake=Math.max(game.shake,9);game.freeze=Math.max(game.freeze,.07);vib();}
+    else if(isBoss&&(strong||comboHit)){e.x=clamp(e.x+dir*48,50,WORLD_W-50);if(canStagger&&!setup)e.stun=Math.max(e.stun,Math.min(.3,stagger+.3));game.shake=Math.max(game.shake,9);game.freeze=Math.max(game.freeze,.07);vib();}
     else e.x=clamp(e.x+dir*Math.min(kb,29),50,WORLD_W-50);
     if(e.hp>0){
       if(crit||Math.random()<.76){
@@ -690,7 +702,7 @@
     if(TYPES[e.kind].regional)return regionalStyle(e);
     if(e.kind==='clubBoss')return e.bossStyle||'whip';
     if(e.kind==='manager')return 'shock';
-    if(e.kind==='fedora')return dist<158?'whirlwind':'dagger';
+    if(e.kind==='fedora')return dist<290?'whirlwind':'dagger';
     if(e.kind==='redBoss')return dist<144?'paddle':'bullet';
     return TYPES[e.kind].style;
   }
@@ -698,10 +710,10 @@
   function bossReady(e){return e.hp>0&&!e.exit&&!e.air&&e.floorTime<=0&&e.stun<=0&&e.bind<=0&&!(e.entry>0);}
   function fireBarrage(e,wave){
     const def=TYPES[e.kind],wl=worldLevel(),face=e.face;
-    const n=3+Math.min(2,wl)+(e.hp<e.maxHp*.5?1:0);
+    const n=4+Math.min(3,wl)+(e.hp<e.maxHp*.5?1:0);
     const sx=e.x+face*def.drawH*.38,sy=e.y-def.drawH*.67;
-    const speed=265+wl*16,t=Math.max(.35,Math.abs(player.x-sx)/speed);
-    const baseVy=(player.y-108-sy)/t,gap=wave%2?42:60;
+    const speed=300+wl*18,t=Math.max(.35,Math.abs(player.x-sx)/speed);
+    const baseVy=(player.y-108-sy)/t,gap=wave%2?35:48;
     for(let i=0;i<n;i++){
       const k=i-(n-1)/2;
       game.projectiles.push({kind:'bullet',x:sx,y:sy,vx:face*speed,vy:clamp(baseVy+k*gap,-270,270),face,age:0,ttl:2.7,sourceX:e.x,damage:Math.max(5,Math.round(def.attack*.5))});
@@ -714,40 +726,39 @@
     const wl=worldLevel();
     for(const e of game.enemies){
       const def=TYPES[e.kind];if(!def.boss||!bossReady(e))continue;
-      if(e.barrageCd===undefined){e.barrageCd=2.2;e.closeCd=3;e.barrageWind=0;e.volley=0;e.barrageNo=0;}
+      if(e.barrageCd===undefined){e.barrageCd=.75;e.closeCd=.35;e.barrageWind=0;e.volley=0;e.barrageNo=0;}
       e.barrageCd-=dt;e.closeCd-=dt;
-      const dx=player.x-e.x,dy=player.y-e.y,busy=e.windup>0||e.swing>0||e.rush||e.followup||e.strikes;
+      const dx=player.x-e.x,dy=player.y-e.y,busy=e.windup>0||e.rush||e.spinRush||e.dive||e.followup||e.strikes;
       // 가까이 붙으면 밀쳐내기 (예고 후 발동)
       if(e.closeWind>0){
         e.closeWind-=dt;
         if(e.closeWind<=0){
           comicPop(e.x+Math.sign(dx||1)*60,e.y-def.drawH*.4,'swat',{size:130,life:.3,dir:Math.sign(dx||1)});
           game.shake=Math.max(game.shake,8);AlleyAudio.weapon('whirlwind');
-          if(Math.abs(player.x-e.x)<150&&Math.abs(player.y-e.y)<62&&player.jumpZ<20)damagePlayer(Math.max(8,Math.round(def.attack*.8)),e.x,'heavy');
+          if(Math.abs(player.x-e.x)<150&&Math.abs(player.y-e.y)<72&&player.jumpZ<20)damagePlayer(Math.max(8,Math.round(def.attack*.8)),e.x,'heavy');
         }
         continue;
       }
-      if(!busy&&e.closeCd<=0&&Math.abs(dx)<125&&Math.abs(dy)<58){
-        e.closeWind=.5;e.closeCd=Math.max(2.6,4.2-wl*.3);e.face=Math.sign(dx)||e.face;
+      if(!busy&&e.closeCd<=0&&Math.abs(dx)<145&&Math.abs(dy)<72){
+        e.closeWind=.32;e.closeCd=Math.max(.85,1.3-wl*.08);e.face=Math.sign(dx)||e.face;
         particle(e.x,e.y-def.drawH-8,'!','#ff5a5a',44);continue;
       }
       // 연속 사격: 두 번째 묶음
       if(e.volley>0){
         e.barrageWind-=dt;
-        if(e.barrageWind<=0){e.volley--;e.face=Math.sign(dx)||e.face;fireBarrage(e,++e.barrageNo);e.barrageWind=.55;}
+        if(e.barrageWind<=0){e.volley--;e.face=Math.sign(dx)||e.face;fireBarrage(e,++e.barrageNo);e.barrageWind=e.volley>0?.28:0;}
         continue;
       }
       // 멀리 있을 때 탄막
       if(!busy&&e.barrageCd<=0&&(Math.abs(dx)>150||Math.abs(dy)>70)){
-        if(e.barrageWind<=0){e.barrageWind=.55;e.face=Math.sign(dx)||e.face;particle(e.x,e.y-def.drawH-8,'!','#ffb347',44);comicPop(e.x+e.face*def.drawH*.38,e.y-def.drawH*.67,'flare',{size:60,life:.5,dir:e.face,behind:true});continue;}
+        if(e.barrageWind<=0){e.barrageWind=.36;e.face=Math.sign(dx)||e.face;particle(e.x,e.y-def.drawH-8,'!','#ffb347',44);comicPop(e.x+e.face*def.drawH*.38,e.y-def.drawH*.67,'flare',{size:60,life:.5,dir:e.face,behind:true});continue;}
       }
       if(e.barrageWind>0&&e.volley===0){
         e.barrageWind-=dt;
         if(e.barrageWind<=0){
           e.face=Math.sign(dx)||e.face;fireBarrage(e,++e.barrageNo);
-          const rage=e.hp<e.maxHp*.6||wl>=1;
-          if(rage){e.volley=1;e.barrageWind=.55;}
-          e.barrageCd=Math.max(2.3,3.6-wl*.25)*(e.hp<e.maxHp*.5?.8:1);
+          e.volley=e.hp<e.maxHp*.6||wl>=1?2:1;e.barrageWind=.28;
+          e.barrageCd=Math.max(1.1,1.85-wl*.12)*(e.hp<e.maxHp*.5?.8:1);
         }
       }
     }
@@ -766,17 +777,17 @@
       for(const e of game.enemies)if(e.reinf&&live(e)){e.hp=0;defeatEnemy(e,1);}
       game.reinfT=undefined;return;
     }
-    if(game.reinfT===undefined)game.reinfT=5.5;
+    if(game.reinfT===undefined)game.reinfT=3.2;
     game.reinfT-=dt;if(game.reinfT>0)return;
-    const wl=worldLevel();game.reinfT=Math.max(3.6,6.2-wl*.4);
+    const wl=worldLevel();game.reinfT=Math.max(2.8,4.3-wl*.25);
     const alive=game.enemies.filter(e=>!TYPES[e.kind].boss&&live(e)).length;
     if(alive>=3+Math.min(1,wl))return;
     const pool=bossMinionPool();if(!pool.length)return;
     const kind=pool[Math.floor(Math.random()*pool.length)],def=TYPES[kind],z=game.zones[game.zone];
     let x=player.x+(Math.random()<.5?1:-1)*(380+Math.random()*60);
     x=clamp(x,z.start+80,z.end-95);if(Math.abs(x-player.x)<220)x=clamp(player.x+(player.x<(z.start+z.end)/2?1:-1)*400,z.start+80,z.end-95);
-    const hp=Math.round(def.hp*GaiaCampaign.stages[activeStage].hpScale*(game.hpMul||1));
-    game.enemies.push({kind,name:def.name,x,y:Y_MIN+25+Math.floor(Math.random()*3)*48,face:Math.sign(player.x-x)||-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:def.style,attackCd:1.4+Math.random()*.5,swing:0,swingStyle:def.style,colorShift:0,id:++enemySerial,slotY:(Math.floor(Math.random()*3)-1)*27,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:Math.random()*Math.PI*2,captured:false,reward:0,entry:.6,reinf:true});
+    const hp=Math.round(def.hp*femaleHealth(kind)*GaiaCampaign.stages[activeStage].hpScale*(game.hpMul||1));
+    game.enemies.push({kind,name:def.name,x,y:Y_MIN+25+Math.floor(Math.random()*3)*48,face:Math.sign(player.x-x)||-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:def.style,attackCd:.4+Math.random()*.2,swing:0,swingStyle:def.style,colorShift:0,id:++enemySerial,slotY:(Math.floor(Math.random()*3)-1)*27,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:Math.random()*Math.PI*2,captured:false,reward:0,entry:.6,reinf:true});
   }
   function jump(){
     if(game.mode!=='playing'||player.hp<=0||player.grab||player.stun>0||player.jump||player.down||player.crouch&&!player.dash||player.attack||player.slam||player.splash||player.charge)return;
@@ -1056,29 +1067,36 @@
       e.walking=false;e.motionPhase=(e.motionPhase||0)+dt*1.6;
       e.invuln=Math.max(0,e.invuln-dt);e.hurt=Math.max(0,e.hurt-dt);e.stun=Math.max(0,e.stun-dt);e.staggerResist=Math.max(0,e.staggerResist-dt);e.bind=Math.max(0,e.bind-dt);e.powerDown=Math.max(0,e.powerDown-dt);
       if(e.setupPush){const k=e.setupPush;k.age=Math.min(k.duration,k.age+dt);const t=k.age/k.duration,z=game.zones[game.zone];e.x=clamp(k.fromX+k.dir*k.distance*(1-(1-t)**2),z.start+55,z.end-60);if(k.age>=k.duration)e.setupPush=null;}
-      e.attackCd=Math.max(0,e.attackCd-dt);e.swing=Math.max(0,e.swing-dt);
-      if(e.air||e.floorTime>0||e.bind>0||e.stun>0){e.dive=null;e.rush=null;e.followup=null;e.strikes=null;continue;}
-      if(e.dive){const d=e.dive;d.age+=dt;const t=clamp(d.age/d.duration,0,1);
+      const actionDt=dt*enemyActionRate(e.kind);
+      e.attackCd=Math.max(0,e.attackCd-actionDt);e.swing=Math.max(0,e.swing-actionDt);
+      if(e.air||e.floorTime>0||e.bind>0||e.stun>0){e.dive=null;e.rush=null;e.spinRush=null;e.followup=null;e.strikes=null;continue;}
+      if(e.dive){const d=e.dive;d.age+=actionDt;const t=clamp(d.age/d.duration,0,1);
         e.x=clamp(d.fromX+d.dir*d.distance*t,game.zones[game.zone].start+55,game.zones[game.zone].end-60);e.face=d.dir;
         if(!d.hit&&t>.16&&Math.abs(player.x-e.x)<64&&Math.abs(player.y-e.y)<72){d.hit=true;hurtPlayer(e);}
         if(t>=1){e.dive=null;e.swing=0;e.attackCd=Math.max(e.attackCd,.9);}continue;
       }
       if(e.strikes){
-        for(const hit of e.strikes){hit.time-=dt;if(hit.time<=0&&!hit.done){hit.done=true;const front=(player.x-e.x)*hit.dir;if(front>=-12&&front<TYPES[e.kind].reach+8&&Math.abs(player.y-e.y)<72)hurtPlayer(e);}}
+        for(const hit of e.strikes){hit.time-=actionDt;if(hit.time<=0&&!hit.done){hit.done=true;const front=(player.x-e.x)*hit.dir;if(front>=-12&&front<TYPES[e.kind].reach+8&&Math.abs(player.y-e.y)<72)hurtPlayer(e);}}
         if(e.strikes&&e.strikes.every(hit=>hit.done))e.strikes=null;
       }
-      if(e.followup){e.followup.time-=dt;if(e.followup.time<=0){const dir=e.followup.dir;e.followup=null;e.face=dir;e.swing=.44;e.swingStyle='shock';if((player.x-e.x)*dir>=-12&&Math.abs(player.x-e.x)<TYPES[e.kind].reach&&Math.abs(player.y-e.y)<72)hurtPlayer(e);}}
-      if(e.rush){const r=e.rush;r.age+=dt;const t=clamp(r.age/r.duration,0,1);e.x=clamp(r.fromX+r.dir*r.distance*t,game.zones[game.zone].start+55,game.zones[game.zone].end-70);e.face=r.dir;e.walking=true;
+      if(e.followup){e.followup.time-=actionDt;if(e.followup.time<=0){const dir=e.followup.dir;e.followup=null;e.face=dir;e.swing=.44;e.swingStyle='shock';if((player.x-e.x)*dir>=-12&&Math.abs(player.x-e.x)<TYPES[e.kind].reach&&Math.abs(player.y-e.y)<72)hurtPlayer(e);}}
+      if(e.rush){const r=e.rush;r.age+=actionDt;const t=clamp(r.age/r.duration,0,1);e.x=clamp(r.fromX+r.dir*r.distance*t,game.zones[game.zone].start+55,game.zones[game.zone].end-70);e.face=r.dir;e.walking=true;
         if(!r.hit&&Math.abs(player.x-e.x)<105&&Math.abs(player.y-e.y)<76){r.hit=true;damagePlayer(TYPES[e.kind].attack,e.x,'heavy');}
         if(t>=1){e.rush=null;e.attackCd=1.7;}continue;
       }
+      if(e.spinRush){const r=e.spinRush;r.age+=actionDt;const t=clamp(r.age/r.duration,0,1),z=game.zones[game.zone];
+        e.x=clamp(r.fromX+r.dir*r.distance*t,z.start+55,z.end-60);e.y=clamp(r.fromY+(r.targetY-r.fromY)*t,Y_MIN,Y_MAX);e.face=r.dir;e.swing=Math.max(e.swing,.08);
+        if(!r.hit&&Math.abs(player.x-e.x)<TYPES[e.kind].reach&&Math.abs(player.y-e.y)<80){r.hit=true;hurtPlayer(e);}
+        if(t>=1){e.spinRush=null;e.swing=0;}continue;
+      }
+      if(e.closeWind>0||e.barrageWind>0||e.volley>0){e.walking=false;continue;}
       const deltaX=player.x-e.x,deltaY=player.y-e.y,dist=Math.hypot(deltaX,deltaY*1.35);
       // Face the target at the start of an attack, then commit to that
       // direction through the warning. Players can dodge behind the whip.
       if(Math.abs(deltaX)>3&&e.windup<=0&&e.swing<=0&&!e.followup)e.face=Math.sign(deltaX);
       const def=TYPES[e.kind];if(e.kind==='clubBoss'&&e.windup<=0&&e.attackCd<=0){const cycle=e.hp/e.maxHp<.5?['whip','bullet','rush','bullet']:['whip','bullet','rush'];e.bossStyle=cycle[(e.pattern||0)%cycle.length];}const style=enemyAttackStyle(e,dist);
       if(e.windup>0){
-        e.windup-=dt;
+        e.windup-=actionDt;
         if(e.windup<=0){
           const released=e.windupStyle;AlleyAudio.weapon(released);e.swing=released==='whirlwind'?.72:released==='whip'?.66:released==='paddle'?.58:.55;
           e.swingStyle=released;e.attackBeat=(e.attackBeat||0)+1;
@@ -1098,8 +1116,8 @@
             e.x=clamp(e.x+e.face*25,game.zones[game.zone].start+55,game.zones[game.zone].end-65);
             if((player.x-e.x)*e.face>=-12&&Math.abs(player.x-e.x)<def.reach&&Math.abs(deltaY)<72)hurtPlayer(e);
             e.followup={time:.42,dir:e.face};
-          }else if(released==='sweep'){
-            if(Math.abs(player.x-e.x)<def.reach&&Math.abs(deltaY)<80)hurtPlayer(e);
+          }else if(released==='sweep'||released==='whirlwind'){
+            e.swing=.72;e.spinRush={age:0,duration:.72,dir:e.face,fromX:e.x,fromY:e.y,targetY:player.y,distance:Math.min(260,Math.abs(player.x-e.x)+25),hit:false};
           }else if(['flame','rocket','grenade','dagger','bullet'].includes(released))throwEnemyProjectile(e,released);
           else if(released==='whip'){
             // A broad frontal sweep, not a one-pixel punch: readable warning,
@@ -1113,30 +1131,26 @@
         }
       } else if(e.swing<=0) {
         const ranged=isRangedStyle(style);
-        const reach=ranged?500:style==='rush'?360:def.reach;
-        const inLine=Math.abs(deltaY)<(ranged?80:style==='whip'?92:72);
-        // One telegraphed enemy threat at a time; ranged attackers additionally
-        // share a longer fire-window to stop simultaneous projectile walls.
-        const canAttack=game.elapsed>=game.nextThreatAt&&
-          (!ranged||game.elapsed>=game.nextRangedAt);
+        const reach=enemyReach(e,style);
+        const inLine=Math.abs(deltaY)<(ranged?155:['dive','rush','sweep','whirlwind'].includes(style)?100:style==='whip'?92:72);
+        // Each enemy acts independently; no global queue makes the others watch.
+        const canAttack=!e.followup&&!e.strikes;
         if(e.attackCd<=0&&dist<reach&&inLine&&canAttack){
           e.windupStyle=style;e.windup=def.telegraph;if(def.regional){e.pattern=(e.pattern||0)+1;if(e.kind==='studentBoss'&&e.hp<e.maxHp*.5)e.windup*=.88;}if(e.kind==='clubBoss'){e.pattern=(e.pattern||0)+1;e.windup=style==='rush'?1.25:style==='bullet'?1.05:.95;}
           if(style==='whip'&&Math.random()<.60)comicBubble(e,'주인님 명령이에요!');
-          game.nextThreatAt=game.elapsed+def.telegraph+.62;
-          if(ranged)game.nextRangedAt=game.elapsed+def.telegraph+1.62;
-        }else if(dist<660){
+        }else{
           // Approach in staggered lanes; ranged types hold their own distance.
-          const gap=def.regional?(ranged?(def.keep||265):style==='rush'?230:Math.min(def.spacing,def.reach*.72)):e.kind==='clubBoss'?(style==='bullet'?290:style==='rush'?270:190):def.spacing,spacingError=Math.abs(deltaX)-gap;
+          const gap=ranged?Math.min(def.keep||def.spacing,reach*.7):Math.min(def.spacing,def.reach*.65),spacingError=Math.abs(deltaX)-gap;
           const burst=['punk','clubPunk'].includes(e.kind)?1+.26*Math.max(0,Math.sin(game.elapsed*8+e.id)):1;
-          const rootBossFiring=e.kind==='redBoss'&&ranged;
-          const staccato=['boxer','clubPunk'].includes(e.kind)?(Math.sin(game.elapsed*7.5+e.id)>.1?1.3:.35):1;
-          if(!rootBossFiring&&spacingError>12)e.x+=Math.sign(deltaX)*def.speed*burst*staccato*dt;
-          else if(!rootBossFiring&&spacingError< -25)e.x-=Math.sign(deltaX)*def.speed*dt*(ranged?.65:.16);
+          const speed=def.speed*(def.boss?1.4:1.25);
+          const staccato=['boxer','clubPunk'].includes(e.kind)?(Math.sin(game.elapsed*7.5+e.id)>.1?1.3:.75):1;
+          if(spacingError>12)e.x+=Math.sign(deltaX)*speed*burst*staccato*dt;
+          else if(spacingError< -25)e.x-=Math.sign(deltaX)*speed*dt*(ranged?.65:.16);
           const sideStep=e.kind==='breaker'?Math.sin(game.elapsed*3.3+e.id)*43:e.kind==='hippie'?Math.sin(game.elapsed*2.7+e.id)*29:
             e.kind==='goth'?Math.sin(game.elapsed*1.8+e.id)*15:0;
-          const desiredY=clamp(player.y+(e.slotY||0)+sideStep,Y_MIN,Y_MAX);
+          const desiredY=clamp(player.y+(e.slotY||0)*.3+sideStep*.55,Y_MIN,Y_MAX);
           const laneError=desiredY-e.y;
-          if(!rootBossFiring&&Math.abs(laneError)>9)e.y+=Math.sign(laneError)*Math.min(Math.abs(laneError),def.speed*.64*dt);
+          if(Math.abs(laneError)>9)e.y+=Math.sign(laneError)*Math.min(Math.abs(laneError),speed*.95*dt);
           e.y=clamp(e.y,Y_MIN,Y_MAX);
         }
         // Keep paper-doll silhouettes from piling up into one solid wall.
@@ -2076,7 +2090,7 @@
   window.AlleyGame={debug:{addDopa,hurt:d=>damagePlayer(d,player.x+60),player:()=>player},hold:s=>{game.freeze=Math.max(game.freeze,s);},useCard,canUseCard:()=>game.mode==='playing'&&!player.grab&&player.hp>0,start:reset,focus:()=>{cvs.focus();},state:()=>({stage:activeStage,mode:game.mode,zone:game.zone,packs:packIndex,enemies:game.enemies.length,time:game.elapsed,checkpoint:wallet.checkpoint[activeStage]||0})};
   if(new URLSearchParams(location.search).has('qa'))window.__alleyQA={
     get game(){return game;},get player(){return player;},get types(){return TYPES;},get waves(){return WAVES;},get assetsFailed(){return assetsFailed;},
-    GRAB_LINES,drawGrabOverlay,beginGrab,mashGrab,releaseGrab,drawGrab,dash,moves,femaleAttack,makePlan,spawnPack,regionalAttack,regionalStyle,regionalVisibleY,combatBeat,enemyBodyMotion,comicWeaponPhase,comicWeaponPose,heroTrailSamples,hipHeartSamples,pushSkill,beginCharge,releaseCharge,SKILLS,enemyAttackStyle,update,damagePlayer,hitEnemy,attack,jump,spawnWave,finish,clearInput,drawWorld,poses,images,throwEnemyProjectile,drawFighter,drawProjectile,drawAttackEffect,updateCombatArt,defeatEnemy,emitBlast,
+    femaleEnemy,femaleHealth,enemyActionRate,enemyReach,applyDifficulty,updateBossPressure,updateReinforcements,GRAB_LINES,drawGrabOverlay,beginGrab,mashGrab,releaseGrab,drawGrab,dash,moves,femaleAttack,makePlan,spawnPack,regionalAttack,regionalStyle,regionalVisibleY,combatBeat,enemyBodyMotion,comicWeaponPhase,comicWeaponPose,heroTrailSamples,hipHeartSamples,pushSkill,beginCharge,releaseCharge,SKILLS,enemyAttackStyle,update,damagePlayer,hitEnemy,attack,jump,spawnWave,finish,clearInput,drawWorld,poses,images,throwEnemyProjectile,drawFighter,drawProjectile,drawAttackEffect,updateCombatArt,defeatEnemy,emitBlast,
     teleport(x,y){player.x=x;player.y=y;game.camera=clamp(x-345,0,WORLD_W-W);},
     clearPack(){for(const e of game.enemies){e.hp=0;e.exit=null;}game.enemies=[];update(.016);},
     move(dx,dy){joystick.x=dx;joystick.y=dy;},input
