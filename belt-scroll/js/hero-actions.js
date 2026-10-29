@@ -11,6 +11,7 @@ window.HeroActions=(()=>{
     if(u.attack?.kind==='dashHug')return 'h1';
     if(u.attack?.kind==='headbutt'){const t=u.attack.age/.42;return t<.25?'01':t<.66?'02':'03';}
     if(u.attack?.kind==='split'){const t=u.attack.age/.65;return t<.24?'10':t<.58?'11':t<.78?'12':'13';}
+    if(u.attack?.kind==='whirlSplit'){const t=u.attack.age/1.08;return t<.16?'10':t<.89?'11':'13';}
     return u.crouch?'00':null;
   }
   function frame(ctx,im,key,x=0,y=0){const f=DATA[key]||HUG[key];if(!f)return;const [sx,sy,w,h]=f.rect;ctx.drawImage(im,sx,sy,w,h,x-f.anchor[0]/2,y-f.anchor[1]/2,w/2,h/2);}
@@ -21,6 +22,15 @@ window.HeroActions=(()=>{
     // A readable, foot-planted comic wobble instead of high-frequency jitter.
     if(u.grab)ctx.rotate(Math.sin(u.grab.age*Math.PI*2*1.8)*.065*(u.grab.dir||1));
     const hip=u.attack?.kind==='dashHip'||u.grab?.pose==='hip',dir=u.grab?.dir||u.dash?.dir||u.attack?.dir||u.face;ctx.scale(hip?dir:-dir,1);
+    // Perspective flip around the upright axis: spread legs stay at fixed height,
+    // and the original split image is reused instead of replacing the character.
+    if(u.attack?.kind==='whirlSplit'){
+      const t=Math.max(0,Math.min(1,(u.attack.age/1.08-.16)/.73));
+      const spin=t*Math.PI*4,side=Math.cos(spin);
+      ctx.scale(Math.sign(side||1)*(.38+.62*Math.abs(side)),1);
+      ctx.save();ctx.strokeStyle='#ffe8fb';ctx.lineWidth=5;ctx.globalAlpha=.33+.25*Math.sin(spin)**2;
+      ctx.beginPath();ctx.ellipse(0,-31,110,24,0,0,Math.PI*2);ctx.stroke();ctx.restore();
+    }
     if(u.dash||hip&&u.dashFollow){
       for(let j=3;j>0;j--){ctx.save();ctx.globalAlpha=.1+(3-j)*.07;frame(ctx,im,key,(hip?-1:1)*j*18,0);ctx.restore();}
       ctx.save();ctx.strokeStyle='#e1fff5';ctx.lineWidth=2;ctx.globalAlpha=.75;ctx.lineCap='round';

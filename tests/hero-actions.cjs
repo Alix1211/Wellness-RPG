@@ -56,3 +56,34 @@ if(p.grab)q.releaseGrab(false);reset();p.grabCd=0;const aiCaptor={...enemy('boxe
 
 if(p.grab)q.releaseGrab(false);let overlayFoe=grabReset('punk','low');g.projectiles=[{kind:'bullet',x:100,y:240,vx:200,vy:0,age:0,ttl:8,damage:5}];p.dashCd=.4;p.invuln=2;const frozen={time:g.elapsed,x:overlayFoe.x,y:overlayFoe.y,shotX:g.projectiles[0].x,shotAge:g.projectiles[0].age,cooldown:p.dashCd,invuln:p.invuln};settle(.6);assert(p.grab.age>.5);assert.equal(g.elapsed,frozen.time);assert.equal(overlayFoe.x,frozen.x);assert.equal(overlayFoe.y,frozen.y);assert.equal(g.projectiles[0].x,frozen.shotX);assert.equal(g.projectiles[0].age,frozen.shotAge);assert.equal(p.dashCd,frozen.cooldown);assert.equal(p.invuln,frozen.invuln);assert(!c.AlleyGame.canUseCard());for(let i=0;i<6;i++){press('punch');release('punch');}settle(.5);assert(!p.grab);const resumed=g.elapsed;settle(.1);assert(g.elapsed>resumed);assert(g.projectiles[0].x>frozen.shotX);console.log('PASS cut-in freezes enemy/projectile/battle clocks and cooldowns while escape input and its separate clock work; battle resumes after escape');
 assert.equal(q.GRAB_LINES.enemy,'야! 이 판국에 뭐하는거야!!');assert.equal(q.GRAB_LINES.rosie,'앙..체포 중이랍니다~~');console.log('PASS user dialogue preserved verbatim');
+
+// Finisher input tests: genuine taps, not held autofire or an old long input buffer.
+function tapCombo(kind){press(kind);release(kind);q.update(.016);return p.attack?.kind;}
+reset();g.enemies=[frozenEnemy('punk',540)];
+assert.equal(tapCombo('punch'),'punch');settle(.51);
+assert.equal(tapCombo('punch'),'punch');settle(.51);
+assert.equal(tapCombo('kick'),'hipCrash');assert.equal(q.moves.hipCrash.damage,44);
+settle(.55);assert.equal(g.enemies[0].hp,56);assert.equal(g.lastAttack.kind,'hipCrash');
+assert(!q.comboChain.steps.length);console.log('PASS chest-chest-hip uses the final tap for a strong hip crash; ordinary damage remains 13/28');
+
+reset();g.enemies=[frozenEnemy('punk',545),{...frozenEnemy('punk',255),id:2}];
+assert.equal(tapCombo('kick'),'kick');settle(.75);
+assert.equal(tapCombo('kick'),'kick');settle(.75);
+assert.equal(tapCombo('punch'),'punch');settle(.51);
+assert.equal(tapCombo('punch'),'whirlSplit');assert.equal(A.pose(p),'10');
+settle(.43);assert.equal(g.enemies[0].hp,80);assert.equal(g.enemies[1].hp,80);
+settle(.42);assert.equal(g.enemies[0].hp,55);assert.equal(g.enemies[1].hp,55);
+assert.equal(g.lastAttack.kind,'whirlSplit');assert(!q.comboChain.steps.length);
+console.log('PASS hip-hip-chest-chest triggers split and two outward spinning attack pulses');
+
+reset();g.enemies=[frozenEnemy('punk',1200)];press('punch');settle(1.3);release('punch');
+assert(q.comboChain.steps.length===0);assert.notEqual(p.attack?.kind,'hipCrash');
+console.log('PASS press-and-hold repeats ordinary upper attacks without progressing a combo');
+reset();g.enemies=[frozenEnemy('punk',1200)];assert.equal(tapCombo('punch'),'punch');settle(1.25);
+assert.equal(tapCombo('punch'),'punch');settle(.51);assert.equal(tapCombo('kick'),'kick');
+console.log('PASS an expired input pattern does not fire a finisher');
+
+reset();g.enemies=[frozenEnemy('punk',1200)];tapCombo('punch');settle(.51);p.invuln=0;
+assert(q.damagePlayer(3,p.x+60));p.hurt=0;p.stun=0;p.down=null;settle(.51);
+tapCombo('punch');settle(.51);assert.equal(tapCombo('kick'),'kick');
+console.log('PASS player damage cancels the previous combo sequence');
