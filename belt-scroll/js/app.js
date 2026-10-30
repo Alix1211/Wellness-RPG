@@ -81,6 +81,22 @@ window.DetectiveApp=(()=>{
  let chosen=state.stage1?2:1,locationId='warehouse',engineReady=false;
  const $=id=>document.getElementById(id),region=()=>C.regions[locationId];
  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch{}}
+ // Clear only this brawler's save key; other GAIA games and sound settings stay intact.
+ function resetGame(){
+  try{localStorage.removeItem(KEY);if(localStorage.getItem(KEY)!==null)return false;}
+  catch{return false;}
+  window.location.reload();return true;
+ }
+ function initNewGameButton(){
+  const dialog=$('newGameConfirm'),open=$('mapNewGame'),cancel=$('newGameCancel'),apply=$('newGameApply');
+  if(!dialog||!open||!cancel||!apply)return;
+  const hide=()=>{dialog.classList.add('hidden');open.focus?.();};
+  open.addEventListener('click',e=>{e.stopPropagation?.();$('newGameError').textContent='';dialog.classList.remove('hidden');cancel.focus?.();});
+  cancel.addEventListener('click',hide);
+  dialog.addEventListener('click',e=>{if(e.target===dialog)hide();});
+  dialog.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();hide();}});
+  apply.addEventListener('click',()=>{if(!resetGame())$('newGameError').textContent='저장 데이터를 삭제하지 못했습니다. 저장 공간 권한을 확인해 주세요.';});
+ }
  function closeEntry(){$('missionEntry').classList.add('hidden');BeltCards.closeBox();}
  function sync(){$('cityGold').textContent=state.gold+' G';$('cityHP').textContent=Math.ceil(state.hp)+' / 160';$('cityProgress').textContent=`월드 ${state.worldLevel} · `+(state.endingPending?'엔딩 대기':state.stage8?'1막 수사 완료':state.stage4?'클럽 수사 완료':'수사 진행');if(GAIA.map.refresh)GAIA.map.refresh();}
  function city(){closeEntry();$('game-shell').classList.add('hidden');document.body.classList.remove('inbattle');$('cityTop').classList.remove('hidden');AlleyAudio.bgm('map');GAIA.map.open();sync();}
@@ -119,7 +135,7 @@ window.DetectiveApp=(()=>{
  function start(stage,checkpoint=0){const info=C.stages[stage];if(!engineReady||!info)return;const r=C.regions[info.region];if(r.stages.indexOf(stage)>0&&!state['stage'+r.stages[0]])return;locationId=info.region;state.last=locationId;BeltItems.close();closeEntry();GAIA.map.close();document.body.classList.add('inbattle');$('cityTop').classList.add('hidden');$('game-shell').classList.remove('hidden');AlleyGame.start(stage,checkpoint);AlleyGame.focus();}
  function result(info){state.hp=Math.max(1,info.hp);state.mp=Math.max(0,Math.min(100,info.mp??state.mp));state.arrests+=info.arrests;state.slotUsed=0;state.lastReward='';state.tickets=Math.min(9,state.tickets+(info.won?2:1));if(!info.won){state.hp=Math.min(160,state.hp+30);state.stats.복종도=Math.min(30,state.stats.복종도+1);}const n=info.stage,r=C.regions[C.stages[n].region];if(info.won){state['stage'+n]=true;state.checkpoint[n]=0;if(r.stages.length>1&&n===r.stages[0])chosen=n+1;const old=state.records[n];state.records[n]={time:old?Math.min(old.time,info.elapsed):info.elapsed,arrests:info.arrests};state.hp=Math.min(160,state.hp+40+(window.BeltItems?.bonuses().healAfter||0));state.lastReward=BeltCards.reward(n);if(n===4)state.cardSlots=Math.max(state.cardSlots,3);if(n===9)state.cardSlots=4;if(n===12)state.endingPending=true;if(n===13)state.eventRuns=(state.eventRuns||0)+1;if(n===10)state.last='district';}save();sync();}
  GAIA.config={player:{maxHp:160}};GAIA.run={get:()=>({wl:state.worldLevel,hp:Math.ceil(state.hp),deck:state.loadout||[]}),spotInfo:id=>id==='police'?{state:'open',title:'경찰서',sub:'',go:'들어가기'}:id==='mart'?{state:'open',title:'마트',sub:'유물·소모품 구매와 소지품 판매',go:'쇼핑하기'}:id==='district'&&state.endingPending?{state:'clear',title:'환락가',sub:'최종보스 격파 · 엔딩 대기',go:'엔딩 보기'}:C.regions[id]?(!regionOpen(id)?{state:'locked',title:C.regions[id].name,sub:id==='park'||id==='casino'?'월드 2부터 개방':'앞 지역을 먼저 클리어하세요',go:null}:regionDone(id)?{state:'clear',title:C.regions[id].name,sub:'클리어',go:id==='casino'?'슬롯머신':'다시 출동'}:{state:'open',title:C.regions[id].name,sub:'',go:'출동'}):{state:'locked',sub:'',go:null},enter};
- function init(){$('entryBack').onclick=closeEntry;$('stageOne').onclick=()=>choose(region().stages[0]);$('stageTwo').onclick=()=>choose(region().stages[1]);$('mapBag').textContent='경찰서';$('mapBag').onclick=()=>enter('police');$('cityFocus').onclick=()=>enter('warehouse');$('cityClub').onclick=()=>enter('club');BeltItems.init();city();if(window.BeltStory&&!state.storySeen?.policeBegin){BeltStory.play('police.begin',{title:'경찰서 · 출근',...window.BeltDialogue.actors.chief},()=>{state.storySeen={...state.storySeen,policeBegin:true};save();});}}
+ function init(){$('entryBack').onclick=closeEntry;$('stageOne').onclick=()=>choose(region().stages[0]);$('stageTwo').onclick=()=>choose(region().stages[1]);$('mapBag').textContent='경찰서';$('mapBag').onclick=()=>enter('police');$('cityFocus').onclick=()=>enter('warehouse');$('cityClub').onclick=()=>enter('club');initNewGameButton();BeltItems.init();city();if(window.BeltStory&&!state.storySeen?.policeBegin){BeltStory.play('police.begin',{title:'경찰서 · 출근',...window.BeltDialogue.actors.chief},()=>{state.storySeen={...state.storySeen,policeBegin:true};save();});}}
  function ready(){engineReady=true;sync();if(!$('missionEntry').classList.contains('hidden')&&C.regions[state.last])choose(chosen);}
- return {state,sync,save,city,enter,start,result,advanceWorld,replayEnding,ready,init};
+ return {state,sync,save,city,enter,start,result,advanceWorld,replayEnding,resetGame,ready,init};
 })();

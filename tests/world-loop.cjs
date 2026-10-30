@@ -6,23 +6,26 @@ const path=require('node:path');
 const vm=require('node:vm');
 const base=path.join(__dirname,'../belt-scroll/js');
 const script=name=>fs.readFileSync(path.join(base,name),'utf8');
+const html=fs.readFileSync(path.join(base,'../index.html'),'utf8');
+for(const id of ['mapNewGame','newGameConfirm','newGameCancel','newGameApply'])assert(html.includes(`id="${id}"`),`${id} is rendered in the game`);
 
 function boot(saved){
  const db=new Map();if(saved)db.set('gaia_detective_alley_campaign_v1',JSON.stringify(saved));
  const dom=new Map();const element=id=>{if(!dom.has(id))dom.set(id,{
-  textContent:'',style:{},classList:{toggle(){},add(){},remove(){}},
-  appendChild(){},addEventListener(){},querySelector(){return null;},
+  textContent:'',style:{},events:{},classList:{toggle(){},add(){},remove(){}},
+  appendChild(){},focus(){},addEventListener(type,fn){this.events[type]=fn;},querySelector(){return null;},
  });return dom.get(id);};
  const ctx={console,Math,JSON,performance:{now:()=>0},
-  localStorage:{getItem:key=>db.get(key)||null,setItem:(key,val)=>db.set(key,val)},
-  document:{getElementById:element,createElement:()=>({innerHTML:'',addEventListener(){},classList:{toggle(){}}}),addEventListener(){}},
+  localStorage:{getItem:key=>db.get(key)||null,setItem:(key,val)=>db.set(key,val),removeItem:key=>db.delete(key)},
+  location:{reloaded:0,reload(){this.reloaded++;}},AUDIO_ASSETS:{},
+  document:{getElementById:element,createElement:()=>({innerHTML:'',addEventListener(){},classList:{toggle(){}}}),addEventListener(){},body:{classList:{add(){},remove(){}}}},
   BELT_CARDS:[
    {id:'heal',name:'회복',fam:'회복',grade:'일반',price:10,fx:'치유'},
    {id:'hit',name:'공격',fam:'공격',grade:'일반',price:10,fx:'타격'},
    {id:'buff',name:'지원',fam:'버프',grade:'일반',price:10,fx:'강화'},
   ],
  };
- ctx.window=ctx;ctx.GAIA={map:{refresh(){}}};ctx.BeltItems={bonuses:()=>({})};
+ ctx.window=ctx;ctx.GAIA={map:{refresh(){},open(){}}};ctx.BeltItems={bonuses:()=>({}),init(){}};
  vm.createContext(ctx);for(const file of ['campaign.js','app.js','cards.js'])vm.runInContext(script(file),ctx,{filename:file});
  return ctx;
 }
@@ -82,4 +85,27 @@ assert.equal(migrated.state.worldLevel,2);
 
 const dialogues=boot();vm.runInContext(script('story-data.js'),dialogues);
 assert.equal(dialogues.BeltDialogue.scenes['district.ending'].length,7,'ending dialogue is available');
-console.log('PASS world levels advance only after ending, chapter locks reset, park/casino unlock, card slots and player belongings persist, legacy saves migrate.');
+
+// Reset must be opt-in, erase only the Detective save, and restart at world 1.
+const reset=boot({version:1,worldLevel:5,gold:7315,cardSlots:4,stage12:true,itemBag:[{id:'a10',uid:'gi1'}],stats:{복종도:24}});
+reset.localStorage.setItem('unrelated_gaia_game','keep');
+assert.equal(reset.DetectiveApp.state.worldLevel,5);
+reset.DetectiveApp.init();
+const resetButton=reset.document.getElementById('mapNewGame');
+const cancelButton=reset.document.getElementById('newGameCancel');
+const applyButton=reset.document.getElementById('newGameApply');
+resetButton.events.click({stopPropagation(){}});
+assert(reset.localStorage.getItem('gaia_detective_alley_campaign_v1'),'opening confirmation does not delete the save');
+cancelButton.events.click();
+assert(reset.localStorage.getItem('gaia_detective_alley_campaign_v1'),'cancel leaves the save intact');
+resetButton.events.click({stopPropagation(){}});
+applyButton.events.click();
+assert.equal(reset.location.reloaded,1,'reset refreshes the game');
+assert.equal(reset.localStorage.getItem('gaia_detective_alley_campaign_v1'),null,'only the detective save is removed');
+assert.equal(reset.localStorage.getItem('unrelated_gaia_game'),'keep','other game saves are untouched');
+const freshAfterReset=boot();
+assert.equal(freshAfterReset.DetectiveApp.state.worldLevel,1);
+assert.equal(freshAfterReset.DetectiveApp.state.cardSlots,2);
+assert.equal(freshAfterReset.DetectiveApp.state.gold,80);
+assert.equal(freshAfterReset.DetectiveApp.state.itemBag,undefined);
+console.log('PASS ending-only world levels, persistent slots and items, legacy migration, safe opt-in reset and fresh world 1.');
