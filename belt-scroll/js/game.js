@@ -44,6 +44,7 @@
   Object.assign(ASSET,window.FemaleEnemies?.assets||{},window.EnemyWalk?.assets||{},window.HeroActions?.assets||{});
   const wallet=DetectiveApp.state;
   const ST=k=>Math.min(30,(wallet.stats&&wallet.stats[k])||0),sk=()=>1+.04*ST('개방성');
+  const relic=()=>window.BeltItems?.bonuses?.()||{};
   const save=()=>DetectiveApp.save();
   const images = {};
 
@@ -340,7 +341,8 @@
     game.seed=activeStage===13?67821+(wallet.eventRuns||0)*997:67821;game.zone=checkpointStart;game.waveLive=false;game.arrests=0;game.camera=0;game.elapsed=0;game.enemies=[];game.particles=[];game.decals=[];game.bubbles=[];game.shockwaves=[];game.skillBursts=[];game.projectiles=[];game.shake=0;game.freeze=0;game.lastAttack=null;game.transition=0;game.artParticles=[];game.artBursts=[];game.skillRings=[];game.heartBursts=[];
     makeProps();
     const startX=game.zones[checkpointStart].start+145;
-    Object.assign(player,{x:startX,y:435,face:1,hp:checkpoint?Math.max(112,wallet.hp):Math.max(80,wallet.hp),maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,mp:wallet.mp??100,maxMp:100,pushCd:0,chargeCd:0,charge:null,skillPose:null,stun:0,combo:0,comboTime:0,jump:null,jumpZ:0,grab:null,grabCd:2,crouch:false,crouchHold:0,crouchBlend:0,dash:null,dashLink:null,dashFollow:null,dashCd:0,down:null,slam:null,splash:null,cardGuard:0,cardDef:0,cardSpd:0,dopa:0,climaxT:0,climaxCd:0,dazeT:0});game.cardQ=[];if(window.BeltCards)BeltCards.begin(stage);
+    const prepared=window.BeltItems?.stageStart?.()||{},maxMp=prepared.maxMp||100;
+    Object.assign(player,{x:startX,y:435,face:1,hp:checkpoint?Math.max(112,wallet.hp):Math.max(80,wallet.hp),maxHp:160,invuln:0,hurt:0,attack:null,attackCooldown:0,skillCooldown:0,mp:Math.min(maxMp,(wallet.mp??100)+(prepared.startMp||0)),maxMp,pushCd:0,chargeCd:0,charge:null,skillPose:null,stun:0,combo:0,comboTime:0,jump:null,jumpZ:0,grab:null,grabCd:2,crouch:false,crouchHold:0,crouchBlend:0,dash:null,dashLink:null,dashFollow:null,dashCd:0,down:null,slam:null,splash:null,cardGuard:0,cardDef:0,cardSpd:prepared.speedSec||0,relicShield:prepared.shield||0,dopa:prepared.dopa||0,climaxT:0,climaxCd:0,dazeT:0});game.preparedVuln=prepared.vulnAll||0;game.cardQ=[];if(window.BeltCards)BeltCards.begin(stage);
     game.camera=Math.max(0,startX-345);clearInput();game.mode='playing';AlleyAudio.bgm('battle');hidePanels();if(storyRetry)battleStory('common.retry');battleStory('enter');spawnWave(checkpointStart);
     toast(stage===1?'뒷골목 1 · 중간보스를 찾아 전진하세요':'뒷골목 2 · 골목 안쪽으로 진입합니다',2.6);refreshHud();
   }
@@ -364,6 +366,7 @@
       const hp=Math.round(def.hp*femaleHealth(kind)*(boss?(activeStage===13?.60:1)*(BOSS_HP[kind]??BOSS_HP_DEFAULT):GaiaCampaign.stages[activeStage].hpScale)*(game.hpMul||1));
       game.enemies.push({kind,name:def.name,x,y:Y_MIN+25+(i%3)*48,face:left?1:-1,hp,maxHp:hp,invuln:0,hurt:0,stun:0,staggerResist:0,windup:0,windupStyle:def.style,attackCd:.35+i*.12+rng()*.18,swing:0,swingStyle:def.style,colorShift:0,id:++enemySerial,slotY:(i%3-1)*27,powerDown:0,bind:0,air:null,floorTime:0,floorAngle:0,exit:null,walking:false,motionPhase:rng()*Math.PI*2,captured:false,reward:0,entry:.8});
     });
+    if(game.preparedVuln){for(const e of game.enemies)e.vulnT=Math.max(e.vulnT||0,8+game.preparedVuln);game.preparedVuln=0;}
     game.reinfT=undefined;
     game.encounterBossMax=game.enemies.filter(e=>TYPES[e.kind].boss).reduce((n,e)=>n+e.maxHp,0);
     storyPackBosses=game.enemies.filter(e=>TYPES[e.kind].boss).map(e=>({kind:e.kind,name:e.name}));
@@ -445,7 +448,12 @@
     if(e.captured)return;
     e.captured=true;game.arrests++;
     e.reward=TYPES[e.kind].reward??(TYPES[e.kind].boss?80:5);
-    wallet.gold+=e.reward;save();refreshHud();
+    const gained=Math.round(e.reward*(1+(relic().goldPlus||0)/100));
+    wallet.gold+=gained;
+    const drop=window.BeltItems?.dropEnemy?.(!!TYPES[e.kind].boss);
+    if(drop?.item){const name=drop.name;particle(e.x,e.y-150,'+ '+name,'#fff0a0',20);}
+    else if(drop?.full&&TYPES[e.kind].boss)particle(e.x,e.y-150,'가방 가득','#ffe1bb',20);
+    save();refreshHud();
   }
   // Defeat is an over-the-top comic exit, not another identical knockdown.
   // A deliberately different miniature cartoon for every enemy personality.
@@ -477,7 +485,7 @@
   function hitEnemy(e,amount,kb,stagger,sourceX,crit=false,forceDir=0,strong=false,setup=false){
     if(e.hp<=0||e.invuln>0)return false;
     if(e.vulnT>0)amount=Math.round(amount*1.8);
-    amount=Math.max(1,Math.round(amount*(1+.03*ST('음란도'))*(player.climaxT>0?1.5:1)));
+    amount=Math.max(1,Math.round(amount*(1+.03*ST('음란도'))*(1+.08*(relic().strPlus||0))*(player.climaxT>0?1.5:1)));
     if(e.kind==='bouncer'&&!strong&&e.windup<=0&&e.swing<=0&&Math.sign(sourceX-e.x)===e.face)amount=Math.max(1,Math.round(amount*.6));
     e.hp=Math.max(0,e.hp-amount);e.hurt=.21;AlleyAudio.impact(strong,e.kind);hap(strong?'bigHit':'hit');
     const boss=!!TYPES[e.kind].boss,canStagger=setup||e.staggerResist<=0||strong&&!boss;
@@ -590,6 +598,10 @@
     }
     if(player.invuln>0)return false;
     if(kind!=='explosion'&&player.jump&&player.jump.age<.12&&player.jumpZ>36){return false;} // 점프 직후 아주 짧은 순간만 무적 [임시]
+    if(player.relicShield>0){
+      const blocked=Math.min(d,player.relicShield);player.relicShield-=blocked;d-=blocked;
+      if(d<=0){particle(player.x,player.y-115,'방어막','#bbfff4',24);return false;}
+    }
     // The two input-combo finishers take real damage, but a successful
     // input sequence is not cancelled by ordinary, heavy, or blast hits.
     // No invulnerability: preserve the normal 1.25s post-hit grace period.
@@ -1137,8 +1149,9 @@
     // Only the actual, visible stage boundary is closed during a live wave.
     // The old end-105 limit stranded Rozie while ranged enemies kept moving.
     if(player.stun===0&&!player.grab&&!dashing&&!(player.attack&&(moves[player.attack.kind].bothSides||moves[player.attack.kind].setup))&&player.attack?.kind!=='headbutt'&&!player.crouch&&!player.slam&&!player.splash&&!player.charge){const limit=game.waveLive?game.zones[game.zone].end-35:WORLD_W-80;
-      player.x=clamp(player.x+dx*216*dt*(player.cardSpd>0?1.5:1),Math.max(55,game.zones[Math.max(0,game.zone-1)].start+35),limit);
-      player.y=clamp(player.y+dy*169*dt*(player.cardSpd>0?1.5:1),Y_MIN,Y_MAX);
+      const relicSpeed=1+Math.min(.35,(relic().startLube||0)/250);
+      player.x=clamp(player.x+dx*216*dt*(player.cardSpd>0?1.5:1)*relicSpeed,Math.max(55,game.zones[Math.max(0,game.zone-1)].start+35),limit);
+      player.y=clamp(player.y+dy*169*dt*(player.cardSpd>0?1.5:1)*relicSpeed,Y_MIN,Y_MAX);
     }
     updateEnemyFlights(dt);
     updateEnemyExits(dt);

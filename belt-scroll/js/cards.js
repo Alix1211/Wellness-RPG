@@ -9,7 +9,7 @@ window.BeltCards=(()=>{
    const a=ALL.find(c=>s.cards[c.id]&&c.fam==='회복'),b=ALL.find(c=>s.cards[c.id]&&c.fam==='공격');s.loadout=[a&&a.id,b&&b.id].filter(Boolean);}
   s.loadout=(s.loadout||[]).filter(id=>(s.cards[id]||0)>0);return s.cards;
  }
- function cap(){const s=S();let n=1;while(n<13&&s['stage'+n])n++;return tierOf(n);}
+ function cap(){const s=S();let n=1;while(n<13&&s['stage'+n])n++;return Math.min(4,tierOf(n)+(window.BeltItems?.bonuses?.().drawPlus||0));}
  function equipped(id){return (S().loadout||[]).filter(x=>x===id).length;}
  function esc(t){return String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
  function mount(){
@@ -103,7 +103,7 @@ window.BeltCards=(()=>{
  const GAIA_GAIN=GAIN;
  // ---- 전투 ----
  function begin(stage){
-  const s=S(),cards=box(),want=tierOf(stage),ids=s.loadout.slice(0,want),left={...cards};ids.forEach(id=>{left[id]=(left[id]||0)-1;});
+  const s=S(),cards=box(),want=Math.min(4,tierOf(stage)+(window.BeltItems?.bonuses?.().drawPlus||0)),ids=s.loadout.slice(0,want),left={...cards};ids.forEach(id=>{left[id]=(left[id]||0)-1;});
   while(ids.length<want){const have=new Set(ids.map(id=>by(id).fam)),pool=ALL.filter(c=>left[c.id]>0);if(!pool.length)break;
    const c=pool.find(c=>!have.has(c.fam))||pool[0];ids.push(c.id);left[c.id]--;}
   s.loadout=ids;DetectiveApp.save();cur=ids.map(id=>({id,used:false}));buildBar();

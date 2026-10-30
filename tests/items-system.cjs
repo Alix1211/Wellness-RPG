@@ -1,0 +1,75 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const path=require('node:path');
+const root=path.resolve(__dirname,'../belt-scroll');
+const state={gold:10000,hp:140,mp:85,tickets:5,stats:{색기:8,음란도:10,복종도:24,개방성:1}};
+let world=0,saves=0,syncs=0;
+const context={console,Math,Number,String,Object,Array,JSON};
+context.window=context;
+context.GAIA={run:{get:()=>({wl:world})}};
+context.DetectiveApp={state,save(){saves++;},sync(){syncs++;}};
+vm.createContext(context);
+for(const file of ['js/items-data.js','js/items.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),context,{filename:file});
+const items=context.GAIA.items,sys=context.BeltItems;
+assert.equal(items.list.length,64);
+assert.equal(items.equipMax,3);
+assert.equal(items.list.filter(i=>i.type==='relic').length,23);
+assert.equal(items.list.filter(i=>i.type==='cons').length,10);
+assert.equal(items.list.filter(i=>i.type==='junk').length,31);
+for(const x of items.list)assert(fs.existsSync(path.join(root,'assets/items',x.id+'.webp')),x.id+' art missing');
+assert.equal(sys.stock().length,20);
+assert.equal(sys.stock().filter(i=>i.id==='b00').length,1);
+const balance=state.gold;
+assert.match(sys.buy(0),/구매 완료/);
+assert.equal(state.gold,balance-items.byId.b00.price);
+assert.equal(state.itemBag.length,1);
+assert.equal(state.itemBag[0].id,'b00');
+assert.match(sys.equip(state.itemBag[0].uid),/장착 완료/);
+assert.equal(state.itemEquip.filter(Boolean).length,1);
+assert(sys.bonuses().startBlock>=8);
+assert.match(sys.sell(state.itemBag[0].uid),/장착 해제/);
+assert.match(sys.unequip(0),/해제/);
+assert.match(sys.sell(state.itemBag[0].uid),/판매/);
+assert.equal(state.itemBag.length,0);
+assert.equal(state.gold,balance-items.byId.b00.price+items.sell(items.byId.b00));
+for(const id of ['a10','b05','c02','c18']){
+ const it=sys.add(sys.roll(id));assert(it);
+ assert.match(sys.equip(it.uid),/장착 완료/);
+}
+assert.equal(state.itemEquip.filter(Boolean).length,3,'must not exceed three slots');
+assert.equal(state.itemEquip.includes(state.itemBag[2].uid),false,'fourth item replaces selected equipped slot');
+assert.equal(state.itemBag.length,4,'replaced item remains owned');
+sys.add(sys.roll('c14'));const before=state.hp;
+assert.match(sys.use(state.itemBag.at(-1).uid),/사용 완료/);
+assert.equal(state.hp,before+15);
+sys.add(sys.roll('c15'));
+assert.match(sys.use(state.itemBag.at(-1).uid),/다음 출동/);
+const prep=sys.stageStart();
+assert(prep.shield>=10);
+assert.equal(Object.keys(state.itemPrepared).length,0,'consumable buff must apply only once');
+world=4;
+const newRoll=sys.roll('b00');
+assert.equal(newRoll.level,4);
+assert(newRoll.fx.startBlock>=items.byId.b00.fx.startBlock);
+assert.equal(sys.stock()[0].level,4,'mart stock changes with world level');
+assert(sys.dropEnemy(true)?.item,'boss loot guaranteed when space remains');
+while(state.itemBag.length<items.slots)sys.add(sys.roll('a00'));
+assert.equal(sys.dropEnemy(true).full,true);
+assert.equal(sys.add(sys.roll('a00')),null,'bag capacity 20');
+assert(saves>5&&syncs>0,'transactions persist and refresh gold display');
+// Render the three item tabs in a small DOM stand-in so template errors surface.
+const nodes={};
+function element(id=''){
+ const flags=new Set(id==='itemPanel'?['hidden']:[]);
+ return {id,innerHTML:'',dataset:{},classList:{add:k=>flags.add(k),remove:k=>flags.delete(k),contains:k=>flags.has(k)},
+  addEventListener(){},appendChild(child){nodes[child.id]=child;}};
+}
+nodes.cityInventory=element('cityInventory');
+context.document={getElementById:id=>nodes[id]||null,createElement:()=>element(),body:element('body')};
+sys.init();sys.open('mart');assert.match(nodes.itemPanel.innerHTML,/하트 하네스 조끼/);
+sys.open('bag');assert.match(nodes.itemPanel.innerHTML,/유물 장비/);
+assert.equal((nodes.itemPanel.innerHTML.match(/data-slot="[012]"/g)||[]).length,3);
+sys.open('status');assert.match(nodes.itemPanel.innerHTML,/현재 월드 레벨/);
+sys.close();assert.equal(nodes.itemPanel.classList.contains('hidden'),true);
+console.log('PASS original 64 items/art; three equip slots; mart buy/sell; item effects; world-level rolls; boss loot; save; 20-slot inventory.');

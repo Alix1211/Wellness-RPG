@@ -373,3 +373,49 @@ button:disabled{filter:grayscale(1);opacity:.52;cursor:default}button:focus-visi
  .cbTile>b{font-size:12px;min-height:2.6em;line-height:1.3;margin:5px 1px 3px}
  .cbTileMeta{font-size:10px}
 }
+
+/* Mart / relic inventory: independent of the police card collection. */
+#cityInventory{background:#f9dfeb;color:#874768;border:1px solid #d5a0b6;border-radius:10px;padding:10px 15px;white-space:nowrap}
+#itemPanel{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:2.5dvh 2.5vw;background:#26192acd;backdrop-filter:blur(5px)}
+#itemPanel button{touch-action:manipulation}
+.biWindow{display:flex;flex-direction:column;width:min(1100px,96vw);height:min(710px,94dvh);min-height:0;overflow:hidden;background:#fff8f3;border:2px solid #e6b6c4;border-radius:22px;color:#693f54;box-shadow:0 15px 70px #130d1c99}
+.biHeader{display:flex;align-items:center;gap:18px;padding:12px 20px;border-bottom:1px solid #eed6d9;background:linear-gradient(110deg,#fff2ed,#f7d8e5)}
+.biHeader div{display:grid;gap:2px}.biHeader strong{font-size:22px}.biHeader small{color:#a17c8b;font-size:11px}.biHeader>b{margin-left:auto;background:#fff5e9;padding:8px 20px;border-radius:18px;color:#87613f}
+.biHeader>button{border:0;background:#c77295;color:#fff;border-radius:11px;width:39px;height:39px;font-size:26px}
+.biTabs{display:flex;gap:7px;padding:8px 15px;border-bottom:1px solid #f0d9e2;background:#fffbf9}
+.biTabs button{border:1px solid #e8c3d3;background:#fff7f6;color:#9d6682;border-radius:11px;padding:9px 18px;font-size:13px}
+.biTabs button.active,.biToolbar button.active{background:#ce7096;color:#fff;border-color:#ce7096}
+.biBody{display:grid;grid-template-columns:minmax(0,1fr) minmax(285px,35%);min-height:0;flex:1}
+.biShelf{min-height:0;display:flex;flex-direction:column;min-width:0;padding:11px 13px;gap:8px}
+.biToolbar{display:flex;align-items:center;justify-content:space-between;gap:7px}
+.biToolbar>div{display:flex;gap:4px;flex-wrap:wrap}
+.biToolbar button{font-size:11px;border:1px solid #ebd8df;background:#fff;color:#8a6274;border-radius:9px;padding:6px 10px}
+.biToolbar small{white-space:nowrap;font-size:10px;color:#b08595}
+.biGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-content:start;gap:9px;padding:1px 4px 10px 1px;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+.biTile{display:grid;grid-template-columns:74px minmax(0,1fr);gap:7px;min-width:0;min-height:104px;padding:7px;border:1px solid #efd8e2;border-radius:14px;background:#fff;color:#82566c;text-align:left;box-shadow:0 2px 6px #ab829014}
+.biTile.active{outline:2px solid #ca6390;background:#fff3f8}
+.biTile>img{width:74px;height:90px;object-fit:contain;background:#fff0f5;border-radius:10px}
+.biTile>span{display:flex;min-width:0;flex-direction:column;gap:5px;justify-content:center}
+.biTile b{font-size:12px;line-height:1.3;word-break:keep-all}.biTile small{font-size:10px;color:#9e8690}.biTile em{font-style:normal;font-weight:800;color:#c06d93;font-size:10px}
+.biAside{border-left:1px solid #ecd2dc;padding:12px;display:flex;flex-direction:column;gap:9px;min-height:0;overflow-y:auto;touch-action:pan-y}
+.biEquip{border:1px solid #efd8df;border-radius:15px;background:#fffdf9;padding:12px}
+.biEquip h3{font-size:14px;margin:0 0 10px}.biEquip h3 small{color:#a77890;float:right}
+.biEquipGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.biEquipUnit{position:relative;min-width:0}.biEquipUnit>button:first-child{width:100%;height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:7px;border:1px dashed #d4a8bf;background:#fbedf3;color:#9c7091;border-radius:12px}
+.biEquipUnit>button:first-child.active{border:2px solid #d16594;background:#ffe5f0}
+.biEquipUnit img{width:58px;height:62px;object-fit:contain}.biEquipUnit b{font-size:10px;line-height:1.15;word-break:keep-all}.biEquipUnit .biUn{position:absolute;top:-6px;right:-4px;border:0;border-radius:50%;background:#bb6c8e;color:#fff;width:24px;height:24px}
+.biEquip>small{display:block;margin-top:8px;font-size:10px;color:#af8a9c}
+.biDetail{display:grid;grid-template-columns:90px minmax(0,1fr);gap:10px;align-content:start;border-radius:15px;padding:12px;background:#fff;border:1px solid #e9cfdc;min-height:180px}
+.biDetail>img{width:90px;height:113px;object-fit:contain;background:#fff0f5;border-radius:10px}
+.biDetail small{font-size:10px;color:#b4789a}.biDetail h3{font-size:17px;margin:6px 0}.biDetail p{font-size:12px;line-height:1.6;margin:0;word-break:keep-all}
+.biActions{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+.biActions button{flex:1;border:0;border-radius:11px;min-height:40px;padding:7px;background:#cb7397;color:#fff;font-size:12px}
+.biActions button+button{background:#f3e5ed;color:#8b5e75}
+.biFooter{padding:9px 15px;border-top:1px solid #eed4db;display:flex;gap:10px;align-items:center;background:#fff8f5;font-size:12px}
+.biFooter>span{flex:1;min-width:0;color:#ad648a}.biFooter button{border:0;background:#db92ad;color:#fff;padding:9px 22px;border-radius:10px}
+.biStatus{overflow:auto;touch-action:pan-y;padding:20px 23px;flex:1}.biStatus h3{font-size:20px;margin:0 0 13px}.biStatus h4{font-size:15px;margin:20px 0 9px}.biStatus p{padding:13px;border-radius:12px;background:#fff;border:1px solid #eed9df;font-size:13px;line-height:1.6}
+.biNumbers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.biNumbers>span{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #f0dbe1;padding:10px 14px;border-radius:10px;font-size:12px}.biNumbers b{font-size:13px;color:#ad6085}
+.biEmpty{font-size:12px;color:#ab8a9c}
+@media(max-width:1000px){.biGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.biTile{grid-template-columns:60px minmax(0,1fr);min-height:84px}.biTile>img{width:60px;height:75px}}
+@media(max-height:500px) and (orientation:landscape){.biHeader{padding:5px 13px}.biHeader strong{font-size:16px}.biHeader>button{width:29px;height:29px;font-size:20px}.biTabs{padding:5px 12px}.biTabs button{padding:5px 13px}.biShelf,.biAside{padding:7px}.biEquip{padding:6px}.biEquip h3{margin:0 0 3px}.biEquipUnit>button:first-child{height:64px}.biEquipUnit img{width:36px;height:36px}.biDetail{padding:7px;grid-template-columns:65px minmax(0,1fr);min-height:0}.biDetail>img{width:65px;height:75px}.biDetail h3{font-size:13px;margin:3px 0}.biDetail p{font-size:10px}.biActions button{min-height:29px}.biFooter{padding:4px 12px}}
+@media(max-width:650px) and (orientation:portrait){#cityInventory{padding:7px;font-size:11px}.biWindow{width:96vw}.biHeader{padding:10px}.biHeader strong{font-size:18px}.biHeader>b{padding:6px 10px;font-size:12px}.biTabs{padding:6px}.biTabs button{flex:1;padding:8px 3px;font-size:11px}.biBody{display:flex;flex-direction:column}.biShelf{flex:1;min-height:0}.biGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.biAside{flex:0 0 37%;border-left:0;border-top:1px solid #ead2dd;padding:7px;display:grid;grid-template-columns:44% 1fr;gap:7px}.biEquip{padding:7px}.biEquip h3{font-size:11px;margin-bottom:5px}.biEquipGrid{gap:3px}.biEquipUnit>button:first-child{height:60px;padding:3px}.biEquipUnit img{width:29px;height:32px}.biEquipUnit b{font-size:8px}.biEquip>small{font-size:8px}.biDetail{grid-template-columns:60px minmax(0,1fr);padding:7px;gap:6px}.biDetail>img{width:60px;height:68px}.biDetail h3{font-size:12px;margin:3px 0}.biDetail p{font-size:10px}.biActions button{min-height:31px;font-size:10px}.biFooter{padding:6px 10px;font-size:10px}}
