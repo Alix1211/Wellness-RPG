@@ -35,7 +35,7 @@
     npc.classList.toggle('dim',speaks);$('stNpcLabel').textContent=actor.name||'';
     $('stName').textContent=speaks?'로지':(l.name||actor.name||'상대');$('stName').className=speaks?'hero':'npc';
     }
-    $('stContext').textContent=c.title||'';full=l.text;$('stText').textContent='';$('stMore').style.opacity='0';
+    $('stContext').textContent=c.title||'';full=l.text.replace(/\{(worldLevel|nextWorld)\}/g,(_,key)=>String(c[key]??''));$('stText').textContent='';$('stMore').style.opacity='0';
     const reduce=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     if(reduce){$('stText').textContent=full;$('stMore').style.opacity='1';return;}
     let k=0;timer=setInterval(()=>{$('stText').textContent=full.slice(0,++k);if(k>=full.length){stopTyping();$('stMore').style.opacity='1';}},28);

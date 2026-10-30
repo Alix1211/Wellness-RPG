@@ -8,6 +8,18 @@ window.BeltItems=(()=>{
  let tab='bag',filter='전체',selected=null,slot=0,note='';
  const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','&quot;':'&quot;',"'":'&#39;'}[c]));
  const max=()=>DB().slots,level=()=>Math.max(1,GAIA.run?.get?.().wl||0);
+ const CATALOG_VERSION=2;
+ // Prices reflect the brawler's income, not the original card-game economy.
+ function priceOf(d,world=level()){
+  if(!d)return 0;
+  if(d.type!=='relic')return d.price;
+  const base=d.tier===1?2000+(d.price-120)*20:d.tier===2?5000+(d.price-200)*40:15000+(d.price-380)*100;
+  return Math.round(base*(1+.12*Math.max(0,world-1))/50)*50;
+ }
+ function sellValue(it){const d=DB().byId[it?.id];if(!d)return 0;if(d.type!=='relic')return DB().sell(d);
+  // Previously bought, pre-rebalance relics retain their old resale value.
+  if(it.origin==='mart'&&!it.quality)return DB().sell(d);
+  return Math.floor(priceOf(d,it.level||level())*.25);}
  function ensure(){
   const s=S();if(!Array.isArray(s.itemBag))s.itemBag=[];
   if(!Array.isArray(s.itemEquip))s.itemEquip=[];
@@ -49,12 +61,19 @@ window.BeltItems=(()=>{
   const d=DB().byId[id];if(!d)return null;
   const n=level(),r={id,level:n,fx:{...d.fx},origin};
   if(d.type==='relic'){
-   const multiplier=1+Math.max(0,n-1)*.09+Math.random()*.12;
+   const q=Math.random(),quality=origin==='mart'?'일반':origin==='park'?(q<.25?'희귀':q<.75?'고급':'일반'):origin==='casino'?(q<.40?'희귀':q<.90?'고급':'일반'):origin==='boss'?(q<.12?'희귀':q<.47?'고급':'일반'):(q<.05?'희귀':q<.25?'고급':'일반');
+   r.quality=quality;
+   const multiplier=(1+Math.max(0,n-1)*.18+Math.random()*(origin==='mart'?.04:.12))*(quality==='희귀'?1.38:quality==='고급'?1.18:1);
    for(const [k,v] of Object.entries(r.fx))r.fx[k]=Math.max(1,Math.round(v*multiplier));
-   // Repeated world laps yield distinct bonuses, even for the same relic.
-   if(n>=2&&Math.random()<Math.min(.7,.16+.1*n)){
-    const list=['healAfter','goldPlus','strPlus'],extra=list[Math.floor(Math.random()*list.length)];
-    if(!(extra in r.fx))r.fx[extra]=extra==='goldPlus'?Math.max(2,3*n):extra==='strPlus'?Math.max(1,Math.floor(n/3)):Math.max(1,n);
+   // Better park drops have a genuine chance to roll extra effects, even on a repeated relic.
+   const extraRate=origin==='mart'?0:origin==='park'?.75:origin==='casino'?.85:origin==='boss'?.50:.22;
+   if(n>=2&&Math.random()<extraRate){
+    const list=['healAfter','goldPlus','strPlus','startBlock','startDopa','startTight'].filter(k=>!(k in r.fx));
+    const count=n>=5&&quality==='희귀'&&Math.random()<.6?2:1;
+    for(let i=0;i<count&&list.length;i++){
+     const at=Math.floor(Math.random()*list.length),extra=list.splice(at,1)[0];
+     r.fx[extra]=extra==='goldPlus'?Math.max(3,4*n):extra==='strPlus'?Math.max(1,Math.floor(n/2)):Math.max(2,2*n);
+    }
    }
   }
   return r;
@@ -63,38 +82,39 @@ window.BeltItems=(()=>{
   const s=ensure();if(s.itemBag.length>=max())return null;
   const next={...item,uid:'gi'+(++s.itemUidSeq)};s.itemBag.push(next);DetectiveApp.save();return next;
  }
- function dropEnemy(boss=false){
+ function dropEnemy(boss=false,stage=0){
   const s=ensure();if(s.itemBag.length>=max())return {full:true};
-  if(!boss&&Math.random()>.24)return null;
-  const t=boss?'relic':Math.random()<.12?'relic':Math.random()<.42?'cons':'junk';
-  const choices=DB().list.filter(d=>d.type===t&&(t!=='relic'||d.tier<=Math.min(3,1+Math.floor(level()/2))));
+  const park=stage===13,relicRate=boss?(park?.70:.40):(park?.075:.012),otherRate=boss?.25:park?.14:.17;
+  const chance=Math.random();if(chance>=relicRate+otherRate)return null;
+  const t=chance<relicRate?'relic':Math.random()<.48?'cons':'junk';
+  const choices=DB().list.filter(d=>d.type===t&&d.src.includes('drop')&&(t!=='relic'||d.tier<=Math.min(2,1+Math.floor(level()/2))));
   const d=choices[Math.floor(Math.random()*choices.length)];if(!d)return null;
-  const item=add(roll(d.id));return item?{item,name:d.name}:null;
+  const item=add(roll(d.id,park?'park':boss?'boss':'drop'));return item?{item,name:d.name}:null;
  }
  function stock(){
   const s=ensure(),cycle=level();
-  if(s.itemMart?.cycle===cycle&&Array.isArray(s.itemMart.goods))return s.itemMart.goods;
+  if(s.itemMart?.version===CATALOG_VERSION&&s.itemMart.cycle===cycle&&Array.isArray(s.itemMart.goods))return s.itemMart.goods;
   const all=DB().list;
-  function pick(type,num,exclude=[]){const pool=all.filter(d=>d.type===type&&!exclude.includes(d.id)&&(type!=='relic'||d.tier<=Math.min(3,1+Math.floor(cycle/2))));
+  function pick(type,num){const pool=all.filter(d=>d.type===type&&d.src.includes('mart')&&(type!=='relic'||d.tier===1));
    pool.sort(()=>Math.random()-.5);return pool.slice(0,num).map(d=>roll(d.id,'mart'));
   }
-  const pinned=['b00','b15'].map(id=>roll(id,'mart'));
-  const goods=[...pinned,...pick('relic',6,pinned.map(i=>i.id)),...pick('cons',6),...pick('junk',6)];
-  s.itemMart={cycle,goods};DetectiveApp.save();return goods;
+  const goods=[...pick('relic',4),...pick('cons',8),...pick('junk',8)];
+  s.itemMart={version:CATALOG_VERSION,cycle,goods};DetectiveApp.save();return goods;
  }
  function buy(index){
   const s=ensure(),x=stock()[index],d=DB().byId[x?.id];
   if(!d)return '상품이 없습니다.';
-  if(s.gold<d.price)return '골드가 부족합니다.';
+  if(x.sold)return '이번 월드에서는 품절입니다.';
+  const price=priceOf(d,x.level);if(s.gold<price)return '골드가 부족합니다.';
   if(s.itemBag.length>=max())return '가방이 가득 찼습니다. 먼저 물건을 판매하세요.';
   const it=add(x);if(!it)return '가방이 가득 찼습니다.';
-  s.gold-=d.price;DetectiveApp.save();DetectiveApp.sync();selected=it.uid;return d.name+' 구매 완료 · '+d.price+' G';
+  s.gold-=price;x.sold=true;DetectiveApp.save();DetectiveApp.sync();selected=it.uid;return d.name+' 구매 완료 · '+price+' G';
  }
  function sell(uid){
   const s=ensure(),it=itemAt(uid),d=DB().byId[it?.id];if(!d)return '선택한 물건이 없습니다.';
   if(s.itemEquip.includes(uid))return '장착 해제한 뒤 판매할 수 있습니다.';
-  s.itemBag=s.itemBag.filter(i=>i.uid!==uid);s.gold+=DB().sell(d);selected=null;
-  DetectiveApp.save();DetectiveApp.sync();return d.name+' 판매 · +'+DB().sell(d)+' G';
+  const price=sellValue(it);s.itemBag=s.itemBag.filter(i=>i.uid!==uid);s.gold+=price;selected=null;
+  DetectiveApp.save();DetectiveApp.sync();return d.name+' 판매 · +'+price+' G';
  }
  function equip(uid){
   const s=ensure(),it=itemAt(uid);if(!it||DB().byId[it.id]?.type!=='relic')return '유물만 장착할 수 있습니다.';
@@ -125,8 +145,8 @@ window.BeltItems=(()=>{
  function markupItem(item,index,shop=false){
   const d=DB().byId[item.id],eq=ensure().itemEquip.includes(item.uid),active=(shop?selected==='shop'+index:selected===item.uid);
   return `<button class="biTile ${active?'active':''}" data-item="${shop?'shop'+index:esc(item.uid)}" aria-pressed="${active}">
-   <img loading="lazy" src="assets/items/${d.id}.webp" alt=""><span><b>${esc(d.name)}</b><small>${KIND[d.type]} ${d.type==='relic'?'· Lv.'+item.level:''}</small>
-   <em>${shop?d.price+' G':eq?'장착 중':d.type==='junk'?'판매 '+DB().sell(d)+' G':'보유 중'}</em></span></button>`;
+   <img loading="lazy" src="assets/items/${d.id}.webp" alt=""><span><b>${esc(d.name)}</b><small>${KIND[d.type]} ${d.type==='relic'?'· '+(item.quality||'일반')+' · Lv.'+item.level:''}</small>
+   <em>${shop?(item.sold?'품절':priceOf(d,item.level).toLocaleString()+' G'):eq?'장착 중':d.type==='junk'?'판매 '+sellValue(item)+' G':'보유 중'}</em></span></button>`;
  }
  function render(){
   const el=$('itemPanel');if(!el||el.classList.contains('hidden'))return;
@@ -143,7 +163,7 @@ window.BeltItems=(()=>{
   }else{
    h+=`<div class="biBody"><section class="biShelf"><div class="biToolbar"><div>${TYPES.map(k=>`<button data-filter="${k}" class="${filter===k?'active':''}">${k}</button>`).join('')}</div><small>${tab==='mart'?'월드 단계별 상품 구성':s.itemBag.length+'/'+max()+'칸'}</small></div><div class="biGrid">${list.map(it=>markupItem(it,it._i,tab==='mart')).join('')||'<p class="biEmpty">물건이 없습니다.</p>'}</div></section>
    <aside class="biAside"><div class="biEquip"><h3>유물 장비 <small>${s.itemEquip.filter(Boolean).length}/3</small></h3><div class="biEquipGrid">${[0,1,2].map(i=>{const it=itemAt(s.itemEquip[i]);return `<div class="biEquipUnit"><button data-slot="${i}" class="${slot===i?'active':''}">${it?`<img src="assets/items/${it.id}.webp" alt=""><b>${esc(DB().byId[it.id].name)}</b>`:`<b>+ 빈 슬롯 ${i+1}</b>`}</button>${it?`<button class="biUn" data-un="${i}" aria-label="${i+1}번 유물 장착 해제">×</button>`:''}</div>`;}).join('')}</div><small>슬롯을 선택하면 해당 칸에 유물을 장착합니다.</small></div>
-   <section class="biDetail">${d?`<img src="assets/items/${d.id}.webp" alt="${esc(d.name)}"><div><small>${KIND[d.type]} ${d.type==='relic'?'· 월드 Lv.'+chosen.level:''}</small><h3>${esc(d.name)}</h3><p>${esc(effectText(chosen))}</p></div><div class="biActions">${tab==='mart'?`<button data-buy="${Number(String(selected).replace('shop',''))}" ${s.gold<d.price||s.itemBag.length>=max()?'disabled':''}>구매 · ${d.price} G</button>`:d.type==='relic'?`<button data-equip="${esc(chosen.uid)}" ${isEquipped?'disabled':''}>유물 장착</button><button data-sell="${esc(chosen.uid)}" ${isEquipped?'disabled':''}>판매 · ${DB().sell(d)} G</button>`:d.type==='cons'?`<button data-use="${esc(chosen.uid)}">사용</button><button data-sell="${esc(chosen.uid)}">판매 · ${DB().sell(d)} G</button>`:`<button data-sell="${esc(chosen.uid)}">판매 · ${DB().sell(d)} G</button>`}</div>`:'<p>물건을 선택해 주세요.</p>'}</section></aside></div>`;
+   <section class="biDetail">${d?`<img src="assets/items/${d.id}.webp" alt="${esc(d.name)}"><div><small>${KIND[d.type]} ${d.type==='relic'?'· '+(chosen.quality||'일반')+' · 월드 Lv.'+chosen.level:''}</small><h3>${esc(d.name)}</h3><p>${esc(effectText(chosen))}</p></div><div class="biActions">${tab==='mart'?`<button data-buy="${Number(String(selected).replace('shop',''))}" ${chosen.sold||s.gold<priceOf(d,chosen.level)||s.itemBag.length>=max()?'disabled':''}>${chosen.sold?'품절':'구매 · '+priceOf(d,chosen.level).toLocaleString()+' G'}</button>`:d.type==='relic'?`<button data-equip="${esc(chosen.uid)}" ${isEquipped?'disabled':''}>유물 장착</button><button data-sell="${esc(chosen.uid)}" ${isEquipped?'disabled':''}>판매 · ${sellValue(chosen).toLocaleString()} G</button>`:d.type==='cons'?`<button data-use="${esc(chosen.uid)}">사용</button><button data-sell="${esc(chosen.uid)}">판매 · ${sellValue(chosen)} G</button>`:`<button data-sell="${esc(chosen.uid)}">판매 · ${sellValue(chosen)} G</button>`}</div>`:'<p>물건을 선택해 주세요.</p>'}</section></aside></div>`;
   }
   h+=`<footer class="biFooter"><span role="status">${esc(note)}</span><button data-close="1">닫기</button></footer></section>`;el.innerHTML=h;
  }
@@ -173,5 +193,5 @@ window.BeltItems=(()=>{
   div.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}});
   $('cityInventory')?.addEventListener('click',()=>open('bag'));
  }
- return {init,open,close,ensure,bonuses,stageStart,dropEnemy,add,roll,effectText,buy,sell,equip,unequip,use,stock};
+ return {init,open,close,ensure,bonuses,stageStart,dropEnemy,add,roll,effectText,buy,sell,equip,unequip,use,stock,priceOf,sellValue};
 })();

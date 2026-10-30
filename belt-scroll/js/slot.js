@@ -70,6 +70,13 @@ window.BeltSlot=(()=>{
     const im=document.createElement('img');im.className='sl-man';im.alt='';im.draggable=false;im.src='assets/slot/bunnyman.webp';st.appendChild(im);
   }
   const lineSet=()=>{const n=SLOT.lines[nLines];return n===1?[ROWS[1]]:n===3?ROWS:ROWS.concat(DIAG);};
+  function jackpotRelic(){
+    if(!window.BeltItems?.roll||!window.BeltItems?.add||!window.GAIA?.items)return '';
+    const exclusive=GAIA.items.list.filter(d=>d.type==='relic'&&d.src.length===1&&d.src[0]==='casino');
+    const pick=rnd(exclusive);if(!pick)return '';
+    const got=BeltItems.add(BeltItems.roll(pick.id,'casino'));
+    return got?' · 특별 유물: '+pick.name:' · 가방이 가득 차 유물을 받지 못했습니다';
+  }
   function spin(){
     const tot=total();if(spinning||used()>=SLOT.limit||S().gold<tot)return;
     S().gold-=tot;S().slotUsed=used()+1;DetectiveApp.save();try{DetectiveApp.sync();}catch(_){}
@@ -103,7 +110,8 @@ window.BeltSlot=(()=>{
     });
     S().gold+=gold;DetectiveApp.save();try{DetectiveApp.sync();}catch(_){}
     win.forEach(p=>{const e=$('wn'+p[0]+p[1]);if(e)e.classList.add('on');});
-    msg=gold?(jackpot?'잭팟! ':'')+'+'+gold+' G':'꽝…';
+    const special=jackpot&&Math.random()<.30?jackpotRelic():'';
+    msg=gold?(jackpot?'잭팟! ':'')+'+'+gold+' G'+special:'꽝…';
     spinning=false;hud();
     if(jackpot){jackpotFx();hap('orgasm');sfx('victory',.3);}else if(gold)hap('miniPerfect');else hap('miniBad');
     if(used()>=SLOT.limit)setTimeout(()=>{if(root&&!root.classList.contains('hidden')){showBunnyMan();msg='한 판 뛰고 오세요';hud();}},jackpot?2200:900);

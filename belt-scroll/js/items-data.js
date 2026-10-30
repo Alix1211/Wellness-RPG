@@ -1,11 +1,11 @@
 // 아이템 도감 — 64종. 그림 키(a00~c19)는 assets/gaia-detective/ui/items/<키>.webp 와 같습니다.
 // type: relic(유물: 착용 최대 3, 패시브) / cons(소모품: 전투 준비에 사용) / junk(잡템: 효과 없음, 팔아서 용돈)
-// src: 얻는 곳 — drop(몹 드롭) / mart / casino / slot(슬롯머신 경품). 마트·카지노·슬롯 화면은 아직 없음(데이터만 표시).
-// price: 사는 가격. 파는 값은 sellRate(절반).
+// src: 얻는 곳 — drop(몹 드롭) / mart / casino / slot(슬롯머신 경품).
+// price: 원작 기준 가격/유물 등급 판정용. 벨트스크롤 유물의 거래가는 items.js에서 별도 책정.
 window.GAIA = window.GAIA || {};
 (function () {
   const L = [], by = {};
-  const J = ['drop', 'slot', 'mart'], K = ['drop', 'mart', 'casino'], R = ['drop', 'casino'], R2 = ['casino'];
+  const J = ['drop', 'slot', 'mart'], K = ['drop', 'mart', 'casino'], R = ['drop', 'casino'], R2 = ['casino'], RM=['drop','casino','mart'];
   const add = (id, name, type, price, fx, src) => { const d = { id: id, name: name, type: type, price: price, fx: fx || {}, src: src, tier: type === 'relic' ? (price >= 380 ? 3 : price >= 200 ? 2 : 1) : 0 }; L.push(d); by[id] = d; };
   // ── 잡템 (효과 없음) ──
   [['a00', '분홍 방긋이', 30], ['a01', '보라 리본이', 35], ['a02', '하트눈 컵', 40], ['a03', '보라 줄무늬 컵', 40], ['a04', '토끼 진동이', 55], ['a05', '하늘 말랑이', 30],
@@ -19,10 +19,10 @@ window.GAIA = window.GAIA || {};
   add('b10', '하트 테이프', 'cons', 55, { tight: 6 }, K); add('c12', '간지럼 깃털', 'cons', 80, { vulnAll: 2 }, K); add('c13', '분홍 하트 집게', 'cons', 120, { energy: 1 }, K);
   add('c14', '펌프 보틀', 'cons', 60, { heal: 15 }, K); add('c15', '튜브 로션', 'cons', 45, { block: 10 }, K); add('c16', '하트 향초', 'cons', 100, { dopa: 50 }, K); add('c17', '리본 테이프', 'cons', 100, { tight: 12 }, K);
   // ── 유물 (착용, 최대 3) ──
-  add('a10', '하트 방울 초커', 'relic', 120, { startBlock: 4 }, R); add('b05', '자물쇠 목걸이', 'relic', 120, { startTight: 4 }, R); add('c02', '보라 리본 초커', 'relic', 130, { startLube: 20 }, R);
-  add('c18', '하트 초커', 'relic', 130, { startDopa: 10 }, R); add('c19', '보라 리본 안대', 'relic', 140, { startBlock: 5 }, R); add('a08', '하트 수갑', 'relic', 150, { healAfter: 5 }, R);
-  add('c07', '눈웃음 안대', 'relic', 150, { startTight: 5 }, R); add('b11', '리본 안대', 'relic', 160, { startLube: 25 }, R); add('b02', '폭신 자물쇠 수갑', 'relic', 170, { startBlock: 6 }, R);
-  add('b03', '폭신 자물쇠 팔찌', 'relic', 170, { startTight: 6 }, R); add('c00', '은사슬 하트 수갑', 'relic', 180, { goldPlus: 25 }, R); add('b21', '고양이 반가면', 'relic', 190, { startDopa: 15 }, R);
+  add('a10', '하트 방울 초커', 'relic', 120, { startBlock: 4 }, RM); add('b05', '자물쇠 목걸이', 'relic', 120, { startTight: 4 }, RM); add('c02', '보라 리본 초커', 'relic', 130, { startLube: 20 }, RM);
+  add('c18', '하트 초커', 'relic', 130, { startDopa: 10 }, RM); add('c19', '보라 리본 안대', 'relic', 140, { startBlock: 5 }, RM); add('a08', '하트 수갑', 'relic', 150, { healAfter: 5 }, RM);
+  add('c07', '눈웃음 안대', 'relic', 150, { startTight: 5 }, RM); add('b11', '리본 안대', 'relic', 160, { startLube: 25 }, RM); add('b02', '폭신 자물쇠 수갑', 'relic', 170, { startBlock: 6 }, RM);
+  add('b03', '폭신 자물쇠 팔찌', 'relic', 170, { startTight: 6 }, RM); add('c00', '은사슬 하트 수갑', 'relic', 180, { goldPlus: 25 }, RM); add('b21', '고양이 반가면', 'relic', 190, { startDopa: 15 }, RM);
   add('b15', '보라 허벅지 하네스', 'relic', 200, { startLube: 30 }, R); add('a15', '잠꾸러기 안대', 'relic', 200, { healAfter: 8 }, R); add('b00', '하트 하네스 조끼', 'relic', 240, { startBlock: 8 }, R);
   add('b01', '보라 코르셋', 'relic', 240, { startTight: 8 }, R); add('c01', '하트 방울 퍼 수갑', 'relic', 240, { startDopa: 20 }, R); add('b13', '분홍 장갑', 'relic', 260, { strPlus: 1 }, R);
   add('a09', '보송 수갑 세트', 'relic', 260, { healAfter: 10 }, R); add('a14', '보라 냥이 안대', 'relic', 300, { goldPlus: 50 }, R); add('b14', '하트 리드줄', 'relic', 380, { drawPlus: 1 }, R2);

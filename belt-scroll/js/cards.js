@@ -9,7 +9,9 @@ window.BeltCards=(()=>{
    const a=ALL.find(c=>s.cards[c.id]&&c.fam==='회복'),b=ALL.find(c=>s.cards[c.id]&&c.fam==='공격');s.loadout=[a&&a.id,b&&b.id].filter(Boolean);}
   s.loadout=(s.loadout||[]).filter(id=>(s.cards[id]||0)>0);return s.cards;
  }
- function cap(){const s=S();let n=1;while(n<13&&s['stage'+n])n++;return Math.min(4,tierOf(n)+(window.BeltItems?.bonuses?.().drawPlus||0));}
+ // Card slots belong to Rosie, not to the current map or stage. Relic bonuses
+ // remain temporary while equipped; earned base slots never shrink on a new lap.
+ function cap(){const s=S();const earned=s.stage9?4:s.stage4?3:2;s.cardSlots=Math.min(4,Math.max(2,s.cardSlots||2,earned));return Math.min(4,s.cardSlots+(window.BeltItems?.bonuses?.().drawPlus||0));}
  function equipped(id){return (S().loadout||[]).filter(x=>x===id).length;}
  function esc(t){return String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
  function mount(){
@@ -94,7 +96,7 @@ window.BeltCards=(()=>{
  const GAIN={squat:{great:{색기:2,개방성:1},ok:{색기:1}},batting:{great:{복종도:2,음란도:1},ok:{복종도:1,음란도:1}}};
  function playTrain(id){
   const s=S();if(s.tickets<=0||!window.GAIA||!GAIA.minigame)return;
-  const cleared=Object.keys(s).filter(k=>/^stage\d+$/.test(k)&&s[k]).length,wl=Math.floor(cleared/3);
+  const wl=Math.max(0,(s.worldLevel||1)-1);
   AlleyAudio.bgm(null);
   GAIA.minigame.play(id,{wl,canRetry:()=>S().tickets>0,
    onResult:r=>{const tier=r.ratio>=.8?'great':r.success?'ok':'fail',g=(GAIA_GAIN[id]||{})[tier]||{};S().tickets=Math.max(0,S().tickets-1);for(const k of Object.keys(g))S().stats[k]=Math.min(30,(S().stats[k]||0)+g[k]);DetectiveApp.save();},
@@ -103,7 +105,7 @@ window.BeltCards=(()=>{
  const GAIA_GAIN=GAIN;
  // ---- 전투 ----
  function begin(stage){
-  const s=S(),cards=box(),want=Math.min(4,tierOf(stage)+(window.BeltItems?.bonuses?.().drawPlus||0)),ids=s.loadout.slice(0,want),left={...cards};ids.forEach(id=>{left[id]=(left[id]||0)-1;});
+  const s=S(),cards=box(),want=cap(),ids=s.loadout.slice(0,want),left={...cards};ids.forEach(id=>{left[id]=(left[id]||0)-1;});
   while(ids.length<want){const have=new Set(ids.map(id=>by(id).fam)),pool=ALL.filter(c=>left[c.id]>0);if(!pool.length)break;
    const c=pool.find(c=>!have.has(c.fam))||pool[0];ids.push(c.id);left[c.id]--;}
   s.loadout=ids;DetectiveApp.save();cur=ids.map(id=>({id,used:false}));buildBar();
@@ -138,6 +140,6 @@ window.BeltCards=(()=>{
   for(const c of ALL)for(let k=0;k<(w[c.grade]||1);k++)pool.push(c);
   const c=pool[Math.floor(Math.random()*pool.length)],s=S();box();s.cards[c.id]=(s.cards[c.id]||0)+1;return c.name;
  }
- return {openBox,closeBox,begin,reward,render,all:ALL};
+ return {openBox,closeBox,begin,reward,render,capacity:cap,all:ALL};
 })();
 

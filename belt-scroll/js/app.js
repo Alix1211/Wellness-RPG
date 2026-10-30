@@ -69,24 +69,44 @@ window.AlleyAudio=(()=>{
 window.GAIA=window.GAIA||{};
 window.DetectiveApp=(()=>{
  const KEY='gaia_detective_alley_campaign_v1',C=GaiaCampaign;
- const fresh=()=>({version:1,gold:80,hp:160,mp:100,stage1:false,stage2:false,stage3:false,stage4:false,arrests:0,checkpoint:{},records:{},last:'police',eventRuns:0});
- let state=fresh();try{const v=JSON.parse(localStorage.getItem(KEY));if(v?.version===1)state={...state,...v};}catch{}
+ const fresh=()=>({version:1,worldLevel:1,cardSlots:2,endingPending:false,gold:80,hp:160,mp:100,stage1:false,stage2:false,stage3:false,stage4:false,arrests:0,checkpoint:{},records:{},last:'police',eventRuns:0});
+ let state=fresh(),legacySave=false;
+ try{const v=JSON.parse(localStorage.getItem(KEY));if(v?.version===1){legacySave=!Number.isInteger(v.worldLevel);state={...state,...v};}}catch{}
+ // Migrate old saves without erasing Rosie: completed story grants persistent card slots.
+ state.worldLevel=Number.isInteger(state.worldLevel)&&state.worldLevel>=1?state.worldLevel:1;
+ const earnedSlots=state.stage9?4:state.stage4?3:2;
+ state.cardSlots=Math.min(4,Math.max(2,Number(state.cardSlots)||2,earnedSlots,Array.isArray(state.loadout)?state.loadout.length:0));
+ if(legacySave&&state.stage12)state.endingPending=true; // Allow an already-finished old save to view its first ending.
  state.checkpoint=state.checkpoint||{};state.stats=Object.assign({색기:0,음란도:0,복종도:0,개방성:0},state.stats||{});if(typeof state.tickets!=='number')state.tickets=3;state.records=state.records||{};state.mp=Math.max(0,Math.min(100,Number(state.mp)||0));
  let chosen=state.stage1?2:1,locationId='warehouse',engineReady=false;
  const $=id=>document.getElementById(id),region=()=>C.regions[locationId];
  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch{}}
  function closeEntry(){$('missionEntry').classList.add('hidden');BeltCards.closeBox();}
- function sync(){$('cityGold').textContent=state.gold+' G';$('cityHP').textContent=Math.ceil(state.hp)+' / 160';$('cityProgress').textContent=state.stage12?'환락가 수사 완료':state.stage8?'1막 수사 완료':state.stage4?'클럽 수사 완료':'수사 진행';if(GAIA.map.refresh)GAIA.map.refresh();}
+ function sync(){$('cityGold').textContent=state.gold+' G';$('cityHP').textContent=Math.ceil(state.hp)+' / 160';$('cityProgress').textContent=`월드 ${state.worldLevel} · `+(state.endingPending?'엔딩 대기':state.stage8?'1막 수사 완료':state.stage4?'클럽 수사 완료':'수사 진행');if(GAIA.map.refresh)GAIA.map.refresh();}
  function city(){closeEntry();$('game-shell').classList.add('hidden');document.body.classList.remove('inbattle');$('cityTop').classList.remove('hidden');AlleyAudio.bgm('map');GAIA.map.open();sync();}
  // 시나리오 순서대로 개방: 앞 지역의 스테이지를 모두 깨야 다음 지역이 열린다.
- const ORDER=['warehouse','club','farm','hotel','studio','district','park','casino'];
+ const ORDER=['warehouse','club','farm','hotel','studio','district'];
  const regionDone=id=>C.regions[id].stages.every(n=>state['stage'+n]);
- const regionOpen=id=>{const i=ORDER.indexOf(id);return i<=0||regionDone(ORDER[i-1]);};
+ const regionOpen=id=>{if(id==='park'||id==='casino')return state.worldLevel>=2;const i=ORDER.indexOf(id);return i===0||i>0&&regionDone(ORDER[i-1]);};
+ function advanceWorld(){
+  if(!state.endingPending||!state.stage12)return false;
+  state.worldLevel++;state.endingPending=false;
+  for(let n=1;n<=12;n++){state['stage'+n]=false;delete state.checkpoint[n];}
+  chosen=1;locationId='warehouse';state.last='warehouse';
+  // Keep all character progression: cards, capacity, training, gold, relics and gear.
+  save();sync();return true;
+ }
+ function replayEnding(){
+  if(!state.endingPending)return;
+  closeEntry();const ctx={title:`월드 ${state.worldLevel} · 환락가 사건 종결`,worldLevel:state.worldLevel,nextWorld:state.worldLevel+1,actors:{chief:BeltDialogue.actors.chief}};
+  if(!window.BeltStory){if(advanceWorld())city();return;}
+  BeltStory.play('district.clear',ctx,()=>BeltStory.play('district.ending',ctx,()=>{if(advanceWorld())city();}));
+ }
  function enter(id){
   if(id==='mart'){BeltCards.closeBox();BeltItems.open('mart');return;}
   if(id!=='police'&&(!C.regions[id]||!regionOpen(id)))return;state.last=id;save();AlleyAudio.bgm('map');
   if(id==='police'){$('entryTitle').textContent='경찰서';$('stageChoices').classList.add('hidden');$('entryArt').style.backgroundImage=`url('${GAIA_IMG['place/police_land.webp']}')`;$('deploy').textContent=state.hp<160||state.mp<100?'휴식':'회복 완료';$('deploy').disabled=state.hp>=160&&state.mp>=100;$('deploy').onclick=()=>{state.hp=160;state.mp=100;save();sync();enter('police');};BeltCards.openBox();}
-  else{BeltCards.closeBox();locationId=id;const r=region();if(!r.stages.includes(chosen))chosen=r.stages.find(n=>!state['stage'+n])||r.stages[0];$('entryTitle').textContent=r.name;$('stageChoices').classList.remove('hidden');choose(chosen);}
+  else{BeltCards.closeBox();locationId=id;const r=region();if(state.endingPending&&id==='district')chosen=12;else if(!r.stages.includes(chosen))chosen=r.stages.find(n=>!state['stage'+n])||r.stages[0];$('entryTitle').textContent=r.name;$('stageChoices').classList.remove('hidden');choose(chosen);}
   $('missionEntry').classList.remove('hidden');
  }
  function choose(stage){
@@ -94,12 +114,12 @@ window.DetectiveApp=(()=>{
   const first=r.stages[0],second=r.stages[1];$('stageOne').classList.toggle('selected',stage===first);$('stageTwo').classList.toggle('selected',stage===second);$('stageTwo').classList.toggle('hidden',!second);$('stageChoices').style.gridTemplateColumns=second?'':'1fr';$('stageTwo').disabled=!!second&&!state['stage'+first];
   $('stageOne').querySelector('b').textContent=(r.stages.length===1?(stage===14?(state.stage14?'슬롯머신':'출동'):'이벤트 출동'):'01')+(state['stage'+first]?' ✓':'');$('stageTwo').querySelector('b').textContent='02'+(state['stage'+second]?' ✓':'');
   const bg=C.stages[stage].entry||C.stages[stage].bg,src=window.REGION_ART?.[bg]||'assets/'+bg+'.webp';$('entryArt').style.backgroundImage=`url('${src}')`;
-  const cp=state.checkpoint[stage]||0;$('deploy').textContent=engineReady?(cp?'이어서':'출동'):'…';$('deploy').disabled=!engineReady;$('deploy').onclick=()=>start(stage,cp);if(stage===14&&state.stage14){$('deploy').textContent='슬롯머신';$('deploy').disabled=false;$('deploy').onclick=()=>{const open=()=>BeltSlot.open();if(window.BeltStory)BeltStory.play('casino.revisit',{title:'카지노 · 재방문',name:'카지노 경호원',portrait:window.__GAME_ASSET?.bouncer||''},open);else open();};}
+  const cp=state.checkpoint[stage]||0;$('deploy').textContent=engineReady?(cp?'이어서':'출동'):'…';$('deploy').disabled=!engineReady;$('deploy').onclick=()=>start(stage,cp);if(stage===12&&state.endingPending){$('deploy').textContent='엔딩 보기 · 다음 월드';$('deploy').disabled=false;$('deploy').onclick=replayEnding;}if(stage===14&&state.stage14){$('deploy').textContent='슬롯머신';$('deploy').disabled=false;$('deploy').onclick=()=>{const open=()=>BeltSlot.open();if(window.BeltStory)BeltStory.play('casino.revisit',{title:'카지노 · 재방문',name:'카지노 경호원',portrait:window.__GAME_ASSET?.bouncer||''},open);else open();};}
  }
  function start(stage,checkpoint=0){const info=C.stages[stage];if(!engineReady||!info)return;const r=C.regions[info.region];if(r.stages.indexOf(stage)>0&&!state['stage'+r.stages[0]])return;locationId=info.region;state.last=locationId;BeltItems.close();closeEntry();GAIA.map.close();document.body.classList.add('inbattle');$('cityTop').classList.add('hidden');$('game-shell').classList.remove('hidden');AlleyGame.start(stage,checkpoint);AlleyGame.focus();}
- function result(info){state.hp=Math.max(1,info.hp);state.mp=Math.max(0,Math.min(100,info.mp??state.mp));state.arrests+=info.arrests;state.slotUsed=0;state.lastReward='';state.tickets=Math.min(9,state.tickets+(info.won?2:1));if(!info.won){state.hp=Math.min(160,state.hp+30);state.stats.복종도=Math.min(30,state.stats.복종도+1);}const n=info.stage,r=C.regions[C.stages[n].region];if(info.won){state['stage'+n]=true;state.checkpoint[n]=0;if(r.stages.length>1&&n===r.stages[0])chosen=n+1;const old=state.records[n];state.records[n]={time:old?Math.min(old.time,info.elapsed):info.elapsed,arrests:info.arrests};state.hp=Math.min(160,state.hp+40+(window.BeltItems?.bonuses().healAfter||0));state.lastReward=BeltCards.reward(n);if(n===13)state.eventRuns=(state.eventRuns||0)+1;if(n===10)state.last='district';}save();sync();}
- GAIA.config={player:{maxHp:160}};GAIA.run={get:()=>({wl:Math.floor(Object.keys(state).filter(k=>/^stage\d+$/.test(k)&&state[k]).length/3),hp:Math.ceil(state.hp),deck:[]}),spotInfo:id=>id==='police'?{state:'open',title:'경찰서',sub:'',go:'들어가기'}:id==='mart'?{state:'open',title:'마트',sub:'유물·소모품 구매와 소지품 판매',go:'쇼핑하기'}:C.regions[id]?(!regionOpen(id)?{state:'locked',title:C.regions[id].name,sub:'앞 지역을 먼저 클리어하세요',go:null}:regionDone(id)?{state:'clear',title:C.regions[id].name,sub:'클리어',go:id==='casino'?'슬롯머신':'다시 출동'}:{state:'open',title:C.regions[id].name,sub:'',go:'출동'}):{state:'locked',sub:'',go:null},enter};
+ function result(info){state.hp=Math.max(1,info.hp);state.mp=Math.max(0,Math.min(100,info.mp??state.mp));state.arrests+=info.arrests;state.slotUsed=0;state.lastReward='';state.tickets=Math.min(9,state.tickets+(info.won?2:1));if(!info.won){state.hp=Math.min(160,state.hp+30);state.stats.복종도=Math.min(30,state.stats.복종도+1);}const n=info.stage,r=C.regions[C.stages[n].region];if(info.won){state['stage'+n]=true;state.checkpoint[n]=0;if(r.stages.length>1&&n===r.stages[0])chosen=n+1;const old=state.records[n];state.records[n]={time:old?Math.min(old.time,info.elapsed):info.elapsed,arrests:info.arrests};state.hp=Math.min(160,state.hp+40+(window.BeltItems?.bonuses().healAfter||0));state.lastReward=BeltCards.reward(n);if(n===4)state.cardSlots=Math.max(state.cardSlots,3);if(n===9)state.cardSlots=4;if(n===12)state.endingPending=true;if(n===13)state.eventRuns=(state.eventRuns||0)+1;if(n===10)state.last='district';}save();sync();}
+ GAIA.config={player:{maxHp:160}};GAIA.run={get:()=>({wl:state.worldLevel,hp:Math.ceil(state.hp),deck:state.loadout||[]}),spotInfo:id=>id==='police'?{state:'open',title:'경찰서',sub:'',go:'들어가기'}:id==='mart'?{state:'open',title:'마트',sub:'유물·소모품 구매와 소지품 판매',go:'쇼핑하기'}:id==='district'&&state.endingPending?{state:'clear',title:'환락가',sub:'최종보스 격파 · 엔딩 대기',go:'엔딩 보기'}:C.regions[id]?(!regionOpen(id)?{state:'locked',title:C.regions[id].name,sub:id==='park'||id==='casino'?'월드 2부터 개방':'앞 지역을 먼저 클리어하세요',go:null}:regionDone(id)?{state:'clear',title:C.regions[id].name,sub:'클리어',go:id==='casino'?'슬롯머신':'다시 출동'}:{state:'open',title:C.regions[id].name,sub:'',go:'출동'}):{state:'locked',sub:'',go:null},enter};
  function init(){$('entryBack').onclick=closeEntry;$('stageOne').onclick=()=>choose(region().stages[0]);$('stageTwo').onclick=()=>choose(region().stages[1]);$('mapBag').textContent='경찰서';$('mapBag').onclick=()=>enter('police');$('cityFocus').onclick=()=>enter('warehouse');$('cityClub').onclick=()=>enter('club');BeltItems.init();city();if(window.BeltStory&&!state.storySeen?.policeBegin){BeltStory.play('police.begin',{title:'경찰서 · 출근',...window.BeltDialogue.actors.chief},()=>{state.storySeen={...state.storySeen,policeBegin:true};save();});}}
  function ready(){engineReady=true;sync();if(!$('missionEntry').classList.contains('hidden')&&C.regions[state.last])choose(chosen);}
- return {state,sync,save,city,enter,start,result,ready,init};
+ return {state,sync,save,city,enter,start,result,advanceWorld,replayEnding,ready,init};
 })();

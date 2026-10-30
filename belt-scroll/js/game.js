@@ -155,12 +155,12 @@
     $('pauseDesc').textContent='게임이 일시정지되었습니다.';
     showPanel($intro);
   }
-  function returnToCity(){
+  function returnToCity(skipReturnDialogue=false){
     releaseGrab(false);
     const report=game.mode==='won';
     clearInput();if(!hasReported){wallet.mp=player.mp;wallet.hp=Math.max(1,player.hp);wallet.arrests+=game.arrests;hasReported=true;}save();
     game.mode='city';hidePanels();DetectiveApp.city();
-    window.BeltStory?.play(report?'police.return':'common.return',{title:'경찰서 · 복귀',...window.BeltDialogue?.actors.chief});
+    if(skipReturnDialogue!==true)window.BeltStory?.play(report?'police.return':'common.return',{title:'경찰서 · 복귀',...window.BeltDialogue?.actors.chief});
   }
   // Explicit, data-driven encounter groups: composition and reinforcement count
   // control the length. No forced timer or idle waves delay a skilled player.
@@ -324,12 +324,12 @@
     BeltStory.play(key,c,done);
   }
 
-  // ===== 난이도: 월드 레벨(깬 스테이지 3개마다 +1) 연동 + 보스 기본 강화 — 수치 전부 [임시] =====
-  // 적 체력 +25%/레벨, 공격력 +12%/레벨 유지. 여성 체력 ×2, 보스 기본 체력 ×3.6(마피아 사수 ×2.2). 공격력 배율은 기존 유지.
+  // ===== 난이도: 환락가 엔딩 후 다음 월드에서만 +1. 월드 1은 기존 기초 난이도 =====
+  // 적 체력 +25%/회차, 공격력 +12%/회차. 여성 체력 ×2, 보스 기본 체력 ×3.6(마피아 사수 ×2.2).
   const BOSS_HP={mafiaA:2.2,mafiaB:2.2,mafiaC:2.2,mafiaD:2.2},BOSS_HP_DEFAULT=3.6,BOSS_ATK=1.25;
-  const worldLevel=()=>Math.floor(Object.keys(wallet).filter(k=>/^stage\d+$/.test(k)&&wallet[k]).length/3);
+  const worldLevel=()=>Math.max(1,wallet.worldLevel||1),worldDepth=()=>worldLevel()-1;
   function applyDifficulty(){
-    const wl=worldLevel(),atk=1+.12*wl;
+    const wl=worldDepth(),atk=1+.12*wl;
     for(const d of Object.values(TYPES)){if(d.baseAttack==null)d.baseAttack=d.attack;d.attack=Math.max(1,Math.round(d.baseAttack*atk*(d.boss?BOSS_ATK:1)));}
     game.hpMul=1+.25*wl;
   }
@@ -450,7 +450,7 @@
     e.reward=TYPES[e.kind].reward??(TYPES[e.kind].boss?80:5);
     const gained=Math.round(e.reward*(1+(relic().goldPlus||0)/100));
     wallet.gold+=gained;
-    const drop=window.BeltItems?.dropEnemy?.(!!TYPES[e.kind].boss);
+    const drop=window.BeltItems?.dropEnemy?.(!!TYPES[e.kind].boss,activeStage);
     if(drop?.item){const name=drop.name;particle(e.x,e.y-150,'+ '+name,'#fff0a0',20);}
     else if(drop?.full&&TYPES[e.kind].boss)particle(e.x,e.y-150,'가방 가득','#ffe1bb',20);
     save();refreshHud();
@@ -795,7 +795,7 @@
   // ---- 보스 압박: 탄막 · 근접 밀쳐내기 · 졸개 증원 (수치는 임시) ----
   function bossReady(e){return e.hp>0&&!e.exit&&!e.air&&e.floorTime<=0&&e.stun<=0&&e.bind<=0&&!(e.entry>0);}
   function fireBarrage(e,wave){
-    const def=TYPES[e.kind],wl=worldLevel(),face=e.face;
+    const def=TYPES[e.kind],wl=worldDepth(),face=e.face;
     const n=4+Math.min(3,wl)+(e.hp<e.maxHp*.5?1:0);
     const sx=e.x+face*def.drawH*.38,sy=e.y-def.drawH*.67;
     const speed=300+wl*18,t=Math.max(.35,Math.abs(player.x-sx)/speed);
@@ -809,7 +809,7 @@
   }
   function updateBossPressure(dt){
     if(!game.waveLive)return;
-    const wl=worldLevel();
+    const wl=worldDepth();
     for(const e of game.enemies){
       const def=TYPES[e.kind];if(!def.boss||!bossReady(e))continue;
       if(e.barrageCd===undefined){e.barrageCd=.75;e.closeCd=.35;e.barrageWind=0;e.volley=0;e.barrageNo=0;}
@@ -865,7 +865,7 @@
     }
     if(game.reinfT===undefined)game.reinfT=3.2;
     game.reinfT-=dt;if(game.reinfT>0)return;
-    const wl=worldLevel();game.reinfT=Math.max(2.8,4.3-wl*.25);
+    const wl=worldDepth();game.reinfT=Math.max(2.8,4.3-wl*.25);
     const alive=game.enemies.filter(e=>!TYPES[e.kind].boss&&live(e)).length;
     if(alive>=3+Math.min(1,wl))return;
     const pool=bossMinionPool();if(!pool.length)return;
@@ -1030,14 +1030,16 @@
   function finish(won){
     if(hasReported)return;releaseGrab(false);clearInput();game.mode=won?'won':'lost';hasReported=true;AlleyAudio.pause();AlleyAudio.effect(won?'victory':'defeat',.38);
     DetectiveApp.result({won,stage:activeStage,hp:player.hp,mp:player.mp,arrests:game.arrests,elapsed:game.elapsed});
-    $('resultKicker').textContent='';
-    $('resultTitle').textContent=won?'체포 완료':'잠깐 휴식';
+    const ending=won&&activeStage===12;
+    $('resultKicker').textContent=ending?`월드 ${worldLevel()} · 수사 종결`:'';
+    $('resultTitle').textContent=ending?'엔딩 · 환락가 최종 체포':won?'체포 완료':'잠깐 휴식';
     $('resultDesc').textContent=`${game.arrests}명 · ${clock(game.elapsed)}`+(won&&wallet.lastReward?` · 카드 획득: ${wallet.lastReward}`:'')+(!won?' · 체력 +30 · 복종도 +1':'');
-    $('restart').textContent=won?'지도':'재도전';
+    $('restart').textContent=ending?`월드 ${worldLevel()+1} 시작`:won?'지도':'재도전';
     $('resultReturn').classList.toggle('hidden',won);
-    $('restart').onclick=()=>{if(won)returnToCity();else reset(activeStage,wallet.checkpoint[activeStage]||0);};
+    $('restart').onclick=()=>{if(ending){if(DetectiveApp.advanceWorld())returnToCity(true);}else if(won)returnToCity();else reset(activeStage,wallet.checkpoint[activeStage]||0);};
     refreshHud();
-    if(window.BeltStory)BeltStory.play(BeltStory.key(won?'win':'lose',storyContext(lastStoryBoss)),storyContext(lastStoryBoss),()=>showPanel($result));
+    if(window.BeltStory){const ctx=storyContext(lastStoryBoss);if(ending){ctx.title=`월드 ${worldLevel()} · 환락가 사건 종결`;ctx.worldLevel=worldLevel();ctx.nextWorld=worldLevel()+1;BeltStory.play('district.clear',ctx,()=>BeltStory.play('district.ending',ctx,()=>showPanel($result)));}
+      else BeltStory.play(BeltStory.key(won?'win':'lose',ctx),ctx,()=>showPanel($result));}
     else showPanel($result);
   }
 
