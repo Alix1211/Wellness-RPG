@@ -108,9 +108,15 @@
   });
 
   let lastId = null, built = false;
+  // 지도를 열 때 맞출 곳: 직전에 들어간 곳 → 없으면 지금 갈 차례인 곳(2막 저장을 불러오면 오른쪽 지도에 있음)
+  function focusId() {
+    const r = G.run.get(), F = G.flow, st = (r.lap > 1 && F.steps2 ? F.steps2 : F.steps)[r.step];
+    if (lastId && spots[lastId] && G.run.spotInfo(lastId).state === 'open') return lastId;
+    return (st && spots[st.spot]) ? st.spot : D.start;
+  }
   function open() {
     if (!built) { build(); built = true; }
-    root.classList.remove('hidden'); closeCard(); refresh(); layout(); center(lastId || D.start); if (G.sfx) G.sfx.bgm('map');
+    root.classList.remove('hidden'); closeCard(); refresh(); layout(); center(focusId()); if (G.sfx) G.sfx.bgm('map');
     const h = $('mapHint'); h.classList.remove('fade'); void h.offsetWidth; h.classList.add('fade');
     if (G.story && G.story.onMap) G.story.onMap();
   }
