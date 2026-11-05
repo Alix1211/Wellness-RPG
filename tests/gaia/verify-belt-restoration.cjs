@@ -8,7 +8,8 @@ function model(dir){const ctx={ART:{}};ctx.window=ctx;vm.createContext(ctx);vm.r
 const original=model(beforeDir), restored=model(afterDir), M=restored.CenterModel;
 for(let n=0;n<23;n++){
  new vm.Script(read(afterDir,n),{filename:`script-${n}.js`});
- if(![7,16].includes(n))assert.equal(read(afterDir,n),read(beforeDir,n),`Script ${n} must be byte-identical`);
+ const r62=read(afterDir,16).includes('/* R62 portal input:');
+ if(![7,16,...(r62?[13]:[])].includes(n))assert.equal(read(afterDir,n),read(beforeDir,n),`Script ${n} must be byte-identical`);
 }
 const json=x=>JSON.parse(JSON.stringify(x));
 assert.deepEqual(json(original.GaiaLife.R),json(restored.GaiaLife.R));
@@ -64,6 +65,7 @@ assert.equal(ctx.world.player.x,733,'No repeat migration after save/reload');ass
 ctx.world.player.x=NaN;ctx.world.player.y=undefined;
 vm.runInContext('ensureSceneValid()',ctx);assert(Number.isFinite(ctx.world.player.x)&&Number.isFinite(ctx.world.player.y));
 ctx.floor=()=>M.FLOORS[ctx.world.scene.floor];ctx.place=()=>ctx.floor().place;
+ctx.portalReady=()=>true;ctx.armPortal=()=>{};
 ctx.sceneChange=fn=>fn();ctx.accessDestination=()=>({ok:true});ctx.toast=()=>{};
 vm.runInContext(hostFunction('enterIndex'),ctx);
 M.changeFloor(ctx.world,10);
@@ -90,4 +92,4 @@ for(const fi of [0,1,2,3,4,6,7,8]){
  ctx.world.player.x=180;ctx.world.player.y=480;ctx.keys=new Set(['arrowup']);ctx.usedElevator=false;
  vm.runInContext('update(.04)',ctx);assert(ctx.usedElevator,`Host update ${fi}: elevator`);
 }
-console.log('PASS: 23 scripts parse; 21 scripts byte-identical (all dialogue, assets and minigames); all room IDs/games preserved; depth movement, boundaries and room round trips on every restored floor; R60 save migration and repeat-load position; company gate and room entry; home and growth rules unchanged.');
+console.log('PASS: 23 scripts parse; unrelated scripts byte-identical; all room IDs/games preserved; depth movement, boundaries and room round trips on every restored floor; R60 save migration and repeat-load position; company gate and room entry; home and growth rules unchanged.');

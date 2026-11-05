@@ -1,5 +1,5 @@
 {
-  "build": "20261105-R61-BELT",
+  "build": "20261105-R62-MOVEMENT",
   "sha256": "575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244",
   "size": 87031121,
   "compression": "gzip",
@@ -19,7 +19,7 @@
     "builds/gaia-life-20261020/html.gz.part-12"
   ],
   "base_build": "20261021-R60",
-  "transform": "belt-scroll-r61",
-  "output_sha256": "c9256b55bf71bf0c65894fe9670dd8d2e7168880999ff80a37cdb7649b72e026",
-  "output_size": 87032581
+  "transform": "belt-scroll-r62",
+  "output_sha256": "307cd752a0b6dbdd3285e8204589929e7afa0d73e81e5154e8223a9a9a720c2e",
+  "output_size": 87033834
 }
