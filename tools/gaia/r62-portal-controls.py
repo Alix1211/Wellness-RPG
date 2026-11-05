@@ -68,3 +68,15 @@ replace("world.scene.type==='corridor'){const v=view(),x=e.clientX/v.s+v.cam", "
 replace("world.scene.type==='corridor'&&place()!=='street'&&!floor().strip){const v=view(),hit=", "world.scene.type==='corridor'&&!joyZone&&place()!=='street'&&!floor().strip){const v=view(),hit=")
 p.write_text(s, encoding='utf-8')
 print('R62: physical input release guard, safe stair landing, joystick hit separation, road test button removed')
+
+# R63: consume the same literal patch table as the web loader.
+import json
+module=(Path(__file__).resolve().parents[2]/'src/gaia-life/portal-controls-fix.mjs').read_text(encoding='utf-8')
+patches=json.JSONDecoder().raw_decode(module.split('const UNIFIED_PATCHES=',1)[1])[0]
+for i, entries in patches.items():
+ p=work/f'script-{int(i):02}.js'
+ text=p.read_text(encoding='utf-8')
+ for entry in entries:
+  assert text.count(entry['before'])==1, entry['before'][:80]
+  text=text.replace(entry['before'],entry['after'])
+ p.write_text(text,encoding='utf-8')
