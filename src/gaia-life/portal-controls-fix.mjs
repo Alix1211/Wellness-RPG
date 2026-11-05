@@ -53,5 +53,63 @@ export function fixPortalControls(html) {
   const start=scripts[i].index+scripts[i][0].indexOf('>')+1;
   html=html.slice(0,start)+source+html.slice(start+scripts[i][2].length);
  }
+ return unifyBeltControls(html);
+}
+
+const UNIFIED_PATCHES={
+  "7": [
+    {
+      "before": "window.GAIA_MOVEMENT_BUILD = '20261105-R61-BELT';",
+      "after": "window.GAIA_MOVEMENT_BUILD = '20261105-R61-BELT';\n\n/* R63: shared belt movement; retain home artwork, room IDs and floor links. */\nfor(const f of CenterModel.FLOORS){if(f.place==='home')f.locked=false;}\nwindow.GAIA_MOVEMENT_BUILD='20261106-R63-UNIFIED';\n"
+    }
+  ],
+  "16": [
+    {
+      "before": "world.player.y=f.gy;world.target=null;world.camera=0;",
+      "after": "world.player.y=575;world.target=null;world.camera=0;"
+    },
+    {
+      "before": "world.player.y=floor().gy||575;world.camera=0;});return true;",
+      "after": "world.player.y=575;world.camera=0;});return true;"
+    },
+    {
+      "before": " if(portalReady()&&!world.player.jumpTime){if(floor().strip){centerEdge(dy);}else if(floor().locked?dy<-.1:world.player.y<490&&dy<-.1){if(place()!=='street'&&world.player.x<290)elevator();else{const i=floor().rooms.findIndex(r=>Math.abs(world.player.x-r.x)<165);if(i>=0)enterIndex(i);}}else if(floor().number===1&&world.player.x<=65&&dx<-.1&&place()!=='street')streetExit();}\n}else if(portalReady()&&!world.player.jumpTime){const p=world.player,b=M.bounds(world.scene);if(place()==='home'){if(p.x<=b.left+3&&dx<0){if(world.scene.floor===11||world.scene.room===0)streetExit();else sceneChange(()=>M.homeStep(world,-1));}else if(p.x>=b.right-3&&dx>0){if(world.scene.floor===11)streetExit();else sceneChange(()=>M.homeStep(world,1));}}else if(p.y>=660&&dy>.1)sceneChange(()=>M.leaveRoom(world));else if(room().kind==='lobby'&&p.x<=b.left+3&&dx<0)streetExit();}}",
+      "after": "\n}}\n"
+    },
+    {
+      "before": "function centerAction(){if(!portalReady())return;if(talkNear())return;const p=world.player,f=floor();{const st=f.stairs?.find(t=>p.x>=t.x0-50&&p.x<=t.x1+50);if(st){useStairs(st);return;}}if(!f.edge&&p.x<f.bay-20){elevator();return;}if(f.doorX!=null&&Math.abs(p.x-f.doorX)<170){streetExit();return;}if(f.place==='home'){const zi=f.rooms.findIndex(r=>p.x>=r.x0&&p.x<r.x1);if(zi>=0){world.scene.room=zi;window.__talkShot=captureBg();openRoom(f.rooms[zi]);return;}}toast('사람 가까이 가서 눌러 보세요');}",
+      "after": "function centerAction(){\n if(!portalReady())return;\n const p=world.player,f=floor();\n const st=f.stairs?.find(t=>Math.abs(p.x-(t.x0+t.x1)/2)<=150);\n if(st){useStairs(st);return;}\n if(f.doorX!=null&&Math.abs(p.x-f.doorX)<=60){streetExit();return;}\n if(!f.edge&&Math.abs(p.x-180)<=70){elevator();return;}\n if(talkNear())return;\n if(f.place==='home'){\n  const zi=f.rooms.findIndex(r=>p.x>=r.x0&&p.x<r.x1);\n  if(zi>=0){world.scene.room=zi;window.__talkShot=captureBg();openRoom(f.rooms[zi]);return;}\n }\n const i=f.rooms.findIndex(r=>Math.abs(p.x-r.x)<230);\n if(i>=0){enterIndex(i);return;}\n toast('문이나 계단 가까이에서 눌러 보세요');\n}"
+    },
+    {
+      "before": "function action(){if(CityTravel.active){CityTravel.boost();return;}if(mode!=='field'||$('#panel').open||!portalReady())return;if(world.scene.type==='corridor'&&floor().strip){centerAction();return;}if(world.scene.type==='corridor'){const i=floor().rooms.findIndex(r=>Math.abs(world.player.x-r.x)<230);if(i>=0){enterIndex(i);if(mode==='field'&&!roomCastFor(room()))openRoom(room());}else toast('방 가까이 가세요');return;}{const c=roomCastFor(room());if(c&&!soloHome()){const n=castNearest();if(n)openRoom(room(),{castPerson:n.name});else toast('말을 걸 사람 가까이 가세요');return;}}openRoom(room());}\n\nlet selectedPhoto=null;",
+      "after": "function action(){if(CityTravel.active){CityTravel.boost();return;}if(mode!=='field'||$('#panel').open||!portalReady())return;if(world.scene.type==='corridor'){centerAction();return;}if(world.player.y>=635){sceneChange(()=>M.leaveRoom(world));return;}{const c=roomCastFor(room());if(c&&!soloHome()){const n=castNearest();if(n)openRoom(room(),{castPerson:n.name});else toast('말을 걸 사람 가까이 가세요');return;}}openRoom(room());}\n\nlet selectedPhoto=null;"
+    },
+    {
+      "before": "canvas.addEventListener('pointerdown',e=>{if(CityTravel.active)return;const joyZone=e.clientX<=innerWidth*.55&&e.clientY>=innerHeight*.38;if(mode==='field'&&!$('#panel').open&&world.scene.type==='corridor'&&!joyZone){const v=view(),x=e.clientX/v.s+v.cam,y=(e.clientY-v.y)/v.s;if(floor().strip){if(centerTap(x,y,e.clientX<=innerWidth*.55&&e.clientY>=innerHeight*.38)){e.preventDefault();return;}}else if(y>130&&y<440){const i=floor().rooms.findIndex(r=>Math.abs(x-r.x)<194);if(i>=0){e.preventDefault();enterIndex(i);if(mode==='field')openRoom(room());return;}}}if(mode==='field'&&!$('#panel').open&&world.scene.type==='corridor'&&!joyZone&&place()!=='street'&&!floor().strip){const v=view(),hit=CenterGallery.hit(world.scene.floor,e.clientX/v.s+v.cam,(e.clientY-v.y)/v.s);if(hit){e.preventDefault();openPhoto(hit);return;}}if(mode!=='field'||$('#panel').open||joystick.id!==null||e.clientX>innerWidth*.55||e.clientY<innerHeight*.38)return;e.preventDefault();joystick={id:e.pointerId,x:0,y:0,ox:e.clientX,oy:e.clientY};const st=$('#stick');st.hidden=false;st.style.left=e.clientX-54+'px';st.style.top=e.clientY-54+'px';canvas.setPointerCapture(e.pointerId);});",
+      "after": "canvas.addEventListener('pointerdown',e=>{if(CityTravel.active)return;if(mode!=='field'||$('#panel').open||joystick.id!==null||e.clientX>innerWidth*.55||e.clientY<innerHeight*.38)return;e.preventDefault();joystick={id:e.pointerId,x:0,y:0,ox:e.clientX,oy:e.clientY};const st=$('#stick');st.hidden=false;st.style.left=e.clientX-54+'px';st.style.top=e.clientY-54+'px';canvas.setPointerCapture(e.pointerId);});"
+    },
+    {
+      "before": "function render(){if(CityTravel.draw(ctx,canvas))return;ensureSceneValid();const d=canvas.width/innerWidth,v=view();",
+      "after": "function render(){if(CityTravel.draw(ctx,canvas)){window.GAIA_HERO_SCREEN=null;return;}ensureSceneValid();const d=canvas.width/innerWidth,v=view();window.GAIA_HERO_SCREEN={x:(world.player.x-v.cam)*v.s/innerWidth*100,y:(world.player.y*v.s+v.y)/innerHeight*100,top:((world.player.y-220)*v.s+v.y)/innerHeight*100};"
+    }
+  ],
+  "22": [
+    {
+      "before": "im.style.left=(options.x??(42+(cursor++%3)*9))+'%';im.style.top=(options.y??42)+'%';",
+      "after": "const hero=window.GAIA_HERO_SCREEN;let sx=options.x??(42+(cursor++%3)*9),sy=options.y??42;if(hero){sx=hero.x>=50?16:84;sy=22;}im.style.left=sx+'%';im.style.top=sy+'%';"
+    }
+  ]
+};
+function unifyBeltControls(html){
+ const scripts=[...html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script\s*>/g)];
+ for(const i of [22,16,7]){
+  let source=scripts[i][2];
+  for(const {before,after} of UNIFIED_PATCHES[i]){
+   if(source.split(before).length!==2)throw Error('Unexpected R62 unified movement revision');
+   source=source.replace(before,()=>after);
+  }
+  const start=scripts[i].index+scripts[i][0].indexOf('>')+1;
+  html=html.slice(0,start)+source+html.slice(start+scripts[i][2].length);
+ }
  return html;
 }
