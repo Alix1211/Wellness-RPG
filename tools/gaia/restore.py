@@ -13,11 +13,11 @@ if m.get('transform'):
  assert len(scripts)==23
  with tempfile.TemporaryDirectory(prefix='gaia-belt-') as tmp:
   work=Path(tmp)
-  for i in (7,13,16):(work/f'script-{i:02}.js').write_text(scripts[i][2],encoding='utf-8')
+  for i in (7,13,16,22):(work/f'script-{i:02}.js').write_text(scripts[i][2],encoding='utf-8')
   subprocess.run([sys.executable,str(root/'tools/gaia/r61-belt-scroll.py'),tmp],check=True)
   if m['transform']=='belt-scroll-r62':
    subprocess.run([sys.executable,str(root/'tools/gaia/r62-portal-controls.py'),tmp],check=True)
-  for i in (16,13,7):
+  for i in (22,16,13,7):
    match=scripts[i]
    html=html[:match.start(2)]+(work/f'script-{i:02}.js').read_text(encoding='utf-8')+html[match.end(2):]
  data=html.encode('utf-8')
