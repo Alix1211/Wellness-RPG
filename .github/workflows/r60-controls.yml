@@ -1,0 +1,108 @@
+name: R60 baseline controls only
+on:
+  push:
+    branches: ["fix/r60-baseline-controls"]
+    paths: [".github/workflows/r60-controls.yml","tools/gaia/r60-controls-fix.py","tests/gaia/verify-r60-controls.cjs"]
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build R60 and verify unchanged content
+        shell: python
+        run: |
+          LOADER="<!doctype html><html lang=\"ko\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>GAIA CITY</title><style>body{margin:0;background:#fff2ef;color:#79516a;font:16px system-ui;display:grid;place-items:center;height:100vh}</style><div id=\"loading\">GAIA CITY…</div><script>(async()=>{try{const r=await fetch('builds/gaia-life-20261020/manifest.json');if(!r.ok)throw Error('manifest');const m=await r.json();const pieces=await Promise.all(m.parts.map(async p=>{const r=await fetch(p);if(!r.ok)throw Error(p);return r.arrayBuffer()}));const data=await new Response(new Blob(pieces).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();const hash=async x=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',x)),b=>b.toString(16).padStart(2,'0')).join('');if(data.byteLength!==m.size||await hash(data)!==m.sha256)throw Error('R60 checksum');let html=new TextDecoder().decode(data);if(m.transform){if(m.transform!=='r60-controls-only')throw Error('transform');const p=await import('./src/gaia-life/r60-controls-fix.mjs');html=p.fixR60Controls(html);const b=new TextEncoder().encode(html);if(b.byteLength!==m.output_size||await hash(b)!==m.output_sha256)throw Error('output checksum');}document.open();document.write(html);document.close();}catch(e){document.querySelector('#loading').textContent='실행 파일 복원: python3 tools/gaia/restore.py';console.error(e)}})();</script></html>"
+          RESTORER="#!/usr/bin/env python3\n\"\"\"Restore original R60, then apply only its verified input/control repair.\"\"\"\nimport gzip,hashlib,json,re\nfrom pathlib import Path\nroot=Path(__file__).resolve().parents[2]\nm=json.loads((root/'builds/gaia-life-20261020/manifest.json').read_text())\ndata=gzip.decompress(b''.join((root/p).read_bytes() for p in m['parts']))\nassert len(data)==m['size'] and hashlib.sha256(data).hexdigest()==m['sha256']\nhtml=data.decode('utf-8')\nif m.get('transform'):\n assert m['transform']=='r60-controls-only'\n text=(root/'src/gaia-life/r60-controls-fix.mjs').read_text()\n changes=json.JSONDecoder().raw_decode(text.split('const CHANGES=',1)[1])[0]\n ss=list(re.finditer(r'<script([^>]*)>([\\s\\S]*?)</script\\s*>',html))\n assert len(ss)==23\n for i in [16,13]:\n  source=ss[i][2]\n  for p in changes:\n   if p['script']!=i:continue\n   assert source.count(p['before'])==p['count']\n   source=source.replace(p['before'],p['after'])\n  html=html[:ss[i].start(2)]+source+html[ss[i].end(2):]\n data=html.encode('utf-8')\n assert len(data)==m['output_size'] and hashlib.sha256(data).hexdigest()==m['output_sha256']\nout=root/'GAIA-LIFE-R60-CONTROLS.html'\nout.write_bytes(data)\nprint(out,len(data),hashlib.sha256(data).hexdigest())\n"
+          NOTE="# R60 횡스크롤 기준 복원 및 출입·거리 버튼 수정\n\n기준 main b6ef28f / 원본 R60 SHA-256 575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244.\n작업 브랜치 fix/r60-baseline-controls. 실패 기록 브랜치 fix/restore-belt-scroll-r60은 별도로 보존.\n\nR61~R69의 벨트 변경, 구버전 방 배경 덮어그리기, SD 자동 크기조정, 배치·충돌 추가를 가져오지 않는다.\nR60 원래 횡스크롤 지도·그림·인물 배율·배치·대사·미니게임을 사용한다. 대사 원문이 새로 복구됐다는 뜻은 아니다.\n\n수정은 내장 script13(거리 실린더 테스트 버튼 제거)과 script16(출입·입력)뿐이다.\n- 조이스틱 터치를 계단·문 클릭보다 우선 처리.\n- 계단 도착을 반대 계단/현관 판정 밖으로 옮김.\n- 장면 전환 뒤 실제 방향키/터치가 해제되기 전 재출입 방지.\n- 엘리베이터 도착 시 출입 판정 밖 x=bay+140으로 걸어나온 후 조작 복귀.\n- 실린더 테스트 버튼 제거, 달리기 핸들러는 원본과 동일.\n- 기존 자동 출입 방식을 유지한다. 행동 버튼 전용으로 바꾸지 않음.\n\nnormal index.html과 tools/gaia/restore.py 모두 동일한 R60 수정본을 생성한다. 최신 변경이 Actions 산출물에만 남는 구조를 피했다.\n원본 gzip 조각은 수정하지 않는다. 원본 해시와 수정 출력 해시를 각각 확인한다.\n\n검증: 23개 JS 문법, 변경 대상 외 21개 script 바이트 동일, 정상 웹 변환/오프라인 복원 출력 일치, 계단 전 경로·입력 유지·조이스틱 충돌·달리기 핸들러 회귀 검사, 서버 브라우저 계단·엘리베이터 도착/키 유지 재현.\n검증 성공 여부와 화면은 해당 브랜치 Actions 실행 기록 및 review/R60-controls-check.json 참조.\n\n이 작업은 R60의 기존 SD 크기/배치 문제를 새로 해결하거나 대사 원문을 복구하는 작업이 아니다. 그 상태를 성공으로 주장하지 않는다.\n"
+          from pathlib import Path
+          import json,gzip,hashlib,re,subprocess
+          root=Path.cwd()
+          mp=root/'builds/gaia-life-20261020/manifest.json'
+          m=json.loads(mp.read_text())
+          raw=gzip.decompress(b''.join((root/p).read_bytes() for p in m['parts']))
+          assert hashlib.sha256(raw).hexdigest()=='575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244'
+          html=raw.decode()
+          ss=list(re.finditer(r'<script([^>]*)>([\s\S]*?)</script\s*>',html))
+          assert len(ss)==23
+          before=root/'review/r60-before';after=root/'review/r60-after'
+          before.mkdir(parents=True,exist_ok=True);after.mkdir(parents=True,exist_ok=True)
+          for i,s in enumerate(ss):
+           for folder in (before,after):(folder/f'script-{i:02}.js').write_text(s[2])
+          subprocess.run(['python3','tools/gaia/r60-controls-fix.py',str(after)],check=True)
+          for i in range(23):
+           p=after/f'script-{i:02}.js'
+           subprocess.run(['node','--check',str(p)],check=True)
+           if i not in (13,16):assert p.read_bytes()==(before/p.name).read_bytes()
+          for i in [16,13]:html=html[:ss[i].start(2)]+(after/f'script-{i:02}.js').read_text()+html[ss[i].end(2):]
+          out=root/'GAIA-LIFE-R60-CONTROLS.html';out.write_text(html)
+          m.update(build='20261106-R60-CONTROLS',base_build='20261021-R60',transform='r60-controls-only',output_size=len(html.encode()),output_sha256=hashlib.sha256(html.encode()).hexdigest())
+          mp.write_text(json.dumps(m,indent=2)+'\n')
+          (root/'index.html').write_text(LOADER)
+          (root/'tools/gaia/restore.py').write_text(RESTORER)
+          subprocess.run(['python3','tools/gaia/restore.py'],check=True)
+          assert out.read_text()==html
+          # Assert normal browser transform produces exactly the offline file.
+          script="""import fs from 'node:fs';import {fixR60Controls} from './src/gaia-life/r60-controls-fix.mjs';
+          const a=fs.readFileSync('review/r60-source.html','utf8');if(fixR60Controls(a)!==fs.readFileSync('GAIA-LIFE-R60-CONTROLS.html','utf8'))throw Error('browser/offline mismatch');console.log('PASS normal loader/offline output parity');"""
+          (root/'review/r60-source.html').write_bytes(raw)
+          (root/'check-parity.mjs').write_text(script)
+          subprocess.run(['node','check-parity.mjs'],check=True)
+          subprocess.run(['node','tests/gaia/verify-r60-controls.cjs',str(before),str(after)],check=True)
+          (root/'docs/gaia/R60-CONTROLS-RESTORE.md').write_text(NOTE)
+          print('PASS: R60 source SHA verified; 21/23 scripts byte-identical; images/dialogue/model/NPC metrics unchanged; normal loader and offline output identical.')
+          
+      - name: Install browser
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Test actual stair and elevator keys
+        run: |
+          cat > /tmp/r60-check.cjs <<'JS'
+          const{chromium}=require('playwright'),fs=require('fs');
+          (async()=>{
+           const b=await chromium.launch({headless:true}),p=await b.newPage({viewport:{width:1280,height:720}}),errors=[];
+           p.on('pageerror',e=>errors.push(e.message));
+           await p.goto('file://'+process.cwd()+'/GAIA-LIFE-R60-CONTROLS.html',{waitUntil:'load'});await p.waitForTimeout(10000);
+           // Real key input at basement stairs; held input must not bounce back.
+           await p.evaluate(()=>{const w=GameHost.world;CenterModel.changeFloor(w,13);w.player.x=405;w.player.y=614;});
+           await p.keyboard.down('ArrowUp');await p.waitForTimeout(1800);
+           const stairs=await p.evaluate(()=>({floor:GameHost.world.scene.floor,x:GameHost.world.player.x}));
+           if(stairs.floor!==9)throw Error('Stair held input bounced: '+JSON.stringify(stairs));
+           await p.keyboard.up('ArrowUp');await p.waitForTimeout(800);
+           // Use actual elevator menu while a direction remains pressed through landing.
+           await p.evaluate(()=>{const w=GameHost.world;CenterModel.changeFloor(w,0);w.player.x=180;w.player.y=642;});
+           await p.keyboard.down('ArrowUp');await p.waitForTimeout(1400);
+           await p.locator('.lift-floor[data-floor="1"]').click();
+           await p.waitForTimeout(3800);
+           const lift=await p.evaluate(()=>({floor:GameHost.world.scene.floor,x:GameHost.world.player.x,open:document.querySelector('#panel').open,bay:CenterModel.FLOORS[GameHost.world.scene.floor].bay}));
+           if(lift.floor!==1||lift.open||lift.x<lift.bay+100)throw Error('Elevator re-entry/landing: '+JSON.stringify(lift));
+           await p.keyboard.up('ArrowUp');
+           await p.screenshot({path:'review/R60-controls.jpg',type:'jpeg',quality:70});
+           if(errors.length)throw Error(errors.join(';'));
+           fs.writeFileSync('review/R60-controls-check.json',JSON.stringify({stairs,lift,errors},null,2));
+           console.log('PASS actual browser held stair and elevator landing',JSON.stringify({stairs,lift}));
+           await b.close();
+          })();
+          JS
+          NODE_PATH="$PWD/node_modules" node /tmp/r60-check.cjs
+      - name: Commit normal execution source and evidence
+        run: |
+          git config user.name "GAIA build"
+          git config user.email "gaia-build@users.noreply.github.com"
+          git add index.html tools/gaia/restore.py src/gaia-life/r60-controls-fix.mjs builds/gaia-life-20261020/manifest.json docs/gaia/R60-CONTROLS-RESTORE.md review/R60-controls-check.json review/R60-controls.jpg
+          git commit -m "Restore R60 normal execution with verified input and portal fixes"
+          git push
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GAIA-LIFE-R60-CONTROLS
+          path: |
+            GAIA-LIFE-R60-CONTROLS.html
+            review/R60-controls-check.json
+            review/R60-controls.jpg
+          retention-days: 30
