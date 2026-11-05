@@ -236,11 +236,11 @@ jobs:
             }
             if(!rows.length)throw Error('No NPC rendered');
             for(const row of rows)if(Math.abs(row.ratio-1)>.06)throw Error('Head mismatch '+JSON.stringify(row));
-            return {png:c.toDataURL('image/png').split(',')[1],rows};
+            return {png:c.toDataURL('image/jpeg',.55).split(',')[1],rows};
            });
-           fs.mkdirSync('review',{recursive:true});fs.writeFileSync('review/R67-grid.png',Buffer.from(report.png,'base64'));
+           fs.mkdirSync('review',{recursive:true});fs.writeFileSync('review/R67-grid.jpg',Buffer.from(report.png,'base64'));
            fs.writeFileSync('review/R67-measurements.json',JSON.stringify({rows:report.rows,errors},null,2));
-           fs.writeFileSync('GAIA-R67-SD-GRID.html','<!doctype html><meta charset="utf-8"><title>R67 SD comparison</title><img style="max-width:100%;height:auto" src="data:image/png;base64,'+report.png+'">');
+           fs.writeFileSync('GAIA-R67-SD-GRID.html','<!doctype html><meta charset="utf-8"><title>R67 SD comparison</title><img style="max-width:100%;height:auto" src="data:image/jpeg;base64,'+report.png+'">');
           console.log(JSON.stringify({rows:report.rows,errors}));
            if(errors.length)throw Error('Runtime errors: '+errors.join(';'));
            await browser.close();
@@ -251,7 +251,7 @@ jobs:
         run: |
           git config user.name "GAIA build"
           git config user.email "gaia-build@users.noreply.github.com"
-          git add review/R67-grid.png review/R67-measurements.json
+          git add review/R67-grid.jpg review/R67-measurements.json
           git commit -m "Record R67 actual SD render comparison"
           git push
       - uses: actions/upload-artifact@v4
