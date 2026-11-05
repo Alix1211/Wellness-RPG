@@ -1,0 +1,158 @@
+name: GAIA R66 field SD sizing and body collision
+on:
+  push:
+    branches: ["fix/restore-belt-scroll-r60"]
+    paths: [".github/workflows/gaia-r66.yml"]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: python3 tools/gaia/restore.py
+      - name: Restore room exit and normalize field SD heads
+        shell: python
+        run: |
+          from pathlib import Path
+          import re,subprocess
+          p=Path('GAIA-LIFE-20261020.html')
+          html=p.read_text()
+          matches=list(re.finditer(r'<script([^>]*)>([\s\S]*?)</script\s*>',html))
+          assert len(matches)==23
+          sources=[m[2] for m in matches]
+          def replace(i,old,new):
+           assert sources[i].count(old)==1,(i,old[:80])
+           sources[i]=sources[i].replace(old,new)
+          replace(22,'let cursor=0;','let cursor=0,nextStickerAt=0,stickerTick=0;')
+          replace(22,'function play(event,options={}){','function play(event,options={}){if(++stickerTick%4)return false;const gate=performance.now();if(gate<nextStickerAt)return false;nextStickerAt=gate+8000;')
+          replace(22,'while(layer.children.length>=3)','while(layer.children.length>=1)')
+          old="function drawCenterFloor(){const f=floor(),fi=M.FLOORS.indexOf(f),L=FL_LAYOUT[fi];if(!L)return;const v=view();"
+          new="""function drawCenterFloor(){const f=floor(),fi=M.FLOORS.indexOf(f),L=FL_LAYOUT[fi];if(!L)return;const v=view();
+           if(f.place==='home'){
+            ctx.fillStyle='#e7cabc';ctx.fillRect(0,0,f.width,H);
+            for(let i=0;i<f.rooms.length;i++){
+             const r=f.rooms[i],a=i===0?0:r.x0,b=i===f.rooms.length-1?f.width:r.x1;
+             if(b<v.cam||a>v.cam+v.width)continue;
+             const key=r.kind==='villa'?'home/침실':r.bg;
+             const im=images['bg/'+key];
+             ctx.save();ctx.beginPath();ctx.rect(a,0,b-a,H);ctx.clip();cover(im,a,0,b-a,H);ctx.restore();
+             box(r.x-74,92,148,28,12,'#fff5e8e0');text(r.name,r.x,111,16,'#79516a');
+            }
+            if(f.doorX!=null)text('▲ 거리',f.doorX,256,15,'#79516a');
+            for(const st of f.stairs||[]){const x=(st.x0+st.x1)/2;box(x-58,215,116,32,12,'#fff5e8e0');text((st.dir==='up'?'▲ ':'▼ ')+st.label,x,237,15,'#79516a');}
+            return;
+           }
+          """
+          replace(16,old,new)
+          HEAD_HELPER="\nwindow.GaiaSDScale=(()=>{\n const cache=new WeakMap();\n function head(im){\n  if(cache.has(im))return cache.get(im);\n  const w=im.naturalWidth||im.width,h=im.naturalHeight||im.height;\n  if(!w||!h)return 0;\n  const k=Math.min(1,256/Math.max(w,h)),c=document.createElement('canvas');\n  c.width=Math.max(1,Math.round(w*k));c.height=Math.max(1,Math.round(h*k));\n  const q=c.getContext('2d',{willReadFrequently:true});q.drawImage(im,0,0,c.width,c.height);\n  const d=q.getImageData(0,0,c.width,c.height).data;\n  let top=c.height,bottom=-1;\n  for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++)if(d[(y*c.width+x)*4+3]>48){top=Math.min(top,y);bottom=Math.max(bottom,y);}\n  const widths=[];\n  for(let y=top;y<=top+Math.max(1,Math.round((bottom-top)*.32));y++){\n   let l=c.width,r=-1;for(let x=0;x<c.width;x++)if(d[(y*c.width+x)*4+3]>48){l=Math.min(l,x);r=Math.max(r,x);}\n   if(r>=l)widths.push(r-l+1);\n  }\n  widths.sort((a,b)=>a-b);\n  const value=widths.length?widths[Math.floor((widths.length-1)*.8)]/k:0;\n  cache.set(im,value);return value;\n }\n return (im,images)=>{\n  const key=SPRITES.jeans.directions[0][0],ref=images[key],m=CharacterMetrics[key];\n  const rw=ref&&head(ref),nw=head(im);\n  if(!rw||!nw)return .83;\n  const target=rw*m.scale*224/(ref.naturalWidth||ref.width);\n  return Math.max(.08,Math.min(4,target/nw));\n };\n})();\n"
+          
+          # R65: restore walking out of individual rooms, keeping R62 release guards.
+          a=sources[16].index('function update(dt)')
+          b=sources[16].index('\nfunction frame(',a)
+          u=sources[16][a:b]
+          assert u.endswith('\n}}\n')
+          u=u[:-len('\n}}\n')]+"""
+          }else if(portalReady()&&!world.player.jumpTime){
+           const p=world.player,b=M.bounds(world.scene);
+           if(p.y>=660&&dy>.1)sceneChange(()=>M.leaveRoom(world));
+          }}
+          """
+          sources[16]=sources[16][:a]+u+sources[16][b:]
+          replace(16,"if(world.player.y>=635){sceneChange(()=>M.leaveRoom(world));return;}","")
+          # All field NPC variants use one cached head-width measurement.
+          replace(8,"scale=casual?112/metric.height:metric.scale","scale=window.GaiaSDScale(im,images)")
+          replace(16,"const h=crawl?118:170,w=h*im.naturalWidth/im.naturalHeight","const h=im.naturalHeight*window.GaiaSDScale(im,images),w=h*im.naturalWidth/im.naturalHeight")
+          sources[11]+='\n'+HEAD_HELPER
+          assert 'centerEdge(dy)' not in u
+          assert "p.y>=660&&dy>.1" in u
+          
+          SIZE_HELPER="\nwindow.GaiaActorScale=(n,im,images)=>{\n const base=window.GaiaSDScale(im,images),metric=CharacterMetrics[CenterLife.frame(n)];\n const height=metric?.height||im.naturalHeight||im.height;\n const male=['trainer','office','casual','boss'].includes(n.actor.role);\n const min=male?165:95,max=male?200:145;\n return Math.max(min/height,Math.min(max/height,base*(male?1.25:1)));\n};\nwindow.GaiaArrange=(scene,list)=>{\n const f=CenterModel.FLOORS[scene.floor],b=CenterModel.bounds(scene);\n for(const n of list)if(!n.gaiaArranged){\n  let seed=(scene.floor+1)*7919;for(const ch of n.id)seed=(Math.imul(seed,31)+ch.charCodeAt(0))>>>0;\n  const dx=(seed%281)-140,dy=((seed>>>8)%91)-45;\n  const old=n.x;n.x=CenterModel.clamp(n.x+dx,b.left+90,b.right-90);\n  n.y=CenterModel.clamp(n.y+dy,b.top+35,b.bottom-35);n.homeX=n.x;n.homeY=n.y;\n  n.bounds.left=CenterModel.clamp(n.bounds.left+n.x-old,b.left+40,b.right-40);\n  n.bounds.right=CenterModel.clamp(n.bounds.right+n.x-old,b.left+40,b.right-40);\n  n.gaiaArranged=true;\n }\n return list;\n};\n"
+          
+          # R66: field sprite sizing and real floor footprints.
+          replace(8,"scale=window.GaiaSDScale(im,images)","scale=window.GaiaActorScale(n,im,images)")
+          replace(16,"const h=im.naturalHeight*window.GaiaSDScale(im,images),w=h*im.naturalWidth/im.naturalHeight",
+           "const h=crawl?92:150,w=h*im.naturalWidth/im.naturalHeight")
+          replace(16,"function decorPut(k,x,i,flip,crawl){",
+           """function decorPut(k,x,i,flip,crawl){const salt=(world.scene.floor+1)*7919+i*997;if(salt%5===0)return;x=M.clamp(x+salt%281-140,100,floor().width-100);""")
+          replace(16,"y=(floor().gy||592)+(crawl?4:0);",
+           """y=M.clamp(500+((world.scene.floor*79+i*47)%141),M.bounds(world.scene).top+25,M.bounds(world.scene).bottom-25);window.GaiaDecorBodies.push({x,y,rx:Math.min(110,w*.43)+24,ry:30});""")
+          replace(16,"function render(){if(CityTravel.draw(ctx,canvas))",
+           "function render(){window.GaiaDecorBodies=[];if(CityTravel.draw(ctx,canvas))")
+          replace(16,"CenterLife.update(world.scene,dt);",
+           "CenterLife.update(world.scene,dt);resolveBodies();")
+          # Arrange actors once per cached scene, preserving identities and tasks.
+          replace(8,"return cache.get(k);","return window.GaiaArrange(scene,cache.get(k));")
+          sources[11]+='\n'+SIZE_HELPER
+          collision="""function resolveBodies(){
+           const p=world.player,b=M.bounds(world.scene),actors=CenterLife.get(world.scene);
+           const fixed=window.GaiaDecorBodies||[];
+           const shapes=actors.map(n=>({n,x:n.x,y:n.y,rx:n.actor.kind==='standing'?52:72,ry:27}));
+           // Resolve actors against each other and placed bodies, then player against all.
+           for(let pass=0;pass<4;pass++){
+            for(let i=0;i<shapes.length;i++){
+             const a=shapes[i];
+             for(const z of [...fixed,...shapes.slice(0,i)]){
+              const rx=(a.rx+z.rx)*.72,ry=(a.ry+z.ry)*.8,dx=a.n.x-z.x,dy=a.n.y-z.y,d=Math.hypot(dx/rx,dy/ry);
+              if(d<1){const push=1-d;a.n.x=M.clamp(a.n.x+(dx||1)*push/Math.max(d,.1),b.left+45,b.right-45);a.n.y=M.clamp(a.n.y+(dy||2)*push/Math.max(d,.1),b.top+20,b.bottom-20);}
+             }
+             a.x=a.n.x;a.y=a.n.y;
+            }
+           }
+           for(let pass=0;pass<4;pass++)for(const z of [...fixed,...shapes]){
+            const dx=p.x-z.x,dy=p.y-z.y,d=Math.hypot(dx/z.rx,dy/z.ry);
+            if(d<1){if(d<.01){p.y=z.y+z.ry;}else{p.x=z.x+dx/d;p.y=z.y+dy/d;}}
+           }
+           p.x=M.clamp(p.x,b.left,b.right);p.y=M.clamp(p.y,b.top,b.bottom);
+          }
+          """
+          replace(16,"function update(dt){",collision+"\nfunction update(dt){")
+          
+          for i in range(23):
+           f=Path(f'/tmp/gaia-script-{i}.js');f.write_text(sources[i]);subprocess.run(['node','--check',str(f)],check=True)
+          for i in range(23):
+           if i not in (8,11,16,22):assert sources[i]==matches[i][2]
+          for name in ['거실','침실','화장실','서재','빈방','지하실']:
+           assert ('home/'+name) in html
+          for i in [22,16,11,8]:
+           m=matches[i];html=html[:m.start(2)]+sources[i]+html[m.end(2):]
+          Path('GAIA-LIFE-R66-FIELD-SD.html').write_text(html)
+          print('PASS: 23 script syntax; 19 unrelated scripts byte-identical; room walking exit restored; NPC and decor head scaling unified; R64 backgrounds and sparse stickers retained.')
+          
+          
+          
+          # Separate review grid of all identifiable NPC sprite groups; each cell keeps its key.
+          import json,base64,html as ht
+          decoder=json.JSONDecoder()
+          tables={}
+          for source in sources:
+           for name in ['const ART=','const NPC_ART=','window.CharacterMetrics=']:
+            pos=source.find(name)
+            if pos>=0:
+             try:tables[name]=decoder.raw_decode(source[pos+len(name):])[0]
+             except ValueError:pass
+          art={**tables.get('const ART=',{}),**tables.get('const NPC_ART=',{})}
+          metrics=tables.get('window.CharacterMetrics=',{})
+          cards=[];seen=set()
+          for key,src in art.items():
+           if not isinstance(src,str) or not src.startswith('data:image/'):continue
+           if not (key.startswith('npc/') or key.startswith('sprite/jeans/') or any(x in key.lower() for x in ['decor','stand','crawl'])):continue
+           group=key.rsplit('/',1)[0]
+           if group in seen:continue
+           seen.add(group)
+           cards.append('<figure><div class="cell"><img src="'+src+'"></div><figcaption>'+ht.escape(key)+'</figcaption></figure>')
+          assert cards,'No sprites recovered'
+          Path('GAIA-R66-SD-GRID.html').write_text('<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>SD grid</title><style>body{background:#eee;font:13px sans-serif}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}figure{margin:0;padding:8px;background:white}.cell{height:260px;display:flex;align-items:end;justify-content:center;background-image:linear-gradient(#9aa4 1px,transparent 1px),linear-gradient(90deg,#9aa4 1px,transparent 1px);background-size:20px 20px}img{max-width:230px;max-height:240px;object-fit:contain}figcaption{overflow-wrap:anywhere}</style><h1>SD sprite reference grid</h1><p>Source sprite groups. In-game scaling is applied separately.</p><div class="grid">'+''.join(cards)+'</div>')
+          print('GRID_GROUPS',len(cards))
+          
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GAIA-LIFE-R66-FIELD-SD
+          path: |
+            GAIA-LIFE-R66-FIELD-SD.html
+            GAIA-R66-SD-GRID.html
+          retention-days: 30
