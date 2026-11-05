@@ -1,0 +1,30 @@
+name: GAIA R65 movement and SD
+on:
+  push:
+    branches: ["fix/restore-belt-scroll-r60"]
+    paths: [".github/workflows/gaia-r65.yml"]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: python3 tools/gaia/restore.py
+      - name: Inspect SD rendering
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          h=Path('GAIA-LIFE-20261020.html').read_text()
+          ss=[m[2] for m in re.finditer(r'<script([^>]*)>([\s\S]*?)</script\s*>',h)]
+          for i in [8,11]:
+           print('SCRIPT',i)
+           for line in ss[i].splitlines():
+            if len(line)<3500:print(line)
+            else:print(line[:180]+' ...')
+          s=ss[16];a=s.index('function drawHero(');b=s.index('\nfunction ',a+10);print('HERO',s[a:b])
+          
