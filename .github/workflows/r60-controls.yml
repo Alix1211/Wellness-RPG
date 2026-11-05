@@ -74,6 +74,7 @@ jobs:
            console.log('INITIAL',await p.evaluate(()=>({mode:GameHost.mode,city:CityTravel.active,active:document.activeElement.tagName,panel:document.querySelector('#panel').open,roomScene:document.querySelector('#roomScene').hidden,text:document.body.innerText.slice(-1200),host:Object.keys(GameHost)})));
            // Real key input at basement stairs; held input must not bounce back.
            await p.evaluate(()=>{GameHost.closeRoom();const w=GameHost.world;GameHost.sceneChange(()=>{CenterModel.changeFloor(w,13);w.player.x=405;w.player.y=614;});});await p.waitForTimeout(900);
+           await p.evaluate(()=>{const c=document.querySelector('#stage');c.tabIndex=0;c.focus();});
            await p.keyboard.down('ArrowUp');await p.waitForTimeout(1800);
            const stairs=await p.evaluate(()=>({floor:GameHost.world.scene.floor,x:GameHost.world.player.x}));
            if(stairs.floor!==9)throw Error('Stair held input bounced: '+JSON.stringify(stairs));
