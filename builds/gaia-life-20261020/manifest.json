@@ -1,5 +1,5 @@
 {
-  "build": "20261021-R60",
+  "build": "20261105-R61-BELT",
   "sha256": "575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244",
   "size": 87031121,
   "compression": "gzip",
@@ -17,5 +17,9 @@
     "builds/gaia-life-20261020/html.gz.part-10",
     "builds/gaia-life-20261020/html.gz.part-11",
     "builds/gaia-life-20261020/html.gz.part-12"
-  ]
+  ],
+  "base_build": "20261021-R60",
+  "transform": "belt-scroll-r61",
+  "output_sha256": "c9256b55bf71bf0c65894fe9670dd8d2e7168880999ff80a37cdb7649b72e026",
+  "output_size": 87032581
 }
