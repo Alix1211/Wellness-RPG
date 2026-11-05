@@ -138,7 +138,7 @@ jobs:
           art={**tables.get('const ART=',{}),**tables.get('const NPC_ART=',{})}
           metrics=tables.get('window.CharacterMetrics=',{})
           for source in [sources[16]]:
-           for key,src in re.findall(r'"([^"\\\n]+)"\\s*:\\s*"(data:image/[^"\\\n]+)"',source):art['decor/'+key]=src
+           for key,src in re.findall(r'"([^"\\\n]+)"\s*:\s*"(data:image/[^"\\\n]+)"',source):art['decor/'+key]=src
           cards=[];seen=set()
           for key,src in art.items():
            if not isinstance(src,str) or not src.startswith('data:image/'):continue
@@ -151,6 +151,24 @@ jobs:
           catalog='<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>SD grid</title><style>body{background:#eee;font:13px sans-serif}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}figure{margin:0;padding:8px;background:white}.cell{height:260px;display:flex;align-items:end;justify-content:center;background-image:linear-gradient(#9aa4 1px,transparent 1px),linear-gradient(90deg,#9aa4 1px,transparent 1px);background-size:20px 20px}img{max-width:230px;max-height:240px;object-fit:contain}figcaption{overflow-wrap:anywhere}</style><h1>SD sprite reference grid</h1><p>Source sprite groups. In-game scaling is applied separately.</p><div class="grid">'+''.join(cards)+'</div>'
           catalog+='<script>const SPRITES='+json.dumps(tables.get('const SPRITES=',{}))+';const CharacterMetrics='+json.dumps(metrics)+';const NPC_MANIFEST='+json.dumps(tables.get('const NPC_MANIFEST=',{'actors':[]}))+';window.CenterLife={frame:n=>n.key};'+HEAD_HELPER+SIZE_HELPER+"\nconst imgs=[...document.querySelectorAll('figure img')],assets={};\nfor(const im of imgs){const key=im.closest('figure').querySelector('figcaption').textContent;assets[key]=im;}\nPromise.all(imgs.map(im=>im.complete?Promise.resolve():new Promise(r=>{im.onload=r;im.onerror=r}))).then(()=>{\n const refKey=SPRITES.jeans.directions[0][0];\n if(!assets[refKey])return;\n const roles={};for(const a of NPC_MANIFEST.actors)for(const k of a.frames)roles[k]=a;\n for(const im of imgs){\n  const k=im.closest('figure').querySelector('figcaption').textContent;\n  let scale;\n  if(k.startsWith('decor/'))scale=(/crawl|floor/i.test(k)?92:150)/im.naturalHeight;\n  else if(k.startsWith('sprite/'))scale=CharacterMetrics[k]?.scale||1;\n  else{const a=roles[k]||{role:'member',kind:'front'};scale=GaiaActorScale({actor:a,key:k},im,assets);}\n  im.style.width=(im.naturalWidth*scale)+'px';im.style.height=(im.naturalHeight*scale)+'px';\n  im.style.maxWidth='none';im.style.maxHeight='none';\n }\n});\n"+'</script>'
           Path('GAIA-R66-SD-GRID.html').write_text(catalog)
+          
+          from textwrap import dedent
+          start=sources[16].index('function resolveBodies(')
+          end=sources[16].index('\nfunction update(',start)
+          body=sources[16][start:end]
+          testjs="""const vm=require('node:vm'),assert=require('node:assert/strict');
+          const world={scene:{},player:{x:400,y:600}};
+          const c={world,window:{GaiaDecorBodies:[{x:500,y:600,rx:95,ry:30}]},M:{bounds:()=>({left:60,right:1200,top:443,bottom:674}),clamp:(x,a,b)=>Math.max(a,Math.min(b,x))},CenterLife:{get:()=>[]}};
+          vm.createContext(c);
+          vm.runInContext(BODY,c);
+          for(let i=0;i<100;i++){world.player.x+=5;vm.runInContext('resolveBodies()',c);assert(world.player.x<=405.001);}
+          world.player={x:500,y:600};vm.runInContext('resolveBodies()',c);assert(world.player.y>=630);
+          assert(Number.isFinite(world.player.x)&&Number.isFinite(world.player.y));
+          console.log('PASS: continuous movement cannot pass through a placed body; overlap resolves to edge.');
+          """.replace('BODY',json.dumps(body))
+          Path('/tmp/check-bodies.cjs').write_text(testjs)
+          subprocess.run(['node','/tmp/check-bodies.cjs'],check=True)
+          
           print('GRID_GROUPS',len(cards))
           
       - uses: actions/upload-artifact@v4
