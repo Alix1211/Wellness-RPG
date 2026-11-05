@@ -30,6 +30,7 @@ jobs:
           html=raw.decode()
           ss=list(re.finditer(r'<script([^>]*)>([\s\S]*?)</script\s*>',html))
           assert len(ss)==23
+          print('HOSTKEY', '\n'.join(line for line in ss[16][2].splitlines() if 'keydown' in line or 'keyup' in line))
           before=root/'review/r60-before';after=root/'review/r60-after'
           before.mkdir(parents=True,exist_ok=True);after.mkdir(parents=True,exist_ok=True)
           for i,s in enumerate(ss):
@@ -70,15 +71,15 @@ jobs:
            p.on('pageerror',e=>errors.push(e.message));
            await p.addInitScript(()=>localStorage.setItem('gaia-rpg-road-v1',JSON.stringify({name:'R60 test',stats:{ki:60,um:60,bo:60,ge:60},gold:1000,employed:true,living:{registered:true,opening:true,migrated:true},story:{index:0,seen:[]}})));
            await p.goto('file://'+process.cwd()+'/GAIA-LIFE-R60-CONTROLS.html',{waitUntil:'load'});await p.waitForTimeout(10000);
-           console.log('INITIAL',await p.evaluate(()=>({panel:document.querySelector('#panel').open,roomScene:document.querySelector('#roomScene').hidden,text:document.body.innerText.slice(-1200),host:Object.keys(GameHost)})));
+           console.log('INITIAL',await p.evaluate(()=>({mode:GameHost.mode,city:CityTravel.active,active:document.activeElement.tagName,panel:document.querySelector('#panel').open,roomScene:document.querySelector('#roomScene').hidden,text:document.body.innerText.slice(-1200),host:Object.keys(GameHost)})));
            // Real key input at basement stairs; held input must not bounce back.
-           await p.evaluate(()=>{const w=GameHost.world;CenterModel.changeFloor(w,13);w.player.x=405;w.player.y=614;});
+           await p.evaluate(()=>{GameHost.closeRoom();const w=GameHost.world;GameHost.sceneChange(()=>{CenterModel.changeFloor(w,13);w.player.x=405;w.player.y=614;});});await p.waitForTimeout(900);
            await p.keyboard.down('ArrowUp');await p.waitForTimeout(1800);
            const stairs=await p.evaluate(()=>({floor:GameHost.world.scene.floor,x:GameHost.world.player.x}));
            if(stairs.floor!==9)throw Error('Stair held input bounced: '+JSON.stringify(stairs));
            await p.keyboard.up('ArrowUp');await p.waitForTimeout(800);
            // Use actual elevator menu while a direction remains pressed through landing.
-           await p.evaluate(()=>{const w=GameHost.world;CenterModel.changeFloor(w,0);w.player.x=180;w.player.y=642;});
+           await p.evaluate(()=>{GameHost.closeRoom();const w=GameHost.world;GameHost.sceneChange(()=>{CenterModel.changeFloor(w,0);w.player.x=180;w.player.y=642;});});await p.waitForTimeout(900);
            await p.keyboard.down('ArrowUp');await p.waitForTimeout(1400);
            await p.locator('.lift-floor[data-floor="1"]').click();
            await p.waitForTimeout(3800);
