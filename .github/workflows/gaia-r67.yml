@@ -74,7 +74,7 @@ jobs:
           assert 'centerEdge(dy)' not in u
           assert "p.y>=660&&dy>.1" in u
           
-          SIZE_HELPER="\nwindow.GaiaActorScale=(n,im,images)=>{\n const base=window.GaiaSDScale(im,images),metric=CharacterMetrics[CenterLife.frame(n)];\n const height=metric?.height||im.naturalHeight||im.height;\n const male=['trainer','office','casual','boss'].includes(n.actor.role);\n const min=male?165:95,max=male?200:145;\n return Math.max(min/height,Math.min(max/height,base*(male?1.25:1)));\n};\nwindow.GaiaArrange=(scene,list)=>{\n const f=CenterModel.FLOORS[scene.floor],b=CenterModel.bounds(scene);\n for(const n of list)if(!n.gaiaArranged){\n  let seed=(scene.floor+1)*7919;for(const ch of n.id)seed=(Math.imul(seed,31)+ch.charCodeAt(0))>>>0;\n  const dx=(seed%281)-140,dy=((seed>>>8)%91)-45;\n  const old=n.x;n.x=CenterModel.clamp(n.x+dx,b.left+90,b.right-90);\n  n.y=CenterModel.clamp(n.y+dy,b.top+35,b.bottom-35);n.homeX=n.x;n.homeY=n.y;\n  n.bounds.left=CenterModel.clamp(n.bounds.left+n.x-old,b.left+40,b.right-40);\n  n.bounds.right=CenterModel.clamp(n.bounds.right+n.x-old,b.left+40,b.right-40);\n  n.gaiaArranged=true;\n }\n return list;\n};\n"
+          SIZE_HELPER="\nwindow.GaiaHeadTargets=new WeakMap();\nwindow.GaiaActorScale=(n,im,images)=>{\n const base=window.GaiaSDScale(im,images),metric=CharacterMetrics[CenterLife.frame(n)];\n const height=metric?.height||im.naturalHeight||im.height;\n const male=['trainer','office','casual','boss'].includes(n.actor.role);\n const min=male?165:95,max=male?200:145;\n return Math.max(min/height,Math.min(max/height,base*(male?1.25:1)));\n};\nwindow.GaiaArrange=(scene,list)=>{\n const f=CenterModel.FLOORS[scene.floor],b=CenterModel.bounds(scene);\n for(const n of list)if(!n.gaiaArranged){\n  let seed=(scene.floor+1)*7919;for(const ch of n.id)seed=(Math.imul(seed,31)+ch.charCodeAt(0))>>>0;\n  const dx=(seed%281)-140,dy=((seed>>>8)%91)-45;\n  const old=n.x;n.x=CenterModel.clamp(n.x+dx,b.left+90,b.right-90);\n  n.y=CenterModel.clamp(n.y+dy,b.top+35,b.bottom-35);n.homeX=n.x;n.homeY=n.y;\n  n.bounds.left=CenterModel.clamp(n.bounds.left+n.x-old,b.left+40,b.right-40);\n  n.bounds.right=CenterModel.clamp(n.bounds.right+n.x-old,b.left+40,b.right-40);\n  n.gaiaArranged=true;\n }\n return list;\n};\n"
           
           
           # Use the actual side-view protagonist sheet and its game drawing scale.
@@ -87,7 +87,7 @@ jobs:
            if(sheet){
             const c=document.createElement('canvas');c.width=m.frame_w;c.height=m.frame_h;
             c.getContext('2d').drawImage(sheet,0,0,m.frame_w,m.frame_h,0,0,m.frame_w,m.frame_h);
-            target=GaiaHeadPixels(c)*(120/def.crawl.referenceHeight)*m.relativeScale;
+            target=GaiaHeadPixels(c)*(120/def.crawl.referenceHeight)*m.relativeScale;GaiaHeadTargets.set(sheet,target);
            }
            if(!target)return GaiaSDScale(im,images);
            const male=['trainer','office','casual','boss'].includes(n.actor.role);
@@ -215,7 +215,7 @@ jobs:
             const images=window.GAIA_REVIEW_IMAGES;if(!images)throw Error('Game did not render');
             const w=GameHost.world,def=HeroMotion.definition(w.outfit),m=def.crawl;
             const sheet=images['hero-motion/'+w.outfit+'/crawl'];if(!sheet)throw Error('Missing actual hero sheet');
-            const c=document.createElement('canvas');c.width=1600;c.height=1200;
+            const c=document.createElement('canvas');c.width=1600;c.height=Math.ceil((NPC_MANIFEST.actors.length+1)/5)*380;
             const q=c.getContext('2d');q.fillStyle='#fff';q.fillRect(0,0,c.width,c.height);
             q.strokeStyle='#cbd1db';for(let x=0;x<c.width;x+=20){q.beginPath();q.moveTo(x,0);q.lineTo(x,c.height);q.stroke();}for(let y=0;y<c.height;y+=20){q.beginPath();q.moveTo(0,y);q.lineTo(c.width,y);q.stroke();}
             const hero=document.createElement('canvas');hero.width=m.frame_w;hero.height=m.frame_h;
@@ -225,7 +225,7 @@ jobs:
             q.fillStyle='#111';q.font='18px sans-serif';q.fillText('PLAYER actual side view',20,330);
             let idx=1;const rows=[];
             const seen=new Set();
-            for(const n of CenterLife.get(w.scene)){
+            for(const actor of NPC_MANIFEST.actors){const n={id:actor.id,actor,mode:'idle',time:0,walk:0,face:1};
              if(seen.has(n.actor.id))continue;seen.add(n.actor.id);
              const key=CenterLife.frame(n),im=images[key];if(!im)continue;
              const scale=GaiaActorScale(n,im,images),head=GaiaHeadPixels(im)*scale;
@@ -240,7 +240,8 @@ jobs:
            });
            fs.mkdirSync('review',{recursive:true});fs.writeFileSync('review/R67-grid.png',Buffer.from(report.png,'base64'));
            fs.writeFileSync('review/R67-measurements.json',JSON.stringify({rows:report.rows,errors},null,2));
-           console.log(JSON.stringify({rows:report.rows,errors}));
+           fs.writeFileSync('GAIA-R67-SD-GRID.html','<!doctype html><meta charset="utf-8"><title>R67 SD comparison</title><img style="max-width:100%;height:auto" src="data:image/png;base64,'+report.png+'">');
+          console.log(JSON.stringify({rows:report.rows,errors}));
            if(errors.length)throw Error('Runtime errors: '+errors.join(';'));
            await browser.close();
           })();
