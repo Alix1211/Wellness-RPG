@@ -69,8 +69,8 @@ jobs:
            const b=await chromium.launch({headless:true}),p=await b.newPage({viewport:{width:1280,height:720}}),errors=[];
            p.on('pageerror',e=>errors.push(e.message));
            await p.addInitScript(()=>localStorage.setItem('gaia-rpg-road-v1',JSON.stringify({name:'R60 test',stats:{ki:60,um:60,bo:60,ge:60},gold:1000,employed:true,living:{registered:true,opening:true,migrated:true},story:{index:0,seen:[]}})));
- await p.goto('file://'+process.cwd()+'/GAIA-LIFE-R60-CONTROLS.html',{waitUntil:'load'});await p.waitForTimeout(10000);
- console.log('INITIAL',await p.evaluate(()=>({panel:document.querySelector('#panel').open,roomScene:document.querySelector('#roomScene').hidden,text:document.body.innerText.slice(-1200),host:Object.keys(GameHost)})));
+           await p.goto('file://'+process.cwd()+'/GAIA-LIFE-R60-CONTROLS.html',{waitUntil:'load'});await p.waitForTimeout(10000);
+           console.log('INITIAL',await p.evaluate(()=>({panel:document.querySelector('#panel').open,roomScene:document.querySelector('#roomScene').hidden,text:document.body.innerText.slice(-1200),host:Object.keys(GameHost)})));
            // Real key input at basement stairs; held input must not bounce back.
            await p.evaluate(()=>{const w=GameHost.world;CenterModel.changeFloor(w,13);w.player.x=405;w.player.y=614;});
            await p.keyboard.down('ArrowUp');await p.waitForTimeout(1800);
