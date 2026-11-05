@@ -138,7 +138,10 @@ jobs:
           art={**tables.get('const ART=',{}),**tables.get('const NPC_ART=',{})}
           metrics=tables.get('window.CharacterMetrics=',{})
           for source in [sources[16]]:
-           for key,src in re.findall(r'"([^"\\\n]+)"\s*:\s*"(data:image/[^"\\\n]+)"',source):art['decor/'+key]=src
+           decls=re.findall(r'DECOR_(?:CENTER|COMPANY)\s*=\s*(\{[^;]*?\})',source)
+           decor_keys=set(re.findall(r"['\"]([^'\"]+)['\"]",' '.join(decls)))
+           for key,src in re.findall(r'"([^"\\\n]+)"\s*:\s*"(data:image/[^"\\\n]+)"',source):
+            if key in decor_keys:art['decor/'+key]=src
           cards=[];seen=set()
           for key,src in art.items():
            if not isinstance(src,str) or not src.startswith('data:image/'):continue
