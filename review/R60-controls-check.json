@@ -1,0 +1,13 @@
+{
+  "stairs": {
+    "floor": 9,
+    "x": 650
+  },
+  "lift": {
+    "floor": 1,
+    "x": 500,
+    "open": false,
+    "bay": 360
+  },
+  "errors": []
+}
