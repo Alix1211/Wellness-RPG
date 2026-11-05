@@ -1,0 +1,69 @@
+name: GAIA R64 room and sticker build
+on:
+  push:
+    branches: ["fix/restore-belt-scroll-r60"]
+    paths: [".github/workflows/gaia-r64.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Restore verified R63
+        run: python3 tools/gaia/restore.py
+      - name: Apply two requested changes and check scripts
+        shell: python
+        run: |
+          from pathlib import Path
+          import re,subprocess
+          p=Path('GAIA-LIFE-20261020.html')
+          html=p.read_text()
+          matches=list(re.finditer(r'<script([^>]*)>([\s\S]*?)</script\s*>',html))
+          assert len(matches)==23
+          sources=[m[2] for m in matches]
+          def replace(i,old,new):
+           assert sources[i].count(old)==1,(i,old[:80])
+           sources[i]=sources[i].replace(old,new)
+          replace(22,'let cursor=0;','let cursor=0,nextStickerAt=0,stickerTick=0;')
+          replace(22,'function play(event,options={}){','function play(event,options={}){if(++stickerTick%4)return false;const gate=performance.now();if(gate<nextStickerAt)return false;nextStickerAt=gate+8000;')
+          replace(22,'while(layer.children.length>=3)','while(layer.children.length>=1)')
+          old="function drawCenterFloor(){const f=floor(),fi=M.FLOORS.indexOf(f),L=FL_LAYOUT[fi];if(!L)return;const v=view();"
+          new="""function drawCenterFloor(){const f=floor(),fi=M.FLOORS.indexOf(f),L=FL_LAYOUT[fi];if(!L)return;const v=view();
+           if(f.place==='home'){
+            ctx.fillStyle='#e7cabc';ctx.fillRect(0,0,f.width,H);
+            for(let i=0;i<f.rooms.length;i++){
+             const r=f.rooms[i],a=i===0?0:r.x0,b=i===f.rooms.length-1?f.width:r.x1;
+             if(b<v.cam||a>v.cam+v.width)continue;
+             const key=r.kind==='villa'?'home/침실':r.bg;
+             const im=images['bg/'+key];
+             ctx.save();ctx.beginPath();ctx.rect(a,0,b-a,H);ctx.clip();cover(im,a,0,b-a,H);ctx.restore();
+             box(r.x-74,92,148,28,12,'#fff5e8e0');text(r.name,r.x,111,16,'#79516a');
+            }
+            if(f.doorX!=null)text('▲ 거리',f.doorX,256,15,'#79516a');
+            for(const st of f.stairs||[]){const x=(st.x0+st.x1)/2;box(x-58,215,116,32,12,'#fff5e8e0');text((st.dir==='up'?'▲ ':'▼ ')+st.label,x,237,15,'#79516a');}
+            return;
+           }
+          """
+          replace(16,old,new)
+          for i in range(23):
+           f=Path(f'/tmp/gaia-script-{i}.js');f.write_text(sources[i]);subprocess.run(['node','--check',str(f)],check=True)
+          for i in range(23):
+           if i not in (16,22):assert sources[i]==matches[i][2]
+          for name in ['거실','침실','화장실','서재','빈방','지하실']:
+           assert ('home/'+name) in html
+          for i in [22,16]:
+           m=matches[i];html=html[:m.start(2)]+sources[i]+html[m.end(2):]
+          Path('GAIA-LIFE-R64-ROOM-STICKERS.html').write_text(html)
+          print('PASS: 23 scripts syntax; 21 unrelated scripts unchanged; previous room backgrounds mapped; stickers at most one, every fourth event, minimum 8 seconds.')
+          
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GAIA-LIFE-R64-ROOM-STICKERS
+          path: GAIA-LIFE-R64-ROOM-STICKERS.html
+          retention-days: 30
