@@ -1,8 +1,8 @@
-// R60-controls regression tests: joystick starts near left-side exits, held input at landings,
-// and road controls. Run with the R60 and R60-controls extracted script directories.
+// R62 regression tests: joystick starts near left-side exits, held input at landings,
+// and road controls. Run with the R60 and R62 extracted script directories.
 const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict'),path=require('path');
 const [beforeDir,afterDir]=process.argv.slice(2);
-assert(beforeDir&&afterDir,'Usage: verify-portal-controls.cjs R60 R60-controls');
+assert(beforeDir&&afterDir,'Usage: verify-portal-controls.cjs R60 R62');
 const read=(dir,n)=>fs.readFileSync(path.join(dir,`script-${String(n).padStart(2,'0')}.js`),'utf8');
 for(let n=0;n<23;n++){
  new vm.Script(read(afterDir,n));
@@ -21,7 +21,7 @@ Object.assign(ctx,{portalCooldown:0,liftState:null,mode:'field',life:{},CenterLi
 ctx.floor=()=>M.FLOORS[ctx.world.scene.floor];
 ctx.sceneChange=handler=>{vm.runInContext('armPortal()',ctx);handler();ctx.portalCooldown=.65;};
 ctx.elevator=()=>{ctx.usedElevator=true;};ctx.streetExit=()=>{ctx.exited=true;};ctx.talkTo=()=>{};
-const h0=host.indexOf('/* R60-controls portal input:');const h1=host.indexOf('function resetInput()',h0);
+const h0=host.indexOf('/* R62 portal input:');const h1=host.indexOf('function resetInput()',h0);
 vm.runInContext(host.slice(h0,h1),ctx);
 for(const name of ['useStairs','centerEdge','centerTap'])vm.runInContext(fn(name),ctx);
 const emit=(type,props)=>{for(const handler of events.get(type)||[])handler({target:{matches:()=>false},...props});};
