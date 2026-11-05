@@ -87,7 +87,7 @@ jobs:
            if(sheet){
             const c=document.createElement('canvas');c.width=m.frame_w;c.height=m.frame_h;
             c.getContext('2d').drawImage(sheet,0,0,m.frame_w,m.frame_h,0,0,m.frame_w,m.frame_h);
-            target=GaiaHeadPixels(c)*(120/def.crawl.referenceHeight)*m.relativeScale;GaiaHeadTargets.set(sheet,target);
+            target=GaiaHeadPixels(c)*(120/def.crawl.referenceHeight)*m.relativeScale;
            }
            if(!target)return GaiaSDScale(im,images);
            const male=['trainer','office','casual','boss'].includes(n.actor.role);
