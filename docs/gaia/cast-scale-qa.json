@@ -1,0 +1,28 @@
+{
+  "visual_checks": [
+    "16명+주인공 같은 바닥선 비교 전/후 캡처",
+    "회사 로비 오 부장·강태오·송 회장·주인공 비교",
+    "회사 로비 엘리베이터 바닥 접지 확인"
+  ],
+  "changes": {
+    "오 부장": [
+      1.04,
+      1.9
+    ],
+    "다른 15명": "기존 값 유지",
+    "엘리베이터 y": [
+      "31",
+      "f.gy-.75*652"
+    ]
+  },
+  "runtime_check": {
+    "elevator_target_floor": 1,
+    "mode": "field",
+    "page_errors": []
+  },
+  "restore": "tools/gaia/restore.py와 배포 HTML 바이트 일치",
+  "unverified": [
+    "실제 안드로이드 기기",
+    "전체 미니게임 완주"
+  ]
+}
