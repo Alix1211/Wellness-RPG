@@ -26,5 +26,5 @@ out=root/'GAIA-LIFE-R60-CONTROLS.html'
 out.write_bytes(data)
 print(out,len(data),hashlib.sha256(data).hexdigest())
 if m.get('living_transform')=='gaia-living-corridors-v1':
- final=root/'GAIA-R60-LIVING-COHAB-ENDING.html'
+ final=root/'GAIA-R60-LIVING-COHAB-TOILET-TILES.html'
  subprocess.run(['node',str(root/'tools/gaia/build-latest.mjs'),str(out),str(root/'builds/gaia-life-20261020/manifest.json'),str(final)],check=True)

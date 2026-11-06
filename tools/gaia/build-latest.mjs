@@ -5,6 +5,7 @@ import {createHash} from 'node:crypto';
 import {fixQuestRhythm} from '../../src/gaia-life/quest-rhythm-transform.mjs';
 import {fixLivingCorridors} from '../../src/gaia-life/living-corridors-transform.mjs';
 import {fixCohabEnding} from '../../src/gaia-life/cohab-ending-patch.mjs';
+import {fixToiletTiles} from '../../src/gaia-life/toilet-art-transform.mjs';
 
 if(process.argv.length!==5)throw Error('Usage: node tools/gaia/build-latest.mjs CONTROLS MANIFEST OUTPUT');
 const m=JSON.parse(readFileSync(process.argv[3],'utf8'));
@@ -22,4 +23,7 @@ html=fixLivingCorridors(html);
 check('LIVING-CORRIDORS original',m.living_output_size,m.living_output_sha256);
 html=fixCohabEnding(html,readFileSync(new URL('../../src/gaia-life/cohab-ending-runtime.js',import.meta.url),'utf8'));
 check('LIVING + COHAB/ENDING',m.story_output_size,m.story_output_sha256);
+if(m.toilet_transform!=='gaia-toilet-tiles-v1')throw Error('Unexpected toilet art transform');
+html=fixToiletTiles(html);
+check('TOILET TILES 1-4',m.toilet_output_size,m.toilet_output_sha256);
 writeFileSync(process.argv[4],html);

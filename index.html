@@ -43,6 +43,12 @@
    const b=new TextEncoder().encode(html);
    if(b.byteLength!==m.story_output_size||await hash(b)!==m.story_output_sha256)throw Error('cohab checksum');
   }
+  if(m.toilet_transform==='gaia-toilet-tiles-v1'){
+   const patch=await import('./src/gaia-life/toilet-art-transform.mjs');
+   html=patch.fixToiletTiles(html);
+   const b=new TextEncoder().encode(html);
+   if(b.byteLength!==m.toilet_output_size||await hash(b)!==m.toilet_output_sha256)throw Error('toilet tiles checksum');
+  }
   document.open();document.write(html);document.close();
  }catch(e){document.querySelector('#loading').textContent='실행 파일 복원: python3 tools/gaia/restore.py';console.error(e)}
 })();

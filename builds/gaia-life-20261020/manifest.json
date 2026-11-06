@@ -1,5 +1,5 @@
 {
-    "build": "20261107-R60-LIVING-COHAB-ENDING",
+    "build": "20261107-R60-LIVING-COHAB-TOILET-TILES",
   "sha256": "575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244",
   "size": 87031121,
   "compression": "gzip",
@@ -30,5 +30,8 @@
     "living_output_sha256": "b73c2e2da92c4891d3d03b15ddb376358e8ab5f49f5831b443351044acf18d52",
   "story_transform": "gaia-cohab-ending-v1",
     "story_output_size": 90589000,
-    "story_output_sha256": "bae1b7646bafda7ff9522c47cb45de8e8d0a5c7a71dc4a73d3e0472ae18db5ab"
+    "story_output_sha256": "bae1b7646bafda7ff9522c47cb45de8e8d0a5c7a71dc4a73d3e0472ae18db5ab",
+    "toilet_transform": "gaia-toilet-tiles-v1",
+    "toilet_output_size": 91993636,
+    "toilet_output_sha256": "78770b6495ba41eed35bb86a6f431f65ef60be87f48378d2ff9e79c2799c5ccb"
 }
