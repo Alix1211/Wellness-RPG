@@ -1,0 +1,16 @@
+{
+  "errors": [],
+  "confirmAdvances": true,
+  "confirmExit": true,
+  "backExit": true,
+  "road": {
+    "state": "travel",
+    "moved": true
+  },
+  "corridorMove": {
+    "before": 500,
+    "after": 704.1129199999993,
+    "moved": true,
+    "mode": "field"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "errors": [],
+  "transition": {
+    "mode": "dialogue",
+    "context": true,
+    "player": 300
+  },
+  "resize": {
+    "mode": "dialogue",
+    "width": 1280
+  }
+}
