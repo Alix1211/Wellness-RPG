@@ -1,5 +1,5 @@
 {
-  "build": "20261106-R60-CAST",
+  "build": "20261106-R60-ALL-FLOORS",
   "sha256": "575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244",
   "size": 87031121,
   "compression": "gzip",
@@ -20,6 +20,6 @@
   ],
   "base_build": "20261021-R60",
   "transform": "r60-controls-cast",
-  "output_size": 87035470,
-  "output_sha256": "26b7b272fc08b9fba024ea03c3ec7d12f853399d06cfa646e384c79b0a8a6298"
+  "output_size": 87040768,
+  "output_sha256": "30bbd07ff06d4e37905ff0af2f6e88b1bd495528fbb273cb9409bc2924ad84ed"
 }

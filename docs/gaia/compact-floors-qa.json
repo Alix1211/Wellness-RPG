@@ -1,0 +1,457 @@
+{
+  "errors": [],
+  "floors": [
+    {
+      "floor": 0,
+      "before": {
+        "x": 585,
+        "y": 594,
+        "dir": "left"
+      },
+      "after": {
+        "x": 585,
+        "y": 594,
+        "dir": "left",
+        "mode": "field"
+      },
+      "entered": {
+        "mode": "field",
+        "panel": true
+      },
+      "rooms": [
+        {
+          "id": "f1-lobby-1",
+          "aliases": [
+            "f1-lobby-1",
+            "f1-lobby-2"
+          ],
+          "name": "로비 · 접수",
+          "games": []
+        },
+        {
+          "id": "f1-shop-2",
+          "aliases": [
+            "f1-shop-2"
+          ],
+          "name": "매점",
+          "games": []
+        },
+        {
+          "id": "f1-recovery-3",
+          "aliases": [
+            "f1-recovery-3"
+          ],
+          "name": "휴게실",
+          "games": []
+        }
+      ]
+    },
+    {
+      "floor": 1,
+      "before": {
+        "x": 585,
+        "y": 594,
+        "dir": "left"
+      },
+      "after": {
+        "x": 585,
+        "y": 594,
+        "dir": "left",
+        "mode": "field"
+      },
+      "entered": {
+        "mode": "dialogue",
+        "panel": false,
+        "room": "f2-basic-1"
+      },
+      "rooms": [
+        {
+          "id": "f2-basic-1",
+          "aliases": [
+            "f2-basic-1",
+            "f2-basic-3"
+          ],
+          "name": "기초반",
+          "games": [
+            5
+          ]
+        },
+        {
+          "id": "f2-toilet-4",
+          "aliases": [
+            "f2-toilet-4"
+          ],
+          "name": "화장실",
+          "games": []
+        },
+        {
+          "id": "f2-recovery-5",
+          "aliases": [
+            "f2-recovery-5"
+          ],
+          "name": "휴게실",
+          "games": []
+        }
+      ]
+    },
+    {
+      "floor": 2,
+      "before": {
+        "x": 585,
+        "y": 594,
+        "dir": "left"
+      },
+      "after": {
+        "x": 585,
+        "y": 594,
+        "dir": "left",
+        "mode": "field"
+      },
+      "entered": {
+        "mode": "field",
+        "panel": true
+      },
+      "rooms": [
+        {
+          "id": "f3-gear-1",
+          "aliases": [
+            "f3-gear-1",
+            "f3-gear-3"
+          ],
+          "name": "기구방",
+          "games": [
+            "rope"
+          ]
+        },
+        {
+          "id": "f3-gear-2",
+          "aliases": [
+            "f3-gear-2"
+          ],
+          "name": "기구방 B",
+          "games": [
+            "batting"
+          ]
+        },
+        {
+          "id": "f3-recovery-4",
+          "aliases": [
+            "f3-recovery-4"
+          ],
+          "name": "휴게실",
+          "games": []
+        }
+      ]
+    },
+    {
+      "floor": 3,
+      "before": {
+        "x": 585,
+        "y": 594,
+        "dir": "left"
+      },
+      "after": {
+        "x": 585,
+        "y": 594,
+        "dir": "left",
+        "mode": "field"
+      },
+      "entered": {
+        "mode": "dialogue",
+        "panel": false,
+        "room": "f4-group-1"
+      },
+      "rooms": [
+        {
+          "id": "f4-group-1",
+          "aliases": [
+            "f4-group-1",
+            "f4-group-3"
+          ],
+          "name": "단체방",
+          "games": [
+            0
+          ]
+        },
+        {
+          "id": "f4-posture-3",
+          "aliases": [
+            "f4-posture-3"
+          ],
+          "name": "요가방 A",
+          "games": [
+            2
+          ]
+        },
+        {
+          "id": "f4-posture-4",
+          "aliases": [
+            "f4-posture-4"
+          ],
+          "name": "요가방 B",
+          "games": [
+            "squat"
+          ]
+        }
+      ]
+    },
+    {
+      "floor": 4,
+      "before": {
+        "x": 585,
+        "y": 594,
+        "dir": "left"
+      },
+      "after": {
+        "x": 585,
+        "y": 594,
+        "dir": "left",
+        "mode": "field"
+      },
+      "entered": {
+        "mode": "dialogue",
+        "panel": false,
+        "room": "f6-punish-1"
+      },
+      "rooms": [
+        {
+          "id": "f6-punish-1",
+          "aliases": [
+            "f6-punish-1"
+          ],
+          "name": "통창방 A",
+          "games": [
+            3
+          ]
+        },
+        {
+          "id": "f6-punish-2",
+          "aliases": [
+            "f6-punish-2"
+          ],
+          "name": "통창방 B",
+          "games": [
+            4
+          ]
+        },
+        {
+          "id": "f5-toilet-3",
+          "aliases": [
+            "f5-toilet-3"
+          ],
+          "name": "화장실",
+          "games": []
+        },
+        {
+          "id": "f5-recovery-4",
+          "aliases": [
+            "f5-recovery-4"
+          ],
+          "name": "휴게실",
+          "games": []
+        }
+      ]
+    },
+    {
+      "floor": 6,
+      "before": {
+        "x": 585,
+        "y": 594,
+        "dir": "left"
+      },
+      "after": {
+        "x": 585,
+        "y": 594,
+        "dir": "left",
+        "mode": "field"
+      },
+      "entered": {
+        "mode": "field",
+        "panel": true
+      },
+      "rooms": [
+        {
+          "id": "company-f1-companyLobby-1",
+          "aliases": [
+            "company-f1-companyLobby-1"
+          ],
+          "name": "회사 로비",
+          "games": []
+        },
+        {
+          "id": "company-f1-lounge-2",
+          "aliases": [
+            "company-f1-lounge-2"
+          ],
+          "name": "휴게실",
+          "games": []
+        },
+        {
+          "id": "company-f1-pantry-3",
+          "aliases": [
+            "company-f1-pantry-3"
+          ],
+          "name": "탕비실",
+          "games": []
+        },
+        {
+          "id": "company-f1-companyToilet-4",
+          "aliases": [
+            "company-f1-companyToilet-4"
+          ],
+          "name": "화장실",
+          "games": []
+        }
+      ]
+    },
+    {
+      "floor": 7,
+      "before": {
+        "x": 585,
+        "y": 594,
+        "dir": "left"
+      },
+      "after": {
+        "x": 585,
+        "y": 594,
+        "dir": "left",
+        "mode": "field"
+      },
+      "entered": {
+        "mode": "field",
+        "panel": true
+      },
+      "rooms": [
+        {
+          "id": "company-f2-sharedOffice-1",
+          "aliases": [
+            "company-f2-sharedOffice-1",
+            "company-f2-sharedOffice-2"
+          ],
+          "name": "공용 사무실",
+          "games": []
+        },
+        {
+          "id": "company-f2-meeting-3",
+          "aliases": [
+            "company-f2-meeting-3"
+          ],
+          "name": "회의실",
+          "games": [
+            "squat"
+          ]
+        },
+        {
+          "id": "company-f2-pantry-4",
+          "aliases": [
+            "company-f2-pantry-4"
+          ],
+          "name": "탕비실",
+          "games": []
+        },
+        {
+          "id": "company-f2-companyToilet-5",
+          "aliases": [
+            "company-f2-companyToilet-5"
+          ],
+          "name": "화장실",
+          "games": []
+        }
+      ]
+    },
+    {
+      "floor": 8,
+      "before": {
+        "x": 585,
+        "y": 594,
+        "dir": "left"
+      },
+      "after": {
+        "x": 585,
+        "y": 594,
+        "dir": "left",
+        "mode": "field"
+      },
+      "entered": {
+        "mode": "dialogue",
+        "panel": false,
+        "room": "company-f3-privateOffice-1"
+      },
+      "rooms": [
+        {
+          "id": "company-f3-privateOffice-1",
+          "aliases": [
+            "company-f3-privateOffice-1"
+          ],
+          "name": "개인 사무실 A",
+          "games": [
+            1
+          ]
+        },
+        {
+          "id": "company-f3-privateOffice-2",
+          "aliases": [
+            "company-f3-privateOffice-2"
+          ],
+          "name": "개인 사무실 B",
+          "games": [
+            "batting"
+          ]
+        },
+        {
+          "id": "company-f3-meeting-3",
+          "aliases": [
+            "company-f3-meeting-3"
+          ],
+          "name": "회의실",
+          "games": []
+        },
+        {
+          "id": "company-f3-lounge-4",
+          "aliases": [
+            "company-f3-lounge-4"
+          ],
+          "name": "휴게실",
+          "games": []
+        },
+        {
+          "id": "company-f3-companyToilet-5",
+          "aliases": [
+            "company-f3-companyToilet-5"
+          ],
+          "name": "화장실",
+          "games": []
+        }
+      ]
+    }
+  ],
+  "elevator": {
+    "floor": 1,
+    "mode": "field"
+  },
+  "touch": {
+    "errors": [],
+    "checks": [
+      {
+        "name": "모바일 위 입력 무시: 좌표·방향 고정",
+        "result": {
+          "x": 620,
+          "y": 594,
+          "dir": "left",
+          "mode": "field"
+        }
+      },
+      {
+        "name": "모바일 확인 터치",
+        "text": "×\n로비 · 접수\n도윤\n유리\n시설 이용"
+      },
+      {
+        "name": "모바일 유리 선택",
+        "result": {
+          "mode": "dialogue",
+          "person": "유리"
+        }
+      }
+    ]
+  }
+}
