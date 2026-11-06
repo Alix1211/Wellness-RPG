@@ -1,0 +1,12 @@
+{
+  "errors": [],
+  "opening": {
+    "line": "월세 빠졌네. 잔액은 마이너스고.",
+    "name": "주인공 집"
+  },
+  "introExit": {
+    "city": true,
+    "opening": true,
+    "mode": "field"
+  }
+}

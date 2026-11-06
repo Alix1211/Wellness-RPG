@@ -1,0 +1,63 @@
+{
+  "errors": [],
+  "home": {
+    "name": "주인공 집",
+    "mode": "dialogue",
+    "choices": 0,
+    "backgroundHidden": "none",
+    "portraitHidden": "none",
+    "line": "오늘 하루도 즐거웠다. 내일도 일찍 일어나서 센터에 가야지. 이불이 따뜻하다.",
+    "panel": {
+      "x": 280,
+      "y": 617.5,
+      "width": 720,
+      "height": 88.5,
+      "top": 617.5,
+      "right": 1000,
+      "bottom": 706,
+      "left": 280
+    }
+  },
+  "rest": {
+    "hp": 80,
+    "mp": 40,
+    "slot": 1,
+    "mode": "dialogue",
+    "idle": true
+  },
+  "noHomeWalking": true,
+  "exit": {
+    "city": true,
+    "state": "map",
+    "mode": "field"
+  },
+  "reenter": {
+    "mode": "dialogue",
+    "name": "주인공 집"
+  },
+  "offer": {
+    "buttons": 0,
+    "active": null,
+    "line": "냉장고가 비었네. 장부터 봐야겠다."
+  },
+  "accept": {
+    "active": "L05",
+    "stage": "pickup"
+  },
+  "deliver": {
+    "active": null,
+    "idle": true,
+    "done": true,
+    "gold": 320
+  },
+  "recovery": {
+    "hp": 60,
+    "mp": 30,
+    "mode": "field"
+  },
+  "company": {
+    "name": "회사 로비",
+    "person": "강태오",
+    "buttons": 0
+  }
+}

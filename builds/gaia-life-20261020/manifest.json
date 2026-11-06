@@ -1,5 +1,5 @@
 {
-  "build": "20261106-R60-PINK-ROOMS",
+  "build": "20261106-R60-CONTEXT-ROOMS",
   "sha256": "575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244",
   "size": 87031121,
   "compression": "gzip",
@@ -20,6 +20,6 @@
   ],
   "base_build": "20261021-R60",
   "transform": "r60-controls-cast",
-  "output_size": 87198493,
-  "output_sha256": "3b951a11cdf39ee328e3742a07879677e925d8a4c62dd4917a5e6d3ed96a4bb9"
+  "output_size": 87207638,
+  "output_sha256": "a71ce627b8263f57574b70f1751726bc665df41657bf72b8da0422daac8627dc"
 }
