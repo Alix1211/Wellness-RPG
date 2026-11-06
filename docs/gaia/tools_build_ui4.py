@@ -32,6 +32,9 @@ for k,n in sizes.items():
 css.append("""#roomScene .fxg{position:absolute;left:50%;bottom:0;height:100%;width:max-content;translate:-50% 0;transform-origin:center bottom;animation:portraitIdle 4.2s ease-in-out infinite;will-change:transform;display:block}
 #roomScene .fxg:has(>.speaking){animation:portraitTalking 2s ease-in-out infinite}
 #roomScene .fxg>img:not(.fxi){position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;top:auto!important;translate:none!important;scale:none!important;animation:none!important;display:block;height:100%!important;width:auto!important;max-width:none!important}
+#roomScene .fxg:has(>#malePortrait){height:80%}
+#roomScene .fxg:has(>#femalePortrait){scale:.86}
+@media(orientation:portrait){#roomScene .fxg:has(>#malePortrait){width:150%;height:auto;top:10%;bottom:auto}#roomScene .fxg:has(>#malePortrait)>img:not(.fxi){width:100%!important;height:auto!important}}
 #roomScene .fxg>.fxw{position:absolute;inset:0;pointer-events:none;filter:drop-shadow(0 3px 6px #50334622);--cx:50%;--cy:41%;--rx:27%;--ry:13%;-webkit-mask-image:radial-gradient(ellipse var(--rx) var(--ry) at var(--cx) var(--cy),#000 42%,transparent 100%);mask-image:radial-gradient(ellipse var(--rx) var(--ry) at var(--cx) var(--cy),#000 42%,transparent 100%)}
 #roomScene .fxw[hidden]{display:none}
 #roomScene .fxw img{display:block;width:100%;height:100%;max-width:none;transform-origin:var(--cx) var(--cy);animation:ui4Sway 2.7s ease-in-out infinite}
