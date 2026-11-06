@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Restore original R60, then apply only its verified input/control repair."""
+"""Restore original R60, then apply its verified input/control repair and cast/quest links."""
 import gzip,hashlib,json,re
 from pathlib import Path
 root=Path(__file__).resolve().parents[2]
@@ -8,12 +8,12 @@ data=gzip.decompress(b''.join((root/p).read_bytes() for p in m['parts']))
 assert len(data)==m['size'] and hashlib.sha256(data).hexdigest()==m['sha256']
 html=data.decode('utf-8')
 if m.get('transform'):
- assert m['transform']=='r60-controls-only'
+ assert m['transform']=='r60-controls-cast'
  text=(root/'src/gaia-life/r60-controls-fix.mjs').read_text()
  changes=json.JSONDecoder().raw_decode(text.split('const CHANGES=',1)[1])[0]
  ss=list(re.finditer(r'<script([^>]*)>([\s\S]*?)</script\s*>',html))
  assert len(ss)==23
- for i in [16,13]:
+ for i in [16,13,5]:
   source=ss[i][2]
   for p in changes:
    if p['script']!=i:continue

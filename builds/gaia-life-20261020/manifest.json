@@ -1,5 +1,5 @@
 {
-  "build": "20261106-R60-CONTROLS",
+  "build": "20261106-R60-CAST",
   "sha256": "575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244",
   "size": 87031121,
   "compression": "gzip",
@@ -19,7 +19,7 @@
     "builds/gaia-life-20261020/html.gz.part-12"
   ],
   "base_build": "20261021-R60",
-  "transform": "r60-controls-only",
-  "output_size": 87032473,
-  "output_sha256": "f48e9de52401c7ad9513cc3915f8bd3b77cc0341e7efe05f63715aa19de06e23"
+  "transform": "r60-controls-cast",
+  "output_size": 87035470,
+  "output_sha256": "26b7b272fc08b9fba024ea03c3ec7d12f853399d06cfa646e384c79b0a8a6298"
 }
