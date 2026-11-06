@@ -1,5 +1,5 @@
 {
-  "build": "20261106-R60-PORTRAIT-CROP",
+  "build": "20261106-R60-QUEST-GIVER",
   "sha256": "575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244",
   "size": 87031121,
   "compression": "gzip",
@@ -20,6 +20,6 @@
   ],
   "base_build": "20261021-R60",
   "transform": "r60-controls-cast",
-  "output_size": 90521395,
-  "output_sha256": "3bd78a78c5b02bf8fd1f258504f54e1ee42fc7d9cc4a5246b5cdebefa2341c2a"
+  "output_size": 90521543,
+  "output_sha256": "a6668db5fe0d98166553a9e505d494ce5a1a88a87eb83ddba52c671e9bbf9eb7"
 }
