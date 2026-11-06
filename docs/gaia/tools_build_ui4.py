@@ -84,6 +84,12 @@ function ui4Setup(){document.head.append(Object.assign(document.createElement('s
  const run=()=>requestAnimationFrame(ui4Bubble);const ln=document.querySelector('#line'),sp=document.querySelector('#speaker'),rs=document.querySelector('#roomScene');
  for(const e of [ln,sp])if(e)new MutationObserver(run).observe(e,{childList:true,characterData:true,subtree:true});if(rs)new MutationObserver(run).observe(rs,{attributes:true,attributeFilter:['hidden','class','style']});addEventListener('resize',run);
  ui4Title();}
+(()=>{try{const L=window.PortraitLibrary;if(!L||L.__crop)return;L.__crop=1;const orig=L.get.bind(L),ready=new Map();const K=(o,e,c)=>o+'/'+(c||'hero')+'/'+e;
+function build(o,e,c){const k=K(o,e,c);if(ready.has(k))return;ready.set(k,null);const u=orig(o,e,c);if(!u)return;let svg;try{svg=atob(u.split(',')[1]);}catch(_){return;}
+const vb=svg.match(/viewBox="([\d. ]+)"/),hr=svg.match(/href="([^"]+)"/);if(!vb||!hr)return;const [x,y,w,h]=vb[1].trim().split(/\s+/).map(Number);const im=new Image();
+im.onload=()=>{try{const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(im,x,y,w,h,0,0,w,h);ready.set(k,cv.toDataURL('image/png'));}catch(_){}};im.src=hr[1];}
+L.get=function(o,e='shy',c='hero'){const ex=L.catalog.outfits[o]&&L.catalog.outfits[o].portraits[c];const ee=ex&&ex[e]?e:'shy';build(o,ee,c);return ready.get(K(o,ee,c))||orig(o,e,c);};
+for(const o of Object.keys(L.catalog.outfits))for(const [c,ex] of Object.entries(L.catalog.outfits[o].portraits))for(const e of Object.keys(ex))build(o,e,c);}catch(err){console.warn('portrait crop',err);}})();
 """
 js=js.replace("@@ART@@",json.dumps({k:A[k] for k in ("hero","logo")},ensure_ascii=False)).replace("@@CSS@@",json.dumps(CSS,ensure_ascii=False)).replace("@@GEO@@",json.dumps({k:{"w":G[n]["size"][0],"h":G[n]["size"][1],"pill":G[n]["pill"]} for k,n in sizes.items()}))
 mjs=open('fix_ui3.mjs',encoding='utf8').read()
