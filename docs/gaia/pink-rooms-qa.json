@@ -1,0 +1,350 @@
+{
+  "errors": [],
+  "rooms": [
+    {
+      "id": "f1-lobby-1",
+      "name": "로비 · 접수",
+      "bg": "pink-room/f1-lobby-1",
+      "loaded": true,
+      "slice": {
+        "key": "s02",
+        "start": 0.500220361392684,
+        "end": 1
+      }
+    },
+    {
+      "id": "f1-shop-2",
+      "name": "매점",
+      "bg": "pink-room/f1-shop-2",
+      "loaded": true,
+      "slice": {
+        "key": "s03",
+        "start": 0,
+        "end": 0.5
+      }
+    },
+    {
+      "id": "f1-recovery-3",
+      "name": "휴게실",
+      "bg": "pink-room/f1-recovery-3",
+      "loaded": true,
+      "slice": {
+        "key": "s03",
+        "start": 0.5,
+        "end": 1
+      }
+    },
+    {
+      "id": "f2-basic-1",
+      "name": "기초반",
+      "bg": "pink-room/f2-basic-1",
+      "loaded": true,
+      "slice": {
+        "key": "s04",
+        "start": 0,
+        "end": 0.5
+      }
+    },
+    {
+      "id": "f2-toilet-4",
+      "name": "화장실",
+      "bg": "pink-room/f2-toilet-4",
+      "loaded": true,
+      "slice": {
+        "key": "s01",
+        "start": 0,
+        "end": 0.5002146844139116
+      }
+    },
+    {
+      "id": "f2-recovery-5",
+      "name": "휴게실",
+      "bg": "pink-room/f2-recovery-5",
+      "loaded": true,
+      "slice": {
+        "key": "s01",
+        "start": 0.5002146844139116,
+        "end": 1
+      }
+    },
+    {
+      "id": "f3-gear-1",
+      "name": "기구방",
+      "bg": "pink-room/f3-gear-1",
+      "loaded": true,
+      "slice": {
+        "key": "s09",
+        "start": 0,
+        "end": 0.5
+      }
+    },
+    {
+      "id": "f3-gear-2",
+      "name": "기구방 B",
+      "bg": "pink-room/f3-gear-2",
+      "loaded": true,
+      "slice": {
+        "key": "s09",
+        "start": 0.5,
+        "end": 1
+      }
+    },
+    {
+      "id": "f3-recovery-4",
+      "name": "휴게실",
+      "bg": "pink-room/f3-recovery-4",
+      "loaded": true,
+      "slice": {
+        "key": "s07",
+        "start": 0.5,
+        "end": 1
+      }
+    },
+    {
+      "id": "f4-group-1",
+      "name": "단체방",
+      "bg": "pink-room/f4-group-1",
+      "loaded": true,
+      "slice": {
+        "key": "s08",
+        "start": 0,
+        "end": 0.5
+      }
+    },
+    {
+      "id": "f4-posture-3",
+      "name": "요가방 A",
+      "bg": "pink-room/f4-posture-3",
+      "loaded": true,
+      "slice": {
+        "key": "s10",
+        "start": 0,
+        "end": 0.5
+      }
+    },
+    {
+      "id": "f4-posture-4",
+      "name": "요가방 B",
+      "bg": "pink-room/f4-posture-4",
+      "loaded": true,
+      "slice": {
+        "key": "s10",
+        "start": 0.5,
+        "end": 1
+      }
+    },
+    {
+      "id": "f6-punish-1",
+      "name": "체벌실 A",
+      "bg": "pink-room/f6-punish-1",
+      "loaded": true,
+      "slice": {
+        "key": "s06",
+        "start": 0,
+        "end": 0.5
+      }
+    },
+    {
+      "id": "f6-punish-2",
+      "name": "체벌실 B",
+      "bg": "pink-room/f6-punish-2",
+      "loaded": true,
+      "slice": {
+        "key": "s06",
+        "start": 0.5,
+        "end": 1
+      }
+    },
+    {
+      "id": "f5-toilet-3",
+      "name": "화장실",
+      "bg": "pink-room/f5-toilet-3",
+      "loaded": true,
+      "slice": {
+        "key": "s05",
+        "start": 0,
+        "end": 0.5
+      }
+    },
+    {
+      "id": "f5-recovery-4",
+      "name": "휴게실",
+      "bg": "pink-room/f5-recovery-4",
+      "loaded": true,
+      "slice": {
+        "key": "s05",
+        "start": 0.5,
+        "end": 1
+      }
+    },
+    {
+      "id": "company-f1-companyLobby-1",
+      "name": "회사 로비",
+      "bg": "pink-room/company-f1-companyLobby-1",
+      "loaded": true,
+      "slice": {
+        "key": "c1a",
+        "start": 0,
+        "end": 0.5099789915966386
+      }
+    },
+    {
+      "id": "company-f1-lounge-2",
+      "name": "휴게실",
+      "bg": "pink-room/company-f1-lounge-2",
+      "loaded": true,
+      "slice": {
+        "key": "c1a",
+        "start": 0.5099789915966386,
+        "end": 1
+      }
+    },
+    {
+      "id": "company-f1-pantry-3",
+      "name": "탕비실",
+      "bg": "pink-room/company-f1-pantry-3",
+      "loaded": true,
+      "slice": {
+        "key": "c1b",
+        "start": 0,
+        "end": 0.5
+      }
+    },
+    {
+      "id": "company-f1-companyToilet-4",
+      "name": "화장실",
+      "bg": "pink-room/company-f1-companyToilet-4",
+      "loaded": true,
+      "slice": {
+        "key": "c1b",
+        "start": 0.5,
+        "end": 1
+      }
+    },
+    {
+      "id": "company-f2-sharedOffice-1",
+      "name": "공용 사무실",
+      "bg": "pink-room/company-f2-sharedOffice-1",
+      "loaded": true,
+      "slice": {
+        "key": "c2a",
+        "start": 0,
+        "end": 0.529936974789916
+      }
+    },
+    {
+      "id": "company-f2-meeting-3",
+      "name": "회의실",
+      "bg": "pink-room/company-f2-meeting-3",
+      "loaded": true,
+      "slice": {
+        "key": "c2b",
+        "start": 0,
+        "end": 0.4299947561615102
+      }
+    },
+    {
+      "id": "company-f2-pantry-4",
+      "name": "탕비실",
+      "bg": "pink-room/company-f2-pantry-4",
+      "loaded": true,
+      "slice": {
+        "key": "c2b",
+        "start": 0.4299947561615102,
+        "end": 0.7399056109071841
+      }
+    },
+    {
+      "id": "company-f2-companyToilet-5",
+      "name": "화장실",
+      "bg": "pink-room/company-f2-companyToilet-5",
+      "loaded": true,
+      "slice": {
+        "key": "c2b",
+        "start": 0.7399056109071841,
+        "end": 1
+      }
+    },
+    {
+      "id": "company-f3-privateOffice-1",
+      "name": "개인 사무실 A",
+      "bg": "pink-room/company-f3-privateOffice-1",
+      "loaded": true,
+      "slice": {
+        "key": "c3a",
+        "start": 0,
+        "end": 0.5297872340425532
+      }
+    },
+    {
+      "id": "company-f3-privateOffice-2",
+      "name": "개인 사무실 B",
+      "bg": "pink-room/company-f3-privateOffice-2",
+      "loaded": true,
+      "slice": {
+        "key": "c3a",
+        "start": 0.5297872340425532,
+        "end": 1
+      }
+    },
+    {
+      "id": "company-f3-meeting-3",
+      "name": "회의실",
+      "bg": "pink-room/company-f3-meeting-3",
+      "loaded": true,
+      "slice": {
+        "key": "c3b",
+        "start": 0,
+        "end": 0.29989495798319327
+      }
+    },
+    {
+      "id": "company-f3-lounge-4",
+      "name": "휴게실",
+      "bg": "pink-room/company-f3-lounge-4",
+      "loaded": true,
+      "slice": {
+        "key": "c3b",
+        "start": 0.29989495798319327,
+        "end": 0.6502100840336135
+      }
+    },
+    {
+      "id": "company-f3-companyToilet-5",
+      "name": "화장실",
+      "bg": "pink-room/company-f3-companyToilet-5",
+      "loaded": true,
+      "slice": {
+        "key": "c3b",
+        "start": 0.6502100840336135,
+        "end": 1
+      }
+    }
+  ],
+  "roomDialog": {
+    "name": "체벌실 A",
+    "bgMatches": true
+  },
+  "road": {
+    "stickers": 0,
+    "hurtBubble": false,
+    "noticeVisible": false,
+    "directSticker": false,
+    "collisions": 1
+  },
+  "arrival": {
+    "active": false,
+    "stickers": 0
+  },
+  "mini": {
+    "mode": "game",
+    "stickerAllowed": true,
+    "count": 1
+  },
+  "alignment": {
+    "wall_floor_y": 536,
+    "room_frame_bottom_y": 536,
+    "elevator_alpha_bottom_y": 536,
+    "basis": "이미지 alpha 경계 확인, 그리기 좌표 계산 및 실제 캡처 비교"
+  }
+}
