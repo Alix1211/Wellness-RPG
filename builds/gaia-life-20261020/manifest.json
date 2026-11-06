@@ -21,5 +21,8 @@
   "base_build": "20261021-R60",
   "transform": "r60-controls-cast",
   "output_size": 90521543,
-  "output_sha256": "a6668db5fe0d98166553a9e505d494ce5a1a88a87eb83ddba52c671e9bbf9eb7"
+  "output_sha256": "a6668db5fe0d98166553a9e505d494ce5a1a88a87eb83ddba52c671e9bbf9eb7",
+  "story_transform": "gaia-cohab-ending-v1",
+  "story_output_size": 90551988,
+  "story_output_sha256": "bb7dd328feeefe5effbe9e8ece6a65fd11ff19b7f8d493d6d454fcc3b697b50e"
 }
