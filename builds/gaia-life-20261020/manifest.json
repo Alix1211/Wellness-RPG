@@ -1,5 +1,5 @@
 {
-  "build": "20261106-R60-UIART",
+  "build": "20261106-R60-TITLE-BUBBLE",
   "sha256": "575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244",
   "size": 87031121,
   "compression": "gzip",
@@ -20,6 +20,6 @@
   ],
   "base_build": "20261021-R60",
   "transform": "r60-controls-cast",
-  "output_size": 89201684,
-  "output_sha256": "b9bccc04af3af2e76c94b0c6830cfd82397cdf53bfeba19f1105a34256cff56c"
+  "output_size": 90520000,
+  "output_sha256": "67ef6c9a76b2b64736d7dad234ec3700ef88e56b5bdb41ae5a98a932254e7746"
 }
