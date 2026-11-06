@@ -1,0 +1,26 @@
+{
+  "errors": [],
+  "transition": {
+    "mode": "dialogue",
+    "context": true,
+    "player": 300
+  },
+  "resize": {
+    "mode": "dialogue",
+    "width": 1407
+  },
+  "home-transition-fixed.png": {
+    "backgroundStdDev": [
+      35.518379009438846,
+      40.920460932666096,
+      43.2233034058266
+    ]
+  },
+  "home-resize-fixed.png": {
+    "backgroundStdDev": [
+      34.8572806885031,
+      41.17201675657625,
+      42.198631424428775
+    ]
+  }
+}

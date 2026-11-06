@@ -70,3 +70,10 @@
 - 확인함: manifest transform=r60-controls-cast 유지, 치환 순서 [16,13,5], 현행 restore.py 출력과 배포 HTML 바이트 일치.
 - 미확인: 실제 안드로이드 기기, 게임패드, 모든 의뢰/이야기 분기와 미니게임 결과 전체 회귀검사.
 - 검증 파일: qa-context.json, qa-context-extra.json, qa-context-opening.json. 현재 HTML: GAIA-R60-CONTEXT-ROOMS.html.
+
+## 빈 화면 긴급 수정
+- 사용자 보고: 집 진입 후 베이지색 빈 화면 위에 대화/HUD만 표시됨.
+- 원인: sceneChange의 transition=.22를 대화 모드에서 감쇠시키지 않고, 최초 render 1회 뒤 대화 모드에서는 캔버스를 갱신하지 않았다. 화면 크기 변경도 캔버스를 지운 뒤 복구하지 못했다. 기존 검사에서는 저장 불러오기 경로만 확인해 놓쳤다.
+- 수정: contextual 대화 프레임에서 transition을 감쇠하고 render를 실행한다. 이동/시간/캐릭터 업데이트는 실행하지 않는다.
+- 확인함: sceneChange 직후 집 대화 진입 500ms 뒤 배경/SD 표시, 1407×891 크기 변경 후 배경/SD 유지, 실행 오류0. 배경 영역 RGB 표준편차 검사로 빈색 화면 아님 확인. 실제 안드로이드 미확인.
+- qa-context-render.json 및 현행 restore.py 일치 검사.

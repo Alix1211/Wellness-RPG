@@ -20,6 +20,6 @@
   ],
   "base_build": "20261021-R60",
   "transform": "r60-controls-cast",
-  "output_size": 87207638,
-  "output_sha256": "a71ce627b8263f57574b70f1751726bc665df41657bf72b8da0422daac8627dc"
+  "output_size": 87207713,
+  "output_sha256": "d7dcf754fcbbe1b9ac212ec09ebcb7295d680e8879038ddb469aaefe6c8c4945"
 }
