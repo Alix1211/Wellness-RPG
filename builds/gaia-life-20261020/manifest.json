@@ -1,5 +1,5 @@
 {
-  "build": "20261106-R60-CITYMAP",
+  "build": "20261106-R60-UIART",
   "sha256": "575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244",
   "size": 87031121,
   "compression": "gzip",
@@ -20,6 +20,6 @@
   ],
   "base_build": "20261021-R60",
   "transform": "r60-controls-cast",
-  "output_size": 88064727,
-  "output_sha256": "685710657552b54c12fb4fbb43ba7f787b5ec8653ea0a1ddc808e20aaf78ea4a"
+  "output_size": 89201684,
+  "output_sha256": "b9bccc04af3af2e76c94b0c6830cfd82397cdf53bfeba19f1105a34256cff56c"
 }
