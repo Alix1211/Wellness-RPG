@@ -1,5 +1,5 @@
 {
-  "build": "20261106-R60-CONTEXT-ROOMS",
+  "build": "20261106-R60-HOME-SINGLE",
   "sha256": "575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244",
   "size": 87031121,
   "compression": "gzip",
@@ -20,6 +20,6 @@
   ],
   "base_build": "20261021-R60",
   "transform": "r60-controls-cast",
-  "output_size": 87208118,
-  "output_sha256": "3fbe246812142a9db40a57cbf6a5f18192e80128f812c06217c5a10b3371f248"
+  "output_size": 87199177,
+  "output_sha256": "72d84aebe82f67e5a18ca5f7ff3614056f6c81a635d932b647cd6b42422b3c14"
 }
