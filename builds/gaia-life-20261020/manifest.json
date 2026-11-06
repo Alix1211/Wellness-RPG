@@ -1,5 +1,5 @@
 {
-  "build": "20261106-R60-V4-LINES",
+  "build": "20261106-R60-V4-BASE",
   "sha256": "575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244",
   "size": 87031121,
   "compression": "gzip",
@@ -20,6 +20,6 @@
   ],
   "base_build": "20261021-R60",
   "transform": "r60-controls-cast",
-  "output_size": 87229570,
-  "output_sha256": "c2ef822aae457b245dd20d0938a3d17ee7c51e08ff93dfeca487c287d3a8007f"
+  "output_size": 87352638,
+  "output_sha256": "5ebf783cafe20c9b0f407e246ba5e60cf8456fdd559f00aa31edaa10c6d25120"
 }
