@@ -1,5 +1,5 @@
 {
-  "build": "20261106-R60-SCALE-FIX",
+  "build": "20261106-R60-MAP-TILES",
   "sha256": "575d4b2751f34b0cf251735330773735633401168117cf7c0520e4a136d3f244",
   "size": 87031121,
   "compression": "gzip",
@@ -20,6 +20,6 @@
   ],
   "base_build": "20261021-R60",
   "transform": "r60-controls-cast",
-  "output_size": 87041005,
-  "output_sha256": "aa7f88bd9f506c3a8b0ba755df555b2bbcd649ecd04e67619116934e34a8a90d"
+  "output_size": 87196616,
+  "output_sha256": "6783dd46e34d86b17b420b6bd799d54aa70871fde0bb1c0b684b1ad72076ce98"
 }

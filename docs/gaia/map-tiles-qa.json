@@ -1,0 +1,8 @@
+{
+  "errors": [],
+  "floors": [],
+  "elevator": {
+    "floor": 1,
+    "mode": "field"
+  }
+}
