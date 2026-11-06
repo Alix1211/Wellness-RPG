@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Restore original R60, then apply its verified input/control repair and cast/quest links."""
+"""Restore verified R60, user's two newer versions, then cohab/ending."""
 import gzip,hashlib,json,re,subprocess
 from pathlib import Path
 root=Path(__file__).resolve().parents[2]
@@ -25,9 +25,6 @@ if m.get('transform'):
 out=root/'GAIA-LIFE-R60-CONTROLS.html'
 out.write_bytes(data)
 print(out,len(data),hashlib.sha256(data).hexdigest())
-if m.get('story_transform')=='gaia-cohab-ending-v1':
- final=root/'GAIA-LIFE-R60-COHAB.html'
- subprocess.run(['node',str(root/'tools/gaia/apply-cohab.mjs'),str(out),str(final)],check=True)
- result=final.read_bytes()
- assert len(result)==m['story_output_size'] and hashlib.sha256(result).hexdigest()==m['story_output_sha256']
- print(final,len(result),hashlib.sha256(result).hexdigest())
+if m.get('living_transform')=='gaia-living-corridors-v1':
+ final=root/'GAIA-R60-LIVING-COHAB-ENDING.html'
+ subprocess.run(['node',str(root/'tools/gaia/build-latest.mjs'),str(out),str(root/'builds/gaia-life-20261020/manifest.json'),str(final)],check=True)

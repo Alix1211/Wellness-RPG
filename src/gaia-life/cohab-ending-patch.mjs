@@ -1,7 +1,7 @@
 import {COHAB_DATA} from './cohab-ending-data.mjs';
 
-// Apply ONLY after the verified R60 controls/cast transform.
-// The same exact substitutions are implemented in tools/gaia/restore.py.
+// Apply only after the original, user-supplied LIVING-CORRIDORS updates.
+// Original dialogue, ambient monologues and quest pacing stay untouched.
 export const COHAB_REPLACEMENTS=[
  ['const L=GaiaLife;','const L=GaiaLife;\n/* GAIA_COHAB_RUNTIME */'],
  ['if(!L.length)return;const ms=castManSrc(name);','if(!L.length)return;gaiaTrackTalk(name,L);const ms=castManSrc(name);'],
@@ -25,8 +25,8 @@ function one(src,before,after){
 export function fixCohabEnding(html,runtime){
  if(typeof runtime!=='string'||!runtime.includes('function gaiaPropose('))throw Error('cohab runtime missing');
  const scripts=[...html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script\s*>/g)];
- if(scripts.length!==23)throw Error('Script layout changed: '+scripts.length);
- const m=scripts[16],src=m[2];
+ if(scripts.length!==25)throw Error('LIVING-CORRIDORS script layout changed: '+scripts.length);
+ const m=scripts[18],src=m[2];
  let patched=src;
  for(const [before,after] of COHAB_REPLACEMENTS)patched=one(patched,before,after);
  const data=JSON.stringify(COHAB_DATA).replace(/<\/script/gi,'<\\/script');

@@ -23,6 +23,18 @@
    const b=new TextEncoder().encode(html);
    if(b.byteLength!==m.output_size||await hash(b)!==m.output_sha256)throw Error('controls checksum');
   }
+  if(m.quest_transform==='gaia-quest-rhythm-v1'){
+   const patch=await import('./src/gaia-life/quest-rhythm-transform.mjs');
+   html=patch.fixQuestRhythm(html);
+   const b=new TextEncoder().encode(html);
+   if(b.byteLength!==m.quest_output_size||await hash(b)!==m.quest_output_sha256)throw Error('quest rhythm checksum');
+  }
+  if(m.living_transform==='gaia-living-corridors-v1'){
+   const patch=await import('./src/gaia-life/living-corridors-transform.mjs');
+   html=patch.fixLivingCorridors(html);
+   const b=new TextEncoder().encode(html);
+   if(b.byteLength!==m.living_output_size||await hash(b)!==m.living_output_sha256)throw Error('living corridors checksum');
+  }
   if(m.story_transform==='gaia-cohab-ending-v1'){
    const patch=await import('./src/gaia-life/cohab-ending-patch.mjs');
    const response=await fetch('./src/gaia-life/cohab-ending-runtime.js');
