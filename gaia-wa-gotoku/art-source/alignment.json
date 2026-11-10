@@ -1,0 +1,142 @@
+{
+  "scientist_idle": {
+    "canvas": [
+      750,
+      666
+    ],
+    "source_component": 1
+  },
+  "scientist_attack": {
+    "canvas": [
+      750,
+      666
+    ],
+    "source_component": 2
+  },
+  "farmer_idle": {
+    "canvas": [
+      1219,
+      666
+    ],
+    "source_component": 9
+  },
+  "farmer_attack": {
+    "canvas": [
+      1219,
+      666
+    ],
+    "source_component": 10
+  },
+  "mafiaA_idle": {
+    "canvas": [
+      621,
+      666
+    ],
+    "source_component": 1
+  },
+  "mafiaB_idle": {
+    "canvas": [
+      1013,
+      666
+    ],
+    "source_component": 2
+  },
+  "mafiaC_idle": {
+    "canvas": [
+      855,
+      666
+    ],
+    "source_component": 3
+  },
+  "mafiaD_idle": {
+    "canvas": [
+      946,
+      666
+    ],
+    "source_component": 5
+  },
+  "mafiaBoss_idle": {
+    "canvas": [
+      1052,
+      666
+    ],
+    "source_component": 4
+  },
+  "mafiaBoss_attack": {
+    "canvas": [
+      1052,
+      666
+    ],
+    "source_component": 6
+  },
+  "director_idle": {
+    "canvas": [
+      831,
+      666
+    ],
+    "source_component": 1
+  },
+  "director_attack": {
+    "canvas": [
+      831,
+      666
+    ],
+    "source_component": 2
+  },
+  "heiress_idle": {
+    "canvas": [
+      886,
+      666
+    ],
+    "source_component": 12
+  },
+  "heiress_attack": {
+    "canvas": [
+      886,
+      666
+    ],
+    "source_component": 13
+  },
+  "host_idle": {
+    "canvas": [
+      896,
+      666
+    ],
+    "source_component": 42
+  },
+  "host_attack": {
+    "canvas": [
+      896,
+      666
+    ],
+    "source_component": 45
+  },
+  "pimp_idle": {
+    "canvas": [
+      913,
+      666
+    ],
+    "source_component": 1
+  },
+  "pimp_attack": {
+    "canvas": [
+      913,
+      666
+    ],
+    "source_component": 2
+  },
+  "studentBoss_idle": {
+    "canvas": [
+      822,
+      666
+    ],
+    "source_component": 16
+  },
+  "studentBoss_attack": {
+    "canvas": [
+      822,
+      666
+    ],
+    "source_component": 17
+  }
+}
